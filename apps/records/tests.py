@@ -184,17 +184,178 @@ class PRDetectionTests(TestCase):
         # him regardless of Alice's numbers.
         self.assertTrue(any(r.record_type == PRType.MAX_WEIGHT for r in new_prs))
 
-    def test_deleting_the_source_set_preserves_the_pr_record(self):
-        _log_and_check(self.performed, weight=Decimal("100"), reps=5)
-        record = PersonalRecord.objects.get(
-            record_type=PRType.MAX_WEIGHT, exercise=self.exercise
+
+class RebuildRecordsTests(TestCase):
+    """apps.records.services.rebuild_records - records follow a set being
+    corrected or deleted (issue #21, docs/PR_SYSTEM.md "Correcting a
+    logged set")."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="Test Deadlift", owner=None)
+        self.performed = _new_session_exercise(self.alice, self.exercise)
+
+    def _log(self, performed=None, **kwargs):
+        exercise_set = workout_services.log_set(performed or self.performed, **kwargs)
+        services.check_and_record_prs(exercise_set)
+        return exercise_set
+
+    def _rebuild(self):
+        services.rebuild_records(self.alice, self.exercise)
+
+    def _snapshot(self):
+        return sorted(
+            PersonalRecord.objects.filter(user=self.alice).values_list(
+                "pk", "record_type", "rep_count", "value", "weight", "reps", "source_set_id"
+            )
         )
-        exercise_set = record.source_set
+
+    def test_deleting_the_only_set_removes_its_records(self):
+        exercise_set = self._log(weight=Decimal("60"), reps=8)
         exercise_set.delete()
+        self._rebuild()
+        self.assertFalse(PersonalRecord.objects.filter(user=self.alice).exists())
+
+    def test_a_deleted_typo_no_longer_blocks_later_records(self):
+        self._log(weight=Decimal("60"), reps=8)
+        typo = self._log(weight=Decimal("600"), reps=8)
+        typo.delete()
+        self._rebuild()
+
+        new_prs = _log_and_check(self.performed, weight=Decimal("70"), reps=8)
+        self.assertIn(PRType.MAX_WEIGHT, {r.record_type for r in new_prs})
+        self.assertFalse(PersonalRecord.objects.filter(weight=Decimal("600")).exists())
+
+    def test_a_later_set_hidden_by_the_mistake_becomes_the_record(self):
+        first = self._log(weight=Decimal("100"), reps=5)
+        typo = self._log(weight=Decimal("600"), reps=5)
+        later = self._log(weight=Decimal("110"), reps=5)
+        self.assertFalse(
+            PersonalRecord.objects.filter(
+                source_set=later, record_type=PRType.MAX_WEIGHT
+            ).exists()
+        )
+        first_records = sorted(first.prs_achieved.values_list("pk", "value"))
+
+        typo.delete()
+        self._rebuild()
+
+        record = PersonalRecord.objects.get(source_set=later, record_type=PRType.MAX_WEIGHT)
+        self.assertEqual(record.value, Decimal("110"))
+        self.assertEqual(record.achieved_at, later.performed_at)
+        # The first set's records were never wrong, so they keep their rows.
+        self.assertEqual(sorted(first.prs_achieved.values_list("pk", "value")), first_records)
+
+    def test_editing_a_set_down_drops_the_records_it_no_longer_earns(self):
+        self._log(weight=Decimal("100"), reps=5)
+        edited = self._log(weight=Decimal("120"), reps=5)
+        edited.weight = Decimal("90")
+        edited.save()
+        self._rebuild()
+
+        self.assertFalse(
+            edited.prs_achieved.filter(record_type=PRType.MAX_WEIGHT).exists()
+        )
+        self.assertEqual(
+            PersonalRecord.objects.get(record_type=PRType.MAX_WEIGHT).value, Decimal("100")
+        )
+
+    def test_editing_a_set_that_stays_a_record_updates_its_row_in_place(self):
+        exercise_set = self._log(weight=Decimal("100"), reps=5)
+        record = exercise_set.prs_achieved.get(record_type=PRType.MAX_WEIGHT)
+        exercise_set.weight = Decimal("102.5")
+        exercise_set.save()
+        self._rebuild()
 
         record.refresh_from_db()
-        self.assertIsNone(record.source_set)
-        self.assertEqual(record.value, Decimal("100"))
+        self.assertEqual(record.value, Decimal("102.5"))
+        self.assertEqual(record.weight, Decimal("102.5"))
+
+    def test_marking_a_set_as_warmup_removes_its_records(self):
+        exercise_set = self._log(weight=Decimal("100"), reps=5)
+        exercise_set.is_warmup = True
+        exercise_set.save()
+        self._rebuild()
+        self.assertFalse(PersonalRecord.objects.filter(user=self.alice).exists())
+
+    def test_session_volume_follows_a_deleted_set(self):
+        self._log(weight=Decimal("100"), reps=5)
+        second_session = _new_session_exercise(self.alice, self.exercise)
+        self._log(second_session, weight=Decimal("100"), reps=5)
+        extra = self._log(second_session, weight=Decimal("100"), reps=5)
+        self.assertEqual(
+            PersonalRecord.objects.filter(record_type=PRType.SESSION_VOLUME).count(), 2
+        )
+
+        extra.delete()
+        self._rebuild()
+
+        # 500 kg in each session now - a tie, so only the first stands.
+        record = PersonalRecord.objects.get(record_type=PRType.SESSION_VOLUME)
+        self.assertEqual(record.value, Decimal("500"))
+        self.assertEqual(
+            record.source_set.performed_exercise.session_id, self.performed.session_id
+        )
+
+    def test_rebuilding_untouched_history_changes_nothing(self):
+        self._log(weight=Decimal("100"), reps=5)
+        self._log(weight=Decimal("100"), reps=6)
+        self._log(weight=Decimal("80"), reps=12)
+        second_session = _new_session_exercise(self.alice, self.exercise)
+        self._log(second_session, weight=Decimal("105"), reps=3)
+        self._log(second_session, weight=Decimal("90"), reps=10)
+        self._log(second_session, weight=Decimal("60"), reps=5, is_warmup=True)
+        before = self._snapshot()
+
+        self._rebuild()
+
+        self.assertEqual(self._snapshot(), before)
+
+    def test_other_users_and_exercises_are_untouched(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        other_exercise = Exercise.objects.create(name="Test Row", owner=None)
+        _log_and_check(_new_session_exercise(bob, self.exercise), weight=Decimal("50"), reps=5)
+        _log_and_check(
+            _new_session_exercise(self.alice, other_exercise), weight=Decimal("50"), reps=5
+        )
+        exercise_set = self._log(weight=Decimal("60"), reps=8)
+        exercise_set.delete()
+        self._rebuild()
+
+        self.assertTrue(PersonalRecord.objects.filter(user=bob).exists())
+        self.assertTrue(PersonalRecord.objects.filter(exercise=other_exercise).exists())
+
+
+class CorrectingSetsRebuildsRecordsViewTests(TestCase):
+    """The web views that edit or delete sets keep records in step."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.force_login(self.alice)
+        self.exercise = Exercise.objects.create(name="Test Deadlift", owner=None)
+        self.performed = _new_session_exercise(self.alice, self.exercise)
+        self.exercise_set = workout_services.log_set(
+            self.performed, weight=Decimal("600"), reps=8
+        )
+        services.check_and_record_prs(self.exercise_set)
+
+    def test_set_delete(self):
+        self.client.post(reverse("workouts:set-delete", args=[self.exercise_set.pk]))
+        self.assertFalse(PersonalRecord.objects.filter(user=self.alice).exists())
+
+    def test_set_edit(self):
+        self.client.post(
+            reverse("workouts:set-edit", args=[self.exercise_set.pk]),
+            {"weight": "60", "reps": "8"},
+        )
+        record = PersonalRecord.objects.get(record_type=PRType.MAX_WEIGHT)
+        self.assertEqual(record.value, Decimal("60"))
+
+    def test_session_delete(self):
+        self.client.post(
+            reverse("workouts:session-delete", args=[self.performed.session_id])
+        )
+        self.assertFalse(PersonalRecord.objects.filter(user=self.alice).exists())
 
 
 class PRSurvivesProgramChangesTests(TestCase):

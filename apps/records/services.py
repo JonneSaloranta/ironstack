@@ -4,9 +4,9 @@
 `ExerciseSet` is saved (see apps.workouts.views.set_log), it compares that
 set against the user's prior history for the exercise and records any
 newly broken personal records. Only called for newly *created* sets -
-editing an existing set does not retroactively re-run PR detection (see
-docs/PR_SYSTEM.md's testing list, which covers new records and ties but
-not edit-driven recalculation; that's out of scope for this phase).
+editing or deleting a set instead goes through `rebuild_records`, which
+replays the exercise's whole remaining history (docs/PR_SYSTEM.md
+"Correcting a logged set").
 
 Every "current best" here is computed live from `ExerciseSet` history each
 time, not read back from previously stored `PersonalRecord` rows - so
@@ -16,6 +16,7 @@ edits/deletions (which this module never queries) can't affect it.
 
 from decimal import Decimal
 
+from django.db import transaction
 from django.db.models import DecimalField, ExpressionWrapper, F, Max, Sum
 
 from apps.core import units as core_units
@@ -251,6 +252,126 @@ def _upsert_session_volume_record(qs, user, exercise, exercise_set, session):
         return record
 
     return None
+
+
+def _replayed_records(user, exercise):
+    """The records `check_and_record_prs` would have produced had every
+    remaining eligible set been logged in `performed_at` order, keyed the
+    way `rebuild_records` matches them against stored rows: (set id,
+    type, rep count), or ("session", session id) for session volume,
+    whose one row per session follows the session's latest record-
+    breaking set (same as `_upsert_session_volume_record`). One query,
+    replayed in Python - the same comparisons, strict `>` everywhere, so
+    a tie is still never a record."""
+    rows = (
+        eligible_sets(user, exercise)
+        .order_by("performed_at", "pk")
+        .values_list("pk", "weight", "reps", "performed_at", "performed_exercise__session_id")
+    )
+    desired = {}
+    max_weight = best_estimate = best_volume = None
+    best_reps_at = {}
+    best_weight_for = {}
+    session_totals = {}
+
+    def _beats(value, previous):
+        return previous is None or value > previous
+
+    for pk, weight, reps, performed_at, session_id in rows:
+        fields = {
+            "weight": weight,
+            "reps": reps,
+            "source_set_id": pk,
+            "achieved_at": performed_at,
+        }
+
+        if _beats(weight, max_weight):
+            desired[(pk, PRType.MAX_WEIGHT, None)] = {**fields, "value": weight}
+            max_weight = weight
+
+        if _beats(reps, best_reps_at.get(weight)):
+            desired[(pk, PRType.REP_PR, None)] = {**fields, "value": reps}
+            best_reps_at[weight] = reps
+
+        for milestone in REP_MILESTONES:
+            if reps >= milestone and _beats(weight, best_weight_for.get(milestone)):
+                desired[(pk, PRType.REP_SPECIFIC_PR, milestone)] = {**fields, "value": weight}
+                best_weight_for[milestone] = weight
+
+        estimate = _one_rep_max.estimate(weight, reps)
+        if _beats(estimate, best_estimate):
+            desired[(pk, PRType.ESTIMATED_1RM, None)] = {**fields, "value": estimate}
+            best_estimate = estimate
+
+        volume = weight * reps
+        if _beats(volume, best_volume):
+            desired[(pk, PRType.SET_VOLUME, None)] = {**fields, "value": volume}
+            best_volume = volume
+
+        total = session_totals.get(session_id, Decimal("0")) + volume
+        session_totals[session_id] = total
+        best_other = max(
+            (other for key, other in session_totals.items() if key != session_id),
+            default=None,
+        )
+        if _beats(total, best_other):
+            desired[("session", session_id)] = {**fields, "value": total}
+
+    return desired
+
+
+def _record_key(record):
+    if record.record_type == PRType.SESSION_VOLUME:
+        if record.source_set is None:
+            return None
+        return ("session", record.source_set.performed_exercise.session_id)
+    return (record.source_set_id, record.record_type, record.rep_count)
+
+
+@transaction.atomic
+def rebuild_records(user, exercise):
+    """Bring `user`'s stored records for `exercise` back in line with
+    their remaining set history, after a set was edited or deleted (or a
+    whole session was). A record that still holds keeps its row
+    untouched; one whose set is gone (or no longer beats what came
+    before it) is deleted; a later set that only now turns out to have
+    been a record - because the mistake it was compared against is gone
+    - gets its row, silently (no "new PR" toast for an old set). See
+    docs/PR_SYSTEM.md "Correcting a logged set" and issue #21: a 600 kg
+    typo, deleted right away, used to stay the max weight forever."""
+    desired = _replayed_records(user, exercise)
+    stored = PersonalRecord.objects.filter(user=user, exercise=exercise).select_related(
+        "source_set__performed_exercise"
+    )
+    for record in stored:
+        fields = desired.pop(_record_key(record), None)
+        if fields is None:
+            record.delete()
+            continue
+        if any(getattr(record, name) != value for name, value in fields.items()):
+            for name, value in fields.items():
+                setattr(record, name, value)
+            record.save()
+
+    PersonalRecord.objects.bulk_create(
+        PersonalRecord(
+            user=user,
+            exercise=exercise,
+            record_type=PRType.SESSION_VOLUME if key[0] == "session" else key[1],
+            rep_count=None if key[0] == "session" else key[2],
+            **fields,
+        )
+        for key, fields in desired.items()
+    )
+
+
+def rebuild_records_for_exercises(user, exercise_ids):
+    """`rebuild_records` for each exercise in `exercise_ids` - for a
+    change that touches several at once, like deleting a session."""
+    from apps.exercises.models import Exercise
+
+    for exercise in Exercise.objects.filter(pk__in=set(exercise_ids)):
+        rebuild_records(user, exercise)
 
 
 def display_value(record, user):

@@ -18,6 +18,62 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.28.0] - 2026-10-28
+
+### Added
+- API: prescriptions and personal records include the exercise's name,
+  so a client no longer has to fetch every exercise separately.
+- API: workout sessions can be filtered by status and start time, e.g.
+  `sessions/?status=in_progress` finds the workout in progress.
+- API: exercises can be searched by name (in your own language too) and
+  fetched by a list of ids, and every list takes `?page_size=` (up to
+  100).
+- API: `up-next/` returns the "Up next" workout the dashboard offers.
+- API: `exercises/<id>/last-performance/` returns the sets you did last
+  time for an exercise.
+- API: `performed-exercises/<id>/suggestion/` returns the same
+  explainable weight suggestion the app shows when logging a set.
+- API: logging a set, starting a session and adding an exercise accept
+  an `Idempotency-Key` header, so a retried request on a bad connection
+  never logs the same thing twice.
+- API versioning rules: within `/api/v1/` only additions are allowed.
+  The OpenAPI schema is committed as `docs/api/openapi-v1.yaml`, and CI
+  fails on a breaking API change. See docs/API.md "Versioning".
+- Workouts: estimated durations. A program's workouts show how long they
+  take ("~56 min ± 9 min"), training mode shows the time left, the
+  exercise page shows your own set cycle (time from one set to the next,
+  rest included) next to everyone's, and the add/edit-exercise form
+  shows what the exercise adds to the workout as you change its sets
+  and reps. Estimated from completed workouts, ignoring mistaps and
+  forgotten logs.
+
+### Changed
+- Interface: on the workout page and in a program's workout cards,
+  "Add exercise" is now a secondary button so Complete/Start workout is
+  the clear main action; the workout page's set form uses the same
+  switches as training mode; plain checkboxes and radio buttons are
+  larger and follow the theme color; volume figures drop trailing zeros.
+- API schema: ids in URLs are integers (a non-numeric id is a 404, as
+  before), `total_duration_seconds` is documented as a number, and the
+  docs pages are no longer listed as API operations. The responses
+  themselves are unchanged.
+
+### Fixed
+- Meal names (Breakfast, Lunch, ...) in the diary, recipe and diet plan
+  meal pickers are shown in your language.
+- Training mode no longer asks "Some exercises still have sets left to
+  log" when finishing after the last set was logged.
+- Accessibility: the API key permission checkboxes are named for screen
+  readers, muted tags and not-yet-tracked measurement/activity types
+  meet contrast requirements, and several small tap targets are larger.
+- Deleting or correcting a logged set (or deleting a workout) now
+  updates your personal records: a mistyped set no longer stays a
+  record forever, and a later set it was hiding becomes the record.
+
+### Security
+- Pillow, used to read uploaded images, is updated to 13.x, which
+  fixes security advisories affecting every earlier release.
+
 ## [1.27.0] - 2026-10-22
 
 ### Added

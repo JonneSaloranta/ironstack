@@ -27,6 +27,49 @@ Track:
 - exercise frequency
 - consistency
 
+## Set cycle time
+
+How long a set takes, for estimating a workout's length
+(`apps/workouts/set_timing.py`, tests in `apps/workouts/test_set_timing.py`).
+
+- **What is measured.** Only a set's completion is recorded
+  (`ExerciseSet.performed_at`), so the measurable unit is the *set cycle*:
+  the gap between two consecutive logged sets of one exercise - the set,
+  the rest and changing the weights. The gap into an exercise's first set
+  (finishing the previous one, setting up) is a *transition*.
+- **Whose data.** Every user's completed workouts on the instance, last two
+  years. A group is used once it has 20 gaps, from however many users (an
+  instance often has one). Each user contributes at most their latest 50
+  gaps per group, so one very active user doesn't decide the median.
+- **Dropped before anything is computed** (hard limits): gaps under 10 s
+  (double tap, sets typed in afterwards) or over 20 min (forgot to log,
+  workout left open); sets logged under 5 s apart; sets whose
+  `performed_at` is more than 60 s from `created_at` (edited or supplied
+  later, e.g. by the API); a set of another exercise in between (supersets
+  and circuits); warm-up sets; unfinished workouts.
+- **Off the curve** (statistical): Tukey's fences, 1.5 x IQR, on the log of
+  the gaps in each group. Gaps are right-skewed, so on a log scale the
+  fences remove misfires and forgotten timers without trimming normal long
+  rests. The fences are never narrower than 0.2 on the log scale, or a group
+  of identical gaps would drop everything that differs.
+- **Groups**, most to least specific: exercise x rep range (1-3, 4-6, 7-10,
+  11-15, 16+), exercise, movement type x rep range, every exercise x rep
+  range, then a default (120 s + 3 s per rep, quartiles -25 % / +30 %;
+  transition 180 s), which the UI labels "rough - little data yet".
+- **Shown as "x ± y".** One set: the median ± half the interquartile range
+  (the middle half of the sets). A workout: one transition per exercise and
+  a cycle for each further set; the low and high ends are the sums of the
+  quartiles, shown as their midpoint ± half the range. Summed directly
+  rather than as variances: one person tends to be slow or fast on every
+  set, so the uncertainty doesn't cancel out.
+- **Where.** A program's workout card ("Estimated duration"), training mode
+  ("Time left", remaining sets only), and the exercise page's "Set cycle"
+  card: the user's own figure (from 5 gaps) and everyone's, which is shown
+  only when the data comes from more than one user.
+- **Cost.** The instance-wide groups are computed in one windowed query
+  (`LAG` over each exercise's and each session's sets) and cached for 6 h
+  (`set_timing.clear_cache()` resets it). Warm-up time isn't modelled.
+
 ## Body analytics
 
 Track:

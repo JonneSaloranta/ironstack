@@ -235,6 +235,13 @@ a {
   display: inline-block;
 }
 
+/* A comma-separated run of item links (nutrition dashboard's "Today's
+   plan" meals): the taller line makes each inline-block link a >= 24px
+   target with room between rows (WCAG 2.5.8, audit UI-007). */
+.inline-link-list {
+  line-height: 2;
+}
+
 .container {
   width: 100%;
   max-width: 30rem;
@@ -336,13 +343,21 @@ textarea {
   margin-bottom: 0.75rem;
 }
 
+/* One size and the theme's accent for every native checkbox/radio (a
+   multi-select option, a radio choice) - the browser default is 13px in
+   the browser's own blue, under the 24px target minimum (WCAG 2.5.8)
+   and off-theme. On/off settings use the .checkbox-field switch below,
+   whose more specific rule overrides this size. */
 input[type="checkbox"],
 input[type="radio"] {
-  width: auto;
+  width: 1.25rem;
+  height: 1.25rem;
   min-height: 0;
   min-width: 0;
+  flex-shrink: 0;
   margin: 0 0.5rem 0 0;
   vertical-align: middle;
+  accent-color: var(--color-accent);
 }
 
 /* Alpine.js hasn't run yet on first paint (loaded with `defer`) - any
@@ -840,8 +855,12 @@ input[type="radio"] {
   margin-left: 0.4rem;
 }
 
+/* A tint halfway between border and surface rather than the border
+   color itself: muted text on --color-border was 4.26-4.49:1 in the
+   light half of four palettes (axe, docs/ui-ux/audit.md UI-002); on the
+   tint it is >= 5:1 in every palette and appearance. */
 .tag-muted {
-  background: var(--color-border);
+  background: color-mix(in srgb, var(--color-border) 50%, var(--color-surface));
   color: var(--color-text-muted);
 }
 
@@ -950,16 +969,27 @@ abbr[title]:focus::after {
    same visual weight - "Body weight: 82,00 kg" read no differently
    from six straight "No readings yet" rows around it. Dimming the
    untracked ones (rather than boosting the tracked ones) needs only
-   one variant, and reads as "nothing here yet" rather than "broken" -
-   still full contrast on focus/hover, so it's never actually harder
-   to find or use than a tracked one, just quieter until then. */
+   one variant, and reads as "nothing here yet" rather than "broken":
+   a dashed outline and a muted name, every text still at full AA
+   contrast, solid again on focus/hover. */
 .card-untracked {
-  opacity: 0.6;
+  border-style: dashed;
+}
+
+/* Quieter through color, never opacity: opacity also faded the tag and
+   the "No readings yet" line below AA contrast (audit UI-003). */
+.card-untracked > strong {
+  color: var(--color-text-muted);
 }
 
 .card-untracked:hover,
 .card-untracked:focus-visible {
-  opacity: 1;
+  border-style: solid;
+}
+
+.card-untracked:hover > strong,
+.card-untracked:focus-visible > strong {
+  color: var(--color-text);
 }
 
 /* A card whose whole surface used to be the link - easy to miss that
@@ -1262,6 +1292,11 @@ abbr[title]:focus::after {
 .card > summary {
   cursor: pointer;
   font-weight: bold;
+  /* A full touch target without growing the card: the padding is taken
+     back out of the card's own with the negative margin. */
+  min-height: var(--touch-target);
+  padding: var(--space-3) 0;
+  margin: calc(-1 * var(--space-3)) 0;
 }
 
 .modal-body ul {
@@ -1276,7 +1311,7 @@ abbr[title]:focus::after {
 .modal-body code {
   background: var(--color-bg);
   padding: 0.1rem 0.3rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
   font-size: 0.85em;
 }
 
@@ -1290,7 +1325,7 @@ abbr[title]:focus::after {
 .modal-body pre {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
   padding: 0.75rem;
   margin: 0 0 0.75rem;
   overflow-x: auto;
@@ -2098,6 +2133,15 @@ h2 {
   font-weight: 600;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/* A figure's footnote under it in a stat row ("50 sets") - body text,
+   not another headline number. */
+.stat-row dd.stat-note {
+  font-size: var(--text-xs);
+  font-weight: normal;
+  font-family: inherit;
+  color: var(--color-text-muted);
 }
 
 /* Achievements carousel (templates/core/dashboard.html) */
@@ -3276,6 +3320,7 @@ h2.card-title {
 .text-xs { font-size: var(--text-xs); }
 .text-xl { font-size: var(--text-xl); }
 .text-center { text-align: center; }
+.nowrap { white-space: nowrap; }
 .justify-center { justify-content: center; }
 .invisible { visibility: hidden; }
 .qty-input { width: 6.5rem; }

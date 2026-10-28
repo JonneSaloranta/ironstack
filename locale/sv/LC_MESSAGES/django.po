@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 14:56+0000\n"
+"POT-Creation-Date: 2026-10-28 20:24+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -555,7 +555,7 @@ msgstr "kalorier"
 
 #: apps/activities/models.py:77 apps/measurements/models.py:90
 #: apps/programs/models.py:128 apps/programs/models.py:194
-#: apps/stretching/models.py:196 apps/workouts/forms.py:47
+#: apps/stretching/models.py:196
 msgid "notes"
 msgstr "anteckningar"
 
@@ -613,8 +613,8 @@ msgid_plural "%(counter)s workouts"
 msgstr[0] "%(counter)s träningspass"
 msgstr[1] "%(counter)s träningspass"
 
-#: apps/analytics/achievements.py:150 apps/tutorials/tours.py:450
-#: apps/tutorials/tours.py:523
+#: apps/analytics/achievements.py:150 apps/tutorials/tours.py:477
+#: apps/tutorials/tours.py:550
 msgid "Personal records"
 msgstr "Personliga rekord"
 
@@ -654,19 +654,19 @@ msgstr "1 år"
 msgid "All time"
 msgstr "All tid"
 
-#: apps/api/forms.py:10
+#: apps/api/forms.py:11
 msgid "Create"
 msgstr "Skapa"
 
-#: apps/api/forms.py:11
+#: apps/api/forms.py:12
 msgid "Read"
 msgstr "Läsa"
 
-#: apps/api/forms.py:12
+#: apps/api/forms.py:13
 msgid "Update"
 msgstr "Uppdatera"
 
-#: apps/api/forms.py:13 templates/activities/activity_history.html:57
+#: apps/api/forms.py:14 templates/activities/activity_history.html:57
 #: templates/core/_backup_row.html:22
 #: templates/measurements/measurement_history.html:65
 #: templates/nutrition/diary_day.html:80
@@ -677,33 +677,33 @@ msgstr "Uppdatera"
 msgid "Delete"
 msgstr "Ta bort"
 
-#: apps/api/forms.py:29 apps/nutrition/forms.py:272 apps/social/forms.py:13
+#: apps/api/forms.py:30 apps/nutrition/forms.py:272 apps/social/forms.py:13
 #: templates/admin/nutrition/food/merge.html:14
 #: templates/nutrition/_food_list_results.html:17
 #: templates/nutrition/food_list.html:75
 msgid "Name"
 msgstr "Namn"
 
-#: apps/api/forms.py:29
+#: apps/api/forms.py:30
 msgid "A label to tell your keys apart."
 msgstr "En etikett för att skilja dina nycklar åt."
 
-#: apps/api/models.py:24 apps/tutorials/tours.py:32
-#: apps/tutorials/tours.py:1083 templates/accounts/profile.html:3
+#: apps/api/models.py:25 apps/tutorials/tours.py:32
+#: apps/tutorials/tours.py:1110 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
 #: templates/base.html:207 templates/base.html:230
 #: templates/tutorials/tutorial_list.html:5
 msgid "Profile"
 msgstr "Profil"
 
-#: apps/api/models.py:25 apps/tutorials/tours.py:284
+#: apps/api/models.py:26 apps/tutorials/tours.py:284
 #: templates/api/key_list.html:89 templates/exercises/exercise_detail.html:5
 #: templates/exercises/exercise_list.html:3
 #: templates/exercises/exercise_list.html:6
 msgid "Exercises"
 msgstr "Övningar"
 
-#: apps/api/models.py:26 apps/core/models.py:162 apps/tutorials/tours.py:339
+#: apps/api/models.py:27 apps/core/models.py:162 apps/tutorials/tours.py:348
 #: templates/api/key_list.html:93 templates/base.html:203
 #: templates/base.html:205 templates/programs/program_detail.html:5
 #: templates/programs/program_list.html:3
@@ -711,35 +711,35 @@ msgstr "Övningar"
 msgid "Programs"
 msgstr "Program"
 
-#: apps/api/models.py:27 apps/core/models.py:161 apps/tutorials/tours.py:25
-#: apps/tutorials/tours.py:387 templates/analytics/dashboard.html:13
+#: apps/api/models.py:28 apps/core/models.py:161 apps/tutorials/tours.py:25
+#: apps/tutorials/tours.py:396 templates/analytics/dashboard.html:13
 #: templates/api/key_list.html:97 templates/coaching/client_detail.html:26
 #: templates/workouts/session_detail.html:5
 #: templates/workouts/session_list.html:6
 msgid "Workouts"
 msgstr "Träningspass"
 
-#: apps/api/models.py:28 templates/api/key_list.html:101
+#: apps/api/models.py:29 templates/api/key_list.html:101
 msgid "Measurements"
 msgstr "Mätningar"
 
-#: apps/api/models.py:29 apps/assistant/models.py:115 apps/core/models.py:165
-#: apps/tutorials/tours.py:588 templates/activities/activity_history.html:5
+#: apps/api/models.py:30 apps/assistant/models.py:115 apps/core/models.py:165
+#: apps/tutorials/tours.py:615 templates/activities/activity_history.html:5
 #: templates/activities/activity_type_list.html:3
 #: templates/activities/activity_type_list.html:6
 #: templates/api/key_list.html:105 templates/core/dashboard.html:178
 msgid "Activities"
 msgstr "Aktiviteter"
 
-#: apps/api/models.py:30 templates/api/key_list.html:117
+#: apps/api/models.py:31 templates/api/key_list.html:117
 msgid "Records"
 msgstr "Rekord"
 
-#: apps/api/models.py:31 templates/api/key_list.html:121
+#: apps/api/models.py:32 templates/api/key_list.html:121
 msgid "Analytics"
 msgstr "Analys"
 
-#: apps/api/models.py:32 apps/core/models.py:166 apps/tutorials/tours.py:29
+#: apps/api/models.py:33 apps/core/models.py:166 apps/tutorials/tours.py:29
 #: templates/api/key_list.html:109 templates/base.html:184
 #: templates/base.html:186 templates/nutrition/dashboard.html:3
 #: templates/nutrition/dashboard.html:6
@@ -750,9 +750,9 @@ msgstr "Analys"
 msgid "Nutrition"
 msgstr "Näring"
 
-#: apps/api/models.py:33 apps/assistant/models.py:116 apps/core/models.py:167
+#: apps/api/models.py:34 apps/assistant/models.py:116 apps/core/models.py:167
 #: apps/stretching/models.py:209 apps/tutorials/tours.py:30
-#: apps/tutorials/tours.py:945 templates/api/key_list.html:113
+#: apps/tutorials/tours.py:972 templates/api/key_list.html:113
 #: templates/base.html:190 templates/base.html:192
 #: templates/core/dashboard.html:184 templates/stretching/_cooldown_card.html:7
 #: templates/stretching/home.html:3 templates/stretching/home.html:6
@@ -893,7 +893,7 @@ msgstr "Ingen - användarna måste ha en egen nyckel"
 msgid "Staff only"
 msgstr "Endast personal"
 
-#: apps/assistant/models.py:28
+#: apps/assistant/models.py:28 templates/workouts/_exercise_set_cycle.html:16
 msgid "Everyone"
 msgstr "Alla"
 
@@ -962,7 +962,7 @@ msgstr "Träningshistorik, rekord och progression"
 msgid "Body measurements and weight trend"
 msgstr "Kroppsmått och viktutveckling"
 
-#: apps/assistant/models.py:114 apps/tutorials/tours.py:675
+#: apps/assistant/models.py:114 apps/tutorials/tours.py:702
 #: templates/nutrition/diary_day.html:3 templates/nutrition/diary_day.html:13
 msgid "Food diary"
 msgstr "Matdagbok"
@@ -979,7 +979,7 @@ msgstr "Den här instansens leverantör"
 msgid "Your own API key"
 msgstr "Din egen API-nyckel"
 
-#: apps/assistant/models.py:195
+#: apps/assistant/models.py:195 templates/workouts/_exercise_set_cycle.html:9
 msgid "You"
 msgstr "Du"
 
@@ -1377,7 +1377,7 @@ msgstr "Du kan inte uppdatera den här kostplanen."
 
 #: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
 #: apps/nutrition/views.py:1158 apps/nutrition/views.py:1451
-#: apps/programs/views.py:205
+#: apps/programs/views.py:207
 #, python-format
 msgid "Imported “%(name)s”."
 msgstr "Importerade ”%(name)s”."
@@ -1465,7 +1465,7 @@ msgstr "Den filen är en ”%(kind)s”-export, inte en ”%(expected)s”."
 msgid "unknown"
 msgstr "okänd"
 
-#: apps/core/formatting.py:16 templates/programs/program_detail.html:70
+#: apps/core/formatting.py:16 templates/programs/program_detail.html:78
 #: templates/workouts/_performed_exercise_card.html:11
 msgid "Rate of Perceived Exertion"
 msgstr "Upplevd ansträngningsgrad"
@@ -1475,7 +1475,7 @@ msgid "Reps In Reserve"
 msgstr "Repetitioner i reserv"
 
 #: apps/core/formatting.py:18 templates/analytics/exercise_analytics.html:19
-#: templates/exercises/exercise_detail.html:94
+#: templates/exercises/exercise_detail.html:96
 #: templates/records/_pr_toasts.html:41
 #: templates/records/exercise_records.html:16
 msgid "One-Rep Max"
@@ -1535,7 +1535,8 @@ msgstr "En .json-fil som tidigare exporterats från IronStack."
 msgid "Must be a .json file."
 msgstr "Måste vara en .json-fil."
 
-#: apps/core/forms.py:83 templates/nutrition/food_list.html:77
+#: apps/core/forms.py:83 templates/core/_bmi_card.html:28
+#: templates/nutrition/food_list.html:77
 msgid "Category"
 msgstr "Kategori"
 
@@ -1685,7 +1686,7 @@ msgstr ""
 "inte en offentlig webbplats som någon borde söka efter."
 
 #: apps/core/models.py:163 apps/tutorials/tours.py:27
-#: apps/tutorials/tours.py:455 apps/tutorials/tours.py:464
+#: apps/tutorials/tours.py:482 apps/tutorials/tours.py:491
 #: templates/analytics/dashboard.html:3 templates/analytics/dashboard.html:6
 #: templates/base.html:195 templates/base.html:197
 msgid "Progress"
@@ -1730,7 +1731,7 @@ msgstr "%(actual)s kcal loggat."
 msgid "Stretched %(minutes)s min."
 msgstr "Stretching %(minutes)s min."
 
-#: apps/core/views.py:312 apps/tutorials/tours.py:868
+#: apps/core/views.py:312 apps/tutorials/tours.py:895
 #: templates/nutrition/_subnav.html:47 templates/nutrition/dashboard.html:73
 #: templates/nutrition/diet_plan_detail.html:21
 #: templates/nutrition/diet_plan_shopping.html:3
@@ -2978,6 +2979,7 @@ msgid "Fat (g)"
 msgstr "Fett (g)"
 
 #: apps/nutrition/forms.py:277 apps/nutrition/forms.py:319
+#: apps/workouts/forms.py:47
 msgid "Notes"
 msgstr "Anteckningar"
 
@@ -3024,7 +3026,7 @@ msgid "Plan name"
 msgstr "Planens namn"
 
 #: apps/nutrition/forms.py:424 apps/nutrition/forms.py:596
-#: apps/tutorials/tours.py:935 templates/nutrition/stats.html:76
+#: apps/tutorials/tours.py:962 templates/nutrition/stats.html:76
 msgid "Daily calories"
 msgstr "Dagliga kalorier"
 
@@ -3114,7 +3116,7 @@ msgstr ""
 "här kostplanen och importera en egen kopia. Lämna listan tom för att hålla "
 "den privat."
 
-#: apps/nutrition/forms.py:816 apps/tutorials/tours.py:890
+#: apps/nutrition/forms.py:816 apps/tutorials/tours.py:917
 #: templates/nutrition/diet_plan_shopping.html:65
 msgid "Shopping days"
 msgstr "Inköpsdagar"
@@ -3920,7 +3922,7 @@ msgid "\"%(name)s\" created - now add its ingredients below."
 msgstr "\"%(name)s\" skapad - lägg till dess ingredienser nedan."
 
 #: apps/nutrition/views.py:1163 apps/nutrition/views.py:1456
-#: apps/programs/views.py:210
+#: apps/programs/views.py:212
 #, python-format
 msgid ""
 "This file was exported from IronStack %(version)s - worth double-checking "
@@ -3985,8 +3987,8 @@ msgstr ""
 "det privat."
 
 #: apps/programs/forms.py:117 apps/workouts/forms.py:95
-msgid "exercise"
-msgstr "övning"
+msgid "Exercise"
+msgstr "Övning"
 
 #: apps/programs/forms.py:119 apps/programs/forms.py:122
 msgid "Target"
@@ -4235,39 +4237,39 @@ msgstr "En övning i programmet saknar namn."
 msgid "Missing program name."
 msgstr "Programmets namn saknas."
 
-#: apps/programs/views.py:108
+#: apps/programs/views.py:110
 msgid "Program created."
 msgstr "Programmet skapat."
 
-#: apps/programs/views.py:131
+#: apps/programs/views.py:133
 msgid "Program saved."
 msgstr "Programmet sparat."
 
-#: apps/programs/views.py:147
+#: apps/programs/views.py:149
 msgid "Program deleted."
 msgstr "Programmet borttaget."
 
-#: apps/programs/views.py:231
+#: apps/programs/views.py:233
 msgid "Workout added."
 msgstr "Träningspasset tillagt."
 
-#: apps/programs/views.py:246
+#: apps/programs/views.py:248
 msgid "Workout saved."
 msgstr "Träningspasset sparat."
 
-#: apps/programs/views.py:261
+#: apps/programs/views.py:263
 msgid "Workout deleted."
 msgstr "Träningspasset borttaget."
 
-#: apps/programs/views.py:275
+#: apps/programs/views.py:340
 msgid "Exercise added."
 msgstr "Övningen tillagd."
 
-#: apps/programs/views.py:295
+#: apps/programs/views.py:365
 msgid "Exercise saved."
 msgstr "Övningen sparad."
 
-#: apps/programs/views.py:313
+#: apps/programs/views.py:390
 msgid "Exercise removed."
 msgstr "Övningen borttagen."
 
@@ -4447,7 +4449,7 @@ msgstr "Repetitions-PR"
 msgid "Rep-specific PR"
 msgstr "Repetitionsspecifikt PR"
 
-#: apps/records/models.py:14 apps/tutorials/tours.py:511
+#: apps/records/models.py:14 apps/tutorials/tours.py:538
 #: templates/analytics/exercise_analytics.html:20
 msgid "Estimated 1RM"
 msgstr "Uppskattad 1RM"
@@ -5467,7 +5469,7 @@ msgstr "Program och övningar"
 msgid "Body and activities"
 msgstr "Kropp och aktiviteter"
 
-#: apps/tutorials/tours.py:31 apps/tutorials/tours.py:1093
+#: apps/tutorials/tours.py:31 apps/tutorials/tours.py:1120
 msgid "Friends and groups"
 msgstr "Vänner och grupper"
 
@@ -5528,7 +5530,7 @@ msgstr "Prestationer"
 msgid "Streaks and milestones from everyone on this server who shares them."
 msgstr "Streaks och milstolpar från alla på den här servern som delar dem."
 
-#: apps/tutorials/tours.py:159
+#: apps/tutorials/tours.py:159 templates/base.html:252
 msgid "Shortcuts"
 msgstr "Genvägar"
 
@@ -5610,12 +5612,12 @@ msgstr ""
 "De set du har loggat visas här, och du kan redigera eller ta bort vilket som "
 "helst av dem."
 
-#: apps/tutorials/tours.py:224 apps/tutorials/tours.py:298
+#: apps/tutorials/tours.py:224 apps/tutorials/tours.py:307
 #: templates/stretching/stretch_detail.html:30
 msgid "How to do it"
 msgstr "Så gör du"
 
-#: apps/tutorials/tours.py:226 apps/tutorials/tours.py:300
+#: apps/tutorials/tours.py:226 apps/tutorials/tours.py:309
 msgid ""
 "Tap i to see the exercise's instructions and images without leaving your "
 "workout."
@@ -5623,7 +5625,7 @@ msgstr ""
 "Tryck på i för att se övningens instruktioner och bilder utan att lämna "
 "passet."
 
-#: apps/tutorials/tours.py:233 apps/tutorials/tours.py:307
+#: apps/tutorials/tours.py:233 apps/tutorials/tours.py:316
 msgid "Suggested weight"
 msgstr "Föreslagen vikt"
 
@@ -5668,7 +5670,7 @@ msgstr ""
 "En övning i taget med stora knappar och vilotimer - det enklaste sättet att "
 "logga på gymmet. Den här knappen följer med dig på varje sida."
 
-#: apps/tutorials/tours.py:266 apps/tutorials/tours.py:1026
+#: apps/tutorials/tours.py:266 apps/tutorials/tours.py:1053
 msgid "Finish"
 msgstr "Avsluta"
 
@@ -5688,26 +5690,38 @@ msgstr ""
 "Prickarna visar hur långt du har kommit. Pilarna flyttar mellan övningar i "
 "valfri ordning - nästa ofärdiga öppnas som standard."
 
-#: apps/tutorials/tours.py:292
+#: apps/tutorials/tours.py:292 templates/workouts/_train_panel.html:28
+msgid "Time left"
+msgstr "Tid kvar"
+
+#: apps/tutorials/tours.py:294
+msgid ""
+"Roughly how long the sets you haven't logged yet will take, from how long "
+"sets usually take here. The ± covers the typical spread."
+msgstr ""
+"Ungefär hur lång tid de set du inte har loggat än tar, utifrån hur länge set "
+"brukar ta här. ± visar den vanliga spridningen."
+
+#: apps/tutorials/tours.py:301
 msgid "Current exercise"
 msgstr "Aktuell övning"
 
-#: apps/tutorials/tours.py:293
+#: apps/tutorials/tours.py:302
 msgid "Its target and the sets you've already logged; tap a set to edit it."
 msgstr ""
 "Dess mål och de set du redan har loggat; tryck på ett set för att redigera "
 "det."
 
-#: apps/tutorials/tours.py:308
+#: apps/tutorials/tours.py:317
 msgid ""
 "A starting point from your history. You can always enter something else."
 msgstr "En utgångspunkt från din historik. Du kan alltid ange något annat."
 
-#: apps/tutorials/tours.py:313
+#: apps/tutorials/tours.py:322
 msgid "Log the set"
 msgstr "Logga setet"
 
-#: apps/tutorials/tours.py:315
+#: apps/tutorials/tours.py:324
 msgid ""
 "Weight and reps, then Log set. “More options” has RPE, RIR, warm-up, failure "
 "and notes."
@@ -5715,11 +5729,11 @@ msgstr ""
 "Vikt och reps, sedan Logga set. ”Fler alternativ” har RPE, RIR, uppvärmning, "
 "failure och anteckningar."
 
-#: apps/tutorials/tours.py:322 templates/workouts/session_train.html:26
+#: apps/tutorials/tours.py:331 templates/workouts/session_train.html:26
 msgid "Rest timer"
 msgstr "Vilotimer"
 
-#: apps/tutorials/tours.py:324
+#: apps/tutorials/tours.py:333
 msgid ""
 "Starts by itself after each set and chimes when rest is over. Adjust it by "
 "15 seconds, skip it, or mute the sound."
@@ -5727,36 +5741,36 @@ msgstr ""
 "Startar av sig själv efter varje set och plingar när vilan är slut. Justera "
 "den med 15 sekunder, hoppa över den eller stäng av ljudet."
 
-#: apps/tutorials/tours.py:330 templates/workouts/session_train.html:9
+#: apps/tutorials/tours.py:339 templates/workouts/session_train.html:9
 msgid "Full view"
 msgstr "Fullständig vy"
 
-#: apps/tutorials/tours.py:331
+#: apps/tutorials/tours.py:340
 msgid "Every exercise at once - for reviewing or correcting the whole workout."
 msgstr "Alla övningar på en gång - för att granska eller rätta hela passet."
 
-#: apps/tutorials/tours.py:344
+#: apps/tutorials/tours.py:353
 msgid "Create or import"
 msgstr "Skapa eller importera"
 
-#: apps/tutorials/tours.py:345
+#: apps/tutorials/tours.py:354
 msgid "Build your own program, or import one someone exported for you."
 msgstr ""
 "Bygg ditt eget program, eller importera ett som någon har exporterat åt dig."
 
-#: apps/tutorials/tours.py:349
+#: apps/tutorials/tours.py:358
 msgid "Your programs"
 msgstr "Dina program"
 
-#: apps/tutorials/tours.py:350
+#: apps/tutorials/tours.py:359
 msgid "Open a program to see its workouts and start one."
 msgstr "Öppna ett program för att se dess pass och starta ett."
 
-#: apps/tutorials/tours.py:355
+#: apps/tutorials/tours.py:364
 msgid "Ready-made programs"
 msgstr "Färdiga program"
 
-#: apps/tutorials/tours.py:357
+#: apps/tutorials/tours.py:366
 msgid ""
 "Copy a built-in program to make it yours. Changing your copy never changes "
 "workouts you've already logged."
@@ -5764,15 +5778,15 @@ msgstr ""
 "Kopiera ett inbyggt program för att göra det till ditt. Att ändra din kopia "
 "ändrar aldrig pass du redan har loggat."
 
-#: apps/tutorials/tours.py:367
+#: apps/tutorials/tours.py:376
 msgid "A program"
 msgstr "Ett program"
 
-#: apps/tutorials/tours.py:373
+#: apps/tutorials/tours.py:382
 msgid "About the program"
 msgstr "Om programmet"
 
-#: apps/tutorials/tours.py:375
+#: apps/tutorials/tours.py:384
 msgid ""
 "Its description and version. Editing a program never changes workouts you've "
 "already logged."
@@ -5780,18 +5794,18 @@ msgstr ""
 "Dess beskrivning och version. Att redigera ett program ändrar aldrig pass du "
 "redan har loggat."
 
-#: apps/tutorials/tours.py:381 apps/tutorials/tours.py:997
+#: apps/tutorials/tours.py:390 apps/tutorials/tours.py:1024
 msgid "Make it yours"
 msgstr "Gör det till ditt"
 
-#: apps/tutorials/tours.py:382
+#: apps/tutorials/tours.py:391
 msgid ""
 "This is a template: copy it to a program of your own to edit and use it."
 msgstr ""
 "Det här är en mall: kopiera den till ett eget program för att kunna redigera "
 "och använda den."
 
-#: apps/tutorials/tours.py:389
+#: apps/tutorials/tours.py:398
 msgid ""
 "A program is a set of workouts, each with its exercises, sets, reps and how "
 "the weight should progress."
@@ -5799,12 +5813,24 @@ msgstr ""
 "Ett program är en uppsättning pass, vart och ett med sina övningar, set, "
 "reps och hur vikten ska öka."
 
-#: apps/tutorials/tours.py:396 templates/core/dashboard.html:36
+#: apps/tutorials/tours.py:405
+msgid "How long it takes"
+msgstr "Hur lång tid det tar"
+
+#: apps/tutorials/tours.py:407
+msgid ""
+"Estimated from how long sets of these exercises have taken in logged "
+"workouts - the more you log, the closer it gets."
+msgstr ""
+"Uppskattat utifrån hur länge set av dessa övningar har tagit i loggade pass "
+"- ju mer du loggar, desto närmare kommer det."
+
+#: apps/tutorials/tours.py:414 templates/core/dashboard.html:36
 #: templates/programs/program_detail.html:50
 msgid "Up next"
 msgstr "Nästa på tur"
 
-#: apps/tutorials/tours.py:398
+#: apps/tutorials/tours.py:416
 msgid ""
 "The workout that's next: today's or the next scheduled day's, or in a "
 "continuous program the one after the last you finished."
@@ -5812,115 +5838,127 @@ msgstr ""
 "Passet som är nästa på tur: dagens eller nästa schemalagda dags, eller i ett "
 "löpande program passet efter det du senast gjorde."
 
-#: apps/tutorials/tours.py:405
+#: apps/tutorials/tours.py:423
 msgid "Add exercises"
 msgstr "Lägg till övningar"
 
-#: apps/tutorials/tours.py:406
+#: apps/tutorials/tours.py:424
 msgid "Add an exercise to a workout and set its target sets and reps."
 msgstr "Lägg till en övning i ett pass och ange dess mål för set och reps."
 
-#: apps/tutorials/tours.py:411
+#: apps/tutorials/tours.py:429
 msgid "Start it"
 msgstr "Starta det"
 
-#: apps/tutorials/tours.py:412
+#: apps/tutorials/tours.py:430
 msgid "Starts a workout with these exercises and targets filled in."
 msgstr "Startar ett pass med dessa övningar och mål ifyllda."
 
-#: apps/tutorials/tours.py:417
+#: apps/tutorials/tours.py:435
 msgid "Add a workout"
 msgstr "Lägg till ett pass"
 
-#: apps/tutorials/tours.py:418
+#: apps/tutorials/tours.py:436
 msgid "For example a second training day."
 msgstr "Till exempel en andra träningsdag."
 
-#: apps/tutorials/tours.py:426
+#: apps/tutorials/tours.py:444
 msgid "Exercise library"
 msgstr "Övningsbibliotek"
 
-#: apps/tutorials/tours.py:431
+#: apps/tutorials/tours.py:449
 msgid "Find an exercise"
 msgstr "Hitta en övning"
 
-#: apps/tutorials/tours.py:432
+#: apps/tutorials/tours.py:450
 msgid "Search by name, or filter by muscle group and equipment."
 msgstr "Sök på namn, eller filtrera på muskelgrupp och utrustning."
 
-#: apps/tutorials/tours.py:436
+#: apps/tutorials/tours.py:454
 msgid "Your own exercises"
 msgstr "Dina egna övningar"
 
-#: apps/tutorials/tours.py:437
+#: apps/tutorials/tours.py:455
 msgid "Missing something? Add it - only you will see it."
 msgstr "Saknas något? Lägg till det - bara du ser det."
 
-#: apps/tutorials/tours.py:444
+#: apps/tutorials/tours.py:462
 msgid "An exercise"
 msgstr "En övning"
 
-#: apps/tutorials/tours.py:451
+#: apps/tutorials/tours.py:468 templates/workouts/_exercise_set_cycle.html:3
+msgid "Set cycle"
+msgstr "Setcykel"
+
+#: apps/tutorials/tours.py:470
+msgid ""
+"How long it usually takes from one set to the next, rest included - yours, "
+"and everyone's when others log it too."
+msgstr ""
+"Hur lång tid det brukar ta från ett set till nästa, vila inräknad - din "
+"egen, och allas när andra också loggar den."
+
+#: apps/tutorials/tours.py:478
 msgid "Your best lifts for this exercise, kept up to date automatically."
 msgstr "Dina bästa lyft i den här övningen, uppdaterade automatiskt."
 
-#: apps/tutorials/tours.py:456
+#: apps/tutorials/tours.py:483
 msgid "Your estimated one-rep max and volume for this exercise over time."
 msgstr "Din uppskattade enrepsmax och volym för den här övningen över tid."
 
-#: apps/tutorials/tours.py:469 apps/tutorials/tours.py:506
+#: apps/tutorials/tours.py:496 apps/tutorials/tours.py:533
 msgid "Time range"
 msgstr "Tidsperiod"
 
-#: apps/tutorials/tours.py:470
+#: apps/tutorials/tours.py:497
 msgid "Everything on this page follows the range you pick here."
 msgstr "Allt på den här sidan följer perioden du väljer här."
 
-#: apps/tutorials/tours.py:474
+#: apps/tutorials/tours.py:501
 msgid "Summary"
 msgstr "Sammanfattning"
 
-#: apps/tutorials/tours.py:475
+#: apps/tutorials/tours.py:502
 msgid "Workouts, time spent training and total volume lifted in the range."
 msgstr "Pass, tid som lagts på träning och total lyft volym under perioden."
 
-#: apps/tutorials/tours.py:479
+#: apps/tutorials/tours.py:506
 msgid "One exercise"
 msgstr "En övning"
 
-#: apps/tutorials/tours.py:480
+#: apps/tutorials/tours.py:507
 msgid "Pick an exercise to see how its strength has developed."
 msgstr "Välj en övning för att se hur dess styrka har utvecklats."
 
-#: apps/tutorials/tours.py:485
+#: apps/tutorials/tours.py:512
 msgid "Weekly volume"
 msgstr "Volym per vecka"
 
-#: apps/tutorials/tours.py:486
+#: apps/tutorials/tours.py:513
 msgid ""
 "How much you lifted each week. The table under the chart has exact figures."
 msgstr ""
 "Hur mycket du lyfte varje vecka. Tabellen under diagrammet har exakta "
 "siffror."
 
-#: apps/tutorials/tours.py:491
+#: apps/tutorials/tours.py:518
 msgid "Muscle groups"
 msgstr "Muskelgrupper"
 
-#: apps/tutorials/tours.py:492
+#: apps/tutorials/tours.py:519
 msgid "Which muscles got the most work - handy for spotting imbalances."
 msgstr ""
 "Vilka muskler som fick mest arbete - praktiskt för att upptäcka obalanser."
 
-#: apps/tutorials/tours.py:500
+#: apps/tutorials/tours.py:527
 msgid "Progress for an exercise"
 msgstr "Framsteg för en övning"
 
-#: apps/tutorials/tours.py:507
+#: apps/tutorials/tours.py:534
 msgid "Choose how far back to look."
 msgstr "Välj hur långt bakåt du vill se."
 
-#: apps/tutorials/tours.py:513
+#: apps/tutorials/tours.py:540
 msgid ""
 "The heaviest single rep you could likely lift, estimated from your sets. A "
 "rising line means you're getting stronger."
@@ -5928,144 +5966,144 @@ msgstr ""
 "Den tyngsta enkelrepetition du sannolikt skulle klara, uppskattad från dina "
 "set. En stigande linje betyder att du blir starkare."
 
-#: apps/tutorials/tours.py:529
+#: apps/tutorials/tours.py:556
 msgid "Current records"
 msgstr "Aktuella rekord"
 
-#: apps/tutorials/tours.py:530
+#: apps/tutorials/tours.py:557
 msgid "Heaviest weight, best estimated 1RM, most reps and more."
 msgstr "Tyngsta vikt, bästa uppskattade 1RM, flest reps och mer."
 
-#: apps/tutorials/tours.py:534 templates/records/exercise_records.html:28
+#: apps/tutorials/tours.py:561 templates/records/exercise_records.html:28
 msgid "Rep maxes"
 msgstr "Repetitionsmaxar"
 
-#: apps/tutorials/tours.py:535
+#: apps/tutorials/tours.py:562
 msgid "The most weight you've lifted for each number of reps."
 msgstr "Den största vikt du har lyft för varje antal reps."
 
-#: apps/tutorials/tours.py:543 templates/core/dashboard.html:173
+#: apps/tutorials/tours.py:570 templates/core/dashboard.html:173
 #: templates/measurements/measurement_history.html:5
 #: templates/measurements/measurement_type_list.html:3
 #: templates/measurements/measurement_type_list.html:6
 msgid "Body tracking"
 msgstr "Kroppsspårning"
 
-#: apps/tutorials/tours.py:548
+#: apps/tutorials/tours.py:575
 msgid "What you track"
 msgstr "Vad du följer"
 
-#: apps/tutorials/tours.py:549
+#: apps/tutorials/tours.py:576
 msgid "Body weight, waist, body fat and more. Open one to log a reading."
 msgstr ""
 "Kroppsvikt, midja, kroppsfett och mer. Öppna ett för att logga ett värde."
 
-#: apps/tutorials/tours.py:554
+#: apps/tutorials/tours.py:581
 msgid "Your own measurements"
 msgstr "Dina egna mått"
 
-#: apps/tutorials/tours.py:555
+#: apps/tutorials/tours.py:582
 msgid "Add anything else you want to follow."
 msgstr "Lägg till allt annat du vill följa."
 
-#: apps/tutorials/tours.py:562
+#: apps/tutorials/tours.py:589
 msgid "A measurement"
 msgstr "Ett mått"
 
-#: apps/tutorials/tours.py:568
+#: apps/tutorials/tours.py:595
 #: templates/measurements/measurement_history.html:21
 #: templates/nutrition/_subnav.html:52 templates/nutrition/stats.html:6
 msgid "Statistics"
 msgstr "Statistik"
 
-#: apps/tutorials/tours.py:569
+#: apps/tutorials/tours.py:596
 msgid "Your current value and how it has changed since you started."
 msgstr "Ditt nuvarande värde och hur det har förändrats sedan du började."
 
-#: apps/tutorials/tours.py:574
+#: apps/tutorials/tours.py:601
 msgid "Log a reading"
 msgstr "Logga ett värde"
 
-#: apps/tutorials/tours.py:575
+#: apps/tutorials/tours.py:602
 msgid "Enter today's value - or an earlier date to catch up."
 msgstr "Ange dagens värde - eller ett tidigare datum för att komma ikapp."
 
-#: apps/tutorials/tours.py:579 apps/tutorials/tours.py:618
+#: apps/tutorials/tours.py:606 apps/tutorials/tours.py:645
 msgid "History"
 msgstr "Historik"
 
-#: apps/tutorials/tours.py:580
+#: apps/tutorials/tours.py:607
 msgid "Every reading, newest first, with edit and delete."
 msgstr "Alla värden, nyast först, med redigering och borttagning."
 
-#: apps/tutorials/tours.py:593
+#: apps/tutorials/tours.py:620
 msgid "Activity types"
 msgstr "Aktivitetstyper"
 
-#: apps/tutorials/tours.py:594
+#: apps/tutorials/tours.py:621
 msgid "Running, cycling, walking and more. Open one to log it."
 msgstr "Löpning, cykling, promenader och mer. Öppna en för att logga den."
 
-#: apps/tutorials/tours.py:599
+#: apps/tutorials/tours.py:626
 msgid "Your own types"
 msgstr "Dina egna typer"
 
-#: apps/tutorials/tours.py:600
+#: apps/tutorials/tours.py:627
 msgid "Add any other activity you want to track."
 msgstr "Lägg till vilken annan aktivitet du vill följa."
 
-#: apps/tutorials/tours.py:607
+#: apps/tutorials/tours.py:634
 msgid "An activity"
 msgstr "En aktivitet"
 
-#: apps/tutorials/tours.py:613 apps/tutorials/tours.py:817
+#: apps/tutorials/tours.py:640 apps/tutorials/tours.py:844
 msgid "Log it"
 msgstr "Logga"
 
-#: apps/tutorials/tours.py:614
+#: apps/tutorials/tours.py:641
 msgid "Date, duration and, if you like, distance and notes."
 msgstr "Datum, längd och, om du vill, sträcka och anteckningar."
 
-#: apps/tutorials/tours.py:619
+#: apps/tutorials/tours.py:646
 msgid "Everything you've logged of this activity."
 msgstr "Allt du har loggat av den här aktiviteten."
 
-#: apps/tutorials/tours.py:628
+#: apps/tutorials/tours.py:655
 msgid "Nutrition overview"
 msgstr "Kostöversikt"
 
-#: apps/tutorials/tours.py:633 templates/nutrition/_subnav.html:43
+#: apps/tutorials/tours.py:660 templates/nutrition/_subnav.html:43
 msgid "Nutrition sections"
 msgstr "Näringsavsnitt"
 
-#: apps/tutorials/tours.py:635
+#: apps/tutorials/tours.py:662
 msgid ""
 "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
 msgstr ""
 "Dagbok, inköpslista, livsmedel, recept, kostplaner, kalkylatorer och "
 "statistik."
 
-#: apps/tutorials/tours.py:641
+#: apps/tutorials/tours.py:668
 msgid "Training or rest day"
 msgstr "Tränings- eller vilodag"
 
-#: apps/tutorials/tours.py:642
+#: apps/tutorials/tours.py:669
 msgid "Whether you've completed a workout today. It's shown for context only."
 msgstr "Om du har slutfört ett pass i dag. Det visas bara som information."
 
-#: apps/tutorials/tours.py:646 templates/nutrition/dashboard.html:19
+#: apps/tutorials/tours.py:673 templates/nutrition/dashboard.html:19
 msgid "Today so far"
 msgstr "Hittills idag"
 
-#: apps/tutorials/tours.py:647
+#: apps/tutorials/tours.py:674
 msgid "What you've eaten today against your targets."
 msgstr "Vad du har ätit i dag jämfört med dina mål."
 
-#: apps/tutorials/tours.py:651
+#: apps/tutorials/tours.py:678
 msgid "Target check"
 msgstr "Målkontroll"
 
-#: apps/tutorials/tours.py:653
+#: apps/tutorials/tours.py:680
 msgid ""
 "Compares your weight trend with your goal and may suggest a new target. "
 "Nothing changes unless you accept it."
@@ -6073,44 +6111,44 @@ msgstr ""
 "Jämför din vikttrend med ditt mål och kan föreslå ett nytt mål. Inget ändras "
 "om du inte godkänner det."
 
-#: apps/tutorials/tours.py:660 templates/nutrition/dashboard.html:116
+#: apps/tutorials/tours.py:687 templates/nutrition/dashboard.html:116
 msgid "Daily target"
 msgstr "Dagligt mål"
 
-#: apps/tutorials/tours.py:661
+#: apps/tutorials/tours.py:688
 msgid "Calories and macros, worked out from your profile and goal."
 msgstr "Kalorier och makron, beräknade från din profil och ditt mål."
 
-#: apps/tutorials/tours.py:666
+#: apps/tutorials/tours.py:693
 msgid "Your goal"
 msgstr "Ditt mål"
 
-#: apps/tutorials/tours.py:667
+#: apps/tutorials/tours.py:694
 msgid "Lose, keep or gain - and how fast. Change it at any time."
 msgstr ""
 "Gå ner, behålla eller gå upp - och hur snabbt. Ändra det när som helst."
 
-#: apps/tutorials/tours.py:680
+#: apps/tutorials/tours.py:707
 msgid "Pick a day"
 msgstr "Välj en dag"
 
-#: apps/tutorials/tours.py:681
+#: apps/tutorials/tours.py:708
 msgid "Move a day at a time, or pick any date to fill in."
 msgstr "Flytta en dag i taget, eller välj valfritt datum att fylla i."
 
-#: apps/tutorials/tours.py:685
+#: apps/tutorials/tours.py:712
 msgid "Day total"
 msgstr "Dagens summa"
 
-#: apps/tutorials/tours.py:686
+#: apps/tutorials/tours.py:713
 msgid "Calories and macros eaten on this day."
 msgstr "Kalorier och makron som ätits den här dagen."
 
-#: apps/tutorials/tours.py:690 apps/tutorials/tours.py:853
+#: apps/tutorials/tours.py:717 apps/tutorials/tours.py:880
 msgid "Meals"
 msgstr "Måltider"
 
-#: apps/tutorials/tours.py:692
+#: apps/tutorials/tours.py:719
 msgid ""
 "Each meal lists what you logged. “Save as recipe” turns a meal you eat often "
 "into a recipe you can log in one tap."
@@ -6118,41 +6156,41 @@ msgstr ""
 "Varje måltid listar det du loggat. ”Spara som recept” gör en måltid du ofta "
 "äter till ett recept du kan logga med ett tryck."
 
-#: apps/tutorials/tours.py:698 templates/nutrition/diary_add_entry.html:3
+#: apps/tutorials/tours.py:725 templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
 #: templates/nutrition/diary_day.html:88
 msgid "Add food"
 msgstr "Lägg till livsmedel"
 
-#: apps/tutorials/tours.py:699
+#: apps/tutorials/tours.py:726
 msgid "Search, scan a barcode, or enter macros straight in."
 msgstr "Sök, skanna en streckkod eller ange makron direkt."
 
-#: apps/tutorials/tours.py:703
+#: apps/tutorials/tours.py:730
 msgid "Copy a day"
 msgstr "Kopiera en dag"
 
-#: apps/tutorials/tours.py:704
+#: apps/tutorials/tours.py:731
 msgid "Eating the same as yesterday? Copy the whole day in one go."
 msgstr "Äter du samma som i går? Kopiera hela dagen på en gång."
 
-#: apps/tutorials/tours.py:711
+#: apps/tutorials/tours.py:738
 msgid "Adding food"
 msgstr "Lägga till mat"
 
-#: apps/tutorials/tours.py:716
+#: apps/tutorials/tours.py:743
 msgid "Which meal"
 msgstr "Vilken måltid"
 
-#: apps/tutorials/tours.py:717
+#: apps/tutorials/tours.py:744
 msgid "Everything you add on this page goes to the meal chosen here."
 msgstr "Allt du lägger till på den här sidan hamnar i måltiden som väljs här."
 
-#: apps/tutorials/tours.py:721
+#: apps/tutorials/tours.py:748
 msgid "Search or scan"
 msgstr "Sök eller skanna"
 
-#: apps/tutorials/tours.py:723
+#: apps/tutorials/tours.py:750
 msgid ""
 "Type a name or scan a barcode. Your own foods show first; Open Food Facts "
 "can be searched too. The amount is prefilled with what you logged last time."
@@ -6161,11 +6199,11 @@ msgstr ""
 "Open Food Facts kan också sökas. Mängden är förifylld med det du loggade "
 "senast."
 
-#: apps/tutorials/tours.py:730 templates/nutrition/diary_add_entry.html:79
+#: apps/tutorials/tours.py:757 templates/nutrition/diary_add_entry.html:79
 msgid "Enter macros manually"
 msgstr "Ange makron manuellt"
 
-#: apps/tutorials/tours.py:732
+#: apps/tutorials/tours.py:759
 msgid ""
 "Eating out? Type in the meal's calories and macros without creating a food "
 "for it."
@@ -6173,33 +6211,33 @@ msgstr ""
 "Äter du ute? Skriv in måltidens kalorier och makron utan att skapa ett "
 "livsmedel för den."
 
-#: apps/tutorials/tours.py:738 templates/nutrition/_most_used_foods.html:23
+#: apps/tutorials/tours.py:765 templates/nutrition/_most_used_foods.html:23
 msgid "Most used"
 msgstr "Mest använda"
 
-#: apps/tutorials/tours.py:739
+#: apps/tutorials/tours.py:766
 msgid "The foods you add most often, one tap away."
 msgstr "De livsmedel du lägger till oftast, ett tryck bort."
 
-#: apps/tutorials/tours.py:747 templates/nutrition/_subnav.html:48
+#: apps/tutorials/tours.py:774 templates/nutrition/_subnav.html:48
 #: templates/nutrition/food_detail.html:6 templates/nutrition/food_list.html:3
 #: templates/nutrition/food_list.html:6
 msgid "Foods"
 msgstr "Livsmedel"
 
-#: apps/tutorials/tours.py:752
+#: apps/tutorials/tours.py:779
 msgid "Add foods"
 msgstr "Lägg till livsmedel"
 
-#: apps/tutorials/tours.py:753
+#: apps/tutorials/tours.py:780
 msgid "Create your own, or browse Open Food Facts by category."
 msgstr "Skapa ett eget, eller bläddra i Open Food Facts efter kategori."
 
-#: apps/tutorials/tours.py:757 templates/nutrition/food_list.html:22
+#: apps/tutorials/tours.py:784 templates/nutrition/food_list.html:22
 msgid "Find a new food"
 msgstr "Hitta ett nytt livsmedel"
 
-#: apps/tutorials/tours.py:758
+#: apps/tutorials/tours.py:785
 msgid ""
 "Search Open Food Facts or scan a barcode to bring a product into your "
 "library."
@@ -6207,24 +6245,24 @@ msgstr ""
 "Sök i Open Food Facts eller skanna en streckkod för att lägga till en "
 "produkt i ditt bibliotek."
 
-#: apps/tutorials/tours.py:762
+#: apps/tutorials/tours.py:789
 msgid "Your library"
 msgstr "Ditt bibliotek"
 
-#: apps/tutorials/tours.py:763
+#: apps/tutorials/tours.py:790
 msgid "Filter and sort every food you can log. Newest first by default."
 msgstr ""
 "Filtrera och sortera alla livsmedel du kan logga. Nyast först som standard."
 
-#: apps/tutorials/tours.py:770
+#: apps/tutorials/tours.py:797
 msgid "A food"
 msgstr "Ett livsmedel"
 
-#: apps/tutorials/tours.py:776
+#: apps/tutorials/tours.py:803
 msgid "Nutrition facts"
 msgstr "Näringsvärden"
 
-#: apps/tutorials/tours.py:778
+#: apps/tutorials/tours.py:805
 msgid ""
 "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and "
 "salt - then any vitamins and minerals that are known."
@@ -6232,50 +6270,50 @@ msgstr ""
 "Uppställt som på en förpackning: energi, fett, kolhydrat, fiber, protein och "
 "salt - sedan de vitaminer och mineraler som är kända."
 
-#: apps/tutorials/tours.py:787 templates/nutrition/_subnav.html:49
+#: apps/tutorials/tours.py:814 templates/nutrition/_subnav.html:49
 #: templates/nutrition/recipe_detail.html:6
 #: templates/nutrition/recipe_list.html:3
 #: templates/nutrition/recipe_list.html:6
 msgid "Recipes"
 msgstr "Recept"
 
-#: apps/tutorials/tours.py:792 templates/nutrition/recipe_list.html:22
+#: apps/tutorials/tours.py:819 templates/nutrition/recipe_list.html:22
 msgid "Your recipes"
 msgstr "Dina recept"
 
-#: apps/tutorials/tours.py:793
+#: apps/tutorials/tours.py:820
 msgid "Combine foods into a recipe once, then log a serving in one tap."
 msgstr ""
 "Kombinera livsmedel till ett recept en gång och logga sedan en portion med "
 "ett tryck."
 
-#: apps/tutorials/tours.py:797 templates/nutrition/recipe_list.html:46
+#: apps/tutorials/tours.py:824 templates/nutrition/recipe_list.html:46
 msgid "Template recipes"
 msgstr "Mallrecept"
 
-#: apps/tutorials/tours.py:798
+#: apps/tutorials/tours.py:825
 msgid "Ready-made recipes everyone can use."
 msgstr "Färdiga recept som alla kan använda."
 
-#: apps/tutorials/tours.py:806
+#: apps/tutorials/tours.py:833
 msgid "A recipe"
 msgstr "Ett recept"
 
-#: apps/tutorials/tours.py:812 templates/nutrition/food_detail.html:73
+#: apps/tutorials/tours.py:839 templates/nutrition/food_detail.html:73
 #: templates/nutrition/recipe_detail.html:36
 msgid "Ingredients"
 msgstr "Ingredienser"
 
-#: apps/tutorials/tours.py:813
+#: apps/tutorials/tours.py:840
 msgid "The foods in it and their amounts. Nutrition is worked out from these."
 msgstr ""
 "Livsmedlen i det och deras mängder. Näringsvärdena räknas fram från dessa."
 
-#: apps/tutorials/tours.py:818
+#: apps/tutorials/tours.py:845
 msgid "Add servings of this recipe to your diary."
 msgstr "Lägg till portioner av det här receptet i din dagbok."
 
-#: apps/tutorials/tours.py:826 templates/coaching/shared_plan_list.html:29
+#: apps/tutorials/tours.py:853 templates/coaching/shared_plan_list.html:29
 #: templates/nutrition/_subnav.html:50
 #: templates/nutrition/diet_plan_detail.html:6
 #: templates/nutrition/diet_plan_list.html:3
@@ -6285,11 +6323,11 @@ msgstr "Lägg till portioner av det här receptet i din dagbok."
 msgid "Diet plans"
 msgstr "Kostplaner"
 
-#: apps/tutorials/tours.py:831
+#: apps/tutorials/tours.py:858
 msgid "Create a plan"
 msgstr "Skapa en plan"
 
-#: apps/tutorials/tours.py:833
+#: apps/tutorials/tours.py:860
 msgid ""
 "A plan is built for you from your foods and recipes to hit your targets. You "
 "can adjust every item afterwards."
@@ -6297,43 +6335,43 @@ msgstr ""
 "En plan byggs åt dig av dina livsmedel och recept för att nå dina mål. Du "
 "kan justera varje del efteråt."
 
-#: apps/tutorials/tours.py:842
+#: apps/tutorials/tours.py:869
 msgid "A diet plan"
 msgstr "En kostplan"
 
-#: apps/tutorials/tours.py:848
+#: apps/tutorials/tours.py:875
 msgid "Active plan"
 msgstr "Aktiv plan"
 
-#: apps/tutorials/tours.py:849
+#: apps/tutorials/tours.py:876
 msgid "The active plan is shown on the nutrition overview each day."
 msgstr "Den aktiva planen visas i kostöversikten varje dag."
 
-#: apps/tutorials/tours.py:854
+#: apps/tutorials/tours.py:881
 msgid "Each meal's items and how close they come to its calorie budget."
 msgstr "Varje måltids delar och hur nära de kommer måltidens kaloribudget."
 
-#: apps/tutorials/tours.py:859
+#: apps/tutorials/tours.py:886
 msgid "Log the plan"
 msgstr "Logga planen"
 
-#: apps/tutorials/tours.py:860
+#: apps/tutorials/tours.py:887
 msgid "Copy a day of the plan into your diary as if you'd eaten it."
 msgstr "Kopiera en dag från planen till din dagbok som om du hade ätit den."
 
-#: apps/tutorials/tours.py:874 templates/nutrition/diet_plan_shopping.html:21
+#: apps/tutorials/tours.py:901 templates/nutrition/diet_plan_shopping.html:21
 msgid "Shopping trips"
 msgstr "Inköpsturer"
 
-#: apps/tutorials/tours.py:875
+#: apps/tutorials/tours.py:902
 msgid "One list per shopping day, covering the days until the next one."
 msgstr "En lista per inköpsdag, för dagarna fram till nästa."
 
-#: apps/tutorials/tours.py:880
+#: apps/tutorials/tours.py:907
 msgid "What to buy"
 msgstr "Att köpa"
 
-#: apps/tutorials/tours.py:882
+#: apps/tutorials/tours.py:909
 msgid ""
 "Everything the plan's meals need, recipes included. The same food on several "
 "days is added up, with each day's amount under it. Tick items off as you "
@@ -6342,7 +6380,7 @@ msgstr ""
 "Allt planens måltider behöver, recept inräknade. Samma livsmedel flera dagar "
 "läggs ihop, med varje dags mängd under. Bocka av medan du handlar."
 
-#: apps/tutorials/tours.py:892
+#: apps/tutorials/tours.py:919
 msgid ""
 "Pick the days you go shopping, and whether a shopping day's own meals go on "
 "that day's list. Set separately for each plan."
@@ -6350,14 +6388,14 @@ msgstr ""
 "Välj dagarna du handlar, och om en inköpsdags egna måltider hamnar på den "
 "dagens lista. Ställs in för varje plan för sig."
 
-#: apps/tutorials/tours.py:901 apps/tutorials/tours.py:906
+#: apps/tutorials/tours.py:928 apps/tutorials/tours.py:933
 #: templates/nutrition/_subnav.html:51
 #: templates/nutrition/calculators_home.html:3
 #: templates/nutrition/calculators_home.html:6
 msgid "Calculators"
 msgstr "Kalkylatorer"
 
-#: apps/tutorials/tours.py:908
+#: apps/tutorials/tours.py:935
 msgid ""
 "Energy use, macros, body fat, water, BMI and more. They only calculate - "
 "nothing is saved or changed."
@@ -6365,15 +6403,15 @@ msgstr ""
 "Energiförbrukning, makron, kroppsfett, vatten, BMI och mer. De räknar bara - "
 "inget sparas eller ändras."
 
-#: apps/tutorials/tours.py:917 templates/nutrition/stats.html:3
+#: apps/tutorials/tours.py:944 templates/nutrition/stats.html:3
 msgid "Nutrition statistics"
 msgstr "Näringsstatistik"
 
-#: apps/tutorials/tours.py:922 templates/nutrition/stats.html:11
+#: apps/tutorials/tours.py:949 templates/nutrition/stats.html:11
 msgid "Last 30 days"
 msgstr "Senaste 30 dagarna"
 
-#: apps/tutorials/tours.py:924
+#: apps/tutorials/tours.py:951
 msgid ""
 "Median daily calories and macros. Days with nothing logged don't count, and "
 "one barely-logged day doesn't drag the figure down."
@@ -6381,64 +6419,64 @@ msgstr ""
 "Median för dagliga kalorier och makron. Dagar utan loggning räknas inte, och "
 "en knappt loggad dag drar inte ner värdet."
 
-#: apps/tutorials/tours.py:930
+#: apps/tutorials/tours.py:957
 msgid "Longer and shorter periods"
 msgstr "Längre och kortare perioder"
 
-#: apps/tutorials/tours.py:931
+#: apps/tutorials/tours.py:958
 msgid "The same medians for a week up to everything you've ever logged."
 msgstr "Samma medianer från en vecka upp till allt du någonsin har loggat."
 
-#: apps/tutorials/tours.py:936
+#: apps/tutorials/tours.py:963
 msgid "Each of the last 30 days, with the exact figures in a table below."
 msgstr ""
 "Var och en av de senaste 30 dagarna, med exakta siffror i en tabell nedanför."
 
-#: apps/tutorials/tours.py:950 templates/stretching/_subnav.html:9
+#: apps/tutorials/tours.py:977 templates/stretching/_subnav.html:9
 msgid "Stretching sections"
 msgstr "Stretchingsektioner"
 
-#: apps/tutorials/tours.py:951
+#: apps/tutorials/tours.py:978
 msgid "Overview, routines, the stretch library and your history."
 msgstr "Översikt, rutiner, stretchbiblioteket och din historik."
 
-#: apps/tutorials/tours.py:955
+#: apps/tutorials/tours.py:982
 msgid "Your streak"
 msgstr "Din streak"
 
-#: apps/tutorials/tours.py:956
+#: apps/tutorials/tours.py:983
 msgid "Days in a row with stretching, and your totals."
 msgstr "Dagar i rad med stretching, och dina totaler."
 
-#: apps/tutorials/tours.py:960 templates/stretching/home.html:28
+#: apps/tutorials/tours.py:987 templates/stretching/home.html:28
 msgid "Start a routine"
 msgstr "Starta en rutin"
 
-#: apps/tutorials/tours.py:961
+#: apps/tutorials/tours.py:988
 msgid "A guided session times every stretch for you."
 msgstr "Ett guidat pass tar tid på varje stretchövning åt dig."
 
-#: apps/tutorials/tours.py:966
+#: apps/tutorials/tours.py:993
 msgid "Log it afterwards"
 msgstr "Logga i efterhand"
 
-#: apps/tutorials/tours.py:967
+#: apps/tutorials/tours.py:994
 msgid "Stretched without the timer? Log just how long you stretched."
 msgstr "Stretchade du utan timern? Logga bara hur länge du stretchade."
 
-#: apps/tutorials/tours.py:974
+#: apps/tutorials/tours.py:1001
 msgid "A routine"
 msgstr "En rutin"
 
-#: apps/tutorials/tours.py:980
+#: apps/tutorials/tours.py:1007
 msgid "About the routine"
 msgstr "Om rutinen"
 
-#: apps/tutorials/tours.py:981
+#: apps/tutorials/tours.py:1008
 msgid "How many stretches it has and roughly how long it takes."
 msgstr "Hur många stretchövningar den har och ungefär hur lång tid den tar."
 
-#: apps/tutorials/tours.py:985 apps/tutorials/tours.py:1020
+#: apps/tutorials/tours.py:1012 apps/tutorials/tours.py:1047
 #: templates/stretching/_subnav.html:12
 #: templates/stretching/session_play.html:71
 #: templates/stretching/stretch_detail.html:5
@@ -6447,32 +6485,32 @@ msgstr "Hur många stretchövningar den har och ungefär hur lång tid den tar."
 msgid "Stretches"
 msgstr "Stretchövningar"
 
-#: apps/tutorials/tours.py:986
+#: apps/tutorials/tours.py:1013
 msgid "Each stretch with its hold time, sets and sides."
 msgstr "Varje stretchövning med hålltid, set och sidor."
 
-#: apps/tutorials/tours.py:991 templates/stretching/_routine_card.html:12
+#: apps/tutorials/tours.py:1018 templates/stretching/_routine_card.html:12
 #: templates/tutorials/tutorial_list.html:38
 msgid "Start"
 msgstr "Starta"
 
-#: apps/tutorials/tours.py:992
+#: apps/tutorials/tours.py:1019
 msgid "Opens the guided player."
 msgstr "Öppnar den guidade spelaren."
 
-#: apps/tutorials/tours.py:998
+#: apps/tutorials/tours.py:1025
 msgid "Add stretches and reorder them - in your own routines."
 msgstr "Lägg till stretchövningar och ändra ordningen - i dina egna rutiner."
 
-#: apps/tutorials/tours.py:1006 templates/stretching/session_play.html:25
+#: apps/tutorials/tours.py:1033 templates/stretching/session_play.html:25
 msgid "Guided session"
 msgstr "Guidat pass"
 
-#: apps/tutorials/tours.py:1012
+#: apps/tutorials/tours.py:1039
 msgid "The timer"
 msgstr "Timern"
 
-#: apps/tutorials/tours.py:1014
+#: apps/tutorials/tours.py:1041
 msgid ""
 "Counts down every hold and rest, with a chime between them. Pause, add or "
 "remove 10 seconds, or skip. Leaving the page keeps your place."
@@ -6481,26 +6519,26 @@ msgstr ""
 "eller dra av 10 sekunder, eller hoppa över. Du behåller din plats även om du "
 "lämnar sidan."
 
-#: apps/tutorials/tours.py:1021
+#: apps/tutorials/tours.py:1048
 msgid "Mark a stretch done or skipped yourself if you prefer."
 msgstr "Markera en stretchövning som klar eller överhoppad själv om du vill."
 
-#: apps/tutorials/tours.py:1027
+#: apps/tutorials/tours.py:1054
 msgid "Saves the session to your history."
 msgstr "Sparar passet i din historik."
 
-#: apps/tutorials/tours.py:1035 templates/social/friend_list.html:3
+#: apps/tutorials/tours.py:1062 templates/social/friend_list.html:3
 #: templates/social/friend_list.html:6 templates/social/message_list.html:27
 msgid "Friends"
 msgstr "Vänner"
 
-#: apps/tutorials/tours.py:1040 templates/social/friend_list.html:9
+#: apps/tutorials/tours.py:1067 templates/social/friend_list.html:9
 #: templates/social/friend_list.html:68 templates/social/friend_search.html:3
 #: templates/social/friend_search.html:6
 msgid "Find friends"
 msgstr "Hitta vänner"
 
-#: apps/tutorials/tours.py:1042
+#: apps/tutorials/tours.py:1069
 msgid ""
 "Search for people on this server. Friends can message you and see the "
 "progress you choose to share."
@@ -6508,74 +6546,74 @@ msgstr ""
 "Sök efter personer på den här servern. Vänner kan skicka meddelanden till "
 "dig och se de framsteg du väljer att dela."
 
-#: apps/tutorials/tours.py:1051 templates/social/message_list.html:3
+#: apps/tutorials/tours.py:1078 templates/social/message_list.html:3
 msgid "Messages"
 msgstr "Meddelanden"
 
-#: apps/tutorials/tours.py:1056 templates/social/message_list.html:32
+#: apps/tutorials/tours.py:1083 templates/social/message_list.html:32
 msgid "Direct messages"
 msgstr "Direktmeddelanden"
 
-#: apps/tutorials/tours.py:1057
+#: apps/tutorials/tours.py:1084
 msgid "One conversation per friend."
 msgstr "En konversation per vän."
 
-#: apps/tutorials/tours.py:1061 templates/social/message_list.html:42
+#: apps/tutorials/tours.py:1088 templates/social/message_list.html:42
 msgid "Group chats"
 msgstr "Gruppchattar"
 
-#: apps/tutorials/tours.py:1062
+#: apps/tutorials/tours.py:1089
 msgid "Every group you're in has its own chat."
 msgstr "Varje grupp du är med i har sin egen chatt."
 
-#: apps/tutorials/tours.py:1069 templates/social/group_list.html:3
+#: apps/tutorials/tours.py:1096 templates/social/group_list.html:3
 #: templates/social/group_list.html:6 templates/social/message_list.html:28
 msgid "Groups"
 msgstr "Grupper"
 
-#: apps/tutorials/tours.py:1074
+#: apps/tutorials/tours.py:1101
 msgid "Create a group"
 msgstr "Skapa en grupp"
 
-#: apps/tutorials/tours.py:1075
+#: apps/tutorials/tours.py:1102
 msgid "Train together: invite friends or share an invite link."
 msgstr "Träna tillsammans: bjud in vänner eller dela en inbjudningslänk."
 
-#: apps/tutorials/tours.py:1088 templates/accounts/profile.html:25
+#: apps/tutorials/tours.py:1115 templates/accounts/profile.html:25
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: apps/tutorials/tours.py:1089 templates/accounts/profile.html:26
+#: apps/tutorials/tours.py:1116 templates/accounts/profile.html:26
 msgid "Units, language, timezone, theme, and which sections you use."
 msgstr "Enheter, språk, tidszon, tema och vilka delar du använder."
 
-#: apps/tutorials/tours.py:1094
+#: apps/tutorials/tours.py:1121
 msgid "Messages, friends and groups."
 msgstr "Meddelanden, vänner och grupper."
 
-#: apps/tutorials/tours.py:1098
+#: apps/tutorials/tours.py:1125
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
 #: templates/accounts/profile.html:163
 msgid "Your data"
 msgstr "Dina uppgifter"
 
-#: apps/tutorials/tours.py:1099
+#: apps/tutorials/tours.py:1126
 msgid "Everything you've logged is yours - browse it or download it."
 msgstr "Allt du har loggat är ditt - bläddra i det eller ladda ner det."
 
-#: apps/tutorials/tours.py:1103 templates/accounts/profile.html:185
+#: apps/tutorials/tours.py:1130 templates/accounts/profile.html:185
 #: templates/tutorials/tutorial_list.html:3
 #: templates/tutorials/tutorial_list.html:6
 #: templates/tutorials/tutorial_list.html:9
 msgid "Tutorials"
 msgstr "Guider"
 
-#: apps/tutorials/tours.py:1104
+#: apps/tutorials/tours.py:1131
 msgid "Replay any tour, or turn tutorials on or off."
 msgstr "Spela upp valfri guide igen, eller slå på eller av guiderna."
 
-#: apps/tutorials/tours.py:1111 templates/accounts/profile.html:153
+#: apps/tutorials/tours.py:1138 templates/accounts/profile.html:153
 #: templates/accounts/profile.html:157 templates/accounts/profile.html:234
 #: templates/assistant/admin_settings.html:3
 #: templates/assistant/admin_settings.html:6 templates/assistant/home.html:3
@@ -6583,13 +6621,13 @@ msgstr "Spela upp valfri guide igen, eller slå på eller av guiderna."
 msgid "AI assistant"
 msgstr "AI-assistent"
 
-#: apps/tutorials/tours.py:1116 templates/assistant/home.html:9
+#: apps/tutorials/tours.py:1143 templates/assistant/home.html:9
 #: templates/assistant/settings.html:6 templates/core/backup_list.html:60
 #: templates/core/feedback_list.html:9
 msgid "Settings"
 msgstr "Inställningar"
 
-#: apps/tutorials/tours.py:1118
+#: apps/tutorials/tours.py:1145
 msgid ""
 "Turn the assistant on or off, choose what it may read, tell it what it "
 "should always know about you (allergies, equipment, schedule), and add your "
@@ -6599,11 +6637,11 @@ msgstr ""
 "ska veta om dig (allergier, utrustning, schema) och lägg till din egen API-"
 "nyckel."
 
-#: apps/tutorials/tours.py:1125
+#: apps/tutorials/tours.py:1152
 msgid "Ask anything"
 msgstr "Fråga vad som helst"
 
-#: apps/tutorials/tours.py:1127
+#: apps/tutorials/tours.py:1154
 msgid ""
 "Ask for a diet plan or a workout program, or about your progress. It looks "
 "at your own data before it answers."
@@ -6611,11 +6649,11 @@ msgstr ""
 "Be om en kostplan eller ett träningsprogram, eller fråga om dina framsteg. "
 "Den tittar på dina egna data innan den svarar."
 
-#: apps/tutorials/tours.py:1134
+#: apps/tutorials/tours.py:1161
 msgid "Your conversations"
 msgstr "Dina konversationer"
 
-#: apps/tutorials/tours.py:1136
+#: apps/tutorials/tours.py:1163
 msgid ""
 "Pick up where you left off. A plan it suggests is only created if you accept "
 "it."
@@ -6637,8 +6675,9 @@ msgid "Every tutorial will start again the next time you open its page."
 msgstr "Varje guide startar igen nästa gång du öppnar dess sida."
 
 #: apps/workouts/forms.py:41
-msgid "reps"
-msgstr "repetitioner"
+#: templates/workouts/_performed_exercise_card.html:18
+msgid "Reps"
+msgstr "Repetitioner"
 
 #: apps/workouts/forms.py:42
 msgid "Target reps"
@@ -6668,12 +6707,12 @@ msgstr "Planerat"
 msgid "RPE goes from %(min)s to %(max)s."
 msgstr "RPE går från %(min)s till %(max)s."
 
-#: apps/workouts/views.py:168 apps/workouts/views.py:253
-#: apps/workouts/views.py:265 apps/workouts/views.py:371
+#: apps/workouts/views.py:169 apps/workouts/views.py:254
+#: apps/workouts/views.py:266 apps/workouts/views.py:374
 msgid "This session is no longer in progress."
 msgstr "Detta pass pågår inte längre."
 
-#: apps/workouts/views.py:353
+#: apps/workouts/views.py:356
 #, python-format
 msgid "New PR - %(exercise)s: %(record_type)s %(value)s"
 msgstr "Nytt PR - %(exercise)s: %(record_type)s %(value)s"
@@ -6758,7 +6797,7 @@ msgstr ""
 #: templates/nutrition/food_form.html:16
 #: templates/nutrition/recipe_form.html:16
 #: templates/nutrition/recipe_ingredient_edit_form.html:16
-#: templates/programs/prescription_form.html:15
+#: templates/programs/prescription_form.html:29
 #: templates/programs/program_form.html:18
 #: templates/programs/workout_form.html:15 templates/social/group_form.html:15
 #: templates/stretching/routine_form.html:15
@@ -7303,7 +7342,7 @@ msgstr "Redigera %(name)s"
 #: templates/activities/activity_form.html:18
 #: templates/exercises/exercise_form.html:19
 #: templates/measurements/measurement_form.html:18
-#: templates/programs/prescription_form.html:26
+#: templates/programs/prescription_form.html:40
 #: templates/programs/program_form.html:22
 #: templates/programs/workout_form.html:26
 #, python-format
@@ -7362,6 +7401,12 @@ msgstr "Datum"
 msgid "Distance"
 msgstr "Distans"
 
+#: templates/activities/activity_history.html:45
+#: templates/measurements/measurement_history.html:54
+#: templates/workouts/_performed_exercise_card.html:18
+msgid "Actions"
+msgstr "Åtgärder"
+
 #: templates/activities/activity_history.html:54
 #: templates/exercises/exercise_detail.html:12
 #: templates/measurements/measurement_history.html:62
@@ -7370,7 +7415,7 @@ msgstr "Distans"
 #: templates/nutrition/recipe_detail.html:45
 #: templates/programs/program_detail.html:12
 #: templates/programs/program_detail.html:55
-#: templates/programs/program_detail.html:72
+#: templates/programs/program_detail.html:80
 #: templates/social/group_detail.html:10
 #: templates/stretching/routine_detail.html:12
 #: templates/stretching/routine_detail.html:54
@@ -7555,7 +7600,7 @@ msgstr "Senaste"
 #: templates/analytics/member_profile.html:46
 #: templates/coaching/client_detail.html:33
 #: templates/coaching/client_detail.html:37 templates/core/dashboard.html:104
-#: templates/exercises/exercise_detail.html:88
+#: templates/exercises/exercise_detail.html:90
 #: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Personliga rekord"
@@ -7581,7 +7626,7 @@ msgid "Sessions"
 msgstr "Pass"
 
 #: templates/analytics/exercise_analytics.html:19
-#: templates/exercises/exercise_detail.html:94
+#: templates/exercises/exercise_detail.html:96
 #: templates/records/_pr_toasts.html:41
 #: templates/records/exercise_records.html:16
 msgid "Estimated"
@@ -8237,11 +8282,11 @@ msgstr "Träning"
 msgid "Profile - new friend/group activity"
 msgstr "Profil - ny vän-/gruppaktivitet"
 
-#: templates/base.html:246
+#: templates/base.html:254
 msgid "Continue training"
 msgstr "Fortsätt träna"
 
-#: templates/base.html:252
+#: templates/base.html:260
 msgid "Unread messages"
 msgstr "Olästa meddelanden"
 
@@ -8781,7 +8826,7 @@ msgstr "Fritt träningspass"
 msgid "started %(started_at)s"
 msgstr "startade %(started_at)s"
 
-#: templates/core/dashboard.html:44 templates/programs/program_detail.html:86
+#: templates/core/dashboard.html:44 templates/programs/program_detail.html:94
 msgid "Start workout"
 msgstr "Starta träningspass"
 
@@ -8974,23 +9019,23 @@ msgstr ""
 "Denna övning har redan det maximala antalet bilder "
 "(%(max_images_per_exercise)s)."
 
-#: templates/exercises/exercise_detail.html:88
+#: templates/exercises/exercise_detail.html:90
 msgid "Your"
 msgstr "Dina"
 
-#: templates/exercises/exercise_detail.html:89
+#: templates/exercises/exercise_detail.html:91
 msgid "Current personal records for this exercise."
 msgstr "Aktuella personliga rekord för denna övning."
 
-#: templates/exercises/exercise_detail.html:93
+#: templates/exercises/exercise_detail.html:95
 msgid "Strength trend"
 msgstr "Styrketrend"
 
-#: templates/exercises/exercise_detail.html:94
+#: templates/exercises/exercise_detail.html:96
 msgid "over time and training volume."
 msgstr "över tid och träningsvolym."
 
-#: templates/exercises/exercise_detail.html:98
+#: templates/exercises/exercise_detail.html:100
 msgid ""
 "Deactivate this exercise? It will no longer appear when browsing or "
 "prescribing."
@@ -8998,7 +9043,7 @@ msgstr ""
 "Inaktivera denna övning? Den visas inte längre vid bläddring eller "
 "föreskrivning."
 
-#: templates/exercises/exercise_detail.html:100
+#: templates/exercises/exercise_detail.html:102
 #: templates/nutrition/_diet_plan_card.html:14
 #: templates/nutrition/diet_plan_detail.html:16
 #: templates/stretching/routine_detail.html:81
@@ -9006,7 +9051,7 @@ msgstr ""
 msgid "Deactivate"
 msgstr "Inaktivera"
 
-#: templates/exercises/exercise_detail.html:104
+#: templates/exercises/exercise_detail.html:106
 #: templates/exercises/exercise_form.html:21
 msgid "Back to exercises"
 msgstr "Tillbaka till övningar"
@@ -9685,19 +9730,19 @@ msgstr "Fungerar ditt nuvarande mål?"
 
 #: templates/nutrition/dashboard.html:84
 #: templates/workouts/_performed_exercise_card.html:56
-#: templates/workouts/_train_panel.html:63
+#: templates/workouts/_train_panel.html:68
 msgid "High confidence"
 msgstr "Hög tillförlitlighet"
 
 #: templates/nutrition/dashboard.html:85
 #: templates/workouts/_performed_exercise_card.html:55
-#: templates/workouts/_train_panel.html:62
+#: templates/workouts/_train_panel.html:67
 msgid "Medium confidence"
 msgstr "Medelhög tillförlitlighet"
 
 #: templates/nutrition/dashboard.html:86
 #: templates/workouts/_performed_exercise_card.html:54
-#: templates/workouts/_train_panel.html:61
+#: templates/workouts/_train_panel.html:66
 msgid "Low confidence"
 msgstr "Låg tillförlitlighet"
 
@@ -10024,7 +10069,7 @@ msgstr ""
 msgid "Browse by category"
 msgstr "Bläddra efter kategori"
 
-#: templates/nutrition/food_browse.html:50
+#: templates/nutrition/food_browse.html:52
 #: templates/nutrition/food_detail.html:87
 #: templates/nutrition/food_form.html:19
 msgid "Back to foods"
@@ -10258,6 +10303,10 @@ msgid "Add ingredient"
 msgstr "Lägg till ingrediens"
 
 #: templates/nutrition/recipe_detail.html:66
+msgid "Nutrient"
+msgstr "Näringsämne"
+
+#: templates/nutrition/recipe_detail.html:66
 msgid "Total"
 msgstr "Totalt"
 
@@ -10443,27 +10492,44 @@ msgstr "Dagliga kalorier (senaste 30 dagarna)"
 msgid "Log a few days in your food diary to see your trend here."
 msgstr "Logga några dagar i din matdagbok för att se din trend här."
 
+#: templates/programs/_prescription_estimate.html:2
+msgid "This exercise"
+msgstr "Den här övningen"
+
+#: templates/programs/_prescription_estimate.html:3
+#, python-format
+msgid "One set about %(median)s ± %(spread)s, rest included."
+msgstr "Ett set ungefär %(median)s ± %(spread)s, vila inräknad."
+
+#: templates/programs/_prescription_estimate.html:4
+msgid "Whole workout"
+msgstr "Hela passet"
+
+#: templates/programs/_prescription_estimate.html:6
+msgid "Pick the exercise and its sets to see how long it takes."
+msgstr "Välj övning och antal set för att se hur lång tid det tar."
+
 #: templates/programs/prescription_form.html:3
 #: templates/programs/prescription_form.html:6
-#: templates/programs/program_detail.html:81
-#: templates/workouts/_train_panel.html:102
+#: templates/programs/program_detail.html:89
+#: templates/workouts/_train_panel.html:107
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
 #: templates/workouts/session_detail.html:31
 msgid "Add exercise"
 msgstr "Lägg till övning"
 
-#: templates/programs/prescription_form.html:19
+#: templates/programs/prescription_form.html:33
 msgid "Remove this exercise from the workout?"
 msgstr "Ta bort denna övning från träningspasset?"
 
-#: templates/programs/prescription_form.html:21
+#: templates/programs/prescription_form.html:35
 msgid "Remove exercise"
 msgstr "Ta bort övning"
 
 #: templates/programs/program_confirm_delete.html:3
 #: templates/programs/program_confirm_delete.html:6
-#: templates/programs/program_detail.html:97
+#: templates/programs/program_detail.html:105
 msgid "Delete program"
 msgstr "Ta bort program"
 
@@ -10506,27 +10572,31 @@ msgstr "Kopiera till nytt program"
 msgid "Delete this workout and its exercises?"
 msgstr "Ta bort detta träningspass och dess övningar?"
 
-#: templates/programs/program_detail.html:76
-#: templates/workouts/_train_panel.html:102
+#: templates/programs/program_detail.html:67
+msgid "Estimated duration"
+msgstr "Uppskattad tid"
+
+#: templates/programs/program_detail.html:84
+#: templates/workouts/_train_panel.html:107
 #: templates/workouts/session_detail.html:27
 msgid "No exercises yet."
 msgstr "Inga övningar ännu."
 
-#: templates/programs/program_detail.html:90
+#: templates/programs/program_detail.html:98
 msgid "No workouts yet."
 msgstr "Inga träningspass ännu."
 
-#: templates/programs/program_detail.html:94
+#: templates/programs/program_detail.html:102
 #: templates/programs/workout_form.html:3
 #: templates/programs/workout_form.html:6
 msgid "Add workout"
 msgstr "Lägg till träningspass"
 
-#: templates/programs/program_detail.html:95
+#: templates/programs/program_detail.html:103
 msgid "Delete this program? This cannot be undone."
 msgstr "Ta bort detta program? Detta kan inte ångras."
 
-#: templates/programs/program_detail.html:101
+#: templates/programs/program_detail.html:109
 #: templates/programs/program_form.html:24
 #: templates/programs/program_import.html:19
 msgid "Back to programs"
@@ -10991,25 +11061,25 @@ msgstr "Sluta tysta aviseringar"
 msgid "Mute notifications"
 msgstr "Tysta aviseringar"
 
-#: templates/social/group_detail.html:131
-msgid "Back to groups"
-msgstr "Tillbaka till grupper"
-
-#: templates/social/group_detail.html:137
+#: templates/social/group_detail.html:141
 msgid "Leave this group?"
 msgstr "Lämna den här gruppen?"
 
-#: templates/social/group_detail.html:139
+#: templates/social/group_detail.html:143
 msgid "Leave group"
 msgstr "Lämna grupp"
 
-#: templates/social/group_detail.html:143
+#: templates/social/group_detail.html:147
 msgid "Delete this group? This can't be undone."
 msgstr "Ta bort gruppen? Detta kan inte ångras."
 
-#: templates/social/group_detail.html:145
+#: templates/social/group_detail.html:149
 msgid "Delete group"
 msgstr "Ta bort grupp"
+
+#: templates/social/group_detail.html:154
+msgid "Back to groups"
+msgstr "Tillbaka till grupper"
 
 #: templates/social/group_form.html:3 templates/social/group_form.html:6
 msgid "Edit group"
@@ -11454,8 +11524,42 @@ msgstr "Visa alla guider igen, även de du redan har gått igenom?"
 msgid "Show all tutorials again"
 msgstr "Visa alla guider igen"
 
+#: templates/workouts/_duration_estimate.html:4
+msgid "rough - little data yet"
+msgstr "grov - lite data än"
+
+#: templates/workouts/_exercise_set_cycle.html:4
+msgid ""
+"Time from one logged set to the next - the set itself, the rest and changing "
+"the weights. The median, ± covers the middle half of the sets."
+msgstr ""
+"Tiden från ett loggat set till nästa - själva setet, vilan och viktbytet. "
+"Medianen, ± täcker den mittersta hälften av seten."
+
+#: templates/workouts/_exercise_set_cycle.html:11
+#, python-format
+msgid "%(counter)s set"
+msgid_plural "%(counter)s sets"
+msgstr[0] "%(counter)s set"
+msgstr[1] "%(counter)s set"
+
+#: templates/workouts/_exercise_set_cycle.html:18
+#, python-format
+msgid "%(sets)s sets, %(counter)s user"
+msgid_plural "%(sets)s sets, %(counter)s users"
+msgstr[0] "%(sets)s set, %(counter)s användare"
+msgstr[1] "%(sets)s set, %(counter)s användare"
+
+#: templates/workouts/_exercise_set_cycle.html:23
+#, python-format
+msgid ""
+"Shown once you've logged %(count)s sets of this exercise in completed "
+"workouts."
+msgstr ""
+"Visas när du har loggat %(count)s set av den här övningen i avslutade pass."
+
 #: templates/workouts/_performed_exercise_card.html:9
-#: templates/workouts/_train_panel.html:42
+#: templates/workouts/_train_panel.html:47
 #, python-format
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Mål: %(count)s × %(min)s-%(max)s"
@@ -11463,14 +11567,6 @@ msgstr "Mål: %(count)s × %(min)s-%(max)s"
 #: templates/workouts/_performed_exercise_card.html:18
 msgid "Set"
 msgstr "Set"
-
-#: templates/workouts/_performed_exercise_card.html:18
-msgid "Reps"
-msgstr "Repetitioner"
-
-#: templates/workouts/_performed_exercise_card.html:18
-msgid "Actions"
-msgstr "Åtgärder"
 
 #: templates/workouts/_performed_exercise_card.html:23
 msgid "W"
@@ -11489,13 +11585,13 @@ msgid "No sets logged yet."
 msgstr "Inga set loggade ännu."
 
 #: templates/workouts/_performed_exercise_card.html:50
-#: templates/workouts/_train_panel.html:57
+#: templates/workouts/_train_panel.html:62
 #, python-format
 msgid "Suggested: %(weight)s"
 msgstr "Föreslaget: %(weight)s"
 
-#: templates/workouts/_performed_exercise_card.html:75
-#: templates/workouts/_train_panel.html:97
+#: templates/workouts/_performed_exercise_card.html:85
+#: templates/workouts/_train_panel.html:102
 msgid "Log set"
 msgstr "Logga set"
 
@@ -11504,26 +11600,45 @@ msgstr "Logga set"
 msgid "Exercise %(position)s of %(total)s"
 msgstr "Övning %(position)s av %(total)s"
 
-#: templates/workouts/_train_panel.html:30
+#: templates/workouts/_train_panel.html:35
 msgid "All exercises done for today."
 msgstr "Alla dagens övningar klara."
 
-#: templates/workouts/_train_panel.html:50
+#: templates/workouts/_train_panel.html:55
 msgid "Edit this set"
 msgstr "Redigera den här serien"
 
-#: templates/workouts/_train_panel.html:71
+#: templates/workouts/_train_panel.html:76
 msgid ""
 "This exercise is done - logging another set is still fine if you want one."
 msgstr "Den här övningen är klar - du kan ändå logga ett extra set om du vill."
 
-#: templates/workouts/_train_panel.html:88
+#: templates/workouts/_train_panel.html:93
 msgid "Fewer options"
 msgstr "Färre alternativ"
 
-#: templates/workouts/_train_panel.html:88
+#: templates/workouts/_train_panel.html:93
 msgid "More options (RPE, RIR, notes…)"
 msgstr "Fler alternativ (RPE, RIR, anteckningar…)"
+
+#: templates/workouts/_train_panel.html:115
+msgid "Complete this workout? Some exercises still have sets left to log."
+msgstr "Slutföra passet? Vissa övningar har fortfarande set kvar att logga."
+
+#: templates/workouts/_train_panel.html:117
+#: templates/workouts/session_detail.html:35
+msgid "Complete workout"
+msgstr "Slutför träningspass"
+
+#: templates/workouts/_train_panel.html:119
+#: templates/workouts/session_detail.html:37
+msgid "Abandon this workout? It stays in your history as abandoned."
+msgstr "Avbryt detta träningspass? Det finns kvar i din historik som avbrutet."
+
+#: templates/workouts/_train_panel.html:121
+#: templates/workouts/session_detail.html:39
+msgid "Abandon workout"
+msgstr "Avbryt träningspass"
 
 #: templates/workouts/_up_next_day.html:1
 msgid "Today"
@@ -11550,21 +11665,6 @@ msgid "%(n)s set"
 msgid_plural "%(n)s sets"
 msgstr[0] "%(n)s set"
 msgstr[1] "%(n)s set"
-
-#: templates/workouts/session_detail.html:35
-#: templates/workouts/session_train.html:51
-msgid "Complete workout"
-msgstr "Slutför träningspass"
-
-#: templates/workouts/session_detail.html:37
-#: templates/workouts/session_train.html:53
-msgid "Abandon this workout? It stays in your history as abandoned."
-msgstr "Avbryt detta träningspass? Det finns kvar i din historik som avbrutet."
-
-#: templates/workouts/session_detail.html:39
-#: templates/workouts/session_train.html:55
-msgid "Abandon workout"
-msgstr "Avbryt träningspass"
 
 #: templates/workouts/session_detail.html:43
 msgid "Delete this workout? This cannot be undone."
@@ -11613,10 +11713,6 @@ msgstr "Stäng av ljud för vilotimer"
 msgid "Skip rest"
 msgstr "Hoppa över vila"
 
-#: templates/workouts/session_train.html:49
-msgid "Complete this workout? Some exercises still have sets left to log."
-msgstr "Slutföra passet? Vissa övningar har fortfarande set kvar att logga."
-
 #: templates/workouts/set_edit_form.html:3
 msgid "Edit set"
 msgstr "Redigera set"
@@ -11625,6 +11721,12 @@ msgstr "Redigera set"
 #, python-format
 msgid "Edit set %(number)s"
 msgstr "Redigera set %(number)s"
+
+#~ msgid "exercise"
+#~ msgstr "övning"
+
+#~ msgid "reps"
+#~ msgstr "repetitioner"
 
 #, python-format
 #~ msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."

@@ -1,0 +1,4 @@
+{% load i18n core_extras %}{% comment %}
+An apps.workouts.set_timing.DurationEstimate as "~52 min ± 8 min".
+`label` is the text before it ("Estimated duration", "Time left").
+{% endcomment %}{{ label }}: <span class="stat-figure nowrap">~{{ estimate.middle|seconds_duration:"min" }} ± {{ estimate.spread|seconds_duration:"min" }}</span>{% if estimate.rough %} <span class="text-muted">({% trans "rough - little data yet" %})</span>{% endif %}

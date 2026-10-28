@@ -133,12 +133,18 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
 
 class ExercisePrescriptionSerializer(serializers.ModelSerializer):
+    # Read-only, so a client can render a workout without fetching
+    # every exercise separately (issue #19) - same field
+    # PerformedExerciseSerializer already has.
+    exercise_name = serializers.CharField(source="exercise.name", read_only=True)
+
     class Meta:
         model = ExercisePrescription
         fields = [
             "id",
             "workout",
             "exercise",
+            "exercise_name",
             "order",
             "set_count",
             "min_reps",
@@ -187,9 +193,9 @@ class ExercisePrescriptionSerializer(serializers.ModelSerializer):
         # validate_measurement_type's own comment) - without this, a
         # request could attach *any* exercise id, including someone
         # else's private custom exercise this user was never meant to
-        # see at all, to their own prescription. The API response
-        # itself only ever echoes back the bare id (this serializer
-        # never nests exercise details), but the web UI trusts that
+        # see at all, to their own prescription - and the response
+        # would then echo that exercise's name back (`exercise_name`
+        # above). The web UI trusts that
         # every prescription it renders already passed this check -
         # confirmed live, it happily prints a private exercise's name
         # on the *attacker's own* program page once such a row exists.
@@ -481,12 +487,14 @@ class ActivitySerializer(serializers.ModelSerializer):
 
 class PersonalRecordSerializer(serializers.ModelSerializer):
     record_type_display = serializers.CharField(source="get_record_type_display", read_only=True)
+    exercise_name = serializers.CharField(source="exercise.name", read_only=True)
 
     class Meta:
         model = PersonalRecord
         fields = [
             "id",
             "exercise",
+            "exercise_name",
             "record_type",
             "record_type_display",
             "rep_count",
@@ -502,12 +510,55 @@ class PersonalRecordSerializer(serializers.ModelSerializer):
 # --------------------------------------------------------------------
 
 
+class SuggestionSerializer(serializers.Serializer):
+    """apps.progression.suggestions.Suggestion, plus the prescription's
+    progression `method`. Every field is null for a performed exercise
+    with no prescription behind it (added ad hoc), same as the web,
+    which shows no suggestion then. `weight` is kg like everywhere else
+    in this API; `reason` is in the user's own language."""
+
+    weight = serializers.DecimalField(
+        source="suggested_weight", max_digits=6, decimal_places=2, allow_null=True
+    )
+    min_reps = serializers.IntegerField(source="target_min_reps", allow_null=True)
+    max_reps = serializers.IntegerField(source="target_max_reps", allow_null=True)
+    method = serializers.CharField(allow_null=True)
+    action = serializers.CharField(allow_null=True)
+    confidence = serializers.CharField(allow_null=True)
+    reason = serializers.CharField(allow_null=True)
+
+
+class LastPerformanceSerializer(serializers.Serializer):
+    """apps.workouts.services.last_performance - `session`/`started_at`
+    null and `sets` empty when the exercise has never been completed."""
+
+    session = serializers.IntegerField(allow_null=True)
+    started_at = serializers.DateTimeField(allow_null=True)
+    sets = ExerciseSetSerializer(many=True)
+
+
+class UpNextProgramSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Program
+        fields = ["id", "name", "is_continuous"]
+
+
+class UpNextSerializer(serializers.Serializer):
+    """apps.workouts.services.UpNext - every field null when there's
+    nothing next (no program trained from yet), so the shape never
+    changes."""
+
+    program = UpNextProgramSerializer(allow_null=True)
+    workout = WorkoutSerializer(allow_null=True)
+    day = serializers.DateField(allow_null=True)
+
+
 class TrainingSummarySerializer(serializers.Serializer):
     session_count = serializers.IntegerField()
     total_duration_seconds = serializers.SerializerMethodField()
     total_volume = serializers.DecimalField(max_digits=12, decimal_places=2)
 
-    def get_total_duration_seconds(self, obj):
+    def get_total_duration_seconds(self, obj) -> float:
         return obj.total_duration.total_seconds()
 
 

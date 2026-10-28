@@ -392,6 +392,16 @@ class SetLoggingFlowTests(TestCase):
         )
         self.assertContains(response, '<abbr tabindex="0" title="Reps In Reserve">RIR</abbr>')
 
+    def test_set_form_matches_training_mode(self):
+        """The workout page's set form renders its yes/no flags as the
+        same switches training mode uses, with sentence-case labels."""
+        response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
+        self.assertContains(response, '<label class="checkbox-field flex-full">', count=2)
+        self.assertContains(response, '<label class="set-field flex-full">')
+        html = response.content.decode()
+        self.assertRegex(html, r'<label class="set-field">\s*Reps\s*<input')
+        self.assertRegex(html, r'<label class="set-field flex-full">\s*Notes\s*<textarea')
+
     def test_logging_a_set_via_the_view(self):
         response = self.client.post(
             reverse("workouts:set-log", args=[self.performed.pk]),
@@ -690,6 +700,22 @@ class TrainingModeViewTests(TestCase):
         self.assertTrue(response.context["all_done"])
         self.assertContains(response, "All exercises done for today.")
 
+    def test_finish_confirmation_goes_away_once_the_last_set_is_logged(self):
+        # Regression: the Complete form sat outside the HTMX-swapped panel,
+        # so it kept the "sets left to log" confirmation from page load.
+        session, performed = self.session, self.performed
+        for _ in range(performed.set_count - 1):
+            services.log_set(performed, weight=Decimal("100"), reps=5)
+        page = self.client.get(reverse("workouts:session-train", args=[session.pk]))
+        self.assertContains(page, "Some exercises still have sets left to log.")
+        swap = self.client.post(
+            reverse("workouts:train-set-log", args=[performed.pk]),
+            {"weight": "100", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertContains(swap, reverse("workouts:session-complete", args=[session.pk]))
+        self.assertNotContains(swap, "Some exercises still have sets left to log.")
+
     def test_a_validation_error_keeps_the_same_exercise_and_logs_nothing(self):
         response = self.client.post(
             reverse("workouts:train-set-log", args=[self.performed.pk]),
@@ -858,6 +884,11 @@ class TrainingFabTests(TestCase):
                 self.assertContains(
                     response, reverse("workouts:session-train", args=[session.pk])
                 )
+
+    def test_fab_sits_in_a_landmark(self):
+        services.start_session(self.alice, workout=None)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, '<aside aria-label="Shortcuts">')
 
     def test_fab_hidden_on_its_own_destination_page(self):
         # Regression: this used to render on the training screen too,

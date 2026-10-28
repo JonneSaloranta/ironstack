@@ -228,6 +228,25 @@ def default_set_values(performed_exercise):
     }
 
 
+def last_performance(user, exercise):
+    """The `PerformedExercise` (sets prefetched) of `exercise` in `user`'s
+    most recent completed session that logged at least one set of it -
+    "last time: 3 x 5 @ 80 kg" - or None. Warmups are included; their
+    `is_warmup` tells them apart."""
+    return (
+        PerformedExercise.objects.filter(
+            exercise=exercise,
+            session__user=user,
+            session__status=WorkoutSessionStatus.COMPLETED,
+            sets__isnull=False,  # the join can repeat a row; .first() doesn't mind
+        )
+        .select_related("session")
+        .prefetch_related("sets")
+        .order_by("-session__started_at", "-id")
+        .first()
+    )
+
+
 @transaction.atomic
 def log_set(performed_exercise, **fields):
     """Log the next set, numbered one past the highest existing number.

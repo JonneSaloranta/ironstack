@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -146,3 +147,33 @@ class ApiKeyPermission(models.Model):
 
     def __str__(self):
         return f"{self.api_key.name} - {self.get_context_display()}"
+
+
+class IdempotencyKey(models.Model):
+    """One `Idempotency-Key` a user sent with a create request, and the
+    response it got - so a retry of the same request (the first one
+    reached the server but its response was lost on a bad connection)
+    is answered from here instead of creating the row a second time.
+    See apps.api.idempotency and docs/API.md "Retrying writes".
+
+    `request_hash` covers the method, path and body, so the same key
+    reused for a different request is refused rather than answered with
+    an unrelated response. Rows are short-lived: older than
+    apps.api.idempotency.KEY_LIFETIME they're ignored and cleared."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="idempotency_keys", on_delete=models.CASCADE
+    )
+    key = models.CharField(max_length=255)
+    request_hash = models.CharField(max_length=64)
+    response_status = models.PositiveSmallIntegerField()
+    response_body = models.JSONField(encoder=DjangoJSONEncoder)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "key"], name="unique_idempotency_key_per_user")
+        ]
+
+    def __str__(self):
+        return f"{self.user_id}: {self.key}"

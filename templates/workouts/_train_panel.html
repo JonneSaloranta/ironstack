@@ -23,6 +23,11 @@
       <span class="button-secondary invisible" aria-hidden="true">&rarr;</span>
     {% endif %}
   </div>
+  {% if remaining_estimate %}
+    <p data-tour="train-time-left" class="text-muted text-center">
+      {% trans "Time left" as estimate_label %}{% include "workouts/_duration_estimate.html" with estimate=remaining_estimate label=estimate_label %}
+    </p>
+  {% endif %}
 {% endif %}
 
 {% if all_done %}
@@ -34,7 +39,7 @@
 {% if current %}
   <div data-tour="train-exercise" class="card">
     <div class="row-center mb-1">
-      <h2 class="no-margin">{% trans current.display_name %}</h2>
+      <h2 class="card-title no-margin">{% trans current.display_name %}</h2>
       <span class="ml-auto">{% include "exercises/_exercise_guide_modal.html" with exercise_id=current.exercise_id name=current.display_name tour="train-exercise-guide" %}</span>
     </div>
     {% if current.set_count %}
@@ -101,6 +106,20 @@
   {% url 'workouts:performed-exercise-add' session.pk as empty_cta_url %}
   {% include "core/_empty_state.html" with message=_("No exercises yet.") cta_url=empty_cta_url cta_label=_("Add exercise") %}
 {% endif %}
+
+{% comment %}
+Inside the panel, not after it on session_train.html: logging a set
+swaps only #train-panel, so a form outside it kept the "sets left to
+log" confirmation from page load even after the last set was logged.
+{% endcomment %}
+<form method="post" action="{% url 'workouts:session-complete' session.pk %}"{% if not all_done %} data-confirm="{% filter force_escape %}{% trans "Complete this workout? Some exercises still have sets left to log." %}{% endfilter %}"{% endif %}>
+  {% csrf_token %}
+  <button type="submit">{% trans "Complete workout" %}</button>
+</form>
+<form method="post" action="{% url 'workouts:session-abandon' session.pk %}" data-confirm="{% filter force_escape %}{% trans "Abandon this workout? It stays in your history as abandoned." %}{% endfilter %}">
+  {% csrf_token %}
+  <button type="submit" class="button-danger">{% trans "Abandon workout" %}</button>
+</form>
 
 </div>
 {% include "records/_pr_toasts.html" %}

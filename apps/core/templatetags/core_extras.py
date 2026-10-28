@@ -60,6 +60,30 @@ def duration(value):
 
 
 @register.filter
+def seconds_duration(value, precision=""):
+    """Format an estimate in seconds (apps.workouts.set_timing): "45 s",
+    "2 min 20 s" (5 s steps) under ten minutes, whole minutes above it,
+    "1 h 5 min" from an hour. Same unit symbols as `duration` above.
+    `precision="min"` always rounds to whole minutes (at least 1) - a
+    whole workout's estimate, where seconds would be false precision."""
+    if value is None:
+        return ""
+    seconds = max(float(value), 0)
+    if precision == "min":
+        seconds = max(round(seconds / 60), 1) * 60
+    if seconds < 60:
+        return f"{round(seconds)} s"
+    if seconds < 600:
+        whole = round(seconds / 5) * 5
+        minutes, rest = divmod(whole, 60)
+        return f"{minutes} min {rest} s" if rest else f"{minutes} min"
+    hours, minutes = divmod(round(seconds / 60), 60)
+    if hours:
+        return f"{hours} h {minutes} min" if minutes else f"{hours} h"
+    return f"{minutes} min"
+
+
+@register.filter
 def weight(value, user):
     """Format a canonical-kg `Decimal` for display in `user`'s preferred
     unit system.

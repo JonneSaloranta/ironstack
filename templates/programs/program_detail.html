@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n core_extras %}
+{% load i18n core_extras workouts_extras %}
 {% block title %}{% trans program.name %} - IronStack{% endblock %}
 {% block content %}
 {% url 'programs:program-list' as c1u %}{% trans "Programs" as c1l %}
@@ -61,6 +61,14 @@
       {% endif %}
     </div>
 
+    {% with estimate=workout|workout_duration_estimate %}
+      {% if estimate %}
+        <p data-tour="workout-duration-estimate" class="text-muted">
+          {% trans "Estimated duration" as estimate_label %}{% include "workouts/_duration_estimate.html" with label=estimate_label %}
+        </p>
+      {% endif %}
+    {% endwith %}
+
     <ul class="prescription-list">
       {% for prescription in workout.prescriptions.all %}
         <li>
@@ -78,7 +86,7 @@
     </ul>
 
     {% if can_edit %}
-      <a data-tour="add-prescription" class="button" href="{% url 'programs:prescription-create' program.pk workout.pk %}">{% trans "Add exercise" %}</a>
+      <a data-tour="add-prescription" class="button-secondary" href="{% url 'programs:prescription-create' program.pk workout.pk %}">{% trans "Add exercise" %}</a>
     {% endif %}
 
     <form data-tour="start-program-workout" method="post" action="{% url 'workouts:session-start' workout.pk %}">

@@ -66,11 +66,20 @@
           hx-disabled-elt="find button[type=submit]">
       {% csrf_token %}
       {% include "workouts/_set_form_errors.html" %}
+      {% comment %}
+      Same field treatment as training mode's form (_train_panel.html):
+      the yes/no flags are switches beside their label, notes spans the
+      row (docs/ui-ux/audit.md UI-010).
+      {% endcomment %}
       {% for field in set_form %}
-        <label class="set-field">
-          {{ field.label }}
-          {{ field|field_a11y }}
-        </label>
+        {% if field.widget_type == "checkbox" %}
+          <label class="checkbox-field flex-full">{{ field|field_a11y }} {{ field.label }}</label>
+        {% else %}
+          <label class="set-field{% if field.name == "notes" %} flex-full{% endif %}">
+            {{ field.label }}
+            {{ field|field_a11y }}
+          </label>
+        {% endif %}
       {% endfor %}
       <button type="submit">{% trans "Log set" %}</button>
     </form>

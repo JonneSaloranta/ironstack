@@ -34,6 +34,11 @@ urlpatterns = [
         name="prescription-create",
     ),
     path(
+        "<int:program_pk>/workouts/<int:workout_pk>/prescriptions/estimate/",
+        views.prescription_estimate,
+        name="prescription-estimate",
+    ),
+    path(
         "<int:program_pk>/workouts/<int:workout_pk>/prescriptions/<int:pk>/edit/",
         views.prescription_update,
         name="prescription-update",

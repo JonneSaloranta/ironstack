@@ -19,6 +19,7 @@ from datetime import date
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
@@ -326,7 +327,11 @@ class MealSlot(models.Model):
         ]
 
     def __str__(self):
-        return self.name
+        # Form widgets (the diary's meal picker, a recipe's or diet plan's
+        # meal checkboxes) render the option text from str(), so a
+        # built-in slot is translated here like any other seeded content
+        # (apps.nutrition.i18n_content); a user's own slot stays as typed.
+        return gettext(self.name) if self.owner_id is None else self.name
 
     @property
     def is_custom(self):

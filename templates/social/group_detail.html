@@ -128,10 +128,14 @@
       <button type="submit" class="button-secondary">{% trans "Mute notifications" %}</button>
     {% endif %}
   </form>
-  <a class="button-link" href="{% url 'social:group-list' %}">&larr; {% trans "Back to groups" %}</a>
 </div>
 
-<p>
+{% comment %}
+  A <div>, not a <p>: a <form> inside a <p> closes it during parsing.
+  The back link comes after it, as the page's last element like on
+  every other page (docs/UI_COMPONENTS.md "Page skeleton").
+{% endcomment %}
+<div>
   {% if not is_owner %}
     <form method="post" action="{% url 'social:group-leave' group.pk %}"
           data-confirm="{% filter force_escape %}{% trans "Leave this group?" %}{% endfilter %}">
@@ -145,5 +149,7 @@
       <button type="submit" class="button-danger">{% trans "Delete group" %}</button>
     </form>
   {% endif %}
-</p>
+</div>
+
+<p><a class="button-link" href="{% url 'social:group-list' %}">&larr; {% trans "Back to groups" %}</a></p>
 {% endblock %}

@@ -22,7 +22,7 @@ from apps.programs.models import Workout
 from apps.progression.suggestions import suggest_weight
 from apps.records import services as records_services
 
-from . import services
+from . import services, set_timing
 from .forms import ExerciseSetForm, PerformedExerciseAddForm
 from .models import ExerciseSet, PerformedExercise, WorkoutSessionStatus
 
@@ -153,6 +153,7 @@ def _train_context(request, session, current=None):
         and services.first_incomplete_performed_exercise(performed_exercises) is None,
         "set_form": set_form,
         "suggestion": suggestion,
+        "remaining_estimate": set_timing.estimate_remaining(performed_exercises),
         "new_prs": [],
     }
 
@@ -271,7 +272,9 @@ def session_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     session = get_object_or_404(services.sessions_for(request.user), pk=pk)
+    exercise_ids = list(session.performed_exercises.values_list("exercise_id", flat=True))
     session.delete()
+    records_services.rebuild_records_for_exercises(request.user, exercise_ids)
     return redirect("workouts:session-list")
 
 
@@ -410,6 +413,7 @@ def set_edit(request, pk):
         form = ExerciseSetForm(request.POST, instance=exercise_set, user=request.user)
         if form.is_valid():
             form.save()
+            records_services.rebuild_records(request.user, performed_exercise.exercise)
             new_form, suggestion = _build_set_form(request.user, performed_exercise)
             return _render_session_or_card(
                 request, performed_exercise, new_form, suggestion=suggestion
@@ -432,6 +436,7 @@ def set_delete(request, pk):
     )
     performed_exercise = exercise_set.performed_exercise
     exercise_set.delete()
+    records_services.rebuild_records(request.user, performed_exercise.exercise)
     form, suggestion = _build_set_form(request.user, performed_exercise)
     return _render_session_or_card(request, performed_exercise, form, suggestion=suggestion)
 

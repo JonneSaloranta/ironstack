@@ -186,7 +186,9 @@ keys" above) - a deliberately separate credential from the API key
 you authorize with inside it. The raw OpenAPI 3 schema itself is at
 `/api/docs/schema/` (also session-gated), for generating a typed
 client or importing into another tool (Postman, Insomnia, ...) instead
-of using the bundled UI.
+of using the bundled UI - or use the committed
+`docs/api/openapi-v1.yaml` (see "Versioning" below), which needs no
+login.
 
 Served entirely from this instance's own static files
 (`drf-spectacular-sidecar`), not a CDN - works the same on an
@@ -195,20 +197,77 @@ no exception to this app's CSP (`apps.core.middleware.
 ContentSecurityPolicyMiddleware`, docs/SECURITY.md
 "Content-Security-Policy").
 
+## Versioning
+
+The version is part of every URL: `/api/v1/...`. A client that works
+against v1 today keeps working against v1 after any later release.
+
+**What may change within a version - additions only:**
+
+- a new endpoint, or a new method on an existing one
+- a new field in a response
+- a new optional query parameter, header or request field
+- a new value in an enum the client only sends (never one it receives
+  and has to handle - see below)
+
+So a client must ignore response fields it doesn't know. Everything
+else is a breaking change and needs a new version: removing or renaming
+an endpoint, field or parameter, changing a field's type or meaning,
+making something optional required, a new required request field, or a
+new value in an enum the API returns.
+
+**How it's enforced:**
+
+- Each served version's OpenAPI schema is committed as
+  `docs/api/openapi-<version>.yaml` (`apps.api.schema`). After an API
+  change run `python manage.py api_schema` and commit the regenerated
+  file - the diff is the change as a client sees it, docstrings
+  included, since they're the Swagger descriptions.
+  `python manage.py api_schema --check` (a CI step and a test) fails
+  while the committed file doesn't match the code.
+- CI's `api-compatibility` job compares each committed schema with
+  master's copy using [oasdiff](https://github.com/oasdiff/oasdiff) and
+  fails on every change it classifies as an error; publishing the image
+  waits for it. Its warnings (e.g. a new enum value in a response) are
+  printed but don't fail the run - read them in review against the
+  rules above.
+
+**Adding a version (v2):** only when a breaking change is genuinely
+needed, and only for what it changes. The version is DRF's
+`NamespaceVersioning`: the URL include's namespace (`config/urls.py`),
+available in every API view and serializer as `request.version`. So:
+
+1. Add `path("api/v2/", include("apps.api.urls", namespace="v2"))`
+   to `config/urls.py`, `"v2"` to `REST_FRAMEWORK["ALLOWED_VERSIONS"]`
+   and to `apps.api.schema.VERSIONS`, then run `api_schema` to commit
+   `openapi-v2.yaml`.
+2. Make the breaking change only where `request.version == "v2"`
+   (e.g. `get_serializer_class` returning a v2 serializer) - every other
+   endpoint is shared, and v1's committed schema must not change.
+3. Point the docs views (`apps.api.views_docs.SchemaView.api_version`)
+   at v2, note in CHANGELOG.md when v1 will be removed, and keep it
+   working until then. Removing v1 is itself a breaking change, made
+   in a release whose notes say so.
+
+`reverse("api:...")` resolves to the most recently included version, so
+code and tests that need a specific one pass `current_app="v1"`.
+
 ## Endpoints
 
 All under `/api/v1/`. List/create endpoints are paginated (25 per page,
-`?page=N`) except where noted.
+`?page=N`) except where noted; `?page_size=N` asks for up to 100 per
+page (`apps.api.pagination.ApiPagination` - a larger value is clamped,
+not refused).
 
 | Context | Endpoints |
 |---|---|
 | profile | `GET`/`PATCH` `profile/` (singleton - no id; `username` and `email` are read-only - an API key must not be able to redirect password resets) |
-| exercises | `exercises/`, `exercises/<id>/`, `muscle-groups/` (read-only), `equipment/` (read-only) |
-| programs | `programs/`, `programs/<id>/`, `workouts/`, `workouts/<id>/`, `prescriptions/`, `prescriptions/<id>/` |
-| workouts | `sessions/`, `sessions/<id>/` (create = start; `PATCH status` to `completed`/`abandoned` = end), `performed-exercises/` (create + read only), `sets/`, `sets/<id>/` |
+| exercises | `exercises/` (`?search=<text>` matches the name, also as translated to your language; `?ids=1,2,3` fetches a known set), `exercises/<id>/`, `muscle-groups/` (read-only), `equipment/` (read-only) |
+| programs | `programs/`, `programs/<id>/`, `workouts/`, `workouts/<id>/`, `prescriptions/`, `prescriptions/<id>/` (each prescription, nested or not, carries a read-only `exercise_name`), `up-next/` (`GET` - the dashboard's "Up next": `program`, `workout` and the `day` a weekly program schedules it for, all null before the user has completed a workout from a program; answers even while a session is in progress) |
+| workouts | `exercises/<id>/last-performance/` (`GET` - the sets from the most recent completed session that included the exercise, warmups flagged; `session`/`started_at` null and `sets` empty if none), `sessions/`, `sessions/<id>/` (create = start; `PATCH status` to `completed`/`abandoned` = end; the list takes `?status=planned\|in_progress\|completed\|abandoned`, `?started_after=` (inclusive) and `?started_before=` (exclusive), each an ISO 8601 datetime or a date meaning its midnight in the server's time zone), `performed-exercises/` (create + read only), `performed-exercises/<id>/suggestion/` (`GET` - the smart weight suggestion the web shows when logging a set: `weight` in kg, `min_reps`/`max_reps`, the prescription's progression `method`, `action`, `confidence` and a plain-language `reason` in the user's language; every field null when no prescription is behind the exercise; only ever a default the user confirms), `sets/`, `sets/<id>/` |
 | measurements | `measurement-types/`, `measurement-types/<id>/`, `measurements/`, `measurements/<id>/` |
 | activities | `activity-types/`, `activity-types/<id>/`, `activities/`, `activities/<id>/` |
-| records | `records/`, `records/<id>/` (read-only) |
+| records | `records/`, `records/<id>/` (read-only, with `exercise_name`) |
 | analytics | `analytics/summary/?range=7d\|30d\|all` (default 30d), `analytics/achievements/` (both read-only) |
 | nutrition | `foods/`, `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/`, `diary-entries/<id>/`, `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton - no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plans/<id>/shopping-list/` (`GET`), `diet-plans/<id>/shopping-settings/` (`GET`/`PUT`/`PATCH`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
 | stretching | `stretches/`, `stretches/<id>/`, `stretch-routines/`, `stretch-routines/<id>/` (items nested read-only), `stretch-routine-items/`, `stretch-routine-items/<id>/` (own routines only), `stretch-sessions/`, `stretch-sessions/<id>/` (create = quick log with `duration`; name/routine/status and the per-stretch snapshot are read-only) |
@@ -221,7 +280,11 @@ logic. Concretely: `POST sets/` calls
 `apps.workouts.services.log_set` and then
 `apps.records.services.check_and_record_prs`, exactly the two calls the
 web UI's own set-logging view makes - a set logged through the API sets
-PRs the same as one logged through the app.
+PRs the same as one logged through the app. Likewise `PATCH`/`DELETE
+sets/<id>/` and `DELETE sessions/<id>/` call
+`apps.records.services.rebuild_records`, the same as the web's edit and
+delete views, so records follow a corrected or deleted set
+(`docs/PR_SYSTEM.md` "Correcting a logged set").
 
 Ownership rules match the web UI exactly too: a system exercise/program
 template is readable by everyone but only ever editable by whoever
@@ -305,6 +368,28 @@ their ingredients, with `food`, `food_name`, `unit` (`g`/`ml`/`piece`),
 `weekdays` (list of 0–6) and `include_shopping_day`; `PUT` replaces both,
 `PATCH` changes whichever is given. Both need the `nutrition` context -
 read for `GET`, update for `PUT`/`PATCH`.
+
+## Retrying writes
+
+A client on a bad connection retries a write until it gets an answer -
+but if the first attempt reached the server and only the response was
+lost, the retry would log the same set twice. `POST sets/`,
+`POST sessions/` and `POST performed-exercises/` therefore accept an
+optional `Idempotency-Key` header (1-255 characters; one random value,
+e.g. a UUID, per queued write, sent unchanged with every retry of it).
+
+- The first request with a key runs normally; a successful (2xx)
+  response is stored for that key and user (`apps.api.models.
+  IdempotencyKey`, `apps.api.idempotency`).
+- A repeat with the same key and the same method, path and body gets
+  that stored response back, with an `Idempotent-Replayed: true` header,
+  and creates nothing. Two requests with the same key at the same
+  moment still create only one row.
+- The same key with a different request is refused with `422`.
+- A failed request (4xx/5xx) isn't stored, so retrying it with the same
+  key simply runs it again.
+- Keys are remembered for 24 hours, then forgotten. Without the header a
+  request behaves exactly as before.
 
 ## What's deliberately not here
 

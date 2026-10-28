@@ -6091,3 +6091,112 @@ program page tags it. The flag is copied, exported/imported, in the API
 and in the assistant's program tool; a continuous program's workout form
 drops the weekday field and its weekday tags are hidden.
 
+
+## Records follow corrected sets (#21)
+
+A deleted set used to leave every `PersonalRecord` it produced in place
+(`source_set` just went null), so a typo like 600 kg for 60 kg became a
+permanent max weight and blocked every later PR for that exercise.
+`apps.records.services.rebuild_records(user, exercise)` now replays the
+exercise's remaining eligible sets in `performed_at` order - one query,
+the same strict comparisons as `check_and_record_prs` - and diffs the
+result against the stored rows: rows that still hold are untouched, rows
+a set no longer earns are deleted, and a later set that only now turns
+out to have been a record gets its row silently (no toast). It runs
+after a set is edited or deleted and after a session is deleted, in the
+web views and the API (including a set moved to another exercise via
+PATCH). Of the three options in the issue, this one was chosen over
+"in-progress sessions only" because a mistake is often noticed after
+finishing the workout, and over "remove a record by hand" because the
+user would then have to know which of the five rows to remove.
+
+## API for the Sailfish OS client (#16-#19)
+
+Four gaps found while building a native client. Prescriptions and
+records carry a read-only `exercise_name` (#19), with the program,
+workout and prescription querysets prefetching the exercise. `sessions/`
+takes `?status=` and `?started_after=`/`?started_before=` (#17); a bad
+value is a 400, not silently ignored. `exercises/` takes `?search=` and
+`?ids=` (#18) - search reuses `apps.exercises.services.search` under
+`translation.override(user.language)`, because an API key is
+authenticated by DRF after `UserLanguageMiddleware` has already run with
+an anonymous user. A shared `apps.api.pagination.ApiPagination` adds
+`?page_size=` (capped at 100) to every list. `up-next/` (#16) wraps
+`apps.workouts.services.up_next`, returning null fields rather than an
+empty body when there's nothing next.
+
+## Suggestions, last performance and idempotent writes in the API (#15, #20, #22)
+
+`performed-exercises/<id>/suggestion/` (#15) wraps `suggest_weight`
+under the user's language, since its reason text is translated as it's
+built. `exercises/<id>/last-performance/` (#20) uses a new
+`apps.workouts.services.last_performance` - the exercise in the most
+recent completed session that logged a set of it. `Idempotency-Key`
+(#22) is `apps.api.idempotency.IdempotentCreateMixin` on the set,
+session and performed-exercise viewsets: the lookup, the create and
+storing the response run in one transaction, so when the same key
+arrives twice at once the unique (user, key) constraint fails the
+second request, rolls back the row it created (and any PRs) and answers
+it with the first response. The request hash covers method, path and
+parsed body; only 2xx responses are stored, and a user's keys older
+than 24 hours are cleared when they store a new one.
+
+## API versioning and a committed contract
+
+`/api/v1/` was only a fixed URL prefix: nothing defined what may change
+within it, and nothing noticed a field disappearing. Now the version is
+DRF `NamespaceVersioning` (the include's namespace in `config/urls.py`
+is `v1`, `request.version` is set everywhere; `app_name` stays `api`, so
+every `reverse("api:...")` kept working). The docs views opt out of it
+and name v1 explicitly. Each version's schema is committed as
+`docs/api/openapi-<version>.yaml` by `manage.py api_schema`, with
+`info.version` set to the API version rather than the app release so a
+release alone doesn't touch it; `--check` runs in CI and the tests. A
+CI job compares it with master's copy using oasdiff (official image,
+pinned by digest) and gates `publish-image`.
+
+Getting the schema clean enough to be a contract first: the viewsets'
+querysets need the request's user, so drf-spectacular couldn't type
+`{id}` and guessed string for 27 viewsets. `apps.api.urls.ApiRouter`
+now builds `<int:pk>` paths; with path converters drf-spectacular no
+longer skips the router's `{format}` duplicates, so a preprocessing
+hook drops them. The two Swagger views were being listed as operations
+(their overridden `get` lost the base class's `exclude=True`), and
+`total_duration_seconds` was typed string. `--fail-on-warn` now passes.
+oasdiff calls the old-vs-new schema 95 breaking changes - all of them
+these corrections, not behaviour changes, which is why the first
+committed schema is the baseline rather than compared with anything.
+
+## UI/UX audit in a real browser
+
+A second whole-app audit, this time rendered: `apps/core/test_ui_audit_crawl.py`
+(opt-in, `UI_AUDIT=1`) seeds data and renders every page at
+320/390/768/1280/1680px in dark and light with axe-core, the layout check
+and screenshots. Results, fixes and what's deferred are in
+`docs/ui-ux/audit.md`. No page overflowed at any width. The real failures:
+the API key permission grid had 40 unnamed checkboxes, `.tag-muted` and the
+untracked type cards (opacity) failed AA contrast, a few small or spaced
+targets, empty table headers, the FABs outside any landmark, and the
+OpenFoodFacts attribution rendered in `<head>`. All fixed; the rules that
+came out of it are in `docs/UI_COMPONENTS.md`.
+
+## Set cycle time
+
+Only a set's completion is recorded, so `apps/workouts/set_timing.py`
+estimates the set cycle - the gap between two logged sets of one exercise -
+and a transition into each exercise's first set, from every user's
+completed workouts. Hard limits drop misfires, forgotten logs, edited
+times, supersets and warm-ups; Tukey's fences on the log of each group's
+gaps drop the rest of what's off the curve. Shown as "x ± y" on a program's
+workout card, in training mode (time left), on the exercise page (own and
+everyone's) and live on the add/edit-exercise form. Method and limits:
+docs/ANALYTICS.md "Set cycle time".
+
+## Meal slot names and the training-mode finish confirmation
+
+`MealSlot.__str__` returned the English name, and form widgets render from
+`str()`, so meal pickers stayed English in every language although the
+catalogs had the translations; built-in slots are now translated there.
+Training mode's Complete form was outside the HTMX-swapped panel, so its
+"sets left to log" confirmation was decided at page load and stayed after
+the last set; the finish forms now live in the panel.

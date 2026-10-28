@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
 from .models import ApiContext
@@ -31,10 +32,17 @@ class ApiKeyCreateForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for context_value, _context_label in ApiContext.choices:
+        for context_value, context_label in ApiContext.choices:
             for verb_field, verb_label in CRUD_VERBS:
+                # The grid shows the verb as a column header and the
+                # context as a row header, so the checkbox has no
+                # <label> of its own: name it for screen readers.
                 self.fields[f"{context_value}__{verb_field}"] = forms.BooleanField(
-                    required=False, label=verb_label
+                    required=False,
+                    label=verb_label,
+                    widget=forms.CheckboxInput(
+                        attrs={"aria-label": format_lazy("{} - {}", verb_label, context_label)}
+                    ),
                 )
 
     def permissions(self):
