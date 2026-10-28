@@ -749,6 +749,56 @@ class UpNextEndpointTests(APITestCase):
         self.assertEqual(response.status_code, 403)
 
 
+class LastPerformanceEndpointTests(APITestCase):
+    """Issue #20 - "last time" for an exercise, across sessions."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="API Test Press", owner=None)
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _get(self, exercise=None):
+        return self.client.get(
+            reverse("api:exercise-last-performance", args=[(exercise or self.exercise).pk]),
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+
+    def _session(self, sets, complete=True):
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        for weight, reps, is_warmup in sets:
+            workout_services.log_set(
+                performed, weight=Decimal(weight), reps=reps, is_warmup=is_warmup
+            )
+        if complete:
+            workout_services.complete_session(session)
+        return session
+
+    def test_never_performed(self):
+        response = self._get()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, {"session": None, "started_at": None, "sets": []})
+
+    def test_the_most_recent_completed_session_with_sets(self):
+        self._session([("70", 5, False)])
+        latest = self._session([("40", 8, True), ("80", 5, False), ("80", 5, False)])
+        self._session([])  # completed, but nothing logged for it
+        self._session([("200", 1, False)], complete=False)  # still in progress
+
+        response = self._get()
+
+        self.assertEqual(response.data["session"], latest.pk)
+        self.assertEqual(
+            [(row["weight"], row["reps"], row["is_warmup"]) for row in response.data["sets"]],
+            [("40.00", 8, True), ("80.00", 5, False), ("80.00", 5, False)],
+        )
+
+    def test_another_users_private_exercise_is_a_404(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        bobs = Exercise.objects.create(name="Bob's Lift", owner=bob)
+        self.assertEqual(self._get(bobs).status_code, 404)
+
+
 class ExerciseListQueryTests(APITestCase):
     """Issue #18 - an exercise picker shouldn't need one request per
     page of the whole library."""

@@ -27,6 +27,8 @@ narrated summary of the same version.
   fetched by a list of ids, and every list takes `?page_size=` (up to
   100).
 - API: `up-next/` returns the "Up next" workout the dashboard offers.
+- API: `exercises/<id>/last-performance/` returns the sets you did last
+  time for an exercise.
 
 ### Fixed
 - Deleting or correcting a logged set (or deleting a workout) now

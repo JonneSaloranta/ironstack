@@ -68,6 +68,7 @@ from .serializers import (
     ExerciseSerializer,
     ExerciseSetSerializer,
     FoodSerializer,
+    LastPerformanceSerializer,
     MealSlotSerializer,
     MeasurementTypeSerializer,
     MuscleGroupSerializer,
@@ -447,6 +448,33 @@ class PersonalRecordViewSet(
 # --------------------------------------------------------------------
 # Analytics (read-only aggregates - no backing model of their own)
 # --------------------------------------------------------------------
+
+
+class LastPerformanceView(APIView):
+    """`exercises/<id>/last-performance/` (issue #20): the sets from the
+    user's most recent completed session that included the exercise
+    (apps.workouts.services.last_performance), warmups flagged - for
+    "last time: 3 x 5 @ 80 kg" or prefilling a new session's first set.
+    Workouts context, since it reads logged sets; 404 for an exercise
+    the user can't see, same as `exercises/<id>/`."""
+
+    api_context = ApiContext.WORKOUTS
+
+    # See TrainingSummaryView's own comment below for why this is here.
+    @extend_schema(responses=LastPerformanceSerializer)
+    def get(self, request, pk):
+        exercise = get_object_or_404(
+            exercise_services.visible_to(request.user, include_inactive=True), pk=pk
+        )
+        performed = workout_services.last_performance(request.user, exercise)
+        data = {"session": None, "started_at": None, "sets": []}
+        if performed is not None:
+            data = {
+                "session": performed.session_id,
+                "started_at": performed.session.started_at,
+                "sets": performed.sets.all(),
+            }
+        return Response(LastPerformanceSerializer(data, context={"request": request}).data)
 
 
 class UpNextView(APIView):

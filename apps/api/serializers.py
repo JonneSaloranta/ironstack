@@ -510,6 +510,15 @@ class PersonalRecordSerializer(serializers.ModelSerializer):
 # --------------------------------------------------------------------
 
 
+class LastPerformanceSerializer(serializers.Serializer):
+    """apps.workouts.services.last_performance - `session`/`started_at`
+    null and `sets` empty when the exercise has never been completed."""
+
+    session = serializers.IntegerField(allow_null=True)
+    started_at = serializers.DateTimeField(allow_null=True)
+    sets = ExerciseSetSerializer(many=True)
+
+
 class UpNextProgramSerializer(serializers.ModelSerializer):
     class Meta:
         model = Program
