@@ -133,12 +133,18 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
 
 class ExercisePrescriptionSerializer(serializers.ModelSerializer):
+    # Read-only, so a client can render a workout without fetching
+    # every exercise separately (issue #19) - same field
+    # PerformedExerciseSerializer already has.
+    exercise_name = serializers.CharField(source="exercise.name", read_only=True)
+
     class Meta:
         model = ExercisePrescription
         fields = [
             "id",
             "workout",
             "exercise",
+            "exercise_name",
             "order",
             "set_count",
             "min_reps",
@@ -187,9 +193,9 @@ class ExercisePrescriptionSerializer(serializers.ModelSerializer):
         # validate_measurement_type's own comment) - without this, a
         # request could attach *any* exercise id, including someone
         # else's private custom exercise this user was never meant to
-        # see at all, to their own prescription. The API response
-        # itself only ever echoes back the bare id (this serializer
-        # never nests exercise details), but the web UI trusts that
+        # see at all, to their own prescription - and the response
+        # would then echo that exercise's name back (`exercise_name`
+        # above). The web UI trusts that
         # every prescription it renders already passed this check -
         # confirmed live, it happily prints a private exercise's name
         # on the *attacker's own* program page once such a row exists.
@@ -481,12 +487,14 @@ class ActivitySerializer(serializers.ModelSerializer):
 
 class PersonalRecordSerializer(serializers.ModelSerializer):
     record_type_display = serializers.CharField(source="get_record_type_display", read_only=True)
+    exercise_name = serializers.CharField(source="exercise.name", read_only=True)
 
     class Meta:
         model = PersonalRecord
         fields = [
             "id",
             "exercise",
+            "exercise_name",
             "record_type",
             "record_type_display",
             "rep_count",

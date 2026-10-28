@@ -147,7 +147,9 @@ class ProgramViewSet(OwnedResourceViewSet):
     soft_delete = False  # Program has no `active` field - matches its web view's real delete
 
     def visible_queryset(self):
-        return program_services.visible_to(self.request.user)
+        return program_services.visible_to(self.request.user).prefetch_related(
+            "workouts__prescriptions__exercise"
+        )
 
     def editable_queryset(self):
         return program_services.editable_by(self.request.user)
@@ -162,7 +164,9 @@ class WorkoutViewSet(viewsets.ModelViewSet):
             programs = program_services.editable_by(self.request.user)
         else:
             programs = program_services.visible_to(self.request.user)
-        return Workout.objects.filter(program__in=programs)
+        return Workout.objects.filter(program__in=programs).prefetch_related(
+            "prescriptions__exercise"
+        )
 
 
 class ExercisePrescriptionViewSet(viewsets.ModelViewSet):
@@ -174,7 +178,9 @@ class ExercisePrescriptionViewSet(viewsets.ModelViewSet):
             programs = program_services.editable_by(self.request.user)
         else:
             programs = program_services.visible_to(self.request.user)
-        return ExercisePrescription.objects.filter(workout__program__in=programs)
+        return ExercisePrescription.objects.filter(workout__program__in=programs).select_related(
+            "exercise"
+        )
 
 
 # --------------------------------------------------------------------

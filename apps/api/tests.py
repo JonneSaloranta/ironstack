@@ -396,6 +396,7 @@ class WorkoutLoggingEndpointTests(APITestCase):
 
         records_response = self.client.get(reverse("api:record-list"), **self._auth())
         self.assertGreater(records_response.data["count"], 0)
+        self.assertEqual(records_response.data["results"][0]["exercise_name"], "API Test Squat")
 
     def _logged_set(self, weight="600"):
         session = workout_services.start_session(self.alice, workout=None)
@@ -635,6 +636,33 @@ class ExercisePrescriptionOwnershipTests(APITestCase):
             **self._auth(),
         )
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["exercise_name"], "System Squat")
+
+    def test_prescriptions_carry_the_exercise_name_wherever_they_appear(self):
+        # Issue #19: a client shouldn't need one request per exercise to
+        # render a workout.
+        from apps.programs.models import ExercisePrescription
+
+        exercise = Exercise.objects.create(name="System Bench", owner=None)
+        prescription = ExercisePrescription.objects.create(
+            workout=self.workout, exercise=exercise
+        )
+
+        program = self.client.get(
+            reverse("api:program-detail", args=[self.program.pk]), **self._auth()
+        )
+        workout = self.client.get(
+            reverse("api:workout-detail", args=[self.workout.pk]), **self._auth()
+        )
+        detail = self.client.get(
+            reverse("api:prescription-detail", args=[prescription.pk]), **self._auth()
+        )
+
+        self.assertEqual(
+            program.data["workouts"][0]["prescriptions"][0]["exercise_name"], "System Bench"
+        )
+        self.assertEqual(workout.data["prescriptions"][0]["exercise_name"], "System Bench")
+        self.assertEqual(detail.data["exercise_name"], "System Bench")
 
 
 class OwnedResourceViewSetTests(APITestCase):

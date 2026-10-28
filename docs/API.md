@@ -204,11 +204,11 @@ All under `/api/v1/`. List/create endpoints are paginated (25 per page,
 |---|---|
 | profile | `GET`/`PATCH` `profile/` (singleton - no id; `username` and `email` are read-only - an API key must not be able to redirect password resets) |
 | exercises | `exercises/`, `exercises/<id>/`, `muscle-groups/` (read-only), `equipment/` (read-only) |
-| programs | `programs/`, `programs/<id>/`, `workouts/`, `workouts/<id>/`, `prescriptions/`, `prescriptions/<id>/` |
+| programs | `programs/`, `programs/<id>/`, `workouts/`, `workouts/<id>/`, `prescriptions/`, `prescriptions/<id>/` (each prescription, nested or not, carries a read-only `exercise_name`) |
 | workouts | `sessions/`, `sessions/<id>/` (create = start; `PATCH status` to `completed`/`abandoned` = end), `performed-exercises/` (create + read only), `sets/`, `sets/<id>/` |
 | measurements | `measurement-types/`, `measurement-types/<id>/`, `measurements/`, `measurements/<id>/` |
 | activities | `activity-types/`, `activity-types/<id>/`, `activities/`, `activities/<id>/` |
-| records | `records/`, `records/<id>/` (read-only) |
+| records | `records/`, `records/<id>/` (read-only, with `exercise_name`) |
 | analytics | `analytics/summary/?range=7d\|30d\|all` (default 30d), `analytics/achievements/` (both read-only) |
 | nutrition | `foods/`, `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/`, `diary-entries/<id>/`, `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton - no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plans/<id>/shopping-list/` (`GET`), `diet-plans/<id>/shopping-settings/` (`GET`/`PUT`/`PATCH`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
 | stretching | `stretches/`, `stretches/<id>/`, `stretch-routines/`, `stretch-routines/<id>/` (items nested read-only), `stretch-routine-items/`, `stretch-routine-items/<id>/` (own routines only), `stretch-sessions/`, `stretch-sessions/<id>/` (create = quick log with `duration`; name/routine/status and the per-stretch snapshot are read-only) |

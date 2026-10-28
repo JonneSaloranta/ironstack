@@ -18,6 +18,10 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- API: prescriptions and personal records include the exercise's name,
+  so a client no longer has to fetch every exercise separately.
+
 ### Fixed
 - Deleting or correcting a logged set (or deleting a workout) now
   updates your personal records: a mistyped set no longer stays a
