@@ -18,6 +18,10 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Security
+- Pillow, used to read uploaded images, is updated to 13.x, which
+  fixes security advisories affecting every earlier release.
+
 ## [1.27.0] - 2026-10-22
 
 ### Added
