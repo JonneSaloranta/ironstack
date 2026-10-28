@@ -1266,6 +1266,13 @@ class ApiKeyManagementViewTests(TestCase):
         self.assertRedirects(response, reverse("api_keys:key-list"))
         self.assertEqual(ApiKey.objects.filter(user=self.alice).count(), 1)
 
+    def test_every_permission_checkbox_is_named_for_screen_readers(self):
+        # The grid has no <label> per checkbox (verb = column header,
+        # context = row header), so each carries its own aria-label.
+        response = self.client.get(reverse("api_keys:key-create"))
+        self.assertContains(response, 'aria-label="Read - Exercises"')
+        self.assertContains(response, 'aria-label="Delete - Profile"')
+
     def test_permission_grid_creates_the_right_permission_rows(self):
         data = {"name": "Read-only exercises", "exercises__can_read": "on"}
         self.client.post(reverse("api_keys:key-create"), data)

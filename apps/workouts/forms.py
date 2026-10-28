@@ -38,13 +38,13 @@ class ExerciseSetForm(forms.ModelForm):
             "notes",
         ]
         labels = {
-            "reps": _("reps"),
+            "reps": _("Reps"),
             "target_reps": _("Target reps"),
             "rpe": abbr_label(_("RPE"), RPE_FULL),
             "rir": abbr_label(_("RIR"), RIR_FULL),
             "is_failure": _("Failed set"),
             "is_warmup": _("Warm-up"),
-            "notes": _("notes"),
+            "notes": _("Notes"),
         }
 
     def __init__(self, *args, user=None, **kwargs):
@@ -92,7 +92,7 @@ class PerformedExerciseAddForm(forms.ModelForm):
     class Meta:
         model = PerformedExercise
         fields = ["exercise"]
-        labels = {"exercise": _("exercise")}
+        labels = {"exercise": _("Exercise")}
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)

@@ -231,6 +231,13 @@ instead.
   fixed-position element at all - see body.has-fab below for the fix
   that now applies everywhere else this still floats.
   {% endcomment %}
+  {% comment %}
+  The FABs are position: fixed, so this <aside> only gives them a
+  landmark (screen-reader landmark navigation skipped them before); it
+  doesn't move anything. Same condition as body.has-fab above.
+  {% endcomment %}
+  {% if active_workout_session and request.resolver_match.view_name != 'workouts:session-train' or has_unread_messages %}
+  <aside aria-label="{% trans "Shortcuts" %}">
   {% if active_workout_session and request.resolver_match.view_name != 'workouts:session-train' %}
     <a data-tour="training-fab" class="training-fab" href="{% url 'workouts:session-train' active_workout_session.pk %}" aria-label="{% trans "Continue training" %}">
       {% include "core/_icon.html" with name="workout" %}
@@ -241,6 +248,8 @@ instead.
     <a class="messages-fab" href="{% url 'social:message-list' %}" aria-label="{% trans "Unread messages" %}">
       {% include "core/_icon.html" with name="messages" %}
     </a>
+  {% endif %}
+  </aside>
   {% endif %}
 
   {% include "accounts/_onboarding_modal.html" %}

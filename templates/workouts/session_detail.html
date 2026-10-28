@@ -28,7 +28,7 @@
 {% endfor %}
 
 {% if session.is_in_progress %}
-  <a data-tour="add-exercise" class="button" href="{% url 'workouts:performed-exercise-add' session.pk %}">{% trans "Add exercise" %}</a>
+  <a data-tour="add-exercise" class="button-secondary" href="{% url 'workouts:performed-exercise-add' session.pk %}">{% trans "Add exercise" %}</a>
 
   <form data-tour="finish-workout" method="post" action="{% url 'workouts:session-complete' session.pk %}">
     {% csrf_token %}

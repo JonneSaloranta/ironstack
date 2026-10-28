@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 14:56+0000\n"
+"POT-Creation-Date: 2026-10-28 18:29+0000\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -559,7 +559,7 @@ msgstr "kalorit"
 
 #: apps/activities/models.py:77 apps/measurements/models.py:90
 #: apps/programs/models.py:128 apps/programs/models.py:194
-#: apps/stretching/models.py:196 apps/workouts/forms.py:47
+#: apps/stretching/models.py:196
 msgid "notes"
 msgstr "muistiinpanot"
 
@@ -658,19 +658,19 @@ msgstr "1 vuosi"
 msgid "All time"
 msgstr "Koko aika"
 
-#: apps/api/forms.py:10
+#: apps/api/forms.py:11
 msgid "Create"
 msgstr "Luonti"
 
-#: apps/api/forms.py:11
+#: apps/api/forms.py:12
 msgid "Read"
 msgstr "Luku"
 
-#: apps/api/forms.py:12
+#: apps/api/forms.py:13
 msgid "Update"
 msgstr "Muokkaus"
 
-#: apps/api/forms.py:13 templates/activities/activity_history.html:57
+#: apps/api/forms.py:14 templates/activities/activity_history.html:57
 #: templates/core/_backup_row.html:22
 #: templates/measurements/measurement_history.html:65
 #: templates/nutrition/diary_day.html:80
@@ -681,18 +681,18 @@ msgstr "Muokkaus"
 msgid "Delete"
 msgstr "Poista"
 
-#: apps/api/forms.py:29 apps/nutrition/forms.py:272 apps/social/forms.py:13
+#: apps/api/forms.py:30 apps/nutrition/forms.py:272 apps/social/forms.py:13
 #: templates/admin/nutrition/food/merge.html:14
 #: templates/nutrition/_food_list_results.html:17
 #: templates/nutrition/food_list.html:75
 msgid "Name"
 msgstr "Nimi"
 
-#: apps/api/forms.py:29
+#: apps/api/forms.py:30
 msgid "A label to tell your keys apart."
 msgstr "Nimike, jolla erotat avaimesi toisistaan."
 
-#: apps/api/models.py:24 apps/tutorials/tours.py:32
+#: apps/api/models.py:25 apps/tutorials/tours.py:32
 #: apps/tutorials/tours.py:1083 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
 #: templates/base.html:207 templates/base.html:230
@@ -700,14 +700,14 @@ msgstr "Nimike, jolla erotat avaimesi toisistaan."
 msgid "Profile"
 msgstr "Profiili"
 
-#: apps/api/models.py:25 apps/tutorials/tours.py:284
+#: apps/api/models.py:26 apps/tutorials/tours.py:284
 #: templates/api/key_list.html:89 templates/exercises/exercise_detail.html:5
 #: templates/exercises/exercise_list.html:3
 #: templates/exercises/exercise_list.html:6
 msgid "Exercises"
 msgstr "Liikkeet"
 
-#: apps/api/models.py:26 apps/core/models.py:162 apps/tutorials/tours.py:339
+#: apps/api/models.py:27 apps/core/models.py:162 apps/tutorials/tours.py:339
 #: templates/api/key_list.html:93 templates/base.html:203
 #: templates/base.html:205 templates/programs/program_detail.html:5
 #: templates/programs/program_list.html:3
@@ -715,7 +715,7 @@ msgstr "Liikkeet"
 msgid "Programs"
 msgstr "Ohjelmat"
 
-#: apps/api/models.py:27 apps/core/models.py:161 apps/tutorials/tours.py:25
+#: apps/api/models.py:28 apps/core/models.py:161 apps/tutorials/tours.py:25
 #: apps/tutorials/tours.py:387 templates/analytics/dashboard.html:13
 #: templates/api/key_list.html:97 templates/coaching/client_detail.html:26
 #: templates/workouts/session_detail.html:5
@@ -723,11 +723,11 @@ msgstr "Ohjelmat"
 msgid "Workouts"
 msgstr "Treenit"
 
-#: apps/api/models.py:28 templates/api/key_list.html:101
+#: apps/api/models.py:29 templates/api/key_list.html:101
 msgid "Measurements"
 msgstr "Mittaukset"
 
-#: apps/api/models.py:29 apps/assistant/models.py:115 apps/core/models.py:165
+#: apps/api/models.py:30 apps/assistant/models.py:115 apps/core/models.py:165
 #: apps/tutorials/tours.py:588 templates/activities/activity_history.html:5
 #: templates/activities/activity_type_list.html:3
 #: templates/activities/activity_type_list.html:6
@@ -735,15 +735,15 @@ msgstr "Mittaukset"
 msgid "Activities"
 msgstr "Aktiviteetit"
 
-#: apps/api/models.py:30 templates/api/key_list.html:117
+#: apps/api/models.py:31 templates/api/key_list.html:117
 msgid "Records"
 msgstr "Ennätykset"
 
-#: apps/api/models.py:31 templates/api/key_list.html:121
+#: apps/api/models.py:32 templates/api/key_list.html:121
 msgid "Analytics"
 msgstr "Analytiikka"
 
-#: apps/api/models.py:32 apps/core/models.py:166 apps/tutorials/tours.py:29
+#: apps/api/models.py:33 apps/core/models.py:166 apps/tutorials/tours.py:29
 #: templates/api/key_list.html:109 templates/base.html:184
 #: templates/base.html:186 templates/nutrition/dashboard.html:3
 #: templates/nutrition/dashboard.html:6
@@ -754,7 +754,7 @@ msgstr "Analytiikka"
 msgid "Nutrition"
 msgstr "Ravinto"
 
-#: apps/api/models.py:33 apps/assistant/models.py:116 apps/core/models.py:167
+#: apps/api/models.py:34 apps/assistant/models.py:116 apps/core/models.py:167
 #: apps/stretching/models.py:209 apps/tutorials/tours.py:30
 #: apps/tutorials/tours.py:945 templates/api/key_list.html:113
 #: templates/base.html:190 templates/base.html:192
@@ -1541,7 +1541,8 @@ msgstr "Aiemmin IronStackista viety .json-tiedosto."
 msgid "Must be a .json file."
 msgstr "Tiedoston on oltava .json-tiedosto."
 
-#: apps/core/forms.py:83 templates/nutrition/food_list.html:77
+#: apps/core/forms.py:83 templates/core/_bmi_card.html:28
+#: templates/nutrition/food_list.html:77
 msgid "Category"
 msgstr "Kategoria"
 
@@ -2997,6 +2998,7 @@ msgid "Fat (g)"
 msgstr "Rasva (g)"
 
 #: apps/nutrition/forms.py:277 apps/nutrition/forms.py:319
+#: apps/workouts/forms.py:47
 msgid "Notes"
 msgstr "Muistiinpanot"
 
@@ -4014,8 +4016,8 @@ msgstr ""
 "sen yksityisenä."
 
 #: apps/programs/forms.py:117 apps/workouts/forms.py:95
-msgid "exercise"
-msgstr "liike"
+msgid "Exercise"
+msgstr "Liike"
 
 #: apps/programs/forms.py:119 apps/programs/forms.py:122
 msgid "Target"
@@ -5567,7 +5569,7 @@ msgstr ""
 "Sarjat ja virstanpylväät kaikilta tämän palvelimen käyttäjiltä, jotka "
 "jakavat ne."
 
-#: apps/tutorials/tours.py:159
+#: apps/tutorials/tours.py:159 templates/base.html:252
 msgid "Shortcuts"
 msgstr "Pikalinkit"
 
@@ -6681,8 +6683,9 @@ msgstr ""
 "Jokainen esittely käynnistyy uudelleen, kun avaat sen sivun seuraavan kerran."
 
 #: apps/workouts/forms.py:41
-msgid "reps"
-msgstr "toistot"
+#: templates/workouts/_performed_exercise_card.html:18
+msgid "Reps"
+msgstr "Toistot"
 
 #: apps/workouts/forms.py:42
 msgid "Target reps"
@@ -6713,11 +6716,11 @@ msgid "RPE goes from %(min)s to %(max)s."
 msgstr "RPE on asteikolla %(min)s–%(max)s."
 
 #: apps/workouts/views.py:168 apps/workouts/views.py:253
-#: apps/workouts/views.py:265 apps/workouts/views.py:371
+#: apps/workouts/views.py:265 apps/workouts/views.py:373
 msgid "This session is no longer in progress."
 msgstr "Tämä treeni ei ole enää käynnissä."
 
-#: apps/workouts/views.py:353
+#: apps/workouts/views.py:355
 #, python-format
 msgid "New PR - %(exercise)s: %(record_type)s %(value)s"
 msgstr "Uusi ennätys - %(exercise)s: %(record_type)s %(value)s"
@@ -7405,6 +7408,12 @@ msgstr "Päivämäärä"
 #: templates/activities/activity_history.html:45
 msgid "Distance"
 msgstr "Matka"
+
+#: templates/activities/activity_history.html:45
+#: templates/measurements/measurement_history.html:54
+#: templates/workouts/_performed_exercise_card.html:18
+msgid "Actions"
+msgstr "Toiminnot"
 
 #: templates/activities/activity_history.html:54
 #: templates/exercises/exercise_detail.html:12
@@ -8282,11 +8291,11 @@ msgstr "Treeni"
 msgid "Profile - new friend/group activity"
 msgstr "Profiili - uutta kaveri-/ryhmätoimintaa"
 
-#: templates/base.html:246
+#: templates/base.html:254
 msgid "Continue training"
 msgstr "Jatka harjoittelua"
 
-#: templates/base.html:252
+#: templates/base.html:260
 msgid "Unread messages"
 msgstr "Lukemattomat viestit"
 
@@ -10068,7 +10077,7 @@ msgstr ""
 msgid "Browse by category"
 msgstr "Selaa kategorioittain"
 
-#: templates/nutrition/food_browse.html:50
+#: templates/nutrition/food_browse.html:52
 #: templates/nutrition/food_detail.html:87
 #: templates/nutrition/food_form.html:19
 msgid "Back to foods"
@@ -10300,6 +10309,10 @@ msgstr "Ei vielä ainesosia."
 #: templates/nutrition/recipe_detail.html:58
 msgid "Add ingredient"
 msgstr "Lisää ainesosa"
+
+#: templates/nutrition/recipe_detail.html:66
+msgid "Nutrient"
+msgstr "Ravintoaine"
 
 #: templates/nutrition/recipe_detail.html:66
 msgid "Total"
@@ -11039,25 +11052,25 @@ msgstr "Poista ilmoitusten mykistys"
 msgid "Mute notifications"
 msgstr "Mykistä ilmoitukset"
 
-#: templates/social/group_detail.html:131
-msgid "Back to groups"
-msgstr "Takaisin ryhmiin"
-
-#: templates/social/group_detail.html:137
+#: templates/social/group_detail.html:141
 msgid "Leave this group?"
 msgstr "Poistutaanko tästä ryhmästä?"
 
-#: templates/social/group_detail.html:139
+#: templates/social/group_detail.html:143
 msgid "Leave group"
 msgstr "Poistu ryhmästä"
 
-#: templates/social/group_detail.html:143
+#: templates/social/group_detail.html:147
 msgid "Delete this group? This can't be undone."
 msgstr "Poistetaanko ryhmä? Tätä ei voi perua."
 
-#: templates/social/group_detail.html:145
+#: templates/social/group_detail.html:149
 msgid "Delete group"
 msgstr "Poista ryhmä"
+
+#: templates/social/group_detail.html:154
+msgid "Back to groups"
+msgstr "Takaisin ryhmiin"
 
 #: templates/social/group_form.html:3 templates/social/group_form.html:6
 msgid "Edit group"
@@ -11512,14 +11525,6 @@ msgstr "Tavoite: %(count)s × %(min)s-%(max)s"
 msgid "Set"
 msgstr "Sarja"
 
-#: templates/workouts/_performed_exercise_card.html:18
-msgid "Reps"
-msgstr "Toistot"
-
-#: templates/workouts/_performed_exercise_card.html:18
-msgid "Actions"
-msgstr "Toiminnot"
-
 #: templates/workouts/_performed_exercise_card.html:23
 msgid "W"
 msgstr "L"
@@ -11542,7 +11547,7 @@ msgstr "Sarjoja ei ole vielä kirjattu."
 msgid "Suggested: %(weight)s"
 msgstr "Ehdotus: %(weight)s"
 
-#: templates/workouts/_performed_exercise_card.html:75
+#: templates/workouts/_performed_exercise_card.html:85
 #: templates/workouts/_train_panel.html:97
 msgid "Log set"
 msgstr "Kirjaa sarja"
@@ -11673,6 +11678,12 @@ msgstr "Muokkaa sarjaa"
 #, python-format
 msgid "Edit set %(number)s"
 msgstr "Muokkaa sarjaa %(number)s"
+
+#~ msgid "exercise"
+#~ msgstr "liike"
+
+#~ msgid "reps"
+#~ msgstr "toistot"
 
 #, python-format
 #~ msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."

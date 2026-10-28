@@ -114,7 +114,7 @@ class ExercisePrescriptionForm(forms.ModelForm):
             "notes",
         ]
         labels = {
-            "exercise": _("exercise"),
+            "exercise": _("Exercise"),
             "target_rpe": lazy_format_html(
                 "{} {}", _("Target"), abbr_label(_("RPE"), RPE_FULL)
             ),

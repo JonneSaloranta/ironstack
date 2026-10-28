@@ -78,7 +78,7 @@
     </ul>
 
     {% if can_edit %}
-      <a data-tour="add-prescription" class="button" href="{% url 'programs:prescription-create' program.pk workout.pk %}">{% trans "Add exercise" %}</a>
+      <a data-tour="add-prescription" class="button-secondary" href="{% url 'programs:prescription-create' program.pk workout.pk %}">{% trans "Add exercise" %}</a>
     {% endif %}
 
     <form data-tour="start-program-workout" method="post" action="{% url 'workouts:session-start' workout.pk %}">

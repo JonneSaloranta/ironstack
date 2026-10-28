@@ -392,6 +392,16 @@ class SetLoggingFlowTests(TestCase):
         )
         self.assertContains(response, '<abbr tabindex="0" title="Reps In Reserve">RIR</abbr>')
 
+    def test_set_form_matches_training_mode(self):
+        """The workout page's set form renders its yes/no flags as the
+        same switches training mode uses, with sentence-case labels."""
+        response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
+        self.assertContains(response, '<label class="checkbox-field flex-full">', count=2)
+        self.assertContains(response, '<label class="set-field flex-full">')
+        html = response.content.decode()
+        self.assertRegex(html, r'<label class="set-field">\s*Reps\s*<input')
+        self.assertRegex(html, r'<label class="set-field flex-full">\s*Notes\s*<textarea')
+
     def test_logging_a_set_via_the_view(self):
         response = self.client.post(
             reverse("workouts:set-log", args=[self.performed.pk]),
@@ -858,6 +868,11 @@ class TrainingFabTests(TestCase):
                 self.assertContains(
                     response, reverse("workouts:session-train", args=[session.pk])
                 )
+
+    def test_fab_sits_in_a_landmark(self):
+        services.start_session(self.alice, workout=None)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, '<aside aria-label="Shortcuts">')
 
     def test_fab_hidden_on_its_own_destination_page(self):
         # Regression: this used to render on the training screen too,

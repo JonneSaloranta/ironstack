@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 14:56+0000\n"
+"POT-Creation-Date: 2026-10-28 18:29+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -555,7 +555,7 @@ msgstr "kalorier"
 
 #: apps/activities/models.py:77 apps/measurements/models.py:90
 #: apps/programs/models.py:128 apps/programs/models.py:194
-#: apps/stretching/models.py:196 apps/workouts/forms.py:47
+#: apps/stretching/models.py:196
 msgid "notes"
 msgstr "anteckningar"
 
@@ -654,19 +654,19 @@ msgstr "1 år"
 msgid "All time"
 msgstr "All tid"
 
-#: apps/api/forms.py:10
+#: apps/api/forms.py:11
 msgid "Create"
 msgstr "Skapa"
 
-#: apps/api/forms.py:11
+#: apps/api/forms.py:12
 msgid "Read"
 msgstr "Läsa"
 
-#: apps/api/forms.py:12
+#: apps/api/forms.py:13
 msgid "Update"
 msgstr "Uppdatera"
 
-#: apps/api/forms.py:13 templates/activities/activity_history.html:57
+#: apps/api/forms.py:14 templates/activities/activity_history.html:57
 #: templates/core/_backup_row.html:22
 #: templates/measurements/measurement_history.html:65
 #: templates/nutrition/diary_day.html:80
@@ -677,18 +677,18 @@ msgstr "Uppdatera"
 msgid "Delete"
 msgstr "Ta bort"
 
-#: apps/api/forms.py:29 apps/nutrition/forms.py:272 apps/social/forms.py:13
+#: apps/api/forms.py:30 apps/nutrition/forms.py:272 apps/social/forms.py:13
 #: templates/admin/nutrition/food/merge.html:14
 #: templates/nutrition/_food_list_results.html:17
 #: templates/nutrition/food_list.html:75
 msgid "Name"
 msgstr "Namn"
 
-#: apps/api/forms.py:29
+#: apps/api/forms.py:30
 msgid "A label to tell your keys apart."
 msgstr "En etikett för att skilja dina nycklar åt."
 
-#: apps/api/models.py:24 apps/tutorials/tours.py:32
+#: apps/api/models.py:25 apps/tutorials/tours.py:32
 #: apps/tutorials/tours.py:1083 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
 #: templates/base.html:207 templates/base.html:230
@@ -696,14 +696,14 @@ msgstr "En etikett för att skilja dina nycklar åt."
 msgid "Profile"
 msgstr "Profil"
 
-#: apps/api/models.py:25 apps/tutorials/tours.py:284
+#: apps/api/models.py:26 apps/tutorials/tours.py:284
 #: templates/api/key_list.html:89 templates/exercises/exercise_detail.html:5
 #: templates/exercises/exercise_list.html:3
 #: templates/exercises/exercise_list.html:6
 msgid "Exercises"
 msgstr "Övningar"
 
-#: apps/api/models.py:26 apps/core/models.py:162 apps/tutorials/tours.py:339
+#: apps/api/models.py:27 apps/core/models.py:162 apps/tutorials/tours.py:339
 #: templates/api/key_list.html:93 templates/base.html:203
 #: templates/base.html:205 templates/programs/program_detail.html:5
 #: templates/programs/program_list.html:3
@@ -711,7 +711,7 @@ msgstr "Övningar"
 msgid "Programs"
 msgstr "Program"
 
-#: apps/api/models.py:27 apps/core/models.py:161 apps/tutorials/tours.py:25
+#: apps/api/models.py:28 apps/core/models.py:161 apps/tutorials/tours.py:25
 #: apps/tutorials/tours.py:387 templates/analytics/dashboard.html:13
 #: templates/api/key_list.html:97 templates/coaching/client_detail.html:26
 #: templates/workouts/session_detail.html:5
@@ -719,11 +719,11 @@ msgstr "Program"
 msgid "Workouts"
 msgstr "Träningspass"
 
-#: apps/api/models.py:28 templates/api/key_list.html:101
+#: apps/api/models.py:29 templates/api/key_list.html:101
 msgid "Measurements"
 msgstr "Mätningar"
 
-#: apps/api/models.py:29 apps/assistant/models.py:115 apps/core/models.py:165
+#: apps/api/models.py:30 apps/assistant/models.py:115 apps/core/models.py:165
 #: apps/tutorials/tours.py:588 templates/activities/activity_history.html:5
 #: templates/activities/activity_type_list.html:3
 #: templates/activities/activity_type_list.html:6
@@ -731,15 +731,15 @@ msgstr "Mätningar"
 msgid "Activities"
 msgstr "Aktiviteter"
 
-#: apps/api/models.py:30 templates/api/key_list.html:117
+#: apps/api/models.py:31 templates/api/key_list.html:117
 msgid "Records"
 msgstr "Rekord"
 
-#: apps/api/models.py:31 templates/api/key_list.html:121
+#: apps/api/models.py:32 templates/api/key_list.html:121
 msgid "Analytics"
 msgstr "Analys"
 
-#: apps/api/models.py:32 apps/core/models.py:166 apps/tutorials/tours.py:29
+#: apps/api/models.py:33 apps/core/models.py:166 apps/tutorials/tours.py:29
 #: templates/api/key_list.html:109 templates/base.html:184
 #: templates/base.html:186 templates/nutrition/dashboard.html:3
 #: templates/nutrition/dashboard.html:6
@@ -750,7 +750,7 @@ msgstr "Analys"
 msgid "Nutrition"
 msgstr "Näring"
 
-#: apps/api/models.py:33 apps/assistant/models.py:116 apps/core/models.py:167
+#: apps/api/models.py:34 apps/assistant/models.py:116 apps/core/models.py:167
 #: apps/stretching/models.py:209 apps/tutorials/tours.py:30
 #: apps/tutorials/tours.py:945 templates/api/key_list.html:113
 #: templates/base.html:190 templates/base.html:192
@@ -1535,7 +1535,8 @@ msgstr "En .json-fil som tidigare exporterats från IronStack."
 msgid "Must be a .json file."
 msgstr "Måste vara en .json-fil."
 
-#: apps/core/forms.py:83 templates/nutrition/food_list.html:77
+#: apps/core/forms.py:83 templates/core/_bmi_card.html:28
+#: templates/nutrition/food_list.html:77
 msgid "Category"
 msgstr "Kategori"
 
@@ -2978,6 +2979,7 @@ msgid "Fat (g)"
 msgstr "Fett (g)"
 
 #: apps/nutrition/forms.py:277 apps/nutrition/forms.py:319
+#: apps/workouts/forms.py:47
 msgid "Notes"
 msgstr "Anteckningar"
 
@@ -3985,8 +3987,8 @@ msgstr ""
 "det privat."
 
 #: apps/programs/forms.py:117 apps/workouts/forms.py:95
-msgid "exercise"
-msgstr "övning"
+msgid "Exercise"
+msgstr "Övning"
 
 #: apps/programs/forms.py:119 apps/programs/forms.py:122
 msgid "Target"
@@ -5528,7 +5530,7 @@ msgstr "Prestationer"
 msgid "Streaks and milestones from everyone on this server who shares them."
 msgstr "Streaks och milstolpar från alla på den här servern som delar dem."
 
-#: apps/tutorials/tours.py:159
+#: apps/tutorials/tours.py:159 templates/base.html:252
 msgid "Shortcuts"
 msgstr "Genvägar"
 
@@ -6637,8 +6639,9 @@ msgid "Every tutorial will start again the next time you open its page."
 msgstr "Varje guide startar igen nästa gång du öppnar dess sida."
 
 #: apps/workouts/forms.py:41
-msgid "reps"
-msgstr "repetitioner"
+#: templates/workouts/_performed_exercise_card.html:18
+msgid "Reps"
+msgstr "Repetitioner"
 
 #: apps/workouts/forms.py:42
 msgid "Target reps"
@@ -6669,11 +6672,11 @@ msgid "RPE goes from %(min)s to %(max)s."
 msgstr "RPE går från %(min)s till %(max)s."
 
 #: apps/workouts/views.py:168 apps/workouts/views.py:253
-#: apps/workouts/views.py:265 apps/workouts/views.py:371
+#: apps/workouts/views.py:265 apps/workouts/views.py:373
 msgid "This session is no longer in progress."
 msgstr "Detta pass pågår inte längre."
 
-#: apps/workouts/views.py:353
+#: apps/workouts/views.py:355
 #, python-format
 msgid "New PR - %(exercise)s: %(record_type)s %(value)s"
 msgstr "Nytt PR - %(exercise)s: %(record_type)s %(value)s"
@@ -7361,6 +7364,12 @@ msgstr "Datum"
 #: templates/activities/activity_history.html:45
 msgid "Distance"
 msgstr "Distans"
+
+#: templates/activities/activity_history.html:45
+#: templates/measurements/measurement_history.html:54
+#: templates/workouts/_performed_exercise_card.html:18
+msgid "Actions"
+msgstr "Åtgärder"
 
 #: templates/activities/activity_history.html:54
 #: templates/exercises/exercise_detail.html:12
@@ -8237,11 +8246,11 @@ msgstr "Träning"
 msgid "Profile - new friend/group activity"
 msgstr "Profil - ny vän-/gruppaktivitet"
 
-#: templates/base.html:246
+#: templates/base.html:254
 msgid "Continue training"
 msgstr "Fortsätt träna"
 
-#: templates/base.html:252
+#: templates/base.html:260
 msgid "Unread messages"
 msgstr "Olästa meddelanden"
 
@@ -10024,7 +10033,7 @@ msgstr ""
 msgid "Browse by category"
 msgstr "Bläddra efter kategori"
 
-#: templates/nutrition/food_browse.html:50
+#: templates/nutrition/food_browse.html:52
 #: templates/nutrition/food_detail.html:87
 #: templates/nutrition/food_form.html:19
 msgid "Back to foods"
@@ -10256,6 +10265,10 @@ msgstr "Inga ingredienser än."
 #: templates/nutrition/recipe_detail.html:58
 msgid "Add ingredient"
 msgstr "Lägg till ingrediens"
+
+#: templates/nutrition/recipe_detail.html:66
+msgid "Nutrient"
+msgstr "Näringsämne"
 
 #: templates/nutrition/recipe_detail.html:66
 msgid "Total"
@@ -10991,25 +11004,25 @@ msgstr "Sluta tysta aviseringar"
 msgid "Mute notifications"
 msgstr "Tysta aviseringar"
 
-#: templates/social/group_detail.html:131
-msgid "Back to groups"
-msgstr "Tillbaka till grupper"
-
-#: templates/social/group_detail.html:137
+#: templates/social/group_detail.html:141
 msgid "Leave this group?"
 msgstr "Lämna den här gruppen?"
 
-#: templates/social/group_detail.html:139
+#: templates/social/group_detail.html:143
 msgid "Leave group"
 msgstr "Lämna grupp"
 
-#: templates/social/group_detail.html:143
+#: templates/social/group_detail.html:147
 msgid "Delete this group? This can't be undone."
 msgstr "Ta bort gruppen? Detta kan inte ångras."
 
-#: templates/social/group_detail.html:145
+#: templates/social/group_detail.html:149
 msgid "Delete group"
 msgstr "Ta bort grupp"
+
+#: templates/social/group_detail.html:154
+msgid "Back to groups"
+msgstr "Tillbaka till grupper"
 
 #: templates/social/group_form.html:3 templates/social/group_form.html:6
 msgid "Edit group"
@@ -11464,14 +11477,6 @@ msgstr "Mål: %(count)s × %(min)s-%(max)s"
 msgid "Set"
 msgstr "Set"
 
-#: templates/workouts/_performed_exercise_card.html:18
-msgid "Reps"
-msgstr "Repetitioner"
-
-#: templates/workouts/_performed_exercise_card.html:18
-msgid "Actions"
-msgstr "Åtgärder"
-
 #: templates/workouts/_performed_exercise_card.html:23
 msgid "W"
 msgstr "U"
@@ -11494,7 +11499,7 @@ msgstr "Inga set loggade ännu."
 msgid "Suggested: %(weight)s"
 msgstr "Föreslaget: %(weight)s"
 
-#: templates/workouts/_performed_exercise_card.html:75
+#: templates/workouts/_performed_exercise_card.html:85
 #: templates/workouts/_train_panel.html:97
 msgid "Log set"
 msgstr "Logga set"
@@ -11625,6 +11630,12 @@ msgstr "Redigera set"
 #, python-format
 msgid "Edit set %(number)s"
 msgstr "Redigera set %(number)s"
+
+#~ msgid "exercise"
+#~ msgstr "övning"
+
+#~ msgid "reps"
+#~ msgstr "repetitioner"
 
 #, python-format
 #~ msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
