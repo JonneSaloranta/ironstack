@@ -41,7 +41,7 @@ qrcode[pil]>=8.0,<9.0
 # directly here now that this app's own code relies on it too, same
 # reasoning cryptography is pinned directly further down for the same
 # "don't leave a real dependency undeclared" reason.
-Pillow>=11.0,<13.0
+Pillow>=13.0,<14.0
 # apps.nutrition.openfoodfacts - on-demand product lookups against
 # OpenFoodFacts' public JSON API (docs/NUTRITION.md "OpenFoodFacts
 # integration"). No existing project code does outbound HTTP to a JSON
