@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.28.0] - 2026-10-28
+
 ### Added
 - API: prescriptions and personal records include the exercise's name,
   so a client no longer has to fetch every exercise separately.
