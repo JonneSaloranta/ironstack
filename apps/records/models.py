@@ -34,15 +34,19 @@ class PersonalRecord(TimeStampedModel):
     notification example: "Bench Press - 100 kg × 5"). `rep_count` is only
     populated for rep_specific_pr - the N in "NRM" (e.g. 5 for "5RM").
 
-    Rows are never rewritten to reflect a later edit/deletion of the
-    source set - `source_set` merely goes null (see `on_delete`) while the
-    achievement itself remains on record, same as any other historical
-    fact in this application. The one exception is `session_volume`: since
-    it's a running total across a session rather than a single set's raw
-    number, later sets in the *same* session update this row in place
-    instead of creating a new one each time (see
-    apps.records.services._upsert_session_volume_record) - otherwise every
-    single set in a good session would fire its own "new PR" notification.
+    Records follow the user's own corrections to their set history: when
+    a set is edited or deleted (or its session is), the views call
+    apps.records.services.rebuild_records, which removes the records that
+    set no longer earns and adds any a later set now does - records that
+    still hold are left untouched. `on_delete=SET_NULL` remains only as a
+    safety net for a deletion that bypasses that path. Program edits
+    never touch records (docs/PR_SYSTEM.md). `session_volume` is special:
+    since it's a running total across a session rather than a single
+    set's raw number, later sets in the *same* session update this row
+    in place instead of creating a new one each time (see
+    apps.records.services._upsert_session_volume_record) - otherwise
+    every single set in a good session would fire its own "new PR"
+    notification.
     """
 
     user = models.ForeignKey(

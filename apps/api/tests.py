@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -5,6 +7,8 @@ from rest_framework.test import APITestCase
 
 from apps.exercises.models import Exercise
 from apps.programs.models import Program, Workout
+from apps.records import services as records_services
+from apps.records.models import PersonalRecord, PRType
 from apps.workouts import services as workout_services
 
 from . import crypto, services
@@ -392,6 +396,63 @@ class WorkoutLoggingEndpointTests(APITestCase):
 
         records_response = self.client.get(reverse("api:record-list"), **self._auth())
         self.assertGreater(records_response.data["count"], 0)
+
+    def _logged_set(self, weight="600"):
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        exercise_set = workout_services.log_set(performed, weight=Decimal(weight), reps=8)
+        records_services.check_and_record_prs(exercise_set)
+        return exercise_set
+
+    def test_deleting_a_set_removes_the_records_it_set(self):
+        # Issue #21: a mistyped set, deleted right away, used to stay a
+        # personal record for good.
+        exercise_set = self._logged_set()
+        response = self.client.delete(
+            reverse("api:set-detail", args=[exercise_set.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(PersonalRecord.objects.filter(user=self.alice).exists())
+
+    def test_editing_a_set_rebuilds_its_records(self):
+        exercise_set = self._logged_set()
+        response = self.client.patch(
+            reverse("api:set-detail", args=[exercise_set.pk]),
+            {"weight": "60.00"},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        record = PersonalRecord.objects.get(record_type=PRType.MAX_WEIGHT)
+        self.assertEqual(record.value, Decimal("60"))
+
+    def test_moving_a_set_to_another_exercise_rebuilds_both(self):
+        exercise_set = self._logged_set()
+        other_exercise = Exercise.objects.create(name="API Test Row", owner=None)
+        other_performed = workout_services.add_performed_exercise(
+            exercise_set.performed_exercise.session, other_exercise
+        )
+        self.client.patch(
+            reverse("api:set-detail", args=[exercise_set.pk]),
+            {"performed_exercise": other_performed.pk},
+            format="json",
+            **self._auth(),
+        )
+        self.assertFalse(PersonalRecord.objects.filter(exercise=self.exercise).exists())
+        self.assertTrue(
+            PersonalRecord.objects.filter(
+                exercise=other_exercise, record_type=PRType.MAX_WEIGHT
+            ).exists()
+        )
+
+    def test_deleting_a_session_removes_its_records(self):
+        exercise_set = self._logged_set()
+        response = self.client.delete(
+            reverse("api:session-detail", args=[exercise_set.performed_exercise.session_id]),
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(PersonalRecord.objects.filter(user=self.alice).exists())
 
     def test_cannot_add_a_performed_exercise_referencing_another_users_private_exercise(self):
         # Regression, found live: PerformedExerciseSerializer's

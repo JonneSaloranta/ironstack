@@ -6091,3 +6091,21 @@ program page tags it. The flag is copied, exported/imported, in the API
 and in the assistant's program tool; a continuous program's workout form
 drops the weekday field and its weekday tags are hidden.
 
+
+## Records follow corrected sets (#21)
+
+A deleted set used to leave every `PersonalRecord` it produced in place
+(`source_set` just went null), so a typo like 600 kg for 60 kg became a
+permanent max weight and blocked every later PR for that exercise.
+`apps.records.services.rebuild_records(user, exercise)` now replays the
+exercise's remaining eligible sets in `performed_at` order - one query,
+the same strict comparisons as `check_and_record_prs` - and diffs the
+result against the stored rows: rows that still hold are untouched, rows
+a set no longer earns are deleted, and a later set that only now turns
+out to have been a record gets its row silently (no toast). It runs
+after a set is edited or deleted and after a session is deleted, in the
+web views and the API (including a set moved to another exercise via
+PATCH). Of the three options in the issue, this one was chosen over
+"in-progress sessions only" because a mistake is often noticed after
+finishing the workout, and over "remove a record by hand" because the
+user would then have to know which of the five rows to remove.

@@ -271,7 +271,9 @@ def session_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     session = get_object_or_404(services.sessions_for(request.user), pk=pk)
+    exercise_ids = list(session.performed_exercises.values_list("exercise_id", flat=True))
     session.delete()
+    records_services.rebuild_records_for_exercises(request.user, exercise_ids)
     return redirect("workouts:session-list")
 
 
@@ -410,6 +412,7 @@ def set_edit(request, pk):
         form = ExerciseSetForm(request.POST, instance=exercise_set, user=request.user)
         if form.is_valid():
             form.save()
+            records_services.rebuild_records(request.user, performed_exercise.exercise)
             new_form, suggestion = _build_set_form(request.user, performed_exercise)
             return _render_session_or_card(
                 request, performed_exercise, new_form, suggestion=suggestion
@@ -432,6 +435,7 @@ def set_delete(request, pk):
     )
     performed_exercise = exercise_set.performed_exercise
     exercise_set.delete()
+    records_services.rebuild_records(request.user, performed_exercise.exercise)
     form, suggestion = _build_set_form(request.user, performed_exercise)
     return _render_session_or_card(request, performed_exercise, form, suggestion=suggestion)
 
