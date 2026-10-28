@@ -312,6 +312,28 @@ their ingredients, with `food`, `food_name`, `unit` (`g`/`ml`/`piece`),
 `PATCH` changes whichever is given. Both need the `nutrition` context -
 read for `GET`, update for `PUT`/`PATCH`.
 
+## Retrying writes
+
+A client on a bad connection retries a write until it gets an answer -
+but if the first attempt reached the server and only the response was
+lost, the retry would log the same set twice. `POST sets/`,
+`POST sessions/` and `POST performed-exercises/` therefore accept an
+optional `Idempotency-Key` header (1-255 characters; one random value,
+e.g. a UUID, per queued write, sent unchanged with every retry of it).
+
+- The first request with a key runs normally; a successful (2xx)
+  response is stored for that key and user (`apps.api.models.
+  IdempotencyKey`, `apps.api.idempotency`).
+- A repeat with the same key and the same method, path and body gets
+  that stored response back, with an `Idempotent-Replayed: true` header,
+  and creates nothing. Two requests with the same key at the same
+  moment still create only one row.
+- The same key with a different request is refused with `422`.
+- A failed request (4xx/5xx) isn't stored, so retrying it with the same
+  key simply runs it again.
+- Keys are remembered for 24 hours, then forgotten. Without the header a
+  request behaves exactly as before.
+
 ## What's deliberately not here
 
 - **Bulk/batch endpoints.** Every write is one row at a time, matching

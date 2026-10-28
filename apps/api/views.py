@@ -53,6 +53,8 @@ from apps.stretching.models import RoutineItem
 from apps.workouts import services as workout_services
 from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSessionStatus
 
+from . import idempotency
+from .idempotency import IdempotentCreateMixin
 from .models import ApiContext
 from .serializers import (
     AchievementSerializer,
@@ -254,6 +256,7 @@ def _query_datetime(request, name):
 
 
 @extend_schema_view(
+    create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]),
     list=extend_schema(
         parameters=[
             OpenApiParameter("status", enum=WorkoutSessionStatus.values),
@@ -266,7 +269,7 @@ def _query_datetime(request, name):
         ]
     )
 )
-class WorkoutSessionViewSet(viewsets.ModelViewSet):
+class WorkoutSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     """`?status=` and `?started_after=`/`?started_before=` narrow the
     list (issue #17) - a client resuming after a restart finds the
     session in progress with one request instead of paging through
@@ -317,7 +320,9 @@ class WorkoutSessionViewSet(viewsets.ModelViewSet):
         records_services.rebuild_records_for_exercises(self.request.user, exercise_ids)
 
 
+@extend_schema_view(create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]))
 class PerformedExerciseViewSet(
+    IdempotentCreateMixin,
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
@@ -370,7 +375,8 @@ class PerformedExerciseViewSet(
         return Response(data)
 
 
-class ExerciseSetViewSet(viewsets.ModelViewSet):
+@extend_schema_view(create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]))
+class ExerciseSetViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     """The actual "log a set" endpoint - perform_create goes through
     apps.workouts.services.log_set (auto-numbers set_number, ignoring
     anything a caller sent for it) and then

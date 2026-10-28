@@ -31,6 +31,9 @@ narrated summary of the same version.
   time for an exercise.
 - API: `performed-exercises/<id>/suggestion/` returns the same
   explainable weight suggestion the app shows when logging a set.
+- API: logging a set, starting a session and adding an exercise accept
+  an `Idempotency-Key` header, so a retried request on a bad connection
+  never logs the same thing twice.
 
 ### Fixed
 - Deleting or correcting a logged set (or deleting a workout) now
