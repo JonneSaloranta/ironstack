@@ -87,6 +87,7 @@ from .serializers import (
     StretchRoutineSerializer,
     StretchSerializer,
     StretchSessionSerializer,
+    SuggestionSerializer,
     TrainingSummarySerializer,
     UpNextSerializer,
     WorkoutSerializer,
@@ -336,6 +337,37 @@ class PerformedExerciseViewSet(
         session = serializer.validated_data["session"]
         exercise = serializer.validated_data["exercise"]
         serializer.instance = workout_services.add_performed_exercise(session, exercise)
+
+    @extend_schema(responses=SuggestionSerializer)
+    @action(detail=True, methods=["get"])
+    def suggestion(self, request, pk=None):
+        """The explainable weight suggestion the web shows when logging
+        a set (apps.progression.suggestions.suggest_weight, issue #15).
+        Only ever a default: nothing is logged until the client posts a
+        set the user confirmed."""
+        from apps.progression.suggestions import suggest_weight
+
+        performed = self.get_object()
+        empty = dict.fromkeys(SuggestionSerializer().fields)
+        if performed.prescription_id is None:
+            return Response(empty)
+        # The reason text is translated as it's built; an API key's
+        # request has no user language active yet (see ExerciseViewSet).
+        language = request.user.language
+        with translation.override(language) if language else nullcontext():
+            suggestion = suggest_weight(request.user, performed.prescription)
+            data = SuggestionSerializer(
+                {
+                    "suggested_weight": suggestion.suggested_weight,
+                    "target_min_reps": suggestion.target_min_reps,
+                    "target_max_reps": suggestion.target_max_reps,
+                    "method": performed.prescription.progression_method,
+                    "action": suggestion.action,
+                    "confidence": suggestion.confidence,
+                    "reason": suggestion.reason,
+                }
+            ).data
+        return Response(data)
 
 
 class ExerciseSetViewSet(viewsets.ModelViewSet):

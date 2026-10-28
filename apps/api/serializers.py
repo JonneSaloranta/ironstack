@@ -510,6 +510,24 @@ class PersonalRecordSerializer(serializers.ModelSerializer):
 # --------------------------------------------------------------------
 
 
+class SuggestionSerializer(serializers.Serializer):
+    """apps.progression.suggestions.Suggestion, plus the prescription's
+    progression `method`. Every field is null for a performed exercise
+    with no prescription behind it (added ad hoc), same as the web,
+    which shows no suggestion then. `weight` is kg like everywhere else
+    in this API; `reason` is in the user's own language."""
+
+    weight = serializers.DecimalField(
+        source="suggested_weight", max_digits=6, decimal_places=2, allow_null=True
+    )
+    min_reps = serializers.IntegerField(source="target_min_reps", allow_null=True)
+    max_reps = serializers.IntegerField(source="target_max_reps", allow_null=True)
+    method = serializers.CharField(allow_null=True)
+    action = serializers.CharField(allow_null=True)
+    confidence = serializers.CharField(allow_null=True)
+    reason = serializers.CharField(allow_null=True)
+
+
 class LastPerformanceSerializer(serializers.Serializer):
     """apps.workouts.services.last_performance - `session`/`started_at`
     null and `sets` empty when the exercise has never been completed."""

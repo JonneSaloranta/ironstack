@@ -29,6 +29,8 @@ narrated summary of the same version.
 - API: `up-next/` returns the "Up next" workout the dashboard offers.
 - API: `exercises/<id>/last-performance/` returns the sets you did last
   time for an exercise.
+- API: `performed-exercises/<id>/suggestion/` returns the same
+  explainable weight suggestion the app shows when logging a set.
 
 ### Fixed
 - Deleting or correcting a logged set (or deleting a workout) now

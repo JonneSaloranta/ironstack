@@ -749,6 +749,76 @@ class UpNextEndpointTests(APITestCase):
         self.assertEqual(response.status_code, 403)
 
 
+class SuggestionEndpointTests(APITestCase):
+    """Issue #15 - the web's smart weight suggestion, for a client."""
+
+    def setUp(self):
+        from apps.programs.models import ExercisePrescription
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="API Test Bench", owner=None)
+        program = Program.objects.create(owner=self.alice, name="Program")
+        self.workout = Workout.objects.create(program=program, name="Day 1")
+        ExercisePrescription.objects.create(
+            workout=self.workout,
+            exercise=self.exercise,
+            set_count=3,
+            min_reps=5,
+            max_reps=5,
+            target_weight=Decimal("60"),
+            progression_method="linear",
+            weight_increment=Decimal("2.5"),
+        )
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _suggestion(self):
+        session = workout_services.start_session(self.alice, workout=self.workout)
+        performed = session.performed_exercises.get()
+        return self.client.get(
+            reverse("api:performed-exercise-suggestion", args=[performed.pk]),
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+
+    def test_without_history_it_suggests_the_prescribed_target(self):
+        response = self._suggestion()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["weight"], "60.00")
+        self.assertEqual(response.data["min_reps"], 5)
+        self.assertEqual(response.data["method"], "linear")
+        self.assertEqual(response.data["action"], "insufficient_data")
+        self.assertEqual(response.data["confidence"], "low")
+        self.assertTrue(response.data["reason"])
+
+    def test_after_a_successful_session_it_adds_the_increment(self):
+        session = workout_services.start_session(self.alice, workout=self.workout)
+        performed = session.performed_exercises.get()
+        for _ in range(3):
+            workout_services.log_set(performed, weight=Decimal("60"), reps=5)
+        workout_services.complete_session(session)
+
+        response = self._suggestion()
+
+        self.assertEqual(response.data["weight"], "62.50")
+        self.assertEqual(response.data["action"], "increase")
+        self.assertEqual(response.data["confidence"], "medium")
+
+    def test_the_reason_is_in_the_users_language(self):
+        english = self._suggestion().data["reason"]
+        self.alice.language = "fi"
+        self.alice.save()
+        self.assertNotEqual(self._suggestion().data["reason"], english)
+
+    def test_no_prescription_means_no_suggestion(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        response = self.client.get(
+            reverse("api:performed-exercise-suggestion", args=[performed.pk]),
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(set(response.data.values()), {None})
+
+
 class LastPerformanceEndpointTests(APITestCase):
     """Issue #20 - "last time" for an exercise, across sessions."""
 
