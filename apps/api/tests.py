@@ -455,6 +455,46 @@ class WorkoutLoggingEndpointTests(APITestCase):
         self.assertEqual(response.status_code, 204)
         self.assertFalse(PersonalRecord.objects.filter(user=self.alice).exists())
 
+    def _session_ids(self, query):
+        response = self.client.get(reverse("api:session-list") + query, **self._auth())
+        self.assertEqual(response.status_code, 200)
+        return {row["id"] for row in response.data["results"]}
+
+    def test_sessions_can_be_filtered_by_status(self):
+        # Issue #17: a client resuming after a restart finds its session
+        # in progress with one request.
+        done = workout_services.start_session(self.alice, workout=None)
+        workout_services.complete_session(done)
+        current = workout_services.start_session(self.alice, workout=None)
+
+        self.assertEqual(self._session_ids("?status=in_progress"), {current.pk})
+        self.assertEqual(self._session_ids("?status=completed"), {done.pk})
+        self.assertEqual(self._session_ids(""), {done.pk, current.pk})
+
+    def test_sessions_can_be_filtered_by_start_time(self):
+        from datetime import datetime
+        from datetime import timezone as dt_timezone
+
+        september = workout_services.start_session(self.alice, workout=None)
+        september.started_at = datetime(2026, 9, 15, 18, tzinfo=dt_timezone.utc)
+        september.status = "completed"
+        september.save()
+        october = workout_services.start_session(self.alice, workout=None)
+        october.started_at = datetime(2026, 10, 1, 12, tzinfo=dt_timezone.utc)
+        october.save()
+
+        self.assertEqual(self._session_ids("?started_after=2026-10-01"), {october.pk})
+        self.assertEqual(self._session_ids("?started_before=2026-10-01"), {september.pk})
+        self.assertEqual(
+            self._session_ids("?started_after=2026-09-15T18:00:00Z&started_before=2026-09-16"),
+            {september.pk},
+        )
+
+    def test_an_invalid_session_filter_is_a_400(self):
+        for query in ("?status=paused", "?started_after=yesterday", "?started_before=2026-13-01"):
+            response = self.client.get(reverse("api:session-list") + query, **self._auth())
+            self.assertEqual(response.status_code, 400, query)
+
     def test_cannot_add_a_performed_exercise_referencing_another_users_private_exercise(self):
         # Regression, found live: PerformedExerciseSerializer's
         # `exercise` field had no ownership check at all - a bare

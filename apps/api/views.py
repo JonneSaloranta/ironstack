@@ -9,10 +9,13 @@ CLAUDE.md, business logic belongs in services, and a DRF view is exactly
 as much a "view" as a Django one in that sense.
 """
 
+from datetime import datetime, time
+
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from drf_spectacular.utils import OpenApiParameter, extend_schema
-from rest_framework import generics, mixins, status, viewsets
+from django.utils.dateparse import parse_date, parse_datetime
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
+from rest_framework import generics, mixins, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -47,7 +50,7 @@ from apps.records.models import PersonalRecord
 from apps.stretching import services as stretching_services
 from apps.stretching.models import RoutineItem
 from apps.workouts import services as workout_services
-from apps.workouts.models import ExerciseSet, PerformedExercise
+from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSessionStatus
 
 from .models import ApiContext
 from .serializers import (
@@ -188,15 +191,71 @@ class ExercisePrescriptionViewSet(viewsets.ModelViewSet):
 # --------------------------------------------------------------------
 
 
+def _query_datetime(request, name):
+    """`?<name>=` as an aware datetime: ISO 8601 (`2026-10-01T18:00:00Z`)
+    or a bare date, meaning its midnight in the server's time zone. None
+    when absent; a 400 when present but unparseable."""
+    raw = request.query_params.get(name)
+    if raw is None:
+        return None
+    try:
+        value = parse_datetime(raw)
+        if value is None:
+            day = parse_date(raw)
+            if day is not None:
+                value = datetime.combine(day, time.min)
+    except ValueError:  # well-formed but impossible, e.g. month 13
+        value = None
+    if value is None:
+        raise serializers.ValidationError({name: "Must be an ISO 8601 date or datetime."})
+    if timezone.is_naive(value):
+        value = timezone.make_aware(value)
+    return value
+
+
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter("status", enum=WorkoutSessionStatus.values),
+            OpenApiParameter(
+                "started_after", description="Inclusive: started at or after this date/time."
+            ),
+            OpenApiParameter(
+                "started_before", description="Exclusive: started before this date/time."
+            ),
+        ]
+    )
+)
 class WorkoutSessionViewSet(viewsets.ModelViewSet):
+    """`?status=` and `?started_after=`/`?started_before=` narrow the
+    list (issue #17) - a client resuming after a restart finds the
+    session in progress with one request instead of paging through
+    every session it ever logged."""
+
     serializer_class = WorkoutSessionSerializer
     api_context = ApiContext.WORKOUTS
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
 
     def get_queryset(self):
-        return workout_services.sessions_for(self.request.user).prefetch_related(
+        queryset = workout_services.sessions_for(self.request.user).prefetch_related(
             "performed_exercises__sets"
         )
+        if self.action != "list":
+            return queryset
+        session_status = self.request.query_params.get("status")
+        if session_status is not None:
+            if session_status not in WorkoutSessionStatus.values:
+                raise serializers.ValidationError(
+                    {"status": f"Must be one of: {', '.join(WorkoutSessionStatus.values)}."}
+                )
+            queryset = queryset.filter(status=session_status)
+        started_after = _query_datetime(self.request, "started_after")
+        if started_after is not None:
+            queryset = queryset.filter(started_at__gte=started_after)
+        started_before = _query_datetime(self.request, "started_before")
+        if started_before is not None:
+            queryset = queryset.filter(started_at__lt=started_before)
+        return queryset
 
     def perform_create(self, serializer):
         workout = serializer.validated_data.get("workout")

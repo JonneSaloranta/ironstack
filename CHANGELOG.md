@@ -21,6 +21,8 @@ narrated summary of the same version.
 ### Added
 - API: prescriptions and personal records include the exercise's name,
   so a client no longer has to fetch every exercise separately.
+- API: workout sessions can be filtered by status and start time, e.g.
+  `sessions/?status=in_progress` finds the workout in progress.
 
 ### Fixed
 - Deleting or correcting a logged set (or deleting a workout) now
