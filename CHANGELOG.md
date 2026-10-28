@@ -18,6 +18,11 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Fixed
+- Deleting or correcting a logged set (or deleting a workout) now
+  updates your personal records: a mistyped set no longer stays a
+  record forever, and a later set it was hiding becomes the record.
+
 ### Security
 - Pillow, used to read uploaded images, is updated to 13.x, which
   fixes security advisories affecting every earlier release.

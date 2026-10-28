@@ -221,7 +221,11 @@ logic. Concretely: `POST sets/` calls
 `apps.workouts.services.log_set` and then
 `apps.records.services.check_and_record_prs`, exactly the two calls the
 web UI's own set-logging view makes - a set logged through the API sets
-PRs the same as one logged through the app.
+PRs the same as one logged through the app. Likewise `PATCH`/`DELETE
+sets/<id>/` and `DELETE sessions/<id>/` call
+`apps.records.services.rebuild_records`, the same as the web's edit and
+delete views, so records follow a corrected or deleted set
+(`docs/PR_SYSTEM.md` "Correcting a logged set").
 
 Ownership rules match the web UI exactly too: a system exercise/program
 template is readable by everyone but only ever editable by whoever

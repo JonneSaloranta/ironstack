@@ -207,7 +207,9 @@ class WorkoutSessionViewSet(viewsets.ModelViewSet):
             workout_services.abandon_session(session)
 
     def perform_destroy(self, instance):
+        exercise_ids = list(instance.performed_exercises.values_list("exercise_id", flat=True))
         instance.delete()
+        records_services.rebuild_records_for_exercises(self.request.user, exercise_ids)
 
 
 class PerformedExerciseViewSet(
@@ -239,7 +241,9 @@ class ExerciseSetViewSet(viewsets.ModelViewSet):
     apps.records.services.check_and_record_prs, exactly the two calls
     apps.workouts.views.set_log makes for the same action on the web
     side, so a set logged via the API sets PRs the same as one logged
-    through the UI."""
+    through the UI. Editing or deleting a set rebuilds that exercise's
+    records (apps.records.services.rebuild_records), same as the web's
+    set_edit/set_delete."""
 
     serializer_class = ExerciseSetSerializer
     api_context = ApiContext.WORKOUTS
@@ -257,6 +261,21 @@ class ExerciseSetViewSet(viewsets.ModelViewSet):
         logged_set = workout_services.log_set(performed_exercise, **fields)
         records_services.check_and_record_prs(logged_set)
         serializer.instance = logged_set
+
+    def perform_update(self, serializer):
+        # performed_exercise is writable, so a set can move to another
+        # exercise - both the one it left and the one it joined change.
+        previous_exercise_id = serializer.instance.performed_exercise.exercise_id
+        exercise_set = serializer.save()
+        records_services.rebuild_records_for_exercises(
+            self.request.user,
+            [previous_exercise_id, exercise_set.performed_exercise.exercise_id],
+        )
+
+    def perform_destroy(self, instance):
+        exercise = instance.performed_exercise.exercise
+        instance.delete()
+        records_services.rebuild_records(self.request.user, exercise)
 
 
 # --------------------------------------------------------------------

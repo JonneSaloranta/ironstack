@@ -49,6 +49,24 @@ PR detection must be based on actual historical workout data, not the current pr
 
 A program edit must never erase or rewrite previous PRs.
 
+## Correcting a logged set
+
+Records follow the user's own corrections to their set history. When a
+set is edited or deleted, or a whole session is deleted (web or API),
+`apps.records.services.rebuild_records` replays that exercise's
+remaining sets in the order they were performed and brings the stored
+records in line:
+
+- a record that still holds keeps its row untouched
+- a record its set no longer earns (deleted, lowered, marked warmup or
+  failed) is removed
+- a later set that only now turns out to have been a record - because
+  the mistake it was compared against is gone - gets its record, without
+  a "New PR" notification
+
+So a mistyped 600 kg set, deleted right away, no longer stays the max
+weight forever (issue #21).
+
 ## PR notifications
 
 When a meaningful new PR is detected, display a clear notification.
@@ -82,3 +100,4 @@ Test:
 - volume records
 - session records
 - regression after program edits
+- records after a set is edited or deleted, or its session is deleted
