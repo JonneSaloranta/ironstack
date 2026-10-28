@@ -396,6 +396,7 @@ class WorkoutLoggingEndpointTests(APITestCase):
 
         records_response = self.client.get(reverse("api:record-list"), **self._auth())
         self.assertGreater(records_response.data["count"], 0)
+        self.assertEqual(records_response.data["results"][0]["exercise_name"], "API Test Squat")
 
     def _logged_set(self, weight="600"):
         session = workout_services.start_session(self.alice, workout=None)
@@ -453,6 +454,46 @@ class WorkoutLoggingEndpointTests(APITestCase):
         )
         self.assertEqual(response.status_code, 204)
         self.assertFalse(PersonalRecord.objects.filter(user=self.alice).exists())
+
+    def _session_ids(self, query):
+        response = self.client.get(reverse("api:session-list") + query, **self._auth())
+        self.assertEqual(response.status_code, 200)
+        return {row["id"] for row in response.data["results"]}
+
+    def test_sessions_can_be_filtered_by_status(self):
+        # Issue #17: a client resuming after a restart finds its session
+        # in progress with one request.
+        done = workout_services.start_session(self.alice, workout=None)
+        workout_services.complete_session(done)
+        current = workout_services.start_session(self.alice, workout=None)
+
+        self.assertEqual(self._session_ids("?status=in_progress"), {current.pk})
+        self.assertEqual(self._session_ids("?status=completed"), {done.pk})
+        self.assertEqual(self._session_ids(""), {done.pk, current.pk})
+
+    def test_sessions_can_be_filtered_by_start_time(self):
+        from datetime import datetime
+        from datetime import timezone as dt_timezone
+
+        september = workout_services.start_session(self.alice, workout=None)
+        september.started_at = datetime(2026, 9, 15, 18, tzinfo=dt_timezone.utc)
+        september.status = "completed"
+        september.save()
+        october = workout_services.start_session(self.alice, workout=None)
+        october.started_at = datetime(2026, 10, 1, 12, tzinfo=dt_timezone.utc)
+        october.save()
+
+        self.assertEqual(self._session_ids("?started_after=2026-10-01"), {october.pk})
+        self.assertEqual(self._session_ids("?started_before=2026-10-01"), {september.pk})
+        self.assertEqual(
+            self._session_ids("?started_after=2026-09-15T18:00:00Z&started_before=2026-09-16"),
+            {september.pk},
+        )
+
+    def test_an_invalid_session_filter_is_a_400(self):
+        for query in ("?status=paused", "?started_after=yesterday", "?started_before=2026-13-01"):
+            response = self.client.get(reverse("api:session-list") + query, **self._auth())
+            self.assertEqual(response.status_code, 400, query)
 
     def test_cannot_add_a_performed_exercise_referencing_another_users_private_exercise(self):
         # Regression, found live: PerformedExerciseSerializer's
@@ -635,6 +676,131 @@ class ExercisePrescriptionOwnershipTests(APITestCase):
             **self._auth(),
         )
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["exercise_name"], "System Squat")
+
+    def test_prescriptions_carry_the_exercise_name_wherever_they_appear(self):
+        # Issue #19: a client shouldn't need one request per exercise to
+        # render a workout.
+        from apps.programs.models import ExercisePrescription
+
+        exercise = Exercise.objects.create(name="System Bench", owner=None)
+        prescription = ExercisePrescription.objects.create(
+            workout=self.workout, exercise=exercise
+        )
+
+        program = self.client.get(
+            reverse("api:program-detail", args=[self.program.pk]), **self._auth()
+        )
+        workout = self.client.get(
+            reverse("api:workout-detail", args=[self.workout.pk]), **self._auth()
+        )
+        detail = self.client.get(
+            reverse("api:prescription-detail", args=[prescription.pk]), **self._auth()
+        )
+
+        self.assertEqual(
+            program.data["workouts"][0]["prescriptions"][0]["exercise_name"], "System Bench"
+        )
+        self.assertEqual(workout.data["prescriptions"][0]["exercise_name"], "System Bench")
+        self.assertEqual(detail.data["exercise_name"], "System Bench")
+
+
+class UpNextEndpointTests(APITestCase):
+    """Issue #16 - the dashboard's "Up next" workout, for a client."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.program = Program.objects.create(
+            owner=self.alice, name="Rotation", is_continuous=True
+        )
+        self.day_a = Workout.objects.create(program=self.program, name="A", order=0)
+        self.day_b = Workout.objects.create(program=self.program, name="B", order=1)
+
+    def _get(self, **permission_overrides):
+        _api_key, raw_secret = _create_key(self.alice, **permission_overrides)
+        return self.client.get(reverse("api:up-next"), HTTP_AUTHORIZATION=f"Bearer {raw_secret}")
+
+    def test_nothing_next_before_training_from_a_program(self):
+        response = self._get()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, {"program": None, "workout": None, "day": None})
+
+    def test_the_workout_after_the_last_completed_one(self):
+        session = workout_services.start_session(self.alice, workout=self.day_a)
+        workout_services.complete_session(session)
+
+        response = self._get()
+
+        self.assertEqual(response.data["program"]["id"], self.program.pk)
+        self.assertEqual(response.data["program"]["name"], "Rotation")
+        self.assertEqual(response.data["workout"]["id"], self.day_b.pk)
+        self.assertEqual(response.data["workout"]["name"], "B")
+        self.assertIsNone(response.data["day"])
+
+    def test_needs_programs_read_permission(self):
+        response = self._get(
+            programs={
+                "can_create": False,
+                "can_read": False,
+                "can_update": False,
+                "can_delete": False,
+            }
+        )
+        self.assertEqual(response.status_code, 403)
+
+
+class ExerciseListQueryTests(APITestCase):
+    """Issue #18 - an exercise picker shouldn't need one request per
+    page of the whole library."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _get(self, query):
+        response = self.client.get(
+            reverse("api:exercise-list") + query, HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        return response
+
+    def test_search_matches_the_name(self):
+        Exercise.objects.create(name="Zzq Test Curl", owner=self.alice)
+        response = self._get("?search=zzq test")
+        self.assertEqual([row["name"] for row in response.data["results"]], ["Zzq Test Curl"])
+
+    def test_search_matches_the_name_translated_to_the_users_language(self):
+        # The seeded "Barbell Row" is "Kulmasoutu tangolla" in Finnish.
+        self.alice.language = "en"
+        self.alice.save()
+        self.assertEqual(self._get("?search=kulmasoutu").data["count"], 0)
+
+        self.alice.language = "fi"
+        self.alice.save()
+        response = self._get("?search=kulmasoutu")
+        self.assertIn("Barbell Row", [row["name"] for row in response.data["results"]])
+
+    def test_ids_fetches_a_known_set(self):
+        first = Exercise.objects.create(name="Test A", owner=self.alice)
+        second = Exercise.objects.create(name="Test B", owner=self.alice)
+        Exercise.objects.create(name="Test C", owner=self.alice)
+        response = self._get(f"?ids={first.pk},{second.pk}")
+        self.assertEqual({row["id"] for row in response.data["results"]}, {first.pk, second.pk})
+
+    def test_ids_never_reach_another_users_exercise(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        bobs = Exercise.objects.create(name="Bob's Lift", owner=bob)
+        response = self._get(f"?ids={bobs.pk}")
+        self.assertEqual(response.data["count"], 0)
+
+    def test_malformed_ids_are_a_400(self):
+        self.assertEqual(self._get("?ids=1,two").status_code, 400)
+
+    def test_page_size_is_honoured_up_to_the_cap(self):
+        for index in range(110):
+            Exercise.objects.create(name=f"Test {index}", owner=self.alice)
+        self.assertEqual(len(self._get("").data["results"]), 25)
+        self.assertEqual(len(self._get("?page_size=5").data["results"]), 5)
+        self.assertEqual(len(self._get("?page_size=1000").data["results"]), 100)
 
 
 class OwnedResourceViewSetTests(APITestCase):

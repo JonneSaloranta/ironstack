@@ -42,6 +42,7 @@ router.register("stretch-sessions", views.StretchSessionViewSet, basename="stret
 urlpatterns = [
     path("profile/", views.ProfileView.as_view(), name="profile"),
     path("nutrition/profile/", views.NutritionProfileView.as_view(), name="nutrition-profile"),
+    path("up-next/", views.UpNextView.as_view(), name="up-next"),
     path("analytics/summary/", views.TrainingSummaryView.as_view(), name="analytics-summary"),
     path(
         "analytics/achievements/",

@@ -9,10 +9,14 @@ CLAUDE.md, business logic belongs in services, and a DRF view is exactly
 as much a "view" as a Django one in that sense.
 """
 
+from contextlib import nullcontext
+from datetime import datetime, time
+
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
-from drf_spectacular.utils import OpenApiParameter, extend_schema
-from rest_framework import generics, mixins, status, viewsets
+from django.utils import timezone, translation
+from django.utils.dateparse import parse_date, parse_datetime
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
+from rest_framework import generics, mixins, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -47,7 +51,7 @@ from apps.records.models import PersonalRecord
 from apps.stretching import services as stretching_services
 from apps.stretching.models import RoutineItem
 from apps.workouts import services as workout_services
-from apps.workouts.models import ExerciseSet, PerformedExercise
+from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSessionStatus
 
 from .models import ApiContext
 from .serializers import (
@@ -83,6 +87,7 @@ from .serializers import (
     StretchSerializer,
     StretchSessionSerializer,
     TrainingSummarySerializer,
+    UpNextSerializer,
     WorkoutSerializer,
     WorkoutSessionSerializer,
 )
@@ -128,12 +133,48 @@ class EquipmentViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
     api_context = ApiContext.EXERCISES
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "search",
+                description="Matches the name, also as translated to your language.",
+            ),
+            OpenApiParameter("ids", description="Comma-separated ids, e.g. 1,2,3."),
+        ]
+    )
+)
 class ExerciseViewSet(OwnedResourceViewSet):
+    """`?search=` and `?ids=` narrow the list (issue #18) - an exercise
+    picker finds what it needs without paging through the whole
+    library."""
+
     serializer_class = ExerciseSerializer
     api_context = ApiContext.EXERCISES
 
     def visible_queryset(self):
         return exercise_services.visible_to(self.request.user)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.action != "list":
+            return queryset
+        raw_ids = self.request.query_params.get("ids")
+        if raw_ids is not None:
+            parts = [part.strip() for part in raw_ids.split(",") if part.strip()]
+            if not all(part.isdigit() for part in parts):
+                raise serializers.ValidationError({"ids": "Must be comma-separated ids."})
+            queryset = queryset.filter(pk__in=[int(part) for part in parts])
+        query = self.request.query_params.get("search")
+        if query:
+            # An API key's request never passes through
+            # UserLanguageMiddleware with its user (DRF authenticates
+            # later), so the user's language is applied here - search
+            # matches the translated names they see in the app.
+            language = self.request.user.language
+            with translation.override(language) if language else nullcontext():
+                queryset = exercise_services.search(queryset, query)
+        return queryset
 
 
 # --------------------------------------------------------------------
@@ -147,7 +188,9 @@ class ProgramViewSet(OwnedResourceViewSet):
     soft_delete = False  # Program has no `active` field - matches its web view's real delete
 
     def visible_queryset(self):
-        return program_services.visible_to(self.request.user)
+        return program_services.visible_to(self.request.user).prefetch_related(
+            "workouts__prescriptions__exercise"
+        )
 
     def editable_queryset(self):
         return program_services.editable_by(self.request.user)
@@ -162,7 +205,9 @@ class WorkoutViewSet(viewsets.ModelViewSet):
             programs = program_services.editable_by(self.request.user)
         else:
             programs = program_services.visible_to(self.request.user)
-        return Workout.objects.filter(program__in=programs)
+        return Workout.objects.filter(program__in=programs).prefetch_related(
+            "prescriptions__exercise"
+        )
 
 
 class ExercisePrescriptionViewSet(viewsets.ModelViewSet):
@@ -174,7 +219,9 @@ class ExercisePrescriptionViewSet(viewsets.ModelViewSet):
             programs = program_services.editable_by(self.request.user)
         else:
             programs = program_services.visible_to(self.request.user)
-        return ExercisePrescription.objects.filter(workout__program__in=programs)
+        return ExercisePrescription.objects.filter(workout__program__in=programs).select_related(
+            "exercise"
+        )
 
 
 # --------------------------------------------------------------------
@@ -182,15 +229,71 @@ class ExercisePrescriptionViewSet(viewsets.ModelViewSet):
 # --------------------------------------------------------------------
 
 
+def _query_datetime(request, name):
+    """`?<name>=` as an aware datetime: ISO 8601 (`2026-10-01T18:00:00Z`)
+    or a bare date, meaning its midnight in the server's time zone. None
+    when absent; a 400 when present but unparseable."""
+    raw = request.query_params.get(name)
+    if raw is None:
+        return None
+    try:
+        value = parse_datetime(raw)
+        if value is None:
+            day = parse_date(raw)
+            if day is not None:
+                value = datetime.combine(day, time.min)
+    except ValueError:  # well-formed but impossible, e.g. month 13
+        value = None
+    if value is None:
+        raise serializers.ValidationError({name: "Must be an ISO 8601 date or datetime."})
+    if timezone.is_naive(value):
+        value = timezone.make_aware(value)
+    return value
+
+
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter("status", enum=WorkoutSessionStatus.values),
+            OpenApiParameter(
+                "started_after", description="Inclusive: started at or after this date/time."
+            ),
+            OpenApiParameter(
+                "started_before", description="Exclusive: started before this date/time."
+            ),
+        ]
+    )
+)
 class WorkoutSessionViewSet(viewsets.ModelViewSet):
+    """`?status=` and `?started_after=`/`?started_before=` narrow the
+    list (issue #17) - a client resuming after a restart finds the
+    session in progress with one request instead of paging through
+    every session it ever logged."""
+
     serializer_class = WorkoutSessionSerializer
     api_context = ApiContext.WORKOUTS
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
 
     def get_queryset(self):
-        return workout_services.sessions_for(self.request.user).prefetch_related(
+        queryset = workout_services.sessions_for(self.request.user).prefetch_related(
             "performed_exercises__sets"
         )
+        if self.action != "list":
+            return queryset
+        session_status = self.request.query_params.get("status")
+        if session_status is not None:
+            if session_status not in WorkoutSessionStatus.values:
+                raise serializers.ValidationError(
+                    {"status": f"Must be one of: {', '.join(WorkoutSessionStatus.values)}."}
+                )
+            queryset = queryset.filter(status=session_status)
+        started_after = _query_datetime(self.request, "started_after")
+        if started_after is not None:
+            queryset = queryset.filter(started_at__gte=started_after)
+        started_before = _query_datetime(self.request, "started_before")
+        if started_before is not None:
+            queryset = queryset.filter(started_at__lt=started_before)
+        return queryset
 
     def perform_create(self, serializer):
         workout = serializer.validated_data.get("workout")
@@ -344,6 +447,28 @@ class PersonalRecordViewSet(
 # --------------------------------------------------------------------
 # Analytics (read-only aggregates - no backing model of their own)
 # --------------------------------------------------------------------
+
+
+class UpNextView(APIView):
+    """The program and workout the dashboard offers next
+    (apps.workouts.services.up_next, issue #16): `day` is the date a
+    weekly program's workout is scheduled for, null for a continuous
+    one. All three fields are null before the user has completed a
+    workout from a program. Unlike the dashboard, this answers even
+    while a session is in progress - `sessions/?status=in_progress`
+    tells a client that. Only a suggestion: any workout can be
+    started."""
+
+    api_context = ApiContext.PROGRAMS
+
+    # See TrainingSummaryView's own comment below for why this is here.
+    @extend_schema(responses=UpNextSerializer)
+    def get(self, request):
+        upcoming = workout_services.up_next(request.user, timezone.localdate())
+        data = {"program": None, "workout": None, "day": None}
+        if upcoming is not None:
+            data = {"program": upcoming.program, "workout": upcoming.workout, "day": upcoming.day}
+        return Response(UpNextSerializer(data, context={"request": request}).data)
 
 
 class TrainingSummaryView(APIView):

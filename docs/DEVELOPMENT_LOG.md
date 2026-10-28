@@ -6109,3 +6109,18 @@ PATCH). Of the three options in the issue, this one was chosen over
 "in-progress sessions only" because a mistake is often noticed after
 finishing the workout, and over "remove a record by hand" because the
 user would then have to know which of the five rows to remove.
+
+## API for the Sailfish OS client (#16-#19)
+
+Four gaps found while building a native client. Prescriptions and
+records carry a read-only `exercise_name` (#19), with the program,
+workout and prescription querysets prefetching the exercise. `sessions/`
+takes `?status=` and `?started_after=`/`?started_before=` (#17); a bad
+value is a 400, not silently ignored. `exercises/` takes `?search=` and
+`?ids=` (#18) - search reuses `apps.exercises.services.search` under
+`translation.override(user.language)`, because an API key is
+authenticated by DRF after `UserLanguageMiddleware` has already run with
+an anonymous user. A shared `apps.api.pagination.ApiPagination` adds
+`?page_size=` (capped at 100) to every list. `up-next/` (#16) wraps
+`apps.workouts.services.up_next`, returning null fields rather than an
+empty body when there's nothing next.

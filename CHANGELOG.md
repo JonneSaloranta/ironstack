@@ -18,6 +18,16 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- API: prescriptions and personal records include the exercise's name,
+  so a client no longer has to fetch every exercise separately.
+- API: workout sessions can be filtered by status and start time, e.g.
+  `sessions/?status=in_progress` finds the workout in progress.
+- API: exercises can be searched by name (in your own language too) and
+  fetched by a list of ids, and every list takes `?page_size=` (up to
+  100).
+- API: `up-next/` returns the "Up next" workout the dashboard offers.
+
 ### Fixed
 - Deleting or correcting a logged set (or deleting a workout) now
   updates your personal records: a mistyped set no longer stays a

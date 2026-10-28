@@ -286,7 +286,7 @@ REST_FRAMEWORK = {
     # per-scope cache namespace by; the real numbers never come from here.
     "DEFAULT_THROTTLE_RATES": {"api_key_minute": "1000/min", "api_key_day": "1000000/day"},
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_PAGINATION_CLASS": "apps.api.pagination.ApiPagination",
     "PAGE_SIZE": 25,
     "DATETIME_FORMAT": "iso-8601",
     # drf-spectacular's schema generator, in place of DRF's own much
