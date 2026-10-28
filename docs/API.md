@@ -186,7 +186,9 @@ keys" above) - a deliberately separate credential from the API key
 you authorize with inside it. The raw OpenAPI 3 schema itself is at
 `/api/docs/schema/` (also session-gated), for generating a typed
 client or importing into another tool (Postman, Insomnia, ...) instead
-of using the bundled UI.
+of using the bundled UI - or use the committed
+`docs/api/openapi-v1.yaml` (see "Versioning" below), which needs no
+login.
 
 Served entirely from this instance's own static files
 (`drf-spectacular-sidecar`), not a CDN - works the same on an
@@ -194,6 +196,61 @@ offline/LAN-only deployment as on one with internet access, and needs
 no exception to this app's CSP (`apps.core.middleware.
 ContentSecurityPolicyMiddleware`, docs/SECURITY.md
 "Content-Security-Policy").
+
+## Versioning
+
+The version is part of every URL: `/api/v1/...`. A client that works
+against v1 today keeps working against v1 after any later release.
+
+**What may change within a version - additions only:**
+
+- a new endpoint, or a new method on an existing one
+- a new field in a response
+- a new optional query parameter, header or request field
+- a new value in an enum the client only sends (never one it receives
+  and has to handle - see below)
+
+So a client must ignore response fields it doesn't know. Everything
+else is a breaking change and needs a new version: removing or renaming
+an endpoint, field or parameter, changing a field's type or meaning,
+making something optional required, a new required request field, or a
+new value in an enum the API returns.
+
+**How it's enforced:**
+
+- Each served version's OpenAPI schema is committed as
+  `docs/api/openapi-<version>.yaml` (`apps.api.schema`). After an API
+  change run `python manage.py api_schema` and commit the regenerated
+  file - the diff is the change as a client sees it, docstrings
+  included, since they're the Swagger descriptions.
+  `python manage.py api_schema --check` (a CI step and a test) fails
+  while the committed file doesn't match the code.
+- CI's `api-compatibility` job compares each committed schema with
+  master's copy using [oasdiff](https://github.com/oasdiff/oasdiff) and
+  fails on every change it classifies as an error; publishing the image
+  waits for it. Its warnings (e.g. a new enum value in a response) are
+  printed but don't fail the run - read them in review against the
+  rules above.
+
+**Adding a version (v2):** only when a breaking change is genuinely
+needed, and only for what it changes. The version is DRF's
+`NamespaceVersioning`: the URL include's namespace (`config/urls.py`),
+available in every API view and serializer as `request.version`. So:
+
+1. Add `path("api/v2/", include("apps.api.urls", namespace="v2"))`
+   to `config/urls.py`, `"v2"` to `REST_FRAMEWORK["ALLOWED_VERSIONS"]`
+   and to `apps.api.schema.VERSIONS`, then run `api_schema` to commit
+   `openapi-v2.yaml`.
+2. Make the breaking change only where `request.version == "v2"`
+   (e.g. `get_serializer_class` returning a v2 serializer) - every other
+   endpoint is shared, and v1's committed schema must not change.
+3. Point the docs views (`apps.api.views_docs.SchemaView.api_version`)
+   at v2, note in CHANGELOG.md when v1 will be removed, and keep it
+   working until then. Removing v1 is itself a breaking change, made
+   in a release whose notes say so.
+
+`reverse("api:...")` resolves to the most recently included version, so
+code and tests that need a specific one pass `current_app="v1"`.
 
 ## Endpoints
 

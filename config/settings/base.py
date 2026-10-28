@@ -286,6 +286,12 @@ REST_FRAMEWORK = {
     # per-scope cache namespace by; the real numbers never come from here.
     "DEFAULT_THROTTLE_RATES": {"api_key_minute": "1000/min", "api_key_day": "1000000/day"},
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
+    # docs/API.md "Versioning": the version is the URL include's
+    # namespace (config.urls), available to every API view as
+    # request.version, so a later version can change one endpoint's
+    # shape while every other endpoint is shared.
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
+    "ALLOWED_VERSIONS": ["v1"],
     "DEFAULT_PAGINATION_CLASS": "apps.api.pagination.ApiPagination",
     "PAGE_SIZE": 25,
     "DATETIME_FORMAT": "iso-8601",
@@ -321,7 +327,8 @@ SPECTACULAR_SETTINGS = {
     ),
     "VERSION": _ironstack_version,
     "SERVE_INCLUDE_SCHEMA": False,
-    "SCHEMA_PATH_PREFIX": "/api/v1/",
+    "SCHEMA_PATH_PREFIX": "/api/v[0-9]+/",
+    "PREPROCESSING_HOOKS": ["apps.api.openapi.drop_format_suffix_endpoints"],
     "COMPONENT_SPLIT_REQUEST": True,
     # requirements/base.txt's own comment on drf-spectacular-sidecar
     # explains why this app serves Swagger UI from local static files

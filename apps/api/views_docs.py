@@ -18,7 +18,8 @@ since it embeds schema_auth_names/CSRF header name) content.
 
 from django.template.loader import render_to_string
 from django.urls import reverse
-from drf_spectacular.views import SpectacularSwaggerView
+from drf_spectacular.utils import extend_schema
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.renderers import BaseRenderer
 from rest_framework.response import Response
 
@@ -32,11 +33,26 @@ class _JavaScriptRenderer(BaseRenderer):
         return data
 
 
+class SchemaView(SpectacularAPIView):
+    """The OpenAPI schema of the current API version. These docs views
+    sit outside the versioned API URLs, so they opt out of the API's
+    NamespaceVersioning (which would 404 the "api_docs" namespace) and
+    name the version explicitly instead - docs/API.md "Versioning"."""
+
+    versioning_class = None
+    api_version = "v1"
+
+
 class IronStackSwaggerView(SpectacularSwaggerView):
     """The actual `/api/docs/` page - identical to the base view's own
     HTML except for pointing script_url at SwaggerUIBootstrapScriptView
     below instead of leaving it empty."""
 
+    versioning_class = None  # see SchemaView
+
+    # Not part of the API itself - kept out of the schema the same way
+    # the base view's own get() is.
+    @extend_schema(exclude=True)
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
         response.data["script_url"] = reverse("api_docs:swagger-ui-bootstrap")
@@ -51,7 +67,9 @@ class SwaggerUIBootstrapScriptView(SpectacularSwaggerView):
     'self') rather than needing 'unsafe-inline'."""
 
     renderer_classes = [_JavaScriptRenderer]
+    versioning_class = None  # see SchemaView
 
+    @extend_schema(exclude=True)
     def get(self, request, *args, **kwargs):
         # Reuses the base view's own get() purely to build the same
         # context dict (settings/schema_url/csrf_header_name/

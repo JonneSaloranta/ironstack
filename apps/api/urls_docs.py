@@ -13,14 +13,13 @@ first one.
 
 from django.contrib.auth.decorators import login_required
 from django.urls import path
-from drf_spectacular.views import SpectacularAPIView
 
-from .views_docs import IronStackSwaggerView, SwaggerUIBootstrapScriptView
+from .views_docs import IronStackSwaggerView, SchemaView, SwaggerUIBootstrapScriptView
 
 app_name = "api_docs"
 
 urlpatterns = [
-    path("schema/", login_required(SpectacularAPIView.as_view()), name="schema"),
+    path("schema/", login_required(SchemaView.as_view()), name="schema"),
     path(
         "",
         login_required(IronStackSwaggerView.as_view(url_name="api_docs:schema")),

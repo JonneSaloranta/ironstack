@@ -5,7 +5,21 @@ from . import views
 
 app_name = "api"
 
-router = DefaultRouter()
+
+
+class ApiRouter(DefaultRouter):
+    """Every row id in this API is an integer, so the router's detail
+    URLs only match digits - which also gives the OpenAPI schema an
+    integer `id` parameter instead of a guessed string (the viewsets'
+    querysets depend on the request's user, so drf-spectacular can't
+    derive the type from the model itself)."""
+
+    def __init__(self):
+        super().__init__(use_regex_path=False)
+        self._default_value_pattern = "int"
+
+
+router = ApiRouter()
 router.register("exercises", views.ExerciseViewSet, basename="exercise")
 router.register("muscle-groups", views.MuscleGroupViewSet, basename="muscle-group")
 router.register("equipment", views.EquipmentViewSet, basename="equipment")
