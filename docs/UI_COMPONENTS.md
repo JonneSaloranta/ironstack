@@ -160,6 +160,12 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
   no-JS fallback. For clients use `apps.coaching.forms.ClientPickerField`.
 - A list of checkboxes gets its label above it (`_field.html`); only a single
   checkbox sits beside its label.
+- An on/off **setting** is a switch: `<label class="checkbox-field">` (the
+  set-log flags too, in both set forms). One option among several (meal
+  slots, API permissions) and radios stay native controls; base.css sizes
+  them to 1.25rem in the theme accent - don't restyle them per page.
+- A checkbox inside a table cell (the API key permission grid) has no
+  `<label>`, so give it `aria-label="<column> - <row>"`.
 - Compact inline forms (set logging, training mode, diary quantity) use
   `.set-field`/`.set-log-form`/`.qty-input` - the only allowed exception to
   `_field.html`.
@@ -179,6 +185,10 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
   control always look the same.
 - Status/metadata pills: `.tag` (accent), `.tag-success`, `.tag-muted`,
   `.tag-outline`; never rely on color alone - the tag has text.
+- Every `<th>` has text; a column that needs none visually (row actions,
+  the label column) gets `<span class="visually-hidden">Actions</span>`.
+- A comma-separated run of item links in a sentence goes in a
+  `.inline-link-list` so each is a 24px target.
 - Filters: `.filter-row`; date ranges: `.range-filter` (segmented control).
 
 ## States
@@ -218,6 +228,9 @@ select tour targets by CSS class.
 
 - No `style=""` attributes, except a value that is genuinely data-driven
   (progress bar width).
+- De-emphasise with `--color-text-muted` or a dashed border, never
+  `opacity` on text: it silently drops contrast below AA (the month
+  calendar's padding days are the one accepted exception).
 - Colors only through `--color-*`; spacing `--space-1…6`; type `--text-xs…xl`;
   radii `--radius-sm/--radius/--radius-lg`; shadows `--shadow-*`; stacking
   `--z-*`. Reach for an existing utility (`.row`, `.stack`, `.mt-*`,
@@ -256,6 +269,18 @@ Places that knowingly differ from the rules above:
   nutrition target suggestions, training mode's "all done".
 
 ## Audit log
+
+### 2026-10-28 - second audit, rendered in a browser
+
+Every page crawled at 320/390/768/1280/1680px in dark and light with
+axe-core (`apps/core/test_ui_audit_crawl.py`, opt-in with `UI_AUDIT=1`).
+Findings, fixes and what's still open: `docs/ui-ux/audit.md`; token
+reference `docs/ui-ux/design-system.md`. Rules added above: native
+checkbox/radio vs switch, named grid checkboxes, no empty `<th>`,
+`.inline-link-list`, no opacity on text. Also: the workout page's and a
+program card's "Add exercise" became secondary (the section's primary is
+Complete/Start workout), the group page's back link is last again, the
+FABs sit in an `<aside aria-label="Shortcuts">`.
 
 ### 2026-10-01 - first full template audit
 
