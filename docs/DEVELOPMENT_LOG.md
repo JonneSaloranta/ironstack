@@ -6124,3 +6124,19 @@ an anonymous user. A shared `apps.api.pagination.ApiPagination` adds
 `?page_size=` (capped at 100) to every list. `up-next/` (#16) wraps
 `apps.workouts.services.up_next`, returning null fields rather than an
 empty body when there's nothing next.
+
+## Suggestions, last performance and idempotent writes in the API (#15, #20, #22)
+
+`performed-exercises/<id>/suggestion/` (#15) wraps `suggest_weight`
+under the user's language, since its reason text is translated as it's
+built. `exercises/<id>/last-performance/` (#20) uses a new
+`apps.workouts.services.last_performance` - the exercise in the most
+recent completed session that logged a set of it. `Idempotency-Key`
+(#22) is `apps.api.idempotency.IdempotentCreateMixin` on the set,
+session and performed-exercise viewsets: the lookup, the create and
+storing the response run in one transaction, so when the same key
+arrives twice at once the unique (user, key) constraint fails the
+second request, rolls back the row it created (and any PRs) and answers
+it with the first response. The request hash covers method, path and
+parsed body; only 2xx responses are stored, and a user's keys older
+than 24 hours are cleared when they store a new one.
