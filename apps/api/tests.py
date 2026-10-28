@@ -705,6 +705,60 @@ class ExercisePrescriptionOwnershipTests(APITestCase):
         self.assertEqual(detail.data["exercise_name"], "System Bench")
 
 
+class ExerciseListQueryTests(APITestCase):
+    """Issue #18 - an exercise picker shouldn't need one request per
+    page of the whole library."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _get(self, query):
+        response = self.client.get(
+            reverse("api:exercise-list") + query, HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        return response
+
+    def test_search_matches_the_name(self):
+        Exercise.objects.create(name="Zzq Test Curl", owner=self.alice)
+        response = self._get("?search=zzq test")
+        self.assertEqual([row["name"] for row in response.data["results"]], ["Zzq Test Curl"])
+
+    def test_search_matches_the_name_translated_to_the_users_language(self):
+        # The seeded "Barbell Row" is "Kulmasoutu tangolla" in Finnish.
+        self.alice.language = "en"
+        self.alice.save()
+        self.assertEqual(self._get("?search=kulmasoutu").data["count"], 0)
+
+        self.alice.language = "fi"
+        self.alice.save()
+        response = self._get("?search=kulmasoutu")
+        self.assertIn("Barbell Row", [row["name"] for row in response.data["results"]])
+
+    def test_ids_fetches_a_known_set(self):
+        first = Exercise.objects.create(name="Test A", owner=self.alice)
+        second = Exercise.objects.create(name="Test B", owner=self.alice)
+        Exercise.objects.create(name="Test C", owner=self.alice)
+        response = self._get(f"?ids={first.pk},{second.pk}")
+        self.assertEqual({row["id"] for row in response.data["results"]}, {first.pk, second.pk})
+
+    def test_ids_never_reach_another_users_exercise(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        bobs = Exercise.objects.create(name="Bob's Lift", owner=bob)
+        response = self._get(f"?ids={bobs.pk}")
+        self.assertEqual(response.data["count"], 0)
+
+    def test_malformed_ids_are_a_400(self):
+        self.assertEqual(self._get("?ids=1,two").status_code, 400)
+
+    def test_page_size_is_honoured_up_to_the_cap(self):
+        for index in range(110):
+            Exercise.objects.create(name=f"Test {index}", owner=self.alice)
+        self.assertEqual(len(self._get("").data["results"]), 25)
+        self.assertEqual(len(self._get("?page_size=5").data["results"]), 5)
+        self.assertEqual(len(self._get("?page_size=1000").data["results"]), 100)
+
+
 class OwnedResourceViewSetTests(APITestCase):
     """apps.api.viewsets.OwnedResourceViewSet, via the exercises endpoint
     - covers the shared ownership shape every OwnedResourceViewSet

@@ -23,6 +23,9 @@ narrated summary of the same version.
   so a client no longer has to fetch every exercise separately.
 - API: workout sessions can be filtered by status and start time, e.g.
   `sessions/?status=in_progress` finds the workout in progress.
+- API: exercises can be searched by name (in your own language too) and
+  fetched by a list of ids, and every list takes `?page_size=` (up to
+  100).
 
 ### Fixed
 - Deleting or correcting a logged set (or deleting a workout) now

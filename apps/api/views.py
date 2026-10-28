@@ -9,10 +9,11 @@ CLAUDE.md, business logic belongs in services, and a DRF view is exactly
 as much a "view" as a Django one in that sense.
 """
 
+from contextlib import nullcontext
 from datetime import datetime, time
 
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
+from django.utils import timezone, translation
 from django.utils.dateparse import parse_date, parse_datetime
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import generics, mixins, serializers, status, viewsets
@@ -131,12 +132,48 @@ class EquipmentViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
     api_context = ApiContext.EXERCISES
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "search",
+                description="Matches the name, also as translated to your language.",
+            ),
+            OpenApiParameter("ids", description="Comma-separated ids, e.g. 1,2,3."),
+        ]
+    )
+)
 class ExerciseViewSet(OwnedResourceViewSet):
+    """`?search=` and `?ids=` narrow the list (issue #18) - an exercise
+    picker finds what it needs without paging through the whole
+    library."""
+
     serializer_class = ExerciseSerializer
     api_context = ApiContext.EXERCISES
 
     def visible_queryset(self):
         return exercise_services.visible_to(self.request.user)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.action != "list":
+            return queryset
+        raw_ids = self.request.query_params.get("ids")
+        if raw_ids is not None:
+            parts = [part.strip() for part in raw_ids.split(",") if part.strip()]
+            if not all(part.isdigit() for part in parts):
+                raise serializers.ValidationError({"ids": "Must be comma-separated ids."})
+            queryset = queryset.filter(pk__in=[int(part) for part in parts])
+        query = self.request.query_params.get("search")
+        if query:
+            # An API key's request never passes through
+            # UserLanguageMiddleware with its user (DRF authenticates
+            # later), so the user's language is applied here - search
+            # matches the translated names they see in the app.
+            language = self.request.user.language
+            with translation.override(language) if language else nullcontext():
+                queryset = exercise_services.search(queryset, query)
+        return queryset
 
 
 # --------------------------------------------------------------------
