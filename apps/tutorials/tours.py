@@ -288,6 +288,15 @@ TOURS = (
                 ),
             ),
             Step(
+                "train-time-left",
+                _("Time left"),
+                _(
+                    "Roughly how long the sets you haven't logged yet will take, from how long "
+                    "sets usually take here. The ± covers the typical spread."
+                ),
+                optional=True,
+            ),
+            Step(
                 "train-exercise",
                 _("Current exercise"),
                 _("Its target and the sets you've already logged; tap a set to edit it."),
@@ -392,6 +401,15 @@ TOURS = (
                 optional=True,
             ),
             Step(
+                "workout-duration-estimate",
+                _("How long it takes"),
+                _(
+                    "Estimated from how long sets of these exercises have taken in logged "
+                    "workouts - the more you log, the closer it gets."
+                ),
+                optional=True,
+            ),
+            Step(
                 "program-up-next",
                 _("Up next"),
                 _(
@@ -445,6 +463,15 @@ TOURS = (
         view_names=("exercises:exercise-detail",),
         start_url=first_url(_exercises, "exercises:exercise-detail"),
         steps=(
+            Step(
+                "exercise-set-cycle",
+                _("Set cycle"),
+                _(
+                    "How long it usually takes from one set to the next, rest included - "
+                    "yours, and everyone's when others log it too."
+                ),
+                optional=True,
+            ),
             Step(
                 "exercise-records",
                 _("Personal records"),

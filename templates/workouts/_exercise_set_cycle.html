@@ -1,0 +1,25 @@
+{% load i18n core_extras %}
+<div data-tour="exercise-set-cycle" class="card">
+  <h2 class="card-title">{% trans "Set cycle" %}</h2>
+  <p class="text-muted">{% trans "Time from one logged set to the next - the set itself, the rest and changing the weights. The median, ± covers the middle half of the sets." %}</p>
+  {% if own or everyone %}
+    <dl class="stat-row">
+      {% if own %}
+        <div>
+          <dt>{% trans "You" %}</dt>
+          <dd><span class="nowrap">{{ own.median|seconds_duration }}</span> <span class="nowrap">± {{ own.spread|seconds_duration }}</span></dd>
+          <dd class="stat-note">{% blocktrans count counter=own.sample_size %}{{ counter }} set{% plural %}{{ counter }} sets{% endblocktrans %}</dd>
+        </div>
+      {% endif %}
+      {% if everyone %}
+        <div>
+          <dt>{% trans "Everyone" %}</dt>
+          <dd><span class="nowrap">{{ everyone.median|seconds_duration }}</span> <span class="nowrap">± {{ everyone.spread|seconds_duration }}</span></dd>
+          <dd class="stat-note">{% blocktrans with sets=everyone.sample_size count counter=everyone.user_count %}{{ sets }} sets, {{ counter }} user{% plural %}{{ sets }} sets, {{ counter }} users{% endblocktrans %}</dd>
+        </div>
+      {% endif %}
+    </dl>
+  {% else %}
+    <p>{% blocktrans with count=min_own %}Shown once you've logged {{ count }} sets of this exercise in completed workouts.{% endblocktrans %}</p>
+  {% endif %}
+</div>

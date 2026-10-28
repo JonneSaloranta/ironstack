@@ -1,0 +1,7 @@
+{% load i18n core_extras %}{% if exercise_estimate %}
+<p class="no-margin">{% trans "This exercise" as estimate_label %}{% include "workouts/_duration_estimate.html" with estimate=exercise_estimate label=estimate_label %}</p>
+<p class="text-muted no-margin">{% blocktrans with median=cycle.stats.median|seconds_duration spread=cycle.stats.spread|seconds_duration %}One set about {{ median }} ± {{ spread }}, rest included.{% endblocktrans %}</p>
+{% if workout_estimate %}<p class="no-margin">{% trans "Whole workout" as estimate_label %}{% include "workouts/_duration_estimate.html" with estimate=workout_estimate label=estimate_label %}</p>{% endif %}
+{% else %}
+<p class="text-muted no-margin">{% trans "Pick the exercise and its sets to see how long it takes." %}</p>
+{% endif %}

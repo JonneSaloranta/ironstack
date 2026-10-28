@@ -11,6 +11,19 @@
   {% include "core/_form_errors.html" %}
   {% for field in form %}
     {% include "core/_field.html" with field=field %}
+    {% if field.name == "max_reps" %}
+      {% comment %}
+      Live duration estimate under exercise/sets/reps: re-fetched with
+      the form's values whenever one changes (apps.workouts.set_timing).
+      {% endcomment %}
+      <div id="prescription-estimate" class="alert alert-info" aria-live="polite"
+           hx-get="{% url 'programs:prescription-estimate' program.pk workout.pk %}{% if form.instance.pk %}?prescription={{ form.instance.pk }}{% endif %}"
+           hx-trigger="change from:closest form, input delay:500ms from:closest form"
+           hx-include="closest form"
+           hx-params="exercise,set_count,min_reps,max_reps">
+        {% include "programs/_prescription_estimate.html" %}
+      </div>
+    {% endif %}
   {% endfor %}
   <button type="submit">{% trans "Save" %}</button>
 </form>

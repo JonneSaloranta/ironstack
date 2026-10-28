@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n core_extras %}
+{% load i18n workouts_extras core_extras %}
 {% block title %}{% trans exercise.name %} - IronStack{% endblock %}
 {% block content %}
 {% url 'exercises:exercise-list' as c1u %}{% trans "Exercises" as c1l %}
@@ -83,6 +83,8 @@
   {% endif %}
 </div>
 {% endif %}
+
+{% exercise_set_cycle exercise %}
 
 <a data-tour="exercise-records" class="card card-link" href="{% url 'records:exercise-records' exercise.pk %}">
   <strong>{% trans "Your" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></strong>

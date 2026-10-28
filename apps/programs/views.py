@@ -13,6 +13,8 @@ from django.views.generic import CreateView, DeleteView, DetailView, ListView, U
 from apps.core import version as version_info
 from apps.core.data_exchange import ImportValidationError, build_envelope, parse_envelope
 from apps.core.forms import ExportImportUploadForm
+from apps.exercises.services import visible_to as exercises_visible_to
+from apps.workouts import set_timing
 from apps.workouts.services import next_workout
 
 from . import services
@@ -262,6 +264,69 @@ def workout_delete(request, program_pk, pk):
     return redirect("programs:program-detail", pk=program.pk)
 
 
+def _int_or_none(value, low=1, high=100):
+    try:
+        number = int(value)
+    except (TypeError, ValueError):
+        return None
+    return number if low <= number <= high else None
+
+
+def _prescription_estimate(user, workout, values, editing_pk=None):
+    """Context for programs/_prescription_estimate.html from the add/edit-
+    exercise form's current values (a QueryDict or dict): what this
+    exercise adds and the whole workout with it. Unparseable values just
+    mean no estimate yet - the form's own validation reports them."""
+    exercise = None
+    exercise_pk = _int_or_none(values.get("exercise"), high=10**9)
+    if exercise_pk is not None:
+        exercise = exercises_visible_to(user).filter(pk=exercise_pk).first()
+    set_count = _int_or_none(values.get("set_count"))
+    min_reps = _int_or_none(values.get("min_reps"), high=1000)
+    max_reps = _int_or_none(values.get("max_reps"), high=1000)
+    if exercise is None or set_count is None:
+        return {"exercise_estimate": None}
+    stats = set_timing.instance_stats()
+    exercise_estimate, cycle = set_timing.estimate_exercise(
+        exercise, set_count, min_reps, max_reps, stats
+    )
+    workout_estimate = set_timing.estimate_workout(
+        workout,
+        stats,
+        replace=editing_pk,
+        extra=(exercise, set_count, min_reps, max_reps),
+    )
+    return {
+        "exercise_estimate": exercise_estimate,
+        "cycle": cycle,
+        "workout_estimate": workout_estimate,
+    }
+
+
+@login_required
+def prescription_estimate(request, program_pk, workout_pk):
+    """The add/edit-exercise form's live duration estimate (HTMX, GET with
+    the form's values; `prescription` = the one being edited)."""
+    program = _owned_program_or_404(request, program_pk)
+    workout = get_object_or_404(
+        Workout.objects.prefetch_related("prescriptions__exercise"), pk=workout_pk, program=program
+    )
+    editing_pk = _int_or_none(request.GET.get("prescription"), high=10**9)
+    return render(
+        request,
+        "programs/_prescription_estimate.html",
+        _prescription_estimate(request.user, workout, request.GET, editing_pk),
+    )
+
+
+def _prescription_form_values(form):
+    """The values the estimate should start from: what was posted, else
+    the instance being edited, else the form's initial defaults."""
+    if form.is_bound:
+        return form.data
+    return {name: form[name].value() for name in ("exercise", "set_count", "min_reps", "max_reps")}
+
+
 @login_required
 def prescription_create(request, program_pk, workout_pk):
     program = _owned_program_or_404(request, program_pk)
@@ -277,7 +342,12 @@ def prescription_create(request, program_pk, workout_pk):
     return _render_program_form(
         request,
         "programs/prescription_form.html",
-        {"form": form, "program": program, "workout": workout},
+        {
+            "form": form,
+            "program": program,
+            "workout": workout,
+            **_prescription_estimate(request.user, workout, _prescription_form_values(form)),
+        },
     )
 
 
@@ -297,7 +367,14 @@ def prescription_update(request, program_pk, workout_pk, pk):
     return _render_program_form(
         request,
         "programs/prescription_form.html",
-        {"form": form, "program": program, "workout": workout},
+        {
+            "form": form,
+            "program": program,
+            "workout": workout,
+            **_prescription_estimate(
+                request.user, workout, _prescription_form_values(form), prescription.pk
+            ),
+        },
     )
 
 

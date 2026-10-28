@@ -23,6 +23,11 @@
       <span class="button-secondary invisible" aria-hidden="true">&rarr;</span>
     {% endif %}
   </div>
+  {% if remaining_estimate %}
+    <p data-tour="train-time-left" class="text-muted text-center">
+      {% trans "Time left" as estimate_label %}{% include "workouts/_duration_estimate.html" with estimate=remaining_estimate label=estimate_label %}
+    </p>
+  {% endif %}
 {% endif %}
 
 {% if all_done %}

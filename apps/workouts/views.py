@@ -22,7 +22,7 @@ from apps.programs.models import Workout
 from apps.progression.suggestions import suggest_weight
 from apps.records import services as records_services
 
-from . import services
+from . import services, set_timing
 from .forms import ExerciseSetForm, PerformedExerciseAddForm
 from .models import ExerciseSet, PerformedExercise, WorkoutSessionStatus
 
@@ -153,6 +153,7 @@ def _train_context(request, session, current=None):
         and services.first_incomplete_performed_exercise(performed_exercises) is None,
         "set_form": set_form,
         "suggestion": suggestion,
+        "remaining_estimate": set_timing.estimate_remaining(performed_exercises),
         "new_prs": [],
     }
 

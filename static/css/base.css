@@ -2135,6 +2135,15 @@ h2 {
   font-variant-numeric: tabular-nums;
 }
 
+/* A figure's footnote under it in a stat row ("50 sets") - body text,
+   not another headline number. */
+.stat-row dd.stat-note {
+  font-size: var(--text-xs);
+  font-weight: normal;
+  font-family: inherit;
+  color: var(--color-text-muted);
+}
+
 /* Achievements carousel (templates/core/dashboard.html) */
 .achievements-carousel {
   position: relative;
@@ -3311,6 +3320,7 @@ h2.card-title {
 .text-xs { font-size: var(--text-xs); }
 .text-xl { font-size: var(--text-xl); }
 .text-center { text-align: center; }
+.nowrap { white-space: nowrap; }
 .justify-center { justify-content: center; }
 .invisible { visibility: hidden; }
 .qty-input { width: 6.5rem; }
