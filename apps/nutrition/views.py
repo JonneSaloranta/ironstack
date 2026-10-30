@@ -1976,7 +1976,7 @@ class NutritionStatsView(LoginRequiredMixin, View):
     trend the daily diary total can't show on its own, since it only
     ever shows one day at a time. The chart and headline card are a
     fixed 30-day window, not a range picker like apps.analytics's own
-    stats page; a table adds the same medians for fixed longer and
+    stats page; a table adds the same figures for fixed longer and
     shorter periods (docs/NUTRITION.md "Nutrition statistics")."""
 
     template_name = "nutrition/stats.html"
@@ -1994,7 +1994,7 @@ class NutritionStatsView(LoginRequiredMixin, View):
         ).first()
         calorie_chart = build_bar_series(
             [
-                (day.strftime("%b %d"), totals.calories.quantize(Decimal("1")))
+                (day.strftime("%b %d"), totals and totals.calories.quantize(Decimal("1")))
                 for day, totals in history
             ]
         )

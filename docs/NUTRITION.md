@@ -1281,22 +1281,35 @@ thin view/template:
   ever shows one day; this answers "how have I actually been eating
   the last month," the way `apps.analytics` answers the same question
   for training. `apps.nutrition.services.calorie_history(user, days=30)`
-  returns exactly one point per day - including days nothing was
-  logged (`ZERO_NUTRITION`), the same "never skip a day, a quiet day
-  is a real dip" rule `apps.analytics.services.weekly_volume_series`
-  already uses - charted with the shared `apps.core.charts.
+  returns exactly one point per day - `None` for a day nothing was
+  logged, shown as no bar and "-" in the table rather than a claimed
+  zero, the same "never skip a day" rule
+  `apps.analytics.services.weekly_volume_series` already uses - charted
+  with the shared `apps.core.charts.
   build_bar_series` (`templates/core/_bar_chart.html`, the same
   component `apps.analytics`'s own stats page uses). `nutrition_stats`
-  gives the **median** daily calories/macros, only over days something
-  was actually logged: counting an unlogged day as a zero-calorie day
-  would drag the figure down for anyone who logs most days but not
-  literally every single one, and the median (asked for directly,
-  replacing the mean) also keeps one barely-logged day from pulling it
-  down. A "Median per day" table (`nutrition_stats_by_period`) shows the
-  same medians for 7/14/30 days, 3 months, year to date, 1 year and all
-  time (from the first logged day), all ending today; the diary is read
-  once and sliced per period. The chart and the headline card stay a
-  fixed 30 days - no range picker.
+  gives the **mean and median** daily calories and the median macros,
+  only over finished days something was actually logged. Counting an
+  unlogged day as a zero-calorie day would drag the figures down for
+  anyone who logs most days but not literally every single one, and
+  today is left out because it's still in progress. The mean is the
+  headline because energy balance is cumulative: a median hides big
+  days entirely. The median stays beside it as the typical day, which
+  one barely-logged day hardly moves. When the mean is over 10% below
+  the median across at least 5 logged days, the page says some days may
+  be only partly logged (`possible_logging_gaps`); it never filters
+  them out, since a real fast or sick day looks the same. A "Per day"
+  table (`nutrition_stats_by_period`) shows the same figures for 7/14/30
+  days, 3 months, year to date, 1 year and all time (from the first
+  logged day), all ending yesterday; the diary is read once and sliced
+  per period. The chart and the headline card stay a fixed 30 days - no
+  range picker; the chart alone includes today.
+- **Front page calendar trend** (`calendar_month_statuses`) - each
+  day's color and arrow come from the mean of the trailing 7 days'
+  logged calories against the current target (green within 5%, yellow
+  within 15%, otherwise red). Today and 0-kcal days are left out of the
+  mean, as on the stats page, and a day with nothing left to average
+  has no trend. The popover still shows that day's own total.
 - **"Most used" quick add** (`services.most_used_foods`,
   `templates/nutrition/_most_used_foods.html`) - every place a food
   can be added (the food diary, a recipe's ingredients, a diet-plan

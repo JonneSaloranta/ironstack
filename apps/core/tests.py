@@ -268,6 +268,12 @@ class BarSeriesServiceTests(TestCase):
         self.assertIsNotNone(series)
         self.assertEqual(series.bars[0].height, Decimal("0.00"))
 
+    def test_a_none_value_keeps_its_slot_without_a_bar(self):
+        series = build_bar_series([("A", None), ("B", Decimal("2"))])
+        self.assertIsNone(series.bars[0].value)
+        self.assertEqual(series.bars[0].height, Decimal("0"))
+        self.assertGreater(series.bars[1].height, Decimal("0"))
+
     def test_category_order_is_preserved_not_resorted(self):
         series = build_bar_series([("Z", Decimal("1")), ("A", Decimal("5"))])
         self.assertEqual([bar.label for bar in series.bars], ["Z", "A"])

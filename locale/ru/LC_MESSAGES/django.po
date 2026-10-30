@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 20:24+0000\n"
+"POT-Creation-Date: 2026-10-30 16:33+0000\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -637,15 +637,15 @@ msgstr[2] "%(counter)s рекордов"
 msgid "Total weight lifted"
 msgstr "Всего поднято веса"
 
-#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1567
+#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1592
 msgid "7 days"
 msgstr "7 дней"
 
-#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1569
+#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1594
 msgid "30 days"
 msgstr "30 дней"
 
-#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1570
+#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1595
 msgid "3 months"
 msgstr "3 месяца"
 
@@ -653,11 +653,11 @@ msgstr "3 месяца"
 msgid "6 months"
 msgstr "6 месяцев"
 
-#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1572
+#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1597
 msgid "1 year"
 msgstr "1 год"
 
-#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1573
+#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1598
 #: templates/stretching/home.html:24
 msgid "All time"
 msgstr "За всё время"
@@ -697,7 +697,7 @@ msgid "A label to tell your keys apart."
 msgstr "Метка, чтобы отличать ваши ключи друг от друга."
 
 #: apps/api/models.py:25 apps/tutorials/tours.py:32
-#: apps/tutorials/tours.py:1110 templates/accounts/profile.html:3
+#: apps/tutorials/tours.py:1113 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
 #: templates/base.html:207 templates/base.html:230
 #: templates/tutorials/tutorial_list.html:5
@@ -760,7 +760,7 @@ msgstr "Питание"
 
 #: apps/api/models.py:34 apps/assistant/models.py:116 apps/core/models.py:167
 #: apps/stretching/models.py:209 apps/tutorials/tours.py:30
-#: apps/tutorials/tours.py:972 templates/api/key_list.html:113
+#: apps/tutorials/tours.py:975 templates/api/key_list.html:113
 #: templates/base.html:190 templates/base.html:192
 #: templates/core/dashboard.html:184 templates/stretching/_cooldown_card.html:7
 #: templates/stretching/home.html:3 templates/stretching/home.html:6
@@ -1160,76 +1160,76 @@ msgstr "При написании ответа что-то пошло не та�
 msgid "The reply was interrupted. Please try again."
 msgstr "Ответ был прерван. Попробуйте ещё раз."
 
-#: apps/assistant/tools.py:510 apps/nutrition/models.py:642
+#: apps/assistant/tools.py:512 apps/nutrition/models.py:647
 #: templates/nutrition/diary_day.html:64
 msgid "Quick entry"
 msgstr "Быстрая запись"
 
-#: apps/assistant/tools.py:961
+#: apps/assistant/tools.py:963
 msgid "Looking at your profile…"
 msgstr "Смотрю ваш профиль…"
 
-#: apps/assistant/tools.py:972
+#: apps/assistant/tools.py:974
 msgid "Looking at your workouts…"
 msgstr "Смотрю ваши тренировки…"
 
-#: apps/assistant/tools.py:988
+#: apps/assistant/tools.py:990
 msgid "Looking at your records…"
 msgstr "Смотрю ваши рекорды…"
 
-#: apps/assistant/tools.py:1001
+#: apps/assistant/tools.py:1003
 msgid "Looking at your measurements…"
 msgstr "Смотрю ваши замеры…"
 
-#: apps/assistant/tools.py:1009
+#: apps/assistant/tools.py:1011
 msgid "Looking at your activities…"
 msgstr "Смотрю ваши активности…"
 
-#: apps/assistant/tools.py:1017 apps/assistant/tools.py:1030
+#: apps/assistant/tools.py:1021 apps/assistant/tools.py:1034
 msgid "Looking at your food diary…"
 msgstr "Смотрю ваш дневник питания…"
 
-#: apps/assistant/tools.py:1041
+#: apps/assistant/tools.py:1045
 msgid "Looking at your weight trend…"
 msgstr "Смотрю динамику вашего веса…"
 
-#: apps/assistant/tools.py:1049
+#: apps/assistant/tools.py:1053
 msgid "Looking at your stretching…"
 msgstr "Смотрю вашу растяжку…"
 
-#: apps/assistant/tools.py:1056 apps/assistant/tools.py:1067
+#: apps/assistant/tools.py:1060 apps/assistant/tools.py:1071
 msgid "Looking at your programs…"
 msgstr "Смотрю ваши программы…"
 
-#: apps/assistant/tools.py:1082
+#: apps/assistant/tools.py:1086
 msgid "Looking at your progression…"
 msgstr "Смотрю вашу прогрессию…"
 
-#: apps/assistant/tools.py:1089 apps/assistant/tools.py:1100
+#: apps/assistant/tools.py:1093 apps/assistant/tools.py:1104
 msgid "Looking at your diet plans…"
 msgstr "Смотрю ваши планы питания…"
 
-#: apps/assistant/tools.py:1114
+#: apps/assistant/tools.py:1118
 msgid "Searching exercises…"
 msgstr "Ищу упражнения…"
 
-#: apps/assistant/tools.py:1129
+#: apps/assistant/tools.py:1133
 msgid "Searching foods…"
 msgstr "Ищу продукты…"
 
-#: apps/assistant/tools.py:1139
+#: apps/assistant/tools.py:1143
 msgid "Searching recipes…"
 msgstr "Ищу рецепты…"
 
-#: apps/assistant/tools.py:1146
+#: apps/assistant/tools.py:1150
 msgid "Looking at your meals…"
 msgstr "Смотрю ваши приёмы пищи…"
 
-#: apps/assistant/tools.py:1206
+#: apps/assistant/tools.py:1210
 msgid "Putting a diet plan together…"
 msgstr "Составляю план питания…"
 
-#: apps/assistant/tools.py:1266
+#: apps/assistant/tools.py:1270
 msgid "Putting a program together…"
 msgstr "Составляю программу…"
 
@@ -3064,7 +3064,7 @@ msgid "Plan name"
 msgstr "Название плана"
 
 #: apps/nutrition/forms.py:424 apps/nutrition/forms.py:596
-#: apps/tutorials/tours.py:962 templates/nutrition/stats.html:76
+#: apps/tutorials/tours.py:962 templates/nutrition/stats.html:82
 msgid "Daily calories"
 msgstr "Суточные калории"
 
@@ -3382,145 +3382,145 @@ msgid ""
 msgstr ""
 "Запеките курицу с брокколи и сладким картофелем, сбрызните оливковым маслом."
 
-#: apps/nutrition/models.py:32
+#: apps/nutrition/models.py:33
 msgid "Male"
 msgstr "Мужской"
 
-#: apps/nutrition/models.py:33
+#: apps/nutrition/models.py:34
 msgid "Female"
 msgstr "Женский"
 
-#: apps/nutrition/models.py:37
+#: apps/nutrition/models.py:38
 msgid "Desk job, mostly sitting"
 msgstr "Офисная работа, в основном сидячая"
 
-#: apps/nutrition/models.py:38
+#: apps/nutrition/models.py:39
 msgid "On my feet some of the day"
 msgstr "На ногах часть дня"
 
-#: apps/nutrition/models.py:39
+#: apps/nutrition/models.py:40
 msgid "On my feet most of the day"
 msgstr "На ногах большую часть дня"
 
-#: apps/nutrition/models.py:40
+#: apps/nutrition/models.py:41
 msgid "Physically demanding / manual labor"
 msgstr "Физически тяжёлая / ручной труд"
 
-#: apps/nutrition/models.py:50
+#: apps/nutrition/models.py:51
 msgid "Sedentary"
 msgstr "Малоподвижный"
 
-#: apps/nutrition/models.py:51
+#: apps/nutrition/models.py:52
 msgid "Lightly active"
 msgstr "Слегка активный"
 
-#: apps/nutrition/models.py:52
+#: apps/nutrition/models.py:53
 msgid "Moderately active"
 msgstr "Умеренно активный"
 
-#: apps/nutrition/models.py:53 templates/nutrition/_diet_plan_card.html:5
+#: apps/nutrition/models.py:54 templates/nutrition/_diet_plan_card.html:5
 #: templates/nutrition/diet_plan_detail.html:15
 msgid "Active"
 msgstr "Активный"
 
-#: apps/nutrition/models.py:54
+#: apps/nutrition/models.py:55
 msgid "Very active"
 msgstr "Очень активный"
 
-#: apps/nutrition/models.py:58
+#: apps/nutrition/models.py:59
 msgid "Fat loss - aggressive"
 msgstr "Снижение жира - агрессивное"
 
-#: apps/nutrition/models.py:59
+#: apps/nutrition/models.py:60
 msgid "Fat loss - moderate"
 msgstr "Снижение жира - умеренное"
 
-#: apps/nutrition/models.py:60
+#: apps/nutrition/models.py:61
 msgid "Fat loss - conservative"
 msgstr "Снижение жира - консервативное"
 
-#: apps/nutrition/models.py:61 apps/programs/models.py:147
+#: apps/nutrition/models.py:62 apps/programs/models.py:147
 msgid "Maintenance"
 msgstr "Поддержание"
 
-#: apps/nutrition/models.py:62
+#: apps/nutrition/models.py:63
 msgid "Muscle gain - lean bulk"
 msgstr "Набор мышечной массы - «сухой» набор"
 
-#: apps/nutrition/models.py:63
+#: apps/nutrition/models.py:64
 msgid "Muscle gain - moderate bulk"
 msgstr "Набор мышечной массы - умеренный набор"
 
-#: apps/nutrition/models.py:64
+#: apps/nutrition/models.py:65
 msgid "Muscle gain - aggressive bulk"
 msgstr "Набор мышечной массы - агрессивный набор"
 
-#: apps/nutrition/models.py:68
+#: apps/nutrition/models.py:69
 msgid "Calculated from goal"
 msgstr "Рассчитано на основе цели"
 
-#: apps/nutrition/models.py:69
+#: apps/nutrition/models.py:70
 msgid "Set manually"
 msgstr "Установлено вручную"
 
-#: apps/nutrition/models.py:70
+#: apps/nutrition/models.py:71
 msgid "Accepted a suggested adjustment"
 msgstr "Принята предложенная корректировка"
 
-#: apps/nutrition/models.py:74
+#: apps/nutrition/models.py:75
 msgid "g"
 msgstr "г"
 
-#: apps/nutrition/models.py:75
+#: apps/nutrition/models.py:76
 msgid "ml"
 msgstr "мл"
 
-#: apps/nutrition/models.py:76
+#: apps/nutrition/models.py:77
 msgid "piece"
 msgstr "шт"
 
-#: apps/nutrition/models.py:91
+#: apps/nutrition/models.py:92
 msgid "A - best"
 msgstr "A - лучший"
 
-#: apps/nutrition/models.py:92
+#: apps/nutrition/models.py:93
 msgid "B"
 msgstr "B"
 
-#: apps/nutrition/models.py:93
+#: apps/nutrition/models.py:94
 msgid "C"
 msgstr "C"
 
-#: apps/nutrition/models.py:94
+#: apps/nutrition/models.py:95
 msgid "D"
 msgstr "D"
 
-#: apps/nutrition/models.py:95
+#: apps/nutrition/models.py:96
 msgid "E - worst"
 msgstr "E - худший"
 
-#: apps/nutrition/models.py:105
+#: apps/nutrition/models.py:106
 msgid "1 - unprocessed or minimally processed"
 msgstr "1 - необработанные или минимально обработанные"
 
-#: apps/nutrition/models.py:106
+#: apps/nutrition/models.py:107
 msgid "2 - processed culinary ingredients"
 msgstr "2 - обработанные кулинарные ингредиенты"
 
-#: apps/nutrition/models.py:107
+#: apps/nutrition/models.py:108
 msgid "3 - processed food"
 msgstr "3 - обработанные продукты"
 
-#: apps/nutrition/models.py:108
+#: apps/nutrition/models.py:109
 msgid "4 - ultra-processed food"
 msgstr "4 - ультраобработанные продукты"
 
-#: apps/nutrition/models.py:123
+#: apps/nutrition/models.py:124
 msgid "Stored instead of a raw age, so it never goes stale."
 msgstr ""
 "Сохраняется вместо самого возраста, чтобы данные никогда не устаревали."
 
-#: apps/nutrition/models.py:135
+#: apps/nutrition/models.py:136
 msgid ""
 "If you already track this, tell us - used only to compare against this app's "
 "own estimate, never as an input to it."
@@ -3529,15 +3529,15 @@ msgstr ""
 "сравнения с собственной оценкой приложения, но никогда как входные данные "
 "для неё."
 
-#: apps/nutrition/models.py:309
+#: apps/nutrition/models.py:310
 msgid "Null for the built-in default meal slots."
 msgstr "Пусто (null) для встроенных стандартных приёмов пищи."
 
-#: apps/nutrition/models.py:647
+#: apps/nutrition/models.py:652
 msgid "Log either a food, a recipe or quick macros - exactly one of them."
 msgstr "Запишите продукт, рецепт или быстрые макросы - что-то одно."
 
-#: apps/nutrition/models.py:817
+#: apps/nutrition/models.py:822
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Используйте либо продукт, либо рецепт - не оба и не ни один."
 
@@ -3723,7 +3723,7 @@ msgstr "Йод"
 #: templates/nutrition/dashboard.html:62 templates/nutrition/dashboard.html:124
 #: templates/nutrition/diary_day.html:48
 #: templates/nutrition/onboarding_review.html:19
-#: templates/nutrition/recipe_detail.html:72 templates/nutrition/stats.html:51
+#: templates/nutrition/recipe_detail.html:72 templates/nutrition/stats.html:56
 msgid "Fat"
 msgstr "Жиры"
 
@@ -3734,7 +3734,7 @@ msgstr "Жиры"
 #: templates/nutrition/dashboard.html:61 templates/nutrition/dashboard.html:123
 #: templates/nutrition/diary_day.html:44
 #: templates/nutrition/onboarding_review.html:18
-#: templates/nutrition/recipe_detail.html:71 templates/nutrition/stats.html:50
+#: templates/nutrition/recipe_detail.html:71 templates/nutrition/stats.html:55
 msgid "Carbohydrates"
 msgstr "Углеводы"
 
@@ -3745,7 +3745,7 @@ msgstr "Углеводы"
 #: templates/nutrition/dashboard.html:60 templates/nutrition/dashboard.html:122
 #: templates/nutrition/diary_day.html:40
 #: templates/nutrition/onboarding_review.html:17
-#: templates/nutrition/recipe_detail.html:70 templates/nutrition/stats.html:49
+#: templates/nutrition/recipe_detail.html:70 templates/nutrition/stats.html:54
 msgid "Protein"
 msgstr "Белки"
 
@@ -3877,11 +3877,11 @@ msgstr "Не указано название плана питания."
 msgid "Missing or invalid diet plan targets."
 msgstr "Цели плана питания не указаны или неверны."
 
-#: apps/nutrition/services.py:1568
+#: apps/nutrition/services.py:1593
 msgid "14 days"
 msgstr "14 дней"
 
-#: apps/nutrition/services.py:1571
+#: apps/nutrition/services.py:1596
 msgid "Year to date"
 msgstr "С начала года"
 
@@ -5527,7 +5527,7 @@ msgstr "Программы и упражнения"
 msgid "Body and activities"
 msgstr "Тело и активность"
 
-#: apps/tutorials/tours.py:31 apps/tutorials/tours.py:1120
+#: apps/tutorials/tours.py:31 apps/tutorials/tours.py:1123
 msgid "Friends and groups"
 msgstr "Друзья и группы"
 
@@ -5729,7 +5729,7 @@ msgstr ""
 "Одно упражнение за раз, крупные кнопки и таймер отдыха - самый простой "
 "способ записывать в зале. Эта кнопка доступна на каждой странице."
 
-#: apps/tutorials/tours.py:266 apps/tutorials/tours.py:1053
+#: apps/tutorials/tours.py:266 apps/tutorials/tours.py:1056
 msgid "Finish"
 msgstr "Завершить"
 
@@ -5854,7 +5854,7 @@ msgstr ""
 "Её описание и версия. Изменение программы никогда не затрагивает уже "
 "записанные тренировки."
 
-#: apps/tutorials/tours.py:390 apps/tutorials/tours.py:1024
+#: apps/tutorials/tours.py:390 apps/tutorials/tours.py:1027
 msgid "Make it yours"
 msgstr "Сделайте её своей"
 
@@ -6480,69 +6480,72 @@ msgstr "Последние 30 дней"
 
 #: apps/tutorials/tours.py:951
 msgid ""
-"Median daily calories and macros. Days with nothing logged don't count, and "
-"one barely-logged day doesn't drag the figure down."
+"Mean calories show your real total intake, the median a typical day. Today "
+"and days with nothing logged don't count."
 msgstr ""
-"Медиана калорий и макросов в день. Дни без записей не учитываются, а один "
-"почти пустой день не тянет показатель вниз."
+"Среднее калорий показывает ваше реальное общее потребление, медиана - "
+"типичный день. Сегодняшний день и дни без записей не учитываются."
 
 #: apps/tutorials/tours.py:957
 msgid "Longer and shorter periods"
 msgstr "Более длинные и короткие периоды"
 
 #: apps/tutorials/tours.py:958
-msgid "The same medians for a week up to everything you've ever logged."
-msgstr "Те же медианы - от недели до всего, что вы когда-либо записывали."
+msgid "The same figures for a week up to everything you've ever logged."
+msgstr "Те же показатели от недели до всего, что вы когда-либо записывали."
 
-#: apps/tutorials/tours.py:963
-msgid "Each of the last 30 days, with the exact figures in a table below."
-msgstr "Каждый из последних 30 дней, точные цифры - в таблице ниже."
+#: apps/tutorials/tours.py:964
+msgid ""
+"Each of the last 30 days, today included, with the exact figures in a table "
+"below."
+msgstr ""
+"Каждый из последних 30 дней, включая сегодня, точные значения в таблице ниже."
 
-#: apps/tutorials/tours.py:977 templates/stretching/_subnav.html:9
+#: apps/tutorials/tours.py:980 templates/stretching/_subnav.html:9
 msgid "Stretching sections"
 msgstr "Разделы растяжки"
 
-#: apps/tutorials/tours.py:978
+#: apps/tutorials/tours.py:981
 msgid "Overview, routines, the stretch library and your history."
 msgstr "Обзор, комплексы, библиотека упражнений на растяжку и ваша история."
 
-#: apps/tutorials/tours.py:982
+#: apps/tutorials/tours.py:985
 msgid "Your streak"
 msgstr "Ваша серия"
 
-#: apps/tutorials/tours.py:983
+#: apps/tutorials/tours.py:986
 msgid "Days in a row with stretching, and your totals."
 msgstr "Дни подряд с растяжкой и ваши итоги."
 
-#: apps/tutorials/tours.py:987 templates/stretching/home.html:28
+#: apps/tutorials/tours.py:990 templates/stretching/home.html:28
 msgid "Start a routine"
 msgstr "Начать комплекс"
 
-#: apps/tutorials/tours.py:988
+#: apps/tutorials/tours.py:991
 msgid "A guided session times every stretch for you."
 msgstr "Сеанс с подсказками засекает время каждого упражнения за вас."
 
-#: apps/tutorials/tours.py:993
+#: apps/tutorials/tours.py:996
 msgid "Log it afterwards"
 msgstr "Записать потом"
 
-#: apps/tutorials/tours.py:994
+#: apps/tutorials/tours.py:997
 msgid "Stretched without the timer? Log just how long you stretched."
 msgstr "Тянулись без таймера? Просто запишите, сколько времени это заняло."
 
-#: apps/tutorials/tours.py:1001
+#: apps/tutorials/tours.py:1004
 msgid "A routine"
 msgstr "Комплекс"
 
-#: apps/tutorials/tours.py:1007
+#: apps/tutorials/tours.py:1010
 msgid "About the routine"
 msgstr "О комплексе"
 
-#: apps/tutorials/tours.py:1008
+#: apps/tutorials/tours.py:1011
 msgid "How many stretches it has and roughly how long it takes."
 msgstr "Сколько в нём упражнений и примерно сколько он длится."
 
-#: apps/tutorials/tours.py:1012 apps/tutorials/tours.py:1047
+#: apps/tutorials/tours.py:1015 apps/tutorials/tours.py:1050
 #: templates/stretching/_subnav.html:12
 #: templates/stretching/session_play.html:71
 #: templates/stretching/stretch_detail.html:5
@@ -6551,32 +6554,32 @@ msgstr "Сколько в нём упражнений и примерно ско
 msgid "Stretches"
 msgstr "Упражнения"
 
-#: apps/tutorials/tours.py:1013
+#: apps/tutorials/tours.py:1016
 msgid "Each stretch with its hold time, sets and sides."
 msgstr "Каждое упражнение с временем удержания, подходами и сторонами."
 
-#: apps/tutorials/tours.py:1018 templates/stretching/_routine_card.html:12
+#: apps/tutorials/tours.py:1021 templates/stretching/_routine_card.html:12
 #: templates/tutorials/tutorial_list.html:38
 msgid "Start"
 msgstr "Начать"
 
-#: apps/tutorials/tours.py:1019
+#: apps/tutorials/tours.py:1022
 msgid "Opens the guided player."
 msgstr "Открывает плеер с подсказками."
 
-#: apps/tutorials/tours.py:1025
+#: apps/tutorials/tours.py:1028
 msgid "Add stretches and reorder them - in your own routines."
 msgstr "Добавляйте упражнения и меняйте порядок - в своих комплексах."
 
-#: apps/tutorials/tours.py:1033 templates/stretching/session_play.html:25
+#: apps/tutorials/tours.py:1036 templates/stretching/session_play.html:25
 msgid "Guided session"
 msgstr "Сессия с подсказками"
 
-#: apps/tutorials/tours.py:1039
+#: apps/tutorials/tours.py:1042
 msgid "The timer"
 msgstr "Таймер"
 
-#: apps/tutorials/tours.py:1041
+#: apps/tutorials/tours.py:1044
 msgid ""
 "Counts down every hold and rest, with a chime between them. Pause, add or "
 "remove 10 seconds, or skip. Leaving the page keeps your place."
@@ -6584,26 +6587,26 @@ msgstr ""
 "Отсчитывает каждое удержание и отдых, между ними звучит сигнал. Пауза, ±10 "
 "секунд или пропуск. Если уйти со страницы, место сохранится."
 
-#: apps/tutorials/tours.py:1048
+#: apps/tutorials/tours.py:1051
 msgid "Mark a stretch done or skipped yourself if you prefer."
 msgstr "При желании отметьте упражнение выполненным или пропущенным сами."
 
-#: apps/tutorials/tours.py:1054
+#: apps/tutorials/tours.py:1057
 msgid "Saves the session to your history."
 msgstr "Сохраняет сеанс в вашей истории."
 
-#: apps/tutorials/tours.py:1062 templates/social/friend_list.html:3
+#: apps/tutorials/tours.py:1065 templates/social/friend_list.html:3
 #: templates/social/friend_list.html:6 templates/social/message_list.html:27
 msgid "Friends"
 msgstr "Друзья"
 
-#: apps/tutorials/tours.py:1067 templates/social/friend_list.html:9
+#: apps/tutorials/tours.py:1070 templates/social/friend_list.html:9
 #: templates/social/friend_list.html:68 templates/social/friend_search.html:3
 #: templates/social/friend_search.html:6
 msgid "Find friends"
 msgstr "Найти друзей"
 
-#: apps/tutorials/tours.py:1069
+#: apps/tutorials/tours.py:1072
 msgid ""
 "Search for people on this server. Friends can message you and see the "
 "progress you choose to share."
@@ -6611,75 +6614,75 @@ msgstr ""
 "Ищите людей на этом сервере. Друзья могут писать вам и видеть прогресс, "
 "которым вы решите поделиться."
 
-#: apps/tutorials/tours.py:1078 templates/social/message_list.html:3
+#: apps/tutorials/tours.py:1081 templates/social/message_list.html:3
 msgid "Messages"
 msgstr "Сообщения"
 
-#: apps/tutorials/tours.py:1083 templates/social/message_list.html:32
+#: apps/tutorials/tours.py:1086 templates/social/message_list.html:32
 msgid "Direct messages"
 msgstr "Личные сообщения"
 
-#: apps/tutorials/tours.py:1084
+#: apps/tutorials/tours.py:1087
 msgid "One conversation per friend."
 msgstr "Один разговор на каждого друга."
 
-#: apps/tutorials/tours.py:1088 templates/social/message_list.html:42
+#: apps/tutorials/tours.py:1091 templates/social/message_list.html:42
 msgid "Group chats"
 msgstr "Групповые чаты"
 
-#: apps/tutorials/tours.py:1089
+#: apps/tutorials/tours.py:1092
 msgid "Every group you're in has its own chat."
 msgstr "У каждой вашей группы свой чат."
 
-#: apps/tutorials/tours.py:1096 templates/social/group_list.html:3
+#: apps/tutorials/tours.py:1099 templates/social/group_list.html:3
 #: templates/social/group_list.html:6 templates/social/message_list.html:28
 msgid "Groups"
 msgstr "Группы"
 
-#: apps/tutorials/tours.py:1101
+#: apps/tutorials/tours.py:1104
 msgid "Create a group"
 msgstr "Создать группу"
 
-#: apps/tutorials/tours.py:1102
+#: apps/tutorials/tours.py:1105
 msgid "Train together: invite friends or share an invite link."
 msgstr ""
 "Тренируйтесь вместе: пригласите друзей или поделитесь ссылкой-приглашением."
 
-#: apps/tutorials/tours.py:1115 templates/accounts/profile.html:25
+#: apps/tutorials/tours.py:1118 templates/accounts/profile.html:25
 msgid "Preferences"
 msgstr "Настройки"
 
-#: apps/tutorials/tours.py:1116 templates/accounts/profile.html:26
+#: apps/tutorials/tours.py:1119 templates/accounts/profile.html:26
 msgid "Units, language, timezone, theme, and which sections you use."
 msgstr "Единицы, язык, часовой пояс, тема и какие разделы вы используете."
 
-#: apps/tutorials/tours.py:1121
+#: apps/tutorials/tours.py:1124
 msgid "Messages, friends and groups."
 msgstr "Сообщения, друзья и группы."
 
-#: apps/tutorials/tours.py:1125
+#: apps/tutorials/tours.py:1128
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
 #: templates/accounts/profile.html:163
 msgid "Your data"
 msgstr "Ваши данные"
 
-#: apps/tutorials/tours.py:1126
+#: apps/tutorials/tours.py:1129
 msgid "Everything you've logged is yours - browse it or download it."
 msgstr "Всё, что вы записали, принадлежит вам - просматривайте или скачивайте."
 
-#: apps/tutorials/tours.py:1130 templates/accounts/profile.html:185
+#: apps/tutorials/tours.py:1133 templates/accounts/profile.html:185
 #: templates/tutorials/tutorial_list.html:3
 #: templates/tutorials/tutorial_list.html:6
 #: templates/tutorials/tutorial_list.html:9
 msgid "Tutorials"
 msgstr "Обзоры"
 
-#: apps/tutorials/tours.py:1131
+#: apps/tutorials/tours.py:1134
 msgid "Replay any tour, or turn tutorials on or off."
 msgstr "Повторите любой обзор или включите и выключите обзоры."
 
-#: apps/tutorials/tours.py:1138 templates/accounts/profile.html:153
+#: apps/tutorials/tours.py:1141 templates/accounts/profile.html:153
 #: templates/accounts/profile.html:157 templates/accounts/profile.html:234
 #: templates/assistant/admin_settings.html:3
 #: templates/assistant/admin_settings.html:6 templates/assistant/home.html:3
@@ -6687,13 +6690,13 @@ msgstr "Повторите любой обзор или включите и вы
 msgid "AI assistant"
 msgstr "ИИ-ассистент"
 
-#: apps/tutorials/tours.py:1143 templates/assistant/home.html:9
+#: apps/tutorials/tours.py:1146 templates/assistant/home.html:9
 #: templates/assistant/settings.html:6 templates/core/backup_list.html:60
 #: templates/core/feedback_list.html:9
 msgid "Settings"
 msgstr "Настройки"
 
-#: apps/tutorials/tours.py:1145
+#: apps/tutorials/tours.py:1148
 msgid ""
 "Turn the assistant on or off, choose what it may read, tell it what it "
 "should always know about you (allergies, equipment, schedule), and add your "
@@ -6703,11 +6706,11 @@ msgstr ""
 "расскажите, что ему всегда нужно о вас знать (аллергии, инвентарь, "
 "расписание), и добавьте свой API-ключ."
 
-#: apps/tutorials/tours.py:1152
+#: apps/tutorials/tours.py:1155
 msgid "Ask anything"
 msgstr "Спрашивайте что угодно"
 
-#: apps/tutorials/tours.py:1154
+#: apps/tutorials/tours.py:1157
 msgid ""
 "Ask for a diet plan or a workout program, or about your progress. It looks "
 "at your own data before it answers."
@@ -6715,11 +6718,11 @@ msgstr ""
 "Попросите план питания или программу тренировок, или спросите о своём "
 "прогрессе. Перед ответом ассистент смотрит ваши данные."
 
-#: apps/tutorials/tours.py:1161
+#: apps/tutorials/tours.py:1164
 msgid "Your conversations"
 msgstr "Ваши беседы"
 
-#: apps/tutorials/tours.py:1163
+#: apps/tutorials/tours.py:1166
 msgid ""
 "Pick up where you left off. A plan it suggests is only created if you accept "
 "it."
@@ -8648,7 +8651,7 @@ msgstr "Не удалось восстановить %(name)s: %(detail)s"
 msgid "Creating a backup failed: %(detail)s"
 msgstr "Не удалось создать резервную копию: %(detail)s"
 
-#: templates/core/_bar_chart.html:36
+#: templates/core/_bar_chart.html:37
 #, python-format
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
@@ -8656,7 +8659,7 @@ msgstr[0] "%(title)s, %(counter)s категория"
 msgstr[1] "%(title)s, %(counter)s категории"
 msgstr[2] "%(title)s, %(counter)s категорий"
 
-#: templates/core/_bar_chart.html:47
+#: templates/core/_bar_chart.html:48
 #, python-format
 msgid "%(title)s by category"
 msgstr "%(title)s по категориям"
@@ -9776,7 +9779,7 @@ msgstr ""
 #: templates/nutrition/food_list.html:90 templates/nutrition/goal_edit.html:31
 #: templates/nutrition/recipe_list.html:70
 #: templates/nutrition/shopping_no_plan.html:13
-#: templates/nutrition/stats.html:82
+#: templates/nutrition/stats.html:88
 msgid "Back to nutrition"
 msgstr "Назад к питанию"
 
@@ -9912,19 +9915,19 @@ msgid "Nutrition for this day"
 msgstr "Питание за этот день"
 
 #: templates/nutrition/diary_day.html:59 templates/nutrition/diary_day.html:73
-#: templates/nutrition/stats.html:49
+#: templates/nutrition/stats.html:54
 msgctxt "macro"
 msgid "P"
 msgstr "Б"
 
 #: templates/nutrition/diary_day.html:59 templates/nutrition/diary_day.html:73
-#: templates/nutrition/stats.html:50
+#: templates/nutrition/stats.html:55
 msgctxt "macro"
 msgid "C"
 msgstr "У"
 
 #: templates/nutrition/diary_day.html:59 templates/nutrition/diary_day.html:73
-#: templates/nutrition/stats.html:51
+#: templates/nutrition/stats.html:56
 msgctxt "macro"
 msgid "F"
 msgstr "Ж"
@@ -10540,53 +10543,86 @@ msgstr "Создайте план или активируйте один из с
 msgid "Days logged"
 msgstr "Дней с записями"
 
-#: templates/nutrition/stats.html:14
-msgid "Median calories"
-msgstr "Медиана калорий"
+#: templates/nutrition/stats.html:14 templates/nutrition/stats.html:52
+msgid "Mean calories"
+msgstr "Среднее калорий"
 
-#: templates/nutrition/stats.html:20
+#: templates/nutrition/stats.html:15
+msgid "Typical day (median)"
+msgstr "Типичный день (медиана)"
+
+#: templates/nutrition/stats.html:18
+msgid ""
+"Your mean is clearly below your typical day, so some days may be only partly "
+"logged."
+msgstr ""
+"Ваше среднее заметно ниже типичного дня, поэтому некоторые дни могут быть "
+"записаны лишь частично."
+
+#: templates/nutrition/stats.html:24
 msgid "Median protein"
 msgstr "Медиана белков"
 
-#: templates/nutrition/stats.html:24
+#: templates/nutrition/stats.html:28
 msgid "Median carbohydrates"
 msgstr "Медиана углеводов"
 
-#: templates/nutrition/stats.html:28
+#: templates/nutrition/stats.html:32
 msgid "Median fat"
 msgstr "Медиана жиров"
 
-#: templates/nutrition/stats.html:34
+#: templates/nutrition/stats.html:38
 msgid ""
-"Medians of the days you actually logged something - a day with nothing "
-"logged isn't counted as zero calories, and one barely-logged day doesn't "
-"drag the figure down the way it would an average."
+"The mean shows your real total intake per day, big days included. The median "
+"shows a typical day, and one barely-logged day hardly moves it. Only "
+"finished days you logged something count: today is left out until it's over, "
+"and a day with nothing logged isn't counted as zero calories."
 msgstr ""
-"Медианы по дням, когда вы действительно что-то записали - день без записей "
-"не считается нулём калорий, и один почти пустой день не тянет показатель "
-"вниз, как это было бы со средним."
-
-#: templates/nutrition/stats.html:42
-msgid "Median per day"
-msgstr "Медиана в день"
+"Среднее показывает ваше реальное общее потребление в день, включая обильные "
+"дни. Медиана показывает типичный день, и один едва заполненный день почти не "
+"влияет на неё. Учитываются только завершённые дни, в которые вы что-то "
+"записали: сегодняшний день не учитывается, пока он не закончится, а день без "
+"записей не считается днём с нулём калорий."
 
 #: templates/nutrition/stats.html:46
+msgid "Per day"
+msgstr "В день"
+
+#: templates/nutrition/stats.html:50
 msgid "Period"
 msgstr "Период"
 
-#: templates/nutrition/stats.html:47
+#: templates/nutrition/stats.html:51
 msgid "Days"
 msgstr "Дни"
 
-#: templates/nutrition/stats.html:71
-msgid "Days: days logged / days in the period. Macros in grams."
-msgstr "Дни: дни с записями / дни в периоде. Макросы в граммах."
+#: templates/nutrition/stats.html:52
+msgctxt "calories column"
+msgid "Mean"
+msgstr "Сред."
 
-#: templates/nutrition/stats.html:74
+#: templates/nutrition/stats.html:53
+msgid "Median calories"
+msgstr "Медиана калорий"
+
+#: templates/nutrition/stats.html:53
+msgctxt "calories column"
+msgid "Med."
+msgstr "Мед."
+
+#: templates/nutrition/stats.html:77
+msgid ""
+"Days: days logged / days in the period. Mean and median calories in kcal, "
+"median macros in grams. Today isn't included."
+msgstr ""
+"Дни: записанные дни / дни периода. Среднее и медиана калорий в ккал, медианы "
+"макронутриентов в граммах. Сегодняшний день не учитывается."
+
+#: templates/nutrition/stats.html:80
 msgid "Daily calories (last 30 days)"
 msgstr "Калории по дням (последние 30 дней)"
 
-#: templates/nutrition/stats.html:79
+#: templates/nutrition/stats.html:85
 msgid "Log a few days in your food diary to see your trend here."
 msgstr ""
 "Ведите записи в дневнике питания несколько дней, чтобы увидеть тенденцию "
@@ -11841,6 +11877,25 @@ msgstr "Изменить подход"
 #, python-format
 msgid "Edit set %(number)s"
 msgstr "Изменить подход %(number)s"
+
+#~ msgid ""
+#~ "Median daily calories and macros. Days with nothing logged don't count, "
+#~ "and one barely-logged day doesn't drag the figure down."
+#~ msgstr ""
+#~ "Медиана калорий и макросов в день. Дни без записей не учитываются, а один "
+#~ "почти пустой день не тянет показатель вниз."
+
+#~ msgid ""
+#~ "Medians of the days you actually logged something - a day with nothing "
+#~ "logged isn't counted as zero calories, and one barely-logged day doesn't "
+#~ "drag the figure down the way it would an average."
+#~ msgstr ""
+#~ "Медианы по дням, когда вы действительно что-то записали - день без "
+#~ "записей не считается нулём калорий, и один почти пустой день не тянет "
+#~ "показатель вниз, как это было бы со средним."
+
+#~ msgid "Median per day"
+#~ msgstr "Медиана в день"
 
 #~ msgid "exercise"
 #~ msgstr "упражнение"

@@ -178,6 +178,7 @@ class LongContentLayoutTests(StaticLiveServerTestCase):
         return [
             reverse("dashboard"),
             reverse("nutrition:dashboard"),
+            reverse("nutrition:stats"),
             reverse("nutrition:diary-day"),
             reverse("nutrition:diary-add-entry"),
             reverse("nutrition:food-list"),

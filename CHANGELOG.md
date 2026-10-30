@@ -18,6 +18,24 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Changed
+- Nutrition statistics lead with mean daily calories, which show your real
+  total intake, with the median beside it as a typical day. Macros stay
+  medians.
+- Nutrition statistics and the front page calendar's calorie trend leave out
+  today until it's over, so a day in progress no longer pulls them down.
+
+### Added
+- Nutrition statistics say when your mean is clearly below your typical day,
+  since some days may be only partly logged.
+
+### Fixed
+- The daily calories chart's table shows "-" instead of "0 kcal" for a day
+  with nothing logged.
+- The nutrition statistics headline shows "-" instead of 0 kcal before
+  anything is logged.
+- The front page calendar's calorie trend no longer counts a 0-kcal day.
+
 ## [1.28.0] - 2026-10-28
 
 ### Added

@@ -111,12 +111,16 @@ def build_bar_series(categories, *, width=600, height=200, padding=20):
     the table below for anyone who needs precision or a screen reader,
     but a bar chart with unlabeled bars is hard to read at a glance, so
     the chart itself needs the names too, not just the table.
+
+    A value of `None` means "no data": the category keeps its slot and
+    gets no bar, and its `value` stays None so the template can say so
+    rather than claim a measured zero.
     """
     categories = list(categories)
     if not categories:
         return None
 
-    values = [value for _, value in categories]
+    values = [value or Decimal("0") for _, value in categories]
     max_value = max(values) or Decimal("1")  # avoid /0 when every value is zero
     plot_width = Decimal(width - 2 * padding)
     plot_height = Decimal(height - 2 * padding)
@@ -129,7 +133,7 @@ def build_bar_series(categories, *, width=600, height=200, padding=20):
     for i, (label, value) in enumerate(categories):
         slot_x = Decimal(padding) + Decimal(i) * slot_width
         bar_x = slot_x + (slot_width - bar_width) / 2
-        bar_height = (value / max_value) * plot_height if max_value else Decimal("0")
+        bar_height = ((value or Decimal("0")) / max_value) * plot_height
         bars.append(
             BarPoint(
                 label=label,

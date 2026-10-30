@@ -948,19 +948,22 @@ TOURS = (
                 "stats-30-days",
                 _("Last 30 days"),
                 _(
-                    "Median daily calories and macros. Days with nothing logged don't count, "
-                    "and one barely-logged day doesn't drag the figure down."
+                    "Mean calories show your real total intake, the median a typical day. "
+                    "Today and days with nothing logged don't count."
                 ),
             ),
             Step(
                 "stats-periods",
                 _("Longer and shorter periods"),
-                _("The same medians for a week up to everything you've ever logged."),
+                _("The same figures for a week up to everything you've ever logged."),
             ),
             Step(
                 "stats-chart",
                 _("Daily calories"),
-                _("Each of the last 30 days, with the exact figures in a table below."),
+                _(
+                    "Each of the last 30 days, today included, with the exact figures "
+                    "in a table below."
+                ),
                 optional=True,
             ),
         ),

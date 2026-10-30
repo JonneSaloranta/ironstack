@@ -2787,7 +2787,7 @@ class CalorieHistoryAndStatsTests(TestCase):
     def test_history_has_one_point_per_day_including_unlogged_days(self):
         history = services.calorie_history(self.alice, days=7)
         self.assertEqual(len(history), 7)
-        self.assertTrue(all(totals.calories == Decimal("0") for _day, totals in history))
+        self.assertTrue(all(totals is None for _day, totals in history))
 
     def test_history_is_oldest_first_and_reflects_logged_totals(self):
         today = timezone.localdate()
@@ -2806,9 +2806,9 @@ class CalorieHistoryAndStatsTests(TestCase):
         self.assertEqual(summary.median_calories, Decimal("0"))
 
     def test_stats_count_only_days_something_was_logged(self):
-        today = timezone.localdate()
+        yesterday = timezone.localdate() - timedelta(days=1)
         DiaryEntry.objects.create(
-            user=self.alice, date=today, meal_slot=self.breakfast,
+            user=self.alice, date=yesterday, meal_slot=self.breakfast,
             food=self.chicken, quantity=Decimal("200"),  # 330 kcal
         )
         summary = services.nutrition_stats(self.alice, days=7)
@@ -2823,19 +2823,43 @@ class CalorieHistoryAndStatsTests(TestCase):
             food=self.chicken, quantity=Decimal(grams),
         )
 
-    def test_stats_use_the_median_not_the_mean(self):
+    def test_stats_give_both_the_mean_and_the_median(self):
         today = timezone.localdate()
-        # 165, 165, 1.65 kcal: a barely-logged day mustn't drag it down.
-        self._log(today, "100")
+        # 165, 165, 660 kcal: a big day moves the mean, not the median.
         self._log(today - timedelta(days=1), "100")
-        self._log(today - timedelta(days=2), "1")
+        self._log(today - timedelta(days=2), "100")
+        self._log(today - timedelta(days=3), "400")
         summary = services.nutrition_stats(self.alice, days=7)
         self.assertEqual(summary.median_calories, Decimal("165"))
+        self.assertEqual(summary.mean_calories, Decimal("330"))
 
-    def test_periods_each_end_today(self):
-        today = date(2026, 5, 31)
-        self._log(today, "100")                         # 165 kcal
-        self._log(today - timedelta(days=10), "200")    # 330 kcal
+    def test_stats_leave_out_today_while_it_is_in_progress(self):
+        today = timezone.localdate()
+        self._log(today, "1")
+        self._log(today - timedelta(days=1), "100")
+        self._log(today - timedelta(days=7), "100")
+        summary = services.nutrition_stats(self.alice, days=7)
+        self.assertEqual(summary.days_logged, 2)
+        self.assertEqual(summary.mean_calories, Decimal("165"))
+
+    def _summary(self, days_logged, mean, median):
+        return services.NutritionStatsSummary(
+            days_logged, 30, Decimal(mean), Decimal(median), *[Decimal("0")] * 3
+        )
+
+    def test_logging_gap_hint_needs_a_mean_over_ten_percent_below_the_median(self):
+        self.assertTrue(self._summary(5, "1799", "2000").possible_logging_gaps)
+        self.assertFalse(self._summary(5, "1800", "2000").possible_logging_gaps)
+        self.assertFalse(self._summary(5, "2500", "2000").possible_logging_gaps)
+
+    def test_logging_gap_hint_needs_enough_days(self):
+        self.assertFalse(self._summary(4, "1000", "2000").possible_logging_gaps)
+
+    def test_periods_each_end_yesterday(self):
+        today = date(2026, 6, 1)
+        self._log(today, "1000")                        # in progress, left out
+        self._log(today - timedelta(days=1), "100")     # 165 kcal
+        self._log(today - timedelta(days=11), "200")    # 330 kcal
         self._log(date(2026, 1, 1), "300")              # 495 kcal
         self._log(date(2025, 6, 1), "400")              # 660 kcal
         self._log(date(2024, 1, 1), "500")              # 825 kcal
@@ -2853,18 +2877,29 @@ class CalorieHistoryAndStatsTests(TestCase):
         self.assertEqual(periods["ytd"].median_calories, Decimal("330"))
         self.assertEqual(periods["1y"].days_logged, 4)  # Jun 1 2025 – May 31 2026
         self.assertEqual(periods["all"].days_logged, 5)
-        self.assertEqual(periods["all"].days_in_range, (today - date(2024, 1, 1)).days + 1)
+        self.assertEqual(periods["all"].days_in_range, (today - date(2024, 1, 1)).days)
+
+    def test_a_period_with_no_finished_day_yet_is_empty(self):
+        today = date(2026, 1, 1)
+        self._log(today, "100")
+        periods = {
+            p.key: p.summary for p in services.nutrition_stats_by_period(self.alice, today)
+        }
+        self.assertEqual(periods["ytd"].days_in_range, 0)
+        self.assertEqual(periods["ytd"].days_logged, 0)
+        self.assertEqual(periods["all"].days_in_range, 0)
 
     def test_periods_without_any_diary_are_empty_not_an_error(self):
         periods = services.nutrition_stats_by_period(self.alice)
         self.assertTrue(all(p.summary.days_logged == 0 for p in periods))
-        self.assertEqual(periods[-1].summary.days_in_range, 1)
+        self.assertEqual(periods[-1].summary.days_in_range, 0)
 
     def test_stats_page_shows_every_period(self):
         self.client.login(username="alice", password="s3cret-pass")
-        self._log(timezone.localdate(), "100")
+        self._log(timezone.localdate() - timedelta(days=1), "100")
         response = self.client.get(reverse("nutrition:stats"))
-        self.assertContains(response, "Median calories")
+        self.assertContains(response, "Mean calories")
+        self.assertContains(response, "Typical day (median)")
         for label in ["7 days", "14 days", "30 days", "3 months", "Year to date", "1 year",
                       "All time"]:
             self.assertContains(response, label)
@@ -3001,6 +3036,35 @@ class CalendarMonthStatusesTests(TestCase):
         self._log_calories(date(2026, 6, 10), 2000)
         statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
         self.assertEqual(statuses[date(2026, 6, 10)].calorie_trend, "green")
+
+    def _today_status(self):
+        today = timezone.localdate()
+        statuses = services.calendar_month_statuses(self.alice, today.year, today.month)
+        return next(status for status in statuses if status.date == today)
+
+    def test_todays_trend_ignores_today_while_it_is_in_progress(self):
+        self._set_target(2000)
+        today = timezone.localdate()
+        self._log_calories(today - timedelta(days=1), 2000)
+        self._log_calories(today, 300)
+        status = self._today_status()
+        self.assertEqual(status.calorie_trend, "green")
+        self.assertEqual(status.actual_calories, Decimal("300"))
+
+    def test_no_trend_when_only_today_is_logged(self):
+        self._set_target(2000)
+        self._log_calories(timezone.localdate(), 2000)
+        self.assertIsNone(self._today_status().calorie_trend)
+
+    def test_a_zero_calorie_day_does_not_count_towards_the_trend(self):
+        self._set_target(2000)
+        today = timezone.localdate()
+        self._log_calories(today - timedelta(days=1), 2000)
+        DiaryEntry.objects.create(
+            user=self.alice, date=today - timedelta(days=2), meal_slot=self.breakfast,
+            food=make_food(self.alice, name="Water", calories=0), quantity=Decimal("100"),
+        )
+        self.assertEqual(self._today_status().calorie_trend, "green")
 
     def test_a_days_own_trend_is_unaffected_by_logging_outside_its_window(self):
         self._set_target(2000)
@@ -3780,9 +3844,34 @@ class NutritionStatsViewTests(TestCase):
         self.slot = MealSlot.objects.get(name="Breakfast", owner=None)
         self.client.login(username="alice", password="s3cret-pass")
 
+    def test_headline_shows_a_dash_not_zero_before_anything_is_logged(self):
+        response = self.client.get(reverse("nutrition:stats"))
+        self.assertNotContains(response, "<dd>0 kcal</dd>")
+        self.assertContains(response, "<dd>- kcal</dd>")
+
+    def test_chart_table_shows_a_dash_for_a_day_with_nothing_logged(self):
+        response = self.client.get(reverse("nutrition:stats"))
+        self.assertIsNone(response.context["calorie_chart"].bars[0].value)
+        self.assertContains(response, "<td>-</td>")
+        self.assertNotContains(response, "<td>0 kcal</td>")
+
+    def test_logging_gap_hint_shows_only_when_the_mean_is_well_below_the_median(self):
+        hint = "some days may be only partly logged"
+        today = timezone.localdate()
+        for offset in range(1, 6):
+            DiaryEntry.objects.create(
+                user=self.alice, date=today - timedelta(days=offset), meal_slot=self.slot,
+                food=self.food, quantity=Decimal("100"),
+            )
+        self.assertNotContains(self.client.get(reverse("nutrition:stats")), hint)
+        DiaryEntry.objects.filter(user=self.alice, date=today - timedelta(days=1)).update(
+            quantity=Decimal("1")
+        )
+        self.assertContains(self.client.get(reverse("nutrition:stats")), hint)
+
     def test_renders_the_chart_and_summary_for_a_user_with_history(self):
         DiaryEntry.objects.create(
-            user=self.alice, date=timezone.localdate(), meal_slot=self.slot,
+            user=self.alice, date=timezone.localdate() - timedelta(days=1), meal_slot=self.slot,
             food=self.food, quantity=Decimal("100"),
         )
         response = self.client.get(reverse("nutrition:stats"))

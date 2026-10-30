@@ -433,6 +433,8 @@ def get_nutrition_overview(ctx, args):
     return {
         "days": days,
         "days_logged": stats.days_logged,
+        "mean_daily_calories": int(stats.mean_calories),
+        "possible_logging_gaps": stats.possible_logging_gaps,
         "median_daily": {
             "calories": int(stats.median_calories),
             "protein_g": _num(stats.median_protein_grams),
@@ -1010,7 +1012,9 @@ TOOLS = [
     },
     {
         "name": "get_nutrition_overview",
-        "description": "What the user has actually eaten: median daily intake and recent days.",
+        "description": "What the user has actually eaten: mean and median daily intake over "
+        "finished days (today excluded), a hint when some days may be only partly logged, and "
+        "recent days (today included if logged).",
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_nutrition_overview,
         "scope": DataScope.FOOD,

@@ -11,8 +11,12 @@
   <h2 class="card-title">{% trans "Last 30 days" %}</h2>
   <dl class="stat-row">
     <div><dt>{% trans "Days logged" %}</dt><dd>{{ summary.days_logged }} / {{ summary.days_in_range }}</dd></div>
-    <div><dt>{% trans "Median calories" %}</dt><dd>{{ summary.median_calories|floatformat:0 }}{% if target %} / {{ target.daily_calories }}{% endif %} kcal</dd></div>
+    <div><dt>{% trans "Mean calories" %}</dt><dd>{% if summary.days_logged %}{{ summary.mean_calories|floatformat:0 }}{% else %}-{% endif %}{% if target %} / {{ target.daily_calories }}{% endif %} kcal</dd></div>
+    <div><dt>{% trans "Typical day (median)" %}</dt><dd>{% if summary.days_logged %}{{ summary.median_calories|floatformat:0 }} kcal{% else %}-{% endif %}</dd></div>
   </dl>
+  {% if summary.possible_logging_gaps %}
+    <p class="alert alert-info">{% trans "Your mean is clearly below your typical day, so some days may be only partly logged." %}</p>
+  {% endif %}
   {% if summary.days_logged %}
     <div class="table-wrap"><table class="set-table">
       <tbody>
@@ -31,21 +35,22 @@
       </tbody>
     </table></div>
   {% endif %}
-  <p class="field-help">{% trans "Medians of the days you actually logged something - a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average." %}</p>
+  <p class="field-help">{% trans "The mean shows your real total intake per day, big days included. The median shows a typical day, and one barely-logged day hardly moves it. Only finished days you logged something count: today is left out until it's over, and a day with nothing logged isn't counted as zero calories." %}</p>
 </div>
 
 {% comment %}
-  Every period ends today (services.nutrition_stats_by_period). Only the
-  medians; the chart below stays the last 30 days.
+  Every period ends yesterday (services.nutrition_stats_by_period). The
+  chart below stays the last 30 days, today included.
 {% endcomment %}
 <div data-tour="stats-periods" class="card">
-  <h2 class="card-title">{% trans "Median per day" %}</h2>
+  <h2 class="card-title">{% trans "Per day" %}</h2>
   <div class="table-wrap"><table class="set-table">
     <thead>
       <tr>
         <th scope="col">{% trans "Period" %}</th>
         <th scope="col">{% trans "Days" %}</th>
-        <th scope="col">kcal</th>
+        <th scope="col"><abbr tabindex="0" title="{% trans "Mean calories" %}">{% trans "Mean" context "calories column" %}</abbr></th>
+        <th scope="col"><abbr tabindex="0" title="{% trans "Median calories" %}">{% trans "Med." context "calories column" %}</abbr></th>
         <th scope="col"><abbr tabindex="0" title="{% trans "Protein" %}">{% trans "P" context "macro" %}</abbr></th>
         <th scope="col"><abbr tabindex="0" title="{% trans "Carbohydrates" %}">{% trans "C" context "macro" %}</abbr></th>
         <th scope="col"><abbr tabindex="0" title="{% trans "Fat" %}">{% trans "F" context "macro" %}</abbr></th>
@@ -57,18 +62,19 @@
           <th scope="row">{{ period.label }}</th>
           <td class="stat-figure">{{ period.summary.days_logged }}/{{ period.summary.days_in_range }}</td>
           {% if period.summary.days_logged %}
+            <td class="stat-figure">{{ period.summary.mean_calories|floatformat:0 }}</td>
             <td class="stat-figure">{{ period.summary.median_calories|floatformat:0 }}</td>
             <td class="stat-figure">{{ period.summary.median_protein_grams|floatformat:0 }}</td>
             <td class="stat-figure">{{ period.summary.median_carbohydrate_grams|floatformat:0 }}</td>
             <td class="stat-figure">{{ period.summary.median_fat_grams|floatformat:0 }}</td>
           {% else %}
-            <td>–</td><td>–</td><td>–</td><td>–</td>
+            <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
           {% endif %}
         </tr>
       {% endfor %}
     </tbody>
   </table></div>
-  <p class="field-help">{% trans "Days: days logged / days in the period. Macros in grams." %}</p>
+  <p class="field-help">{% trans "Days: days logged / days in the period. Mean and median calories in kcal, median macros in grams. Today isn't included." %}</p>
 </div>
 
 <h2>{% trans "Daily calories (last 30 days)" %}</h2>

@@ -599,6 +599,23 @@ class ToolScopingTests(TestCase):
         _content, is_error = self.run_tool("get_progression_suggestions", {"program_id": bobs.pk})
         self.assertTrue(is_error)
 
+    def test_nutrition_overview_gives_mean_and_median_without_today(self):
+        from apps.nutrition.models import DiaryEntry
+
+        slot = MealSlot.objects.get(name="Breakfast", owner=None)
+        today = timezone.localdate()
+        for offset, calories in ((0, 9000), (1, 1000), (2, 1000), (3, 4000)):
+            DiaryEntry.objects.create(
+                user=self.user, date=today - timedelta(days=offset), meal_slot=slot,
+                quantity=Decimal("1"), quick_calories=calories,
+            )
+        data, is_error = self.run_tool("get_nutrition_overview", {"days": 7})
+        self.assertFalse(is_error)
+        self.assertEqual(data["days_logged"], 3)
+        self.assertEqual(data["mean_daily_calories"], 2000)
+        self.assertEqual(data["median_daily"]["calories"], 1000)
+        self.assertIs(data["possible_logging_gaps"], False)
+
     def test_calorie_adjustment_without_goal(self):
         data, is_error = self.run_tool("get_calorie_adjustment", {})
         self.assertFalse(is_error)

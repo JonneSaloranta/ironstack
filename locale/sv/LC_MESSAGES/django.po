@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 20:24+0000\n"
+"POT-Creation-Date: 2026-10-30 16:33+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -629,15 +629,15 @@ msgstr[1] "%(counter)s PR"
 msgid "Total weight lifted"
 msgstr "Total lyft vikt"
 
-#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1567
+#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1592
 msgid "7 days"
 msgstr "7 dagar"
 
-#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1569
+#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1594
 msgid "30 days"
 msgstr "30 dagar"
 
-#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1570
+#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1595
 msgid "3 months"
 msgstr "3 månader"
 
@@ -645,11 +645,11 @@ msgstr "3 månader"
 msgid "6 months"
 msgstr "6 månader"
 
-#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1572
+#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1597
 msgid "1 year"
 msgstr "1 år"
 
-#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1573
+#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1598
 #: templates/stretching/home.html:24
 msgid "All time"
 msgstr "All tid"
@@ -689,7 +689,7 @@ msgid "A label to tell your keys apart."
 msgstr "En etikett för att skilja dina nycklar åt."
 
 #: apps/api/models.py:25 apps/tutorials/tours.py:32
-#: apps/tutorials/tours.py:1110 templates/accounts/profile.html:3
+#: apps/tutorials/tours.py:1113 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
 #: templates/base.html:207 templates/base.html:230
 #: templates/tutorials/tutorial_list.html:5
@@ -752,7 +752,7 @@ msgstr "Näring"
 
 #: apps/api/models.py:34 apps/assistant/models.py:116 apps/core/models.py:167
 #: apps/stretching/models.py:209 apps/tutorials/tours.py:30
-#: apps/tutorials/tours.py:972 templates/api/key_list.html:113
+#: apps/tutorials/tours.py:975 templates/api/key_list.html:113
 #: templates/base.html:190 templates/base.html:192
 #: templates/core/dashboard.html:184 templates/stretching/_cooldown_card.html:7
 #: templates/stretching/home.html:3 templates/stretching/home.html:6
@@ -1147,76 +1147,76 @@ msgstr "Något gick fel när svaret skrevs."
 msgid "The reply was interrupted. Please try again."
 msgstr "Svaret avbröts. Försök igen."
 
-#: apps/assistant/tools.py:510 apps/nutrition/models.py:642
+#: apps/assistant/tools.py:512 apps/nutrition/models.py:647
 #: templates/nutrition/diary_day.html:64
 msgid "Quick entry"
 msgstr "Snabbregistrering"
 
-#: apps/assistant/tools.py:961
+#: apps/assistant/tools.py:963
 msgid "Looking at your profile…"
 msgstr "Tittar på din profil…"
 
-#: apps/assistant/tools.py:972
+#: apps/assistant/tools.py:974
 msgid "Looking at your workouts…"
 msgstr "Tittar på dina träningspass…"
 
-#: apps/assistant/tools.py:988
+#: apps/assistant/tools.py:990
 msgid "Looking at your records…"
 msgstr "Tittar på dina rekord…"
 
-#: apps/assistant/tools.py:1001
+#: apps/assistant/tools.py:1003
 msgid "Looking at your measurements…"
 msgstr "Tittar på dina mätningar…"
 
-#: apps/assistant/tools.py:1009
+#: apps/assistant/tools.py:1011
 msgid "Looking at your activities…"
 msgstr "Tittar på dina aktiviteter…"
 
-#: apps/assistant/tools.py:1017 apps/assistant/tools.py:1030
+#: apps/assistant/tools.py:1021 apps/assistant/tools.py:1034
 msgid "Looking at your food diary…"
 msgstr "Tittar på din matdagbok…"
 
-#: apps/assistant/tools.py:1041
+#: apps/assistant/tools.py:1045
 msgid "Looking at your weight trend…"
 msgstr "Tittar på din viktutveckling…"
 
-#: apps/assistant/tools.py:1049
+#: apps/assistant/tools.py:1053
 msgid "Looking at your stretching…"
 msgstr "Tittar på din stretching…"
 
-#: apps/assistant/tools.py:1056 apps/assistant/tools.py:1067
+#: apps/assistant/tools.py:1060 apps/assistant/tools.py:1071
 msgid "Looking at your programs…"
 msgstr "Tittar på dina program…"
 
-#: apps/assistant/tools.py:1082
+#: apps/assistant/tools.py:1086
 msgid "Looking at your progression…"
 msgstr "Tittar på din progression…"
 
-#: apps/assistant/tools.py:1089 apps/assistant/tools.py:1100
+#: apps/assistant/tools.py:1093 apps/assistant/tools.py:1104
 msgid "Looking at your diet plans…"
 msgstr "Tittar på dina kostplaner…"
 
-#: apps/assistant/tools.py:1114
+#: apps/assistant/tools.py:1118
 msgid "Searching exercises…"
 msgstr "Söker övningar…"
 
-#: apps/assistant/tools.py:1129
+#: apps/assistant/tools.py:1133
 msgid "Searching foods…"
 msgstr "Söker livsmedel…"
 
-#: apps/assistant/tools.py:1139
+#: apps/assistant/tools.py:1143
 msgid "Searching recipes…"
 msgstr "Söker recept…"
 
-#: apps/assistant/tools.py:1146
+#: apps/assistant/tools.py:1150
 msgid "Looking at your meals…"
 msgstr "Tittar på dina måltider…"
 
-#: apps/assistant/tools.py:1206
+#: apps/assistant/tools.py:1210
 msgid "Putting a diet plan together…"
 msgstr "Sätter ihop en kostplan…"
 
-#: apps/assistant/tools.py:1266
+#: apps/assistant/tools.py:1270
 msgid "Putting a program together…"
 msgstr "Sätter ihop ett program…"
 
@@ -3026,7 +3026,7 @@ msgid "Plan name"
 msgstr "Planens namn"
 
 #: apps/nutrition/forms.py:424 apps/nutrition/forms.py:596
-#: apps/tutorials/tours.py:962 templates/nutrition/stats.html:76
+#: apps/tutorials/tours.py:962 templates/nutrition/stats.html:82
 msgid "Daily calories"
 msgstr "Dagliga kalorier"
 
@@ -3335,144 +3335,144 @@ msgid ""
 msgstr ""
 "Ugnsrosta kycklingen med broccolin och sötpotatisen, avsluta med olivolja."
 
-#: apps/nutrition/models.py:32
+#: apps/nutrition/models.py:33
 msgid "Male"
 msgstr "Man"
 
-#: apps/nutrition/models.py:33
+#: apps/nutrition/models.py:34
 msgid "Female"
 msgstr "Kvinna"
 
-#: apps/nutrition/models.py:37
+#: apps/nutrition/models.py:38
 msgid "Desk job, mostly sitting"
 msgstr "Skrivbordsjobb, mest stillasittande"
 
-#: apps/nutrition/models.py:38
+#: apps/nutrition/models.py:39
 msgid "On my feet some of the day"
 msgstr "På benen en del av dagen"
 
-#: apps/nutrition/models.py:39
+#: apps/nutrition/models.py:40
 msgid "On my feet most of the day"
 msgstr "På benen större delen av dagen"
 
-#: apps/nutrition/models.py:40
+#: apps/nutrition/models.py:41
 msgid "Physically demanding / manual labor"
 msgstr "Fysiskt krävande / kroppsarbete"
 
-#: apps/nutrition/models.py:50
+#: apps/nutrition/models.py:51
 msgid "Sedentary"
 msgstr "Stillasittande"
 
-#: apps/nutrition/models.py:51
+#: apps/nutrition/models.py:52
 msgid "Lightly active"
 msgstr "Lätt aktiv"
 
-#: apps/nutrition/models.py:52
+#: apps/nutrition/models.py:53
 msgid "Moderately active"
 msgstr "Måttligt aktiv"
 
-#: apps/nutrition/models.py:53 templates/nutrition/_diet_plan_card.html:5
+#: apps/nutrition/models.py:54 templates/nutrition/_diet_plan_card.html:5
 #: templates/nutrition/diet_plan_detail.html:15
 msgid "Active"
 msgstr "Aktiv"
 
-#: apps/nutrition/models.py:54
+#: apps/nutrition/models.py:55
 msgid "Very active"
 msgstr "Mycket aktiv"
 
-#: apps/nutrition/models.py:58
+#: apps/nutrition/models.py:59
 msgid "Fat loss - aggressive"
 msgstr "Fettförlust - aggressiv"
 
-#: apps/nutrition/models.py:59
+#: apps/nutrition/models.py:60
 msgid "Fat loss - moderate"
 msgstr "Fettförlust - måttlig"
 
-#: apps/nutrition/models.py:60
+#: apps/nutrition/models.py:61
 msgid "Fat loss - conservative"
 msgstr "Fettförlust - försiktig"
 
-#: apps/nutrition/models.py:61 apps/programs/models.py:147
+#: apps/nutrition/models.py:62 apps/programs/models.py:147
 msgid "Maintenance"
 msgstr "Underhåll"
 
-#: apps/nutrition/models.py:62
+#: apps/nutrition/models.py:63
 msgid "Muscle gain - lean bulk"
 msgstr "Muskeltillväxt - mager bulk"
 
-#: apps/nutrition/models.py:63
+#: apps/nutrition/models.py:64
 msgid "Muscle gain - moderate bulk"
 msgstr "Muskeltillväxt - måttlig bulk"
 
-#: apps/nutrition/models.py:64
+#: apps/nutrition/models.py:65
 msgid "Muscle gain - aggressive bulk"
 msgstr "Muskeltillväxt - aggressiv bulk"
 
-#: apps/nutrition/models.py:68
+#: apps/nutrition/models.py:69
 msgid "Calculated from goal"
 msgstr "Beräknat från mål"
 
-#: apps/nutrition/models.py:69
+#: apps/nutrition/models.py:70
 msgid "Set manually"
 msgstr "Inställt manuellt"
 
-#: apps/nutrition/models.py:70
+#: apps/nutrition/models.py:71
 msgid "Accepted a suggested adjustment"
 msgstr "Accepterade en föreslagen justering"
 
-#: apps/nutrition/models.py:74
+#: apps/nutrition/models.py:75
 msgid "g"
 msgstr "g"
 
-#: apps/nutrition/models.py:75
+#: apps/nutrition/models.py:76
 msgid "ml"
 msgstr "ml"
 
-#: apps/nutrition/models.py:76
+#: apps/nutrition/models.py:77
 msgid "piece"
 msgstr "st"
 
-#: apps/nutrition/models.py:91
+#: apps/nutrition/models.py:92
 msgid "A - best"
 msgstr "A - bäst"
 
-#: apps/nutrition/models.py:92
+#: apps/nutrition/models.py:93
 msgid "B"
 msgstr "B"
 
-#: apps/nutrition/models.py:93
+#: apps/nutrition/models.py:94
 msgid "C"
 msgstr "C"
 
-#: apps/nutrition/models.py:94
+#: apps/nutrition/models.py:95
 msgid "D"
 msgstr "D"
 
-#: apps/nutrition/models.py:95
+#: apps/nutrition/models.py:96
 msgid "E - worst"
 msgstr "E - sämst"
 
-#: apps/nutrition/models.py:105
+#: apps/nutrition/models.py:106
 msgid "1 - unprocessed or minimally processed"
 msgstr "1 - obearbetat eller minimalt bearbetat"
 
-#: apps/nutrition/models.py:106
+#: apps/nutrition/models.py:107
 msgid "2 - processed culinary ingredients"
 msgstr "2 - bearbetade kulinariska ingredienser"
 
-#: apps/nutrition/models.py:107
+#: apps/nutrition/models.py:108
 msgid "3 - processed food"
 msgstr "3 - bearbetad mat"
 
-#: apps/nutrition/models.py:108
+#: apps/nutrition/models.py:109
 msgid "4 - ultra-processed food"
 msgstr "4 - ultrabearbetad mat"
 
-#: apps/nutrition/models.py:123
+#: apps/nutrition/models.py:124
 msgid "Stored instead of a raw age, so it never goes stale."
 msgstr "Sparas istället för en rå ålder, så att den aldrig blir inaktuell."
 
-#: apps/nutrition/models.py:135
+#: apps/nutrition/models.py:136
 msgid ""
 "If you already track this, tell us - used only to compare against this app's "
 "own estimate, never as an input to it."
@@ -3480,17 +3480,17 @@ msgstr ""
 "Om du redan följer detta, berätta för oss - används endast för att jämföra "
 "med appens egen uppskattning, aldrig som indata till den."
 
-#: apps/nutrition/models.py:309
+#: apps/nutrition/models.py:310
 msgid "Null for the built-in default meal slots."
 msgstr "Null för de inbyggda standardmåltiderna."
 
-#: apps/nutrition/models.py:647
+#: apps/nutrition/models.py:652
 msgid "Log either a food, a recipe or quick macros - exactly one of them."
 msgstr ""
 "Registrera antingen ett livsmedel, ett recept eller snabba makron - exakt "
 "ett av dem."
 
-#: apps/nutrition/models.py:817
+#: apps/nutrition/models.py:822
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Använd antingen ett livsmedel eller ett recept, inte båda eller inget."
 
@@ -3676,7 +3676,7 @@ msgstr "Jod"
 #: templates/nutrition/dashboard.html:62 templates/nutrition/dashboard.html:124
 #: templates/nutrition/diary_day.html:48
 #: templates/nutrition/onboarding_review.html:19
-#: templates/nutrition/recipe_detail.html:72 templates/nutrition/stats.html:51
+#: templates/nutrition/recipe_detail.html:72 templates/nutrition/stats.html:56
 msgid "Fat"
 msgstr "Fett"
 
@@ -3687,7 +3687,7 @@ msgstr "Fett"
 #: templates/nutrition/dashboard.html:61 templates/nutrition/dashboard.html:123
 #: templates/nutrition/diary_day.html:44
 #: templates/nutrition/onboarding_review.html:18
-#: templates/nutrition/recipe_detail.html:71 templates/nutrition/stats.html:50
+#: templates/nutrition/recipe_detail.html:71 templates/nutrition/stats.html:55
 msgid "Carbohydrates"
 msgstr "Kolhydrater"
 
@@ -3698,7 +3698,7 @@ msgstr "Kolhydrater"
 #: templates/nutrition/dashboard.html:60 templates/nutrition/dashboard.html:122
 #: templates/nutrition/diary_day.html:40
 #: templates/nutrition/onboarding_review.html:17
-#: templates/nutrition/recipe_detail.html:70 templates/nutrition/stats.html:49
+#: templates/nutrition/recipe_detail.html:70 templates/nutrition/stats.html:54
 msgid "Protein"
 msgstr "Protein"
 
@@ -3830,11 +3830,11 @@ msgstr "Kostplanens namn saknas."
 msgid "Missing or invalid diet plan targets."
 msgstr "Kostplanens mål saknas eller är ogiltiga."
 
-#: apps/nutrition/services.py:1568
+#: apps/nutrition/services.py:1593
 msgid "14 days"
 msgstr "14 dagar"
 
-#: apps/nutrition/services.py:1571
+#: apps/nutrition/services.py:1596
 msgid "Year to date"
 msgstr "Hittills i år"
 
@@ -5469,7 +5469,7 @@ msgstr "Program och övningar"
 msgid "Body and activities"
 msgstr "Kropp och aktiviteter"
 
-#: apps/tutorials/tours.py:31 apps/tutorials/tours.py:1120
+#: apps/tutorials/tours.py:31 apps/tutorials/tours.py:1123
 msgid "Friends and groups"
 msgstr "Vänner och grupper"
 
@@ -5670,7 +5670,7 @@ msgstr ""
 "En övning i taget med stora knappar och vilotimer - det enklaste sättet att "
 "logga på gymmet. Den här knappen följer med dig på varje sida."
 
-#: apps/tutorials/tours.py:266 apps/tutorials/tours.py:1053
+#: apps/tutorials/tours.py:266 apps/tutorials/tours.py:1056
 msgid "Finish"
 msgstr "Avsluta"
 
@@ -5794,7 +5794,7 @@ msgstr ""
 "Dess beskrivning och version. Att redigera ett program ändrar aldrig pass du "
 "redan har loggat."
 
-#: apps/tutorials/tours.py:390 apps/tutorials/tours.py:1024
+#: apps/tutorials/tours.py:390 apps/tutorials/tours.py:1027
 msgid "Make it yours"
 msgstr "Gör det till ditt"
 
@@ -6413,70 +6413,73 @@ msgstr "Senaste 30 dagarna"
 
 #: apps/tutorials/tours.py:951
 msgid ""
-"Median daily calories and macros. Days with nothing logged don't count, and "
-"one barely-logged day doesn't drag the figure down."
+"Mean calories show your real total intake, the median a typical day. Today "
+"and days with nothing logged don't count."
 msgstr ""
-"Median för dagliga kalorier och makron. Dagar utan loggning räknas inte, och "
-"en knappt loggad dag drar inte ner värdet."
+"Medelvärdet för kalorier visar ditt verkliga totala intag, medianen en "
+"typisk dag. I dag och dagar utan loggning räknas inte."
 
 #: apps/tutorials/tours.py:957
 msgid "Longer and shorter periods"
 msgstr "Längre och kortare perioder"
 
 #: apps/tutorials/tours.py:958
-msgid "The same medians for a week up to everything you've ever logged."
-msgstr "Samma medianer från en vecka upp till allt du någonsin har loggat."
+msgid "The same figures for a week up to everything you've ever logged."
+msgstr "Samma siffror från en vecka upp till allt du någonsin har loggat."
 
-#: apps/tutorials/tours.py:963
-msgid "Each of the last 30 days, with the exact figures in a table below."
+#: apps/tutorials/tours.py:964
+msgid ""
+"Each of the last 30 days, today included, with the exact figures in a table "
+"below."
 msgstr ""
-"Var och en av de senaste 30 dagarna, med exakta siffror i en tabell nedanför."
+"Var och en av de senaste 30 dagarna, i dag inräknat, med exakta siffror i "
+"tabellen nedan."
 
-#: apps/tutorials/tours.py:977 templates/stretching/_subnav.html:9
+#: apps/tutorials/tours.py:980 templates/stretching/_subnav.html:9
 msgid "Stretching sections"
 msgstr "Stretchingsektioner"
 
-#: apps/tutorials/tours.py:978
+#: apps/tutorials/tours.py:981
 msgid "Overview, routines, the stretch library and your history."
 msgstr "Översikt, rutiner, stretchbiblioteket och din historik."
 
-#: apps/tutorials/tours.py:982
+#: apps/tutorials/tours.py:985
 msgid "Your streak"
 msgstr "Din streak"
 
-#: apps/tutorials/tours.py:983
+#: apps/tutorials/tours.py:986
 msgid "Days in a row with stretching, and your totals."
 msgstr "Dagar i rad med stretching, och dina totaler."
 
-#: apps/tutorials/tours.py:987 templates/stretching/home.html:28
+#: apps/tutorials/tours.py:990 templates/stretching/home.html:28
 msgid "Start a routine"
 msgstr "Starta en rutin"
 
-#: apps/tutorials/tours.py:988
+#: apps/tutorials/tours.py:991
 msgid "A guided session times every stretch for you."
 msgstr "Ett guidat pass tar tid på varje stretchövning åt dig."
 
-#: apps/tutorials/tours.py:993
+#: apps/tutorials/tours.py:996
 msgid "Log it afterwards"
 msgstr "Logga i efterhand"
 
-#: apps/tutorials/tours.py:994
+#: apps/tutorials/tours.py:997
 msgid "Stretched without the timer? Log just how long you stretched."
 msgstr "Stretchade du utan timern? Logga bara hur länge du stretchade."
 
-#: apps/tutorials/tours.py:1001
+#: apps/tutorials/tours.py:1004
 msgid "A routine"
 msgstr "En rutin"
 
-#: apps/tutorials/tours.py:1007
+#: apps/tutorials/tours.py:1010
 msgid "About the routine"
 msgstr "Om rutinen"
 
-#: apps/tutorials/tours.py:1008
+#: apps/tutorials/tours.py:1011
 msgid "How many stretches it has and roughly how long it takes."
 msgstr "Hur många stretchövningar den har och ungefär hur lång tid den tar."
 
-#: apps/tutorials/tours.py:1012 apps/tutorials/tours.py:1047
+#: apps/tutorials/tours.py:1015 apps/tutorials/tours.py:1050
 #: templates/stretching/_subnav.html:12
 #: templates/stretching/session_play.html:71
 #: templates/stretching/stretch_detail.html:5
@@ -6485,32 +6488,32 @@ msgstr "Hur många stretchövningar den har och ungefär hur lång tid den tar."
 msgid "Stretches"
 msgstr "Stretchövningar"
 
-#: apps/tutorials/tours.py:1013
+#: apps/tutorials/tours.py:1016
 msgid "Each stretch with its hold time, sets and sides."
 msgstr "Varje stretchövning med hålltid, set och sidor."
 
-#: apps/tutorials/tours.py:1018 templates/stretching/_routine_card.html:12
+#: apps/tutorials/tours.py:1021 templates/stretching/_routine_card.html:12
 #: templates/tutorials/tutorial_list.html:38
 msgid "Start"
 msgstr "Starta"
 
-#: apps/tutorials/tours.py:1019
+#: apps/tutorials/tours.py:1022
 msgid "Opens the guided player."
 msgstr "Öppnar den guidade spelaren."
 
-#: apps/tutorials/tours.py:1025
+#: apps/tutorials/tours.py:1028
 msgid "Add stretches and reorder them - in your own routines."
 msgstr "Lägg till stretchövningar och ändra ordningen - i dina egna rutiner."
 
-#: apps/tutorials/tours.py:1033 templates/stretching/session_play.html:25
+#: apps/tutorials/tours.py:1036 templates/stretching/session_play.html:25
 msgid "Guided session"
 msgstr "Guidat pass"
 
-#: apps/tutorials/tours.py:1039
+#: apps/tutorials/tours.py:1042
 msgid "The timer"
 msgstr "Timern"
 
-#: apps/tutorials/tours.py:1041
+#: apps/tutorials/tours.py:1044
 msgid ""
 "Counts down every hold and rest, with a chime between them. Pause, add or "
 "remove 10 seconds, or skip. Leaving the page keeps your place."
@@ -6519,26 +6522,26 @@ msgstr ""
 "eller dra av 10 sekunder, eller hoppa över. Du behåller din plats även om du "
 "lämnar sidan."
 
-#: apps/tutorials/tours.py:1048
+#: apps/tutorials/tours.py:1051
 msgid "Mark a stretch done or skipped yourself if you prefer."
 msgstr "Markera en stretchövning som klar eller överhoppad själv om du vill."
 
-#: apps/tutorials/tours.py:1054
+#: apps/tutorials/tours.py:1057
 msgid "Saves the session to your history."
 msgstr "Sparar passet i din historik."
 
-#: apps/tutorials/tours.py:1062 templates/social/friend_list.html:3
+#: apps/tutorials/tours.py:1065 templates/social/friend_list.html:3
 #: templates/social/friend_list.html:6 templates/social/message_list.html:27
 msgid "Friends"
 msgstr "Vänner"
 
-#: apps/tutorials/tours.py:1067 templates/social/friend_list.html:9
+#: apps/tutorials/tours.py:1070 templates/social/friend_list.html:9
 #: templates/social/friend_list.html:68 templates/social/friend_search.html:3
 #: templates/social/friend_search.html:6
 msgid "Find friends"
 msgstr "Hitta vänner"
 
-#: apps/tutorials/tours.py:1069
+#: apps/tutorials/tours.py:1072
 msgid ""
 "Search for people on this server. Friends can message you and see the "
 "progress you choose to share."
@@ -6546,74 +6549,74 @@ msgstr ""
 "Sök efter personer på den här servern. Vänner kan skicka meddelanden till "
 "dig och se de framsteg du väljer att dela."
 
-#: apps/tutorials/tours.py:1078 templates/social/message_list.html:3
+#: apps/tutorials/tours.py:1081 templates/social/message_list.html:3
 msgid "Messages"
 msgstr "Meddelanden"
 
-#: apps/tutorials/tours.py:1083 templates/social/message_list.html:32
+#: apps/tutorials/tours.py:1086 templates/social/message_list.html:32
 msgid "Direct messages"
 msgstr "Direktmeddelanden"
 
-#: apps/tutorials/tours.py:1084
+#: apps/tutorials/tours.py:1087
 msgid "One conversation per friend."
 msgstr "En konversation per vän."
 
-#: apps/tutorials/tours.py:1088 templates/social/message_list.html:42
+#: apps/tutorials/tours.py:1091 templates/social/message_list.html:42
 msgid "Group chats"
 msgstr "Gruppchattar"
 
-#: apps/tutorials/tours.py:1089
+#: apps/tutorials/tours.py:1092
 msgid "Every group you're in has its own chat."
 msgstr "Varje grupp du är med i har sin egen chatt."
 
-#: apps/tutorials/tours.py:1096 templates/social/group_list.html:3
+#: apps/tutorials/tours.py:1099 templates/social/group_list.html:3
 #: templates/social/group_list.html:6 templates/social/message_list.html:28
 msgid "Groups"
 msgstr "Grupper"
 
-#: apps/tutorials/tours.py:1101
+#: apps/tutorials/tours.py:1104
 msgid "Create a group"
 msgstr "Skapa en grupp"
 
-#: apps/tutorials/tours.py:1102
+#: apps/tutorials/tours.py:1105
 msgid "Train together: invite friends or share an invite link."
 msgstr "Träna tillsammans: bjud in vänner eller dela en inbjudningslänk."
 
-#: apps/tutorials/tours.py:1115 templates/accounts/profile.html:25
+#: apps/tutorials/tours.py:1118 templates/accounts/profile.html:25
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: apps/tutorials/tours.py:1116 templates/accounts/profile.html:26
+#: apps/tutorials/tours.py:1119 templates/accounts/profile.html:26
 msgid "Units, language, timezone, theme, and which sections you use."
 msgstr "Enheter, språk, tidszon, tema och vilka delar du använder."
 
-#: apps/tutorials/tours.py:1121
+#: apps/tutorials/tours.py:1124
 msgid "Messages, friends and groups."
 msgstr "Meddelanden, vänner och grupper."
 
-#: apps/tutorials/tours.py:1125
+#: apps/tutorials/tours.py:1128
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
 #: templates/accounts/profile.html:163
 msgid "Your data"
 msgstr "Dina uppgifter"
 
-#: apps/tutorials/tours.py:1126
+#: apps/tutorials/tours.py:1129
 msgid "Everything you've logged is yours - browse it or download it."
 msgstr "Allt du har loggat är ditt - bläddra i det eller ladda ner det."
 
-#: apps/tutorials/tours.py:1130 templates/accounts/profile.html:185
+#: apps/tutorials/tours.py:1133 templates/accounts/profile.html:185
 #: templates/tutorials/tutorial_list.html:3
 #: templates/tutorials/tutorial_list.html:6
 #: templates/tutorials/tutorial_list.html:9
 msgid "Tutorials"
 msgstr "Guider"
 
-#: apps/tutorials/tours.py:1131
+#: apps/tutorials/tours.py:1134
 msgid "Replay any tour, or turn tutorials on or off."
 msgstr "Spela upp valfri guide igen, eller slå på eller av guiderna."
 
-#: apps/tutorials/tours.py:1138 templates/accounts/profile.html:153
+#: apps/tutorials/tours.py:1141 templates/accounts/profile.html:153
 #: templates/accounts/profile.html:157 templates/accounts/profile.html:234
 #: templates/assistant/admin_settings.html:3
 #: templates/assistant/admin_settings.html:6 templates/assistant/home.html:3
@@ -6621,13 +6624,13 @@ msgstr "Spela upp valfri guide igen, eller slå på eller av guiderna."
 msgid "AI assistant"
 msgstr "AI-assistent"
 
-#: apps/tutorials/tours.py:1143 templates/assistant/home.html:9
+#: apps/tutorials/tours.py:1146 templates/assistant/home.html:9
 #: templates/assistant/settings.html:6 templates/core/backup_list.html:60
 #: templates/core/feedback_list.html:9
 msgid "Settings"
 msgstr "Inställningar"
 
-#: apps/tutorials/tours.py:1145
+#: apps/tutorials/tours.py:1148
 msgid ""
 "Turn the assistant on or off, choose what it may read, tell it what it "
 "should always know about you (allergies, equipment, schedule), and add your "
@@ -6637,11 +6640,11 @@ msgstr ""
 "ska veta om dig (allergier, utrustning, schema) och lägg till din egen API-"
 "nyckel."
 
-#: apps/tutorials/tours.py:1152
+#: apps/tutorials/tours.py:1155
 msgid "Ask anything"
 msgstr "Fråga vad som helst"
 
-#: apps/tutorials/tours.py:1154
+#: apps/tutorials/tours.py:1157
 msgid ""
 "Ask for a diet plan or a workout program, or about your progress. It looks "
 "at your own data before it answers."
@@ -6649,11 +6652,11 @@ msgstr ""
 "Be om en kostplan eller ett träningsprogram, eller fråga om dina framsteg. "
 "Den tittar på dina egna data innan den svarar."
 
-#: apps/tutorials/tours.py:1161
+#: apps/tutorials/tours.py:1164
 msgid "Your conversations"
 msgstr "Dina konversationer"
 
-#: apps/tutorials/tours.py:1163
+#: apps/tutorials/tours.py:1166
 msgid ""
 "Pick up where you left off. A plan it suggests is only created if you accept "
 "it."
@@ -8567,14 +8570,14 @@ msgstr "Återställningen av %(name)s misslyckades: %(detail)s"
 msgid "Creating a backup failed: %(detail)s"
 msgstr "Det gick inte att skapa säkerhetskopian: %(detail)s"
 
-#: templates/core/_bar_chart.html:36
+#: templates/core/_bar_chart.html:37
 #, python-format
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s kategori"
 msgstr[1] "%(title)s, %(counter)s kategorier"
 
-#: templates/core/_bar_chart.html:47
+#: templates/core/_bar_chart.html:48
 #, python-format
 msgid "%(title)s by category"
 msgstr "%(title)s per kategori"
@@ -9684,7 +9687,7 @@ msgstr "Vid en vald veckotakt, ungefär hur lång tid det tar att nå en målvik
 #: templates/nutrition/food_list.html:90 templates/nutrition/goal_edit.html:31
 #: templates/nutrition/recipe_list.html:70
 #: templates/nutrition/shopping_no_plan.html:13
-#: templates/nutrition/stats.html:82
+#: templates/nutrition/stats.html:88
 msgid "Back to nutrition"
 msgstr "Tillbaka till näring"
 
@@ -9820,19 +9823,19 @@ msgid "Nutrition for this day"
 msgstr "Näring för den här dagen"
 
 #: templates/nutrition/diary_day.html:59 templates/nutrition/diary_day.html:73
-#: templates/nutrition/stats.html:49
+#: templates/nutrition/stats.html:54
 msgctxt "macro"
 msgid "P"
 msgstr "P"
 
 #: templates/nutrition/diary_day.html:59 templates/nutrition/diary_day.html:73
-#: templates/nutrition/stats.html:50
+#: templates/nutrition/stats.html:55
 msgctxt "macro"
 msgid "C"
 msgstr "K"
 
 #: templates/nutrition/diary_day.html:59 templates/nutrition/diary_day.html:73
-#: templates/nutrition/stats.html:51
+#: templates/nutrition/stats.html:56
 msgctxt "macro"
 msgid "F"
 msgstr "F"
@@ -10442,53 +10445,86 @@ msgstr "Skapa en plan eller aktivera en av dina."
 msgid "Days logged"
 msgstr "Loggade dagar"
 
-#: templates/nutrition/stats.html:14
-msgid "Median calories"
-msgstr "Median för kalorier"
+#: templates/nutrition/stats.html:14 templates/nutrition/stats.html:52
+msgid "Mean calories"
+msgstr "Medelvärde för kalorier"
 
-#: templates/nutrition/stats.html:20
+#: templates/nutrition/stats.html:15
+msgid "Typical day (median)"
+msgstr "Typisk dag (median)"
+
+#: templates/nutrition/stats.html:18
+msgid ""
+"Your mean is clearly below your typical day, so some days may be only partly "
+"logged."
+msgstr ""
+"Ditt medelvärde ligger klart under din typiska dag, så vissa dagar kan vara "
+"bara delvis loggade."
+
+#: templates/nutrition/stats.html:24
 msgid "Median protein"
 msgstr "Median för protein"
 
-#: templates/nutrition/stats.html:24
+#: templates/nutrition/stats.html:28
 msgid "Median carbohydrates"
 msgstr "Median för kolhydrater"
 
-#: templates/nutrition/stats.html:28
+#: templates/nutrition/stats.html:32
 msgid "Median fat"
 msgstr "Median för fett"
 
-#: templates/nutrition/stats.html:34
+#: templates/nutrition/stats.html:38
 msgid ""
-"Medians of the days you actually logged something - a day with nothing "
-"logged isn't counted as zero calories, and one barely-logged day doesn't "
-"drag the figure down the way it would an average."
+"The mean shows your real total intake per day, big days included. The median "
+"shows a typical day, and one barely-logged day hardly moves it. Only "
+"finished days you logged something count: today is left out until it's over, "
+"and a day with nothing logged isn't counted as zero calories."
 msgstr ""
-"Medianer av de dagar du faktiskt loggat något - en dag utan loggning räknas "
-"inte som noll kalorier, och en knappt loggad dag drar inte ner värdet så som "
-"den skulle dra ner ett medelvärde."
-
-#: templates/nutrition/stats.html:42
-msgid "Median per day"
-msgstr "Median per dag"
+"Medelvärdet visar ditt verkliga totala intag per dag, stora dagar inräknade. "
+"Medianen visar en typisk dag, och en knappt loggad dag påverkar den "
+"knappast. Bara avslutade dagar där du har loggat något räknas: i dag "
+"utelämnas tills dagen är över, och en dag utan loggning räknas inte som noll "
+"kalorier."
 
 #: templates/nutrition/stats.html:46
+msgid "Per day"
+msgstr "Per dag"
+
+#: templates/nutrition/stats.html:50
 msgid "Period"
 msgstr "Period"
 
-#: templates/nutrition/stats.html:47
+#: templates/nutrition/stats.html:51
 msgid "Days"
 msgstr "Dagar"
 
-#: templates/nutrition/stats.html:71
-msgid "Days: days logged / days in the period. Macros in grams."
-msgstr "Dagar: loggade dagar / dagar i perioden. Makron i gram."
+#: templates/nutrition/stats.html:52
+msgctxt "calories column"
+msgid "Mean"
+msgstr "Medel"
 
-#: templates/nutrition/stats.html:74
+#: templates/nutrition/stats.html:53
+msgid "Median calories"
+msgstr "Median för kalorier"
+
+#: templates/nutrition/stats.html:53
+msgctxt "calories column"
+msgid "Med."
+msgstr "Med."
+
+#: templates/nutrition/stats.html:77
+msgid ""
+"Days: days logged / days in the period. Mean and median calories in kcal, "
+"median macros in grams. Today isn't included."
+msgstr ""
+"Dagar: loggade dagar / dagar i perioden. Medelvärde och median för kalorier "
+"i kcal, medianer för makron i gram. Dagens datum ingår inte."
+
+#: templates/nutrition/stats.html:80
 msgid "Daily calories (last 30 days)"
 msgstr "Dagliga kalorier (senaste 30 dagarna)"
 
-#: templates/nutrition/stats.html:79
+#: templates/nutrition/stats.html:85
 msgid "Log a few days in your food diary to see your trend here."
 msgstr "Logga några dagar i din matdagbok för att se din trend här."
 
@@ -11721,6 +11757,25 @@ msgstr "Redigera set"
 #, python-format
 msgid "Edit set %(number)s"
 msgstr "Redigera set %(number)s"
+
+#~ msgid ""
+#~ "Median daily calories and macros. Days with nothing logged don't count, "
+#~ "and one barely-logged day doesn't drag the figure down."
+#~ msgstr ""
+#~ "Median för dagliga kalorier och makron. Dagar utan loggning räknas inte, "
+#~ "och en knappt loggad dag drar inte ner värdet."
+
+#~ msgid ""
+#~ "Medians of the days you actually logged something - a day with nothing "
+#~ "logged isn't counted as zero calories, and one barely-logged day doesn't "
+#~ "drag the figure down the way it would an average."
+#~ msgstr ""
+#~ "Medianer av de dagar du faktiskt loggat något - en dag utan loggning "
+#~ "räknas inte som noll kalorier, och en knappt loggad dag drar inte ner "
+#~ "värdet så som den skulle dra ner ett medelvärde."
+
+#~ msgid "Median per day"
+#~ msgstr "Median per dag"
 
 #~ msgid "exercise"
 #~ msgstr "övning"
