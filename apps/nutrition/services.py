@@ -1423,6 +1423,13 @@ def copy_diary_day(user, source_date, target_date):
 # for the same reason (docs/NUTRITION.md dashboard weight chart).
 STATS_WINDOW_DAYS = 30
 
+# When a period's mean sits this far below its median (and there are enough
+# days for that to mean something), a few days probably hold far too little
+# food for what was really eaten - worth a hint, never a filter: a real fast
+# or sick day looks the same, so those days still count.
+LOGGING_GAP_MEAN_BELOW_MEDIAN = Decimal("0.10")
+LOGGING_GAP_MIN_DAYS = 5
+
 
 def _daily_totals_by_date(user, start_date, end_date):
     """Every day's total nutrition in [start_date, end_date] inclusive,
@@ -1449,18 +1456,17 @@ def _daily_totals_by_date(user, start_date, end_date):
 def calorie_history(user, *, days=STATS_WINDOW_DAYS):
     """The last `days` calendar days' totals (today inclusive), oldest
     first, with exactly one entry per day - including days nothing was
-    logged at all (`ZERO_NUTRITION`), the same "always one point per
-    day, not just days with data" shape
-    apps.analytics.services.weekly_volume_series uses, so a genuinely
-    quiet day shows up as a real dip on the chart rather than a gap
-    that silently compresses the timeline."""
+    logged at all (`None`, "no data" rather than a claim of zero
+    calories), the same "always one point per day, not just days with
+    data" shape apps.analytics.services.weekly_volume_series uses, so
+    the timeline never silently compresses."""
     today = timezone.localdate()
     start = today - timezone.timedelta(days=days - 1)
     totals_by_date = _daily_totals_by_date(user, start, today)
 
     return [
         (start + timezone.timedelta(days=offset), totals_by_date.get(
-            start + timezone.timedelta(days=offset), ZERO_NUTRITION
+            start + timezone.timedelta(days=offset)
         ))
         for offset in range(days)
     ]
@@ -1473,23 +1479,35 @@ class NutritionStatsSummary:
 
     days_logged: int
     days_in_range: int
+    mean_calories: Decimal
     median_calories: Decimal
     median_protein_grams: Decimal
     median_carbohydrate_grams: Decimal
     median_fat_grams: Decimal
 
+    @property
+    def possible_logging_gaps(self) -> bool:
+        """Whether the mean is low enough against the median to suggest
+        some days were only partly logged."""
+        return (
+            self.days_logged >= LOGGING_GAP_MIN_DAYS
+            and self.mean_calories
+            < self.median_calories * (1 - LOGGING_GAP_MEAN_BELOW_MEDIAN)
+        )
+
 
 def _summarize(logged, days_in_range) -> NutritionStatsSummary:
-    """Median daily calories/macros over `logged` (one ScaledNutrition
-    per day something was logged). The median rather than the mean, asked
-    for directly: one barely-logged day (a forgotten dinner) drags a mean
-    down a lot but barely moves the median, which is what "how much do I
-    usually eat" actually means."""
+    """Mean and median daily calories, and median macros, over `logged`
+    (one ScaledNutrition per day something was logged). The two calorie
+    figures answer different questions: the mean is the real total intake
+    per day, big days included, which is what energy balance depends on;
+    the median is "how much do I usually eat", which one barely-logged day
+    (a forgotten dinner) barely moves."""
     from statistics import median
 
     if not logged:
         zero = Decimal("0")
-        return NutritionStatsSummary(0, days_in_range, zero, zero, zero, zero)
+        return NutritionStatsSummary(0, days_in_range, zero, zero, zero, zero, zero)
 
     def _median(attr, places):
         return Decimal(median(getattr(totals, attr) for totals in logged)).quantize(
@@ -1499,6 +1517,9 @@ def _summarize(logged, days_in_range) -> NutritionStatsSummary:
     return NutritionStatsSummary(
         days_logged=len(logged),
         days_in_range=days_in_range,
+        mean_calories=(
+            sum((totals.calories for totals in logged), Decimal("0")) / len(logged)
+        ).quantize(Decimal("1")),
         median_calories=_median("calories", "1"),
         median_protein_grams=_median("protein_grams", "0.1"),
         median_carbohydrate_grams=_median("carbohydrate_grams", "0.1"),
@@ -1518,12 +1539,14 @@ def _logged_days(totals_by_date, start, end):
 
 
 def nutrition_stats(user, *, days=STATS_WINDOW_DAYS) -> NutritionStatsSummary:
-    """Median daily calories/macros over the last `days` days (today
-    inclusive), counting only days something was actually logged."""
-    today = timezone.localdate()
-    start = today - timezone.timedelta(days=days - 1)
+    """Daily calorie/macro figures over the last `days` finished days,
+    counting only days something was actually logged. Today is left out:
+    it's still in progress, so it would pull every figure down until
+    the evening."""
+    end = timezone.localdate() - timezone.timedelta(days=1)
+    start = end - timezone.timedelta(days=days - 1)
     return _summarize(
-        _logged_days(_daily_totals_by_date(user, start, today), start, today), days
+        _logged_days(_daily_totals_by_date(user, start, end), start, end), days
     )
 
 
@@ -1548,38 +1571,40 @@ class NutritionStatsPeriod:
 
 
 def nutrition_stats_by_period(user, today=None) -> list[NutritionStatsPeriod]:
-    """`nutrition_stats`'s medians for the stats page's fixed periods -
+    """`nutrition_stats`'s figures for the stats page's fixed periods -
     7/14/30 days, 3 months, year to date, 1 year and all time. Every
-    period ends today; the diary is read once (from the user's first
-    entry) and each period is a slice of it. "All" starts at the first
-    logged day, so its day count isn't padded with time before the user
-    started logging."""
+    period ends yesterday, the last finished day; the diary is read once
+    (from the user's first entry) and each period is a slice of it. "All"
+    starts at the first logged day, so its day count isn't padded with
+    time before the user started logging. A period with no finished day
+    yet (year to date on January 1) is simply empty."""
     from django.utils.translation import gettext_lazy as _
 
     from .models import DiaryEntry
 
     today = today or timezone.localdate()
+    end = today - timezone.timedelta(days=1)
     first = DiaryEntry.objects.filter(user=user).order_by("date").values_list(
         "date", flat=True
     ).first()
     all_start = min(first, today) if first else today
     starts = [
-        ("7d", _("7 days"), today - timezone.timedelta(days=6)),
-        ("14d", _("14 days"), today - timezone.timedelta(days=13)),
-        ("30d", _("30 days"), today - timezone.timedelta(days=29)),
-        ("3m", _("3 months"), _months_before(today, 3) + timezone.timedelta(days=1)),
+        ("7d", _("7 days"), end - timezone.timedelta(days=6)),
+        ("14d", _("14 days"), end - timezone.timedelta(days=13)),
+        ("30d", _("30 days"), end - timezone.timedelta(days=29)),
+        ("3m", _("3 months"), _months_before(end, 3) + timezone.timedelta(days=1)),
         ("ytd", _("Year to date"), today.replace(month=1, day=1)),
-        ("1y", _("1 year"), _months_before(today, 12) + timezone.timedelta(days=1)),
+        ("1y", _("1 year"), _months_before(end, 12) + timezone.timedelta(days=1)),
         ("all", _("All time"), all_start),
     ]
     earliest = min(start for _key, _label, start in starts)
-    totals_by_date = _daily_totals_by_date(user, earliest, today)
+    totals_by_date = _daily_totals_by_date(user, earliest, end)
     return [
         NutritionStatsPeriod(
             key=key,
             label=label,
             summary=_summarize(
-                _logged_days(totals_by_date, start, today), (today - start).days + 1
+                _logged_days(totals_by_date, start, end), max((end - start).days + 1, 0)
             ),
         )
         for key, label, start in starts
@@ -1716,8 +1741,12 @@ def calendar_month_statuses(user, year, month):
             training_status = None
 
         window_days = [day - timedelta(days=n) for n in range(CALENDAR_CALORIE_TREND_WINDOW_DAYS)]
+        # Today is still in progress, and a 0-kcal day says nothing -
+        # the same days `_logged_days` leaves out of the stats page.
         logged_calories = [
-            totals_by_date[d].calories for d in window_days if d in totals_by_date
+            totals_by_date[d].calories
+            for d in window_days
+            if d in totals_by_date and d < today and totals_by_date[d].calories > 0
         ]
         trend = None
         direction = None

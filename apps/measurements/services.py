@@ -21,6 +21,8 @@ from .models import BodyMeasurement, MeasurementType
 # that one.
 BODY_TRACKING_REMINDER_DAYS = 14
 
+BODY_WEIGHT_TYPE_NAME = "Body weight"
+
 
 def visible_to(user, *, include_inactive=False):
     """Measurement types a user may track: system types + their own."""
@@ -104,3 +106,44 @@ def stats_for(user, measurement_type):
         max_value=max(values),
         average_value=sum(values) / len(values),
     )
+
+
+@dataclass(frozen=True)
+class MeasurementProgress:
+    """A measurement type's first and latest reading within a date range,
+    in canonical units."""
+
+    measurement_type: MeasurementType
+    first_value: Decimal
+    latest_value: Decimal
+    entry_count: int
+
+
+def progress_in_range(user, start, end):
+    """One `MeasurementProgress` per active measurement type `user` logged
+    in [start, end] (`start=None`: no lower bound) - body weight first as
+    the one nearly everyone tracks, the rest by name."""
+    readings = (
+        BodyMeasurement.objects.filter(
+            user=user, measurement_type__in=visible_to(user), recorded_at__date__lte=end
+        )
+        .select_related("measurement_type")
+        .order_by("recorded_at")
+    )
+    if start:
+        readings = readings.filter(recorded_at__date__gte=start)
+
+    by_type = {}
+    for reading in readings:
+        by_type.setdefault(reading.measurement_type, []).append(reading.value)
+
+    return [
+        MeasurementProgress(measurement_type, values[0], values[-1], len(values))
+        for measurement_type, values in sorted(
+            by_type.items(),
+            key=lambda item: (
+                not (item[0].name == BODY_WEIGHT_TYPE_NAME and item[0].owner_id is None),
+                item[0].name,
+            ),
+        )
+    ]

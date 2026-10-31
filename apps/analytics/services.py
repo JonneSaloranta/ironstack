@@ -15,6 +15,9 @@ from decimal import Decimal
 
 from apps.core import units as core_units
 from apps.core.charts import build_bar_series, build_chart_series
+from apps.measurements import services as measurement_services
+from apps.measurements import units as measurement_units
+from apps.measurements.models import UnitKind
 from apps.records.models import PersonalRecord, PRType
 from apps.records.one_rep_max import OneRepMaxCalculator
 from apps.workouts.models import ExerciseSet, WorkoutSession, WorkoutSessionStatus
@@ -29,6 +32,60 @@ def _weight_display(value, user):
     uses, so a chart's own min/max/point values are already in the unit
     its label claims, not just re-labeled kg. See apps.core.units."""
     return core_units.kg_to_display(value, getattr(user, "unit_system", "metric"))
+
+
+@dataclass(frozen=True)
+class BodyMeasurementProgress:
+    """One measurement type's row in the Progress page's body card, in
+    the user's display unit. `change` is None for a single reading, and
+    `change_percent` is None where a relative change means nothing: a
+    measurement that is itself a percentage, or a first value of 0."""
+
+    measurement_type: object
+    value: Decimal
+    unit_label: str
+    change: Decimal | None
+    change_percent: Decimal | None
+
+
+def body_measurement_progress(user, date_range) -> list[BodyMeasurementProgress]:
+    """How each measurement changed from its first reading in the range
+    to its latest. Readings are compared as logged, not smoothed, so the
+    figures match what the user entered. The display values are rounded
+    before subtracting so a row's own figures always add up."""
+    one_place = Decimal("0.1")
+    rows = []
+    for progress in measurement_services.progress_in_range(
+        user, date_range.start, date_range.end
+    ):
+        unit_kind = progress.measurement_type.unit_kind
+
+        def display(value, unit_kind=unit_kind):
+            return measurement_units.to_display(value, unit_kind, user.unit_system).quantize(
+                one_place
+            )
+
+        latest = display(progress.latest_value)
+        change = None
+        change_percent = None
+        if progress.entry_count > 1:
+            change = latest - display(progress.first_value)
+            if unit_kind != UnitKind.PERCENTAGE and progress.first_value:
+                change_percent = (
+                    (progress.latest_value - progress.first_value)
+                    / progress.first_value
+                    * 100
+                ).quantize(one_place)
+        rows.append(
+            BodyMeasurementProgress(
+                measurement_type=progress.measurement_type,
+                value=latest,
+                unit_label=measurement_units.display_unit_label(unit_kind, user.unit_system),
+                change=change,
+                change_percent=change_percent,
+            )
+        )
+    return rows
 
 
 def _completed_sessions(user, date_range):

@@ -319,6 +319,7 @@ class NutritionDashboardView(LoginRequiredMixin, View):
         from apps.measurements import units as measurement_units
         from apps.measurements.services import history_for
 
+        from .maintenance import estimate_maintenance
         from .models import NutritionGoal, NutritionTarget
         from .suggestions import suggest_calorie_adjustment
 
@@ -354,6 +355,7 @@ class NutritionDashboardView(LoginRequiredMixin, View):
             "is_training_day": services.is_training_day(request.user, today),
             "weight_chart": weight_chart,
             "suggestion": suggest_calorie_adjustment(request.user) if goal else None,
+            "maintenance": estimate_maintenance(request.user),
             "todays_plan": _todays_diet_plan_summary(request.user, today),
         }
         return render(request, "nutrition/dashboard.html", context)
@@ -1976,7 +1978,7 @@ class NutritionStatsView(LoginRequiredMixin, View):
     trend the daily diary total can't show on its own, since it only
     ever shows one day at a time. The chart and headline card are a
     fixed 30-day window, not a range picker like apps.analytics's own
-    stats page; a table adds the same medians for fixed longer and
+    stats page; a table adds the same figures for fixed longer and
     shorter periods (docs/NUTRITION.md "Nutrition statistics")."""
 
     template_name = "nutrition/stats.html"
@@ -1994,9 +1996,10 @@ class NutritionStatsView(LoginRequiredMixin, View):
         ).first()
         calorie_chart = build_bar_series(
             [
-                (day.strftime("%b %d"), totals.calories.quantize(Decimal("1")))
+                (day.strftime("%b %d"), totals and totals.calories.quantize(Decimal("1")))
                 for day, totals in history
-            ]
+            ],
+            reference_value=Decimal(target.daily_calories) if target else None,
         )
         return render(
             request,

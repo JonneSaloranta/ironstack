@@ -175,7 +175,9 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
 ## Lists, tables, pagination
 
 - Tables: `<div class="table-wrap"><table class="set-table">…</table></div>`.
-  Bar-chart data tables use `.bar-chart-table`.
+  Bar-chart data tables use `.bar-chart-table`. A target across a bar chart is
+  `build_bar_series(reference_value=...)`, with a text under the chart saying
+  what the line means.
 - Pagination: always `{% include "core/_pagination.html" %}` (keeps filters
   via `url_replace`). Optional `page=` / `param=` for a second pager on the
   same page, `anchor=` to land back on the pager after a full page load,
@@ -261,6 +263,9 @@ Places that knowingly differ from the rules above:
 - `500.html` is standalone (no context processors), so it can't use the shared
   partials or `{% url %}`.
 - Signed-out pages have no `.top-bar`.
+- The Progress page's body measurements card is a `.stat-row` with one figure
+  per measurement type logged in the range, so it can exceed 2-4 figures; the
+  items wrap cleanly.
 - Empty states whose message contains markup (`<abbr>PRs</abbr>`), contains a
   form (dashboard's "Start freeform workout"), or is an `<li>` inside a list
   (`routine_detail.html`) stay hand-written `<div class="card empty-state">`.

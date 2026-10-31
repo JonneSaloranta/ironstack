@@ -18,6 +18,37 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.29.0] - 2026-10-31
+
+### Changed
+- Nutrition statistics lead with mean daily calories, which show your real
+  total intake, with the median beside it as a typical day. Macros stay
+  medians.
+- Nutrition statistics and the front page calendar's calorie trend leave out
+  today until it's over, so a day in progress no longer pulls them down.
+
+### Added
+- The nutrition overview estimates your real maintenance calories from your
+  food diary and weight, next to the calculated figure. It's only information
+  and never changes your target.
+- The daily calories chart marks your current target with a dashed line.
+- The Progress page shows how your weight and other body measurements changed
+  in the selected range, in your own units and as a percentage.
+- Nutrition statistics say when your mean is clearly below your typical day,
+  since some days may be only partly logged.
+
+### Fixed
+- Calorie adjustment suggestions read only the last 28 days of weight instead
+  of your whole history, use your own timezone, and show rates in your own
+  weight unit.
+- Accepting a calorie adjustment no longer brings the same suggestion straight
+  back: weight logged before it no longer counts.
+- The daily calories chart's table shows "-" instead of "0 kcal" for a day
+  with nothing logged.
+- The nutrition statistics headline shows "-" instead of 0 kcal before
+  anything is logged.
+- The front page calendar's calorie trend no longer counts a 0-kcal day.
+
 ## [1.28.0] - 2026-10-28
 
 ### Added

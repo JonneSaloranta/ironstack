@@ -502,6 +502,12 @@ TOURS = (
                 _("Workouts, time spent training and total volume lifted in the range."),
             ),
             Step(
+                "progress-body",
+                _("Body measurements"),
+                _("How your weight and other measurements changed in the range."),
+                optional=True,
+            ),
+            Step(
                 "exercise-trend-picker",
                 _("One exercise"),
                 _("Pick an exercise to see how its strength has developed."),
@@ -681,6 +687,14 @@ TOURS = (
                     "Nothing changes unless you accept it."
                 ),
                 optional=True,
+            ),
+            Step(
+                "nutrition-maintenance",
+                _("Observed maintenance"),
+                _(
+                    "An estimate of what you really burn, from your food diary and weight. "
+                    "It's only information and never changes your target."
+                ),
             ),
             Step(
                 "nutrition-target",
@@ -948,19 +962,22 @@ TOURS = (
                 "stats-30-days",
                 _("Last 30 days"),
                 _(
-                    "Median daily calories and macros. Days with nothing logged don't count, "
-                    "and one barely-logged day doesn't drag the figure down."
+                    "Mean calories show your real total intake, the median a typical day. "
+                    "Today and days with nothing logged don't count."
                 ),
             ),
             Step(
                 "stats-periods",
                 _("Longer and shorter periods"),
-                _("The same medians for a week up to everything you've ever logged."),
+                _("The same figures for a week up to everything you've ever logged."),
             ),
             Step(
                 "stats-chart",
                 _("Daily calories"),
-                _("Each of the last 30 days, with the exact figures in a table below."),
+                _(
+                    "Each of the last 30 days, today included, with the exact figures "
+                    "in a table below. A dashed line marks your current target."
+                ),
                 optional=True,
             ),
         ),

@@ -89,6 +89,9 @@ class BarSeries:
     max_value: Decimal
     width: int
     height: int  # total SVG height, including the reserved label band below the plot
+    reference_y: Decimal | None = None
+    reference_x1: Decimal | None = None
+    reference_x2: Decimal | None = None
 
 
 # Reserved band below the plot area for each bar's own category label,
@@ -99,7 +102,7 @@ class BarSeries:
 LABEL_BAND = Decimal("38")
 
 
-def build_bar_series(categories, *, width=600, height=200, padding=20):
+def build_bar_series(categories, *, width=600, height=200, padding=20, reference_value=None):
     """`categories`: an iterable of `(label, value)` pairs, in display
     order (not sorted here - callers decide chronological vs.
     ranked-by-value). Returns None for no categories at all; unlike line
@@ -111,13 +114,21 @@ def build_bar_series(categories, *, width=600, height=200, padding=20):
     the table below for anyone who needs precision or a screen reader,
     but a bar chart with unlabeled bars is hard to read at a glance, so
     the chart itself needs the names too, not just the table.
+
+    A value of `None` means "no data": the category keeps its slot and
+    gets no bar, and its `value` stays None so the template can say so
+    rather than claim a measured zero.
+
+    `reference_value` adds one horizontal line across the plot (a target,
+    say); the scale always reaches it, so it's never drawn off the chart.
     """
     categories = list(categories)
     if not categories:
         return None
 
-    values = [value for _, value in categories]
-    max_value = max(values) or Decimal("1")  # avoid /0 when every value is zero
+    values = [value or Decimal("0") for _, value in categories]
+    # `or 1`: avoid /0 when every value is zero
+    max_value = max(values + [reference_value or Decimal("0")]) or Decimal("1")
     plot_width = Decimal(width - 2 * padding)
     plot_height = Decimal(height - 2 * padding)
     baseline = Decimal(height - padding)
@@ -129,7 +140,7 @@ def build_bar_series(categories, *, width=600, height=200, padding=20):
     for i, (label, value) in enumerate(categories):
         slot_x = Decimal(padding) + Decimal(i) * slot_width
         bar_x = slot_x + (slot_width - bar_width) / 2
-        bar_height = (value / max_value) * plot_height if max_value else Decimal("0")
+        bar_height = ((value or Decimal("0")) / max_value) * plot_height
         bars.append(
             BarPoint(
                 label=label,
@@ -143,6 +154,15 @@ def build_bar_series(categories, *, width=600, height=200, padding=20):
             )
         )
 
+    reference = {}
+    if reference_value:
+        reference = {
+            "reference_y": (baseline - (reference_value / max_value) * plot_height).quantize(
+                TWO_PLACES
+            ),
+            "reference_x1": Decimal(padding).quantize(TWO_PLACES),
+            "reference_x2": Decimal(width - padding).quantize(TWO_PLACES),
+        }
     return BarSeries(
-        bars=bars, max_value=max_value, width=width, height=height + int(LABEL_BAND)
+        bars=bars, max_value=max_value, width=width, height=height + int(LABEL_BAND), **reference
     )

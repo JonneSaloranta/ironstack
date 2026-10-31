@@ -433,6 +433,8 @@ def get_nutrition_overview(ctx, args):
     return {
         "days": days,
         "days_logged": stats.days_logged,
+        "mean_daily_calories": int(stats.mean_calories),
+        "possible_logging_gaps": stats.possible_logging_gaps,
         "median_daily": {
             "calories": int(stats.median_calories),
             "protein_g": _num(stats.median_protein_grams),
@@ -613,10 +615,11 @@ def get_progression_suggestions(ctx, args):
 def get_calorie_adjustment(ctx, args):
     """apps.nutrition's calorie-adjustment check: the weight trend against
     the goal's target rate, and the change it would suggest."""
+    from apps.nutrition.maintenance import estimate_maintenance
     from apps.nutrition.suggestions import suggest_calorie_adjustment
 
     suggestion = suggest_calorie_adjustment(ctx.user)
-    return {
+    result = {
         "status": suggestion.action,
         "target_rate_kg_per_week": _num(suggestion.target_rate_kg_per_week, 2),
         "actual_rate_kg_per_week": _num(suggestion.actual_rate_kg_per_week, 2),
@@ -625,6 +628,16 @@ def get_calorie_adjustment(ctx, args):
         "confidence": suggestion.confidence,
         "reason": str(suggestion.reason),
     }
+    # Built from the food diary too, which this tool's own BODY scope
+    # doesn't cover.
+    if ctx.may_read(DataScope.FOOD):
+        maintenance = estimate_maintenance(ctx.user)
+        result["observed_maintenance"] = {
+            "calories": maintenance.calories,
+            "confidence": maintenance.confidence,
+            "reason": str(maintenance.reason),
+        }
+    return result
 
 
 def get_stretching(ctx, args):
@@ -1010,7 +1023,9 @@ TOOLS = [
     },
     {
         "name": "get_nutrition_overview",
-        "description": "What the user has actually eaten: median daily intake and recent days.",
+        "description": "What the user has actually eaten: mean and median daily intake over "
+        "finished days (today excluded), a hint when some days may be only partly logged, and "
+        "recent days (today included if logged).",
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_nutrition_overview,
         "scope": DataScope.FOOD,
@@ -1033,7 +1048,9 @@ TOOLS = [
         "name": "get_calorie_adjustment",
         "description": (
             "The app's own check of the user's weight trend against their nutrition goal, "
-            "and the daily calorie change it suggests (on track / adjust / not enough data)."
+            "and the daily calorie change it suggests (on track / adjust / not enough data). "
+            "If the food diary is shared too, also an estimate of real maintenance calories "
+            "from intake and weight."
         ),
         "input_schema": {"type": "object", "properties": {}},
         "handler": get_calorie_adjustment,

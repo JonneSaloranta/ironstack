@@ -103,6 +103,23 @@
   {% endif %}
 {% endif %}
 
+<div data-tour="nutrition-maintenance" class="card">
+  <h2 class="card-title">{% trans "Observed maintenance" %}</h2>
+  {% if maintenance.calories %}
+    <p class="stat-value">{% blocktrans with calories=maintenance.calories %}{{ calories }} kcal/day{% endblocktrans %}</p>
+    <p class="text-muted">
+      {% if maintenance.confidence == "high" %}{% trans "High confidence" %}
+      {% elif maintenance.confidence == "medium" %}{% trans "Medium confidence" %}
+      {% else %}{% trans "Low confidence" %}{% endif %}
+    </p>
+    {% if target.tdee %}
+      <p>{% blocktrans with calories=target.tdee %}Calculated from your profile: {{ calories }} kcal/day.{% endblocktrans %}</p>
+    {% endif %}
+  {% endif %}
+  <p class="field-help">{{ maintenance.reason }}</p>
+  <p class="field-help">{% trans "An estimate of what you really burn, based on your food diary and weight. It doesn't change your target." %}</p>
+</div>
+
 {% if weight_chart %}
   <div class="card">
     <h2 class="card-title">{% trans "Weight trend" %}</h2>

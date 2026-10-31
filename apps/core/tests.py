@@ -268,6 +268,26 @@ class BarSeriesServiceTests(TestCase):
         self.assertIsNotNone(series)
         self.assertEqual(series.bars[0].height, Decimal("0.00"))
 
+    def test_no_reference_line_by_default(self):
+        self.assertIsNone(build_bar_series([("A", Decimal("1"))]).reference_y)
+
+    def test_reference_line_sits_on_the_same_scale_as_the_bars(self):
+        series = build_bar_series(
+            [("A", Decimal("100")), ("B", Decimal("50"))], reference_value=Decimal("50")
+        )
+        self.assertEqual(series.reference_y, series.bars[1].y)
+
+    def test_a_reference_above_every_bar_extends_the_scale(self):
+        series = build_bar_series([("A", Decimal("50"))], reference_value=Decimal("100"))
+        self.assertEqual(series.max_value, Decimal("100"))
+        self.assertGreater(series.bars[0].y, series.reference_y)
+
+    def test_a_none_value_keeps_its_slot_without_a_bar(self):
+        series = build_bar_series([("A", None), ("B", Decimal("2"))])
+        self.assertIsNone(series.bars[0].value)
+        self.assertEqual(series.bars[0].height, Decimal("0"))
+        self.assertGreater(series.bars[1].height, Decimal("0"))
+
     def test_category_order_is_preserved_not_resorted(self):
         series = build_bar_series([("Z", Decimal("1")), ("A", Decimal("5"))])
         self.assertEqual([bar.label for bar in series.bars], ["Z", "A"])

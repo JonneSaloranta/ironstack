@@ -34,7 +34,7 @@ from apps.assistant import services as assistant  # noqa: E402
 from apps.assistant.models import AssistantMessage, Conversation  # noqa: E402
 from apps.coaching import services as coaching  # noqa: E402
 from apps.exercises.models import Exercise  # noqa: E402
-from apps.measurements.models import MeasurementType  # noqa: E402
+from apps.measurements.models import BodyMeasurement, MeasurementType  # noqa: E402
 from apps.nutrition import services as nutrition  # noqa: E402
 from apps.nutrition.models import (  # noqa: E402
     DiaryEntry,
@@ -136,7 +136,12 @@ class LongContentLayoutTests(StaticLiveServerTestCase):
         exercise = Exercise.objects.create(owner=user, name=LONG)
         session = workout_services.start_session(user, program.workouts.first())
         workout_services.add_performed_exercise(session, exercise)
-        MeasurementType.objects.create(owner=user, name=WORD, unit_kind="length")
+        long_type = MeasurementType.objects.create(owner=user, name=WORD, unit_kind="length")
+        for days_ago, value in ((20, "1.0"), (1, "0.9")):
+            BodyMeasurement.objects.create(
+                user=user, measurement_type=long_type, value=Decimal(value),
+                recorded_at=timezone.now() - datetime.timedelta(days=days_ago),
+            )
         ActivityType.objects.create(owner=user, name=WORD)
         routine = StretchRoutine.objects.create(owner=user, name=LONG)
         for username in ("aino", "ville-valtteri-kristian-oikein-pitka-kayttajanimi"):
@@ -178,6 +183,7 @@ class LongContentLayoutTests(StaticLiveServerTestCase):
         return [
             reverse("dashboard"),
             reverse("nutrition:dashboard"),
+            reverse("nutrition:stats"),
             reverse("nutrition:diary-day"),
             reverse("nutrition:diary-add-entry"),
             reverse("nutrition:food-list"),
@@ -199,6 +205,7 @@ class LongContentLayoutTests(StaticLiveServerTestCase):
             reverse("workouts:session-train", args=[session.pk]),
             reverse("exercises:exercise-list"),
             reverse("exercises:exercise-detail", args=[exercise.pk]),
+            reverse("analytics:dashboard"),
             reverse("measurements:type-list"),
             reverse("activities:type-list"),
             reverse("stretching:home"),

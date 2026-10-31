@@ -1992,6 +1992,13 @@ h2 {
   fill: var(--color-accent);
 }
 
+/* A target across a bar chart: dashed, so it doesn't rely on color. */
+.chart-reference-line {
+  stroke: var(--color-text);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+
 .bar-label {
   font-size: var(--text-xs);
   fill: var(--color-text-muted);
