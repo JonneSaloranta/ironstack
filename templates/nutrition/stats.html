@@ -81,6 +81,9 @@
 {% if calorie_chart %}
   {% trans "Daily calories" as calorie_chart_title %}
   {% include "core/_bar_chart.html" with chart=calorie_chart chart_title=calorie_chart_title unit_label="kcal" tour_anchor="stats-chart" %}
+  {% if target %}
+    <p class="field-help">{% blocktrans with calories=target.daily_calories %}Dashed line: your current target, {{ calories }} kcal. It's the same on every day, even if your target was different back then.{% endblocktrans %}</p>
+  {% endif %}
 {% else %}
   {% include "core/_empty_state.html" with message=_("Log a few days in your food diary to see your trend here.") %}
 {% endif %}

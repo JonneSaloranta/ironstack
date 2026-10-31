@@ -633,3 +633,70 @@ class MeasurementStatsPageTests(TestCase):
         self.assertContains(response, "+2.50 kg")
         self.assertContains(response, "Entries logged")
         self.assertContains(response, ">2<")
+
+
+class ProgressInRangeTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.weight = MeasurementType.objects.get(name="Body weight", owner=None)
+        self.today = timezone.localdate()
+
+    def _log(self, days_ago, value, *, user=None, measurement_type=None):
+        BodyMeasurement.objects.create(
+            user=user or self.alice,
+            measurement_type=measurement_type or self.weight,
+            value=Decimal(value),
+            recorded_at=timezone.now() - timedelta(days=days_ago),
+        )
+
+    def _progress(self, start_days_ago=None, end_days_ago=0):
+        start = (
+            self.today - timedelta(days=start_days_ago) if start_days_ago is not None else None
+        )
+        return services.progress_in_range(
+            self.alice, start, self.today - timedelta(days=end_days_ago)
+        )
+
+    def test_first_and_latest_go_by_date_not_logging_order(self):
+        self._log(1, "78")
+        self._log(20, "80")
+        self._log(10, "90")
+        progress = self._progress(30)[0]
+        self.assertEqual(progress.first_value, Decimal("80"))
+        self.assertEqual(progress.latest_value, Decimal("78"))
+        self.assertEqual(progress.entry_count, 3)
+
+    def test_both_ends_of_the_range_are_respected(self):
+        self._log(40, "1")
+        self._log(20, "80")
+        self._log(5, "78")
+        self._log(1, "2")
+        progress = self._progress(30, 3)[0]
+        self.assertEqual(progress.first_value, Decimal("80"))
+        self.assertEqual(progress.latest_value, Decimal("78"))
+
+    def test_no_start_means_the_whole_history(self):
+        self._log(400, "100")
+        self._log(1, "80")
+        self.assertEqual(self._progress()[0].first_value, Decimal("100"))
+
+    def test_never_includes_another_users_readings(self):
+        self._log(1, "80", user=self.bob)
+        self.assertEqual(self._progress(30), [])
+
+    def test_a_deactivated_type_is_left_out(self):
+        retired = MeasurementType.objects.create(
+            owner=self.alice, name="Old", unit_kind=UnitKind.LENGTH, active=False
+        )
+        self._log(1, "1", measurement_type=retired)
+        self.assertEqual(self._progress(30), [])
+
+    def test_a_users_own_type_named_like_body_weight_is_not_put_first(self):
+        own = MeasurementType.objects.create(
+            owner=self.alice, name="Body weight", unit_kind=UnitKind.WEIGHT
+        )
+        arm = MeasurementType.objects.get(name="Arm", owner=None)
+        self._log(1, "80", measurement_type=own)
+        self._log(1, "0.4", measurement_type=arm)
+        self.assertEqual(self._progress(30)[0].measurement_type, arm)

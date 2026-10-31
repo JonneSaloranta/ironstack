@@ -14,16 +14,20 @@ concerns, never inside the lower-level app itself.
 """
 
 from dataclasses import dataclass
+from datetime import timedelta
 from decimal import ROUND_HALF_UP, Decimal
 from enum import StrEnum
 
+from django.utils import timezone
+from django.utils.formats import number_format
 from django.utils.translation import gettext as _
 
+from apps.core import units as core_units
 from apps.measurements.models import BodyMeasurement, MeasurementType
 
 from . import trends
 from .energy import KCAL_PER_KG_BODY_FAT
-from .models import NutritionGoal, NutritionTarget
+from .models import NutritionGoal, NutritionTarget, TargetSource
 
 # Tolerance band: actual and target rate are considered "on track" if
 # within this fraction of the target's own magnitude, with an absolute
@@ -38,6 +42,11 @@ MIN_TOLERANCE_KG_PER_WEEK = Decimal("0.1")
 # "don't overreact" rule docs/PROGRESSION.md applies to deload timing.
 ADJUSTMENT_ROUNDING_KCAL = Decimal("25")
 MAX_SINGLE_ADJUSTMENT_KCAL = Decimal("250")
+
+# How far back the weight trend reads: long enough for the trend's own
+# minimums, short enough that an old diet phase can't decide today's
+# suggestion.
+ADJUSTMENT_TREND_WINDOW_DAYS = 28
 
 
 class AdjustmentAction(StrEnum):
@@ -74,16 +83,34 @@ def _confidence_for(trend_result: trends.TrendResult) -> Confidence:
     return Confidence.LOW
 
 
-def _weight_readings_for(user) -> list[tuple]:
+def weight_readings_since(user, since) -> list[tuple]:
+    """`(local date, kg)` for each body weight reading from `since` on."""
     body_weight_type = MeasurementType.objects.filter(name="Body weight", owner=None).first()
     if body_weight_type is None:
         return []
     return [
-        (recorded_at.date(), value)
+        (timezone.localtime(recorded_at).date(), value)
         for recorded_at, value in BodyMeasurement.objects.filter(
-            user=user, measurement_type=body_weight_type
+            user=user, measurement_type=body_weight_type, recorded_at__gte=since
         ).values_list("recorded_at", "value")
     ]
+
+
+def _trend_window_start(target):
+    """The last few weeks, but never from before an accepted adjustment:
+    weight logged before it says nothing about the new target, and would
+    only suggest the same correction again on top of the first."""
+    since = timezone.now() - timedelta(days=ADJUSTMENT_TREND_WINDOW_DAYS)
+    if target.source == TargetSource.ADJUSTED:
+        return max(since, target.started_at)
+    return since
+
+
+def _rate_display(rate_kg_per_week, user) -> str:
+    """A kg/week rate in `user`'s own unit and number format, for a reason
+    sentence."""
+    display = core_units.kg_to_display(rate_kg_per_week, user.unit_system)
+    return number_format(display.quantize(Decimal("0.01")))
 
 
 def suggest_calorie_adjustment(user) -> AdjustmentSuggestion:
@@ -104,7 +131,7 @@ def suggest_calorie_adjustment(user) -> AdjustmentSuggestion:
             reason=_("Set a nutrition goal to get adjustment suggestions."),
         )
 
-    trend_result = trends.compute_trend(_weight_readings_for(user))
+    trend_result = trends.compute_trend(weight_readings_since(user, _trend_window_start(target)))
     if trend_result is None:
         return AdjustmentSuggestion(
             action=AdjustmentAction.INSUFFICIENT_DATA,
@@ -132,8 +159,15 @@ def suggest_calorie_adjustment(user) -> AdjustmentSuggestion:
             suggested_daily_calories=None,
             delta_kcal=None,
             confidence=confidence,
-            reason=_("Target: %(target)s kg/week. Actual trend: %(actual)s kg/week - on track.")
-            % {"target": target_rate, "actual": actual_rate},
+            reason=_(
+                "Target: %(target)s %(unit)s/week. Actual trend: %(actual)s %(unit)s/week - "
+                "on track."
+            )
+            % {
+                "target": _rate_display(target_rate, user),
+                "actual": _rate_display(actual_rate, user),
+                "unit": core_units.weight_unit_label(user.unit_system),
+            },
         )
 
     shortfall = target_rate - actual_rate
@@ -147,11 +181,12 @@ def suggest_calorie_adjustment(user) -> AdjustmentSuggestion:
     suggested_calories = target.daily_calories + int(capped_delta)
 
     reason = _(
-        "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last "
-        "%(days)s days. Suggested adjustment: %(delta)+d kcal/day."
+        "Target: %(target)s %(unit)s/week. Actual trend: %(actual)s %(unit)s/week over the "
+        "last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
     ) % {
-        "target": target_rate,
-        "actual": actual_rate,
+        "target": _rate_display(target_rate, user),
+        "actual": _rate_display(actual_rate, user),
+        "unit": core_units.weight_unit_label(user.unit_system),
         "days": trend_result.span_days,
         "delta": int(capped_delta),
     }

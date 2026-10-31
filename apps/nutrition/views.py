@@ -319,6 +319,7 @@ class NutritionDashboardView(LoginRequiredMixin, View):
         from apps.measurements import units as measurement_units
         from apps.measurements.services import history_for
 
+        from .maintenance import estimate_maintenance
         from .models import NutritionGoal, NutritionTarget
         from .suggestions import suggest_calorie_adjustment
 
@@ -354,6 +355,7 @@ class NutritionDashboardView(LoginRequiredMixin, View):
             "is_training_day": services.is_training_day(request.user, today),
             "weight_chart": weight_chart,
             "suggestion": suggest_calorie_adjustment(request.user) if goal else None,
+            "maintenance": estimate_maintenance(request.user),
             "todays_plan": _todays_diet_plan_summary(request.user, today),
         }
         return render(request, "nutrition/dashboard.html", context)
@@ -1996,7 +1998,8 @@ class NutritionStatsView(LoginRequiredMixin, View):
             [
                 (day.strftime("%b %d"), totals and totals.calories.quantize(Decimal("1")))
                 for day, totals in history
-            ]
+            ],
+            reference_value=Decimal(target.daily_calories) if target else None,
         )
         return render(
             request,

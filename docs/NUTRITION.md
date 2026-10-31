@@ -951,7 +951,10 @@ cache" rule as everywhere else in this codebase).
 
 1. Read the user's logged weight from `apps.measurements`
    (`BodyMeasurement` under the system "Body weight" type) - nutrition
-   never keeps its own copy of this data.
+   never keeps its own copy of this data. Only the last 28 days count,
+   and never anything from before an accepted adjustment: that weight
+   says nothing about the new target, and would suggest the same
+   correction again on top of the first.
 2. Bucket readings by day (averaging same-day multiples), then compute
    a **7-day moving average** trend line - never react to a single
    reading, exactly the principle section 6 states outright and
@@ -996,6 +999,26 @@ accepting it creates a new `NutritionTarget` (`source="adjusted"`)
 carrying the same `reason` forward into the history; dismissing it
 just leaves the current target untouched and the suggestion is simply
 recomputed (and can change) next time the dashboard is viewed.
+
+## Observed maintenance
+
+`apps.nutrition.maintenance.estimate_maintenance` estimates what the
+user really burns, next to the formula-based TDEE: mean intake over the
+last 28 finished days minus the weight trend's daily change times 7,700
+kcal/kg, rounded to 50 kcal. It reuses `nutrition_stats` and
+`trends.compute_trend`.
+
+- It needs 14 logged food days and the trend's own minimums (4 weigh-in
+  days over 14 days); otherwise the card says what's missing. A result
+  outside 1000-6000 kcal is treated the same way, since it nearly always
+  means partly logged food.
+- Confidence is `HIGH` from 24 food days and 10 weigh-in days, `MEDIUM`
+  from 18 and 6, otherwise `LOW`. `possible_logging_gaps` always makes it
+  `LOW` and adds a note to the reason, because missing food makes the
+  estimate too low.
+- It's information only: it never changes a target, feeds no suggestion
+  and has no button. 7,700 kcal/kg is an approximation, and a water-weight
+  swing moves the trend too.
 
 ## Integration with existing apps
 

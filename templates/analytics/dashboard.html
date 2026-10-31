@@ -16,6 +16,31 @@
   </dl>
 </div>
 
+<h2>{% trans "Body measurements" %}</h2>
+{% if body_progress %}
+  <div data-tour="progress-body" class="card">
+    <dl class="stat-row">
+      {% for row in body_progress %}
+        <div>
+          <dt><a class="inline-item-link" href="{% url 'measurements:history' row.measurement_type.pk %}">{{ row.measurement_type.name|translate_content }}</a></dt>
+          <dd>{{ row.value|floatformat:"-1" }} {{ row.unit_label }}</dd>
+          {% if row.change is None %}
+            <dd class="stat-note">{% trans "One reading in this range" %}</dd>
+          {% else %}
+            <dd class="stat-note">{% if row.change > 0 %}+{% endif %}{{ row.change|floatformat:"-1" }} {{ row.unit_label }}{% if row.change_percent is not None %} ({% if row.change_percent > 0 %}+{% endif %}{{ row.change_percent|floatformat:"-1" }} %){% endif %}</dd>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </dl>
+  </div>
+{% else %}
+  {% trans "No body measurements in this range." as body_empty_msg %}
+  {% trans "Log a measurement, or widen the date range above." as body_empty_hint %}
+  {% url 'measurements:type-list' as body_tracking_url %}
+  {% trans "Go to body tracking" as body_tracking_label %}
+  {% include "core/_empty_state.html" with message=body_empty_msg hint=body_empty_hint cta_url=body_tracking_url cta_label=body_tracking_label %}
+{% endif %}
+
 {% if trained_exercises %}
   <form data-tour="exercise-trend-picker" method="get" action="" class="card" x-data
         @change="if ($event.target.value) window.location = $event.target.value">

@@ -125,7 +125,7 @@ queries the views use:
 | `get_activities` | activities over a period |
 | `get_nutrition_overview` | mean and median intake over finished days, partial-logging hint, recently logged days |
 | `get_food_diary` | the foods and recipes the user eats most (typical portion, usual meals, food details as below) and the last logged days item by item with entry notes, so a diet plan can be built from food they like |
-| `get_calorie_adjustment` | `apps.nutrition.suggestions.suggest_calorie_adjustment`: weight trend against the goal and the suggested daily change |
+| `get_calorie_adjustment` | `apps.nutrition.suggestions.suggest_calorie_adjustment`: weight trend against the goal and the suggested daily change; with the food scope also `apps.nutrition.maintenance.estimate_maintenance` |
 | `get_stretching` | completed stretching sessions and own routines (nothing when stretching is turned off) |
 | `list_programs`, `get_program` | own, coach-shared and built-in programs |
 | `get_progression_suggestions` | `apps.progression.suggestions.suggest_weight` for every exercise in a program (default: the one last trained from), with its reason |

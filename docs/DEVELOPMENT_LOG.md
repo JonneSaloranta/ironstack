@@ -6200,3 +6200,14 @@ catalogs had the translations; built-in slots are now translated there.
 Training mode's Complete form was outside the HTMX-swapped panel, so its
 "sets left to log" confirmation was decided at page load and stayed after
 the last set; the finish forms now live in the panel.
+
+## Calorie figures and body progress
+
+The nutrition stats showed only a median, which hides big days, so a deficit
+could look better than it was. The mean now leads, with the median as the
+typical day, and unfinished today stays out of every multi-day figure. The
+adjustment suggestion read the whole weight history and could be accepted
+repeatedly on the same data; it now reads 28 days and nothing from before an
+accepted adjustment. New: observed maintenance from intake and weight
+(docs/NUTRITION.md "Observed maintenance"), a target line on the calorie chart,
+and a body measurements card on the Progress page.

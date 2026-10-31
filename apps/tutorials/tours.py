@@ -502,6 +502,12 @@ TOURS = (
                 _("Workouts, time spent training and total volume lifted in the range."),
             ),
             Step(
+                "progress-body",
+                _("Body measurements"),
+                _("How your weight and other measurements changed in the range."),
+                optional=True,
+            ),
+            Step(
                 "exercise-trend-picker",
                 _("One exercise"),
                 _("Pick an exercise to see how its strength has developed."),
@@ -681,6 +687,14 @@ TOURS = (
                     "Nothing changes unless you accept it."
                 ),
                 optional=True,
+            ),
+            Step(
+                "nutrition-maintenance",
+                _("Observed maintenance"),
+                _(
+                    "An estimate of what you really burn, from your food diary and weight. "
+                    "It's only information and never changes your target."
+                ),
             ),
             Step(
                 "nutrition-target",
@@ -962,7 +976,7 @@ TOURS = (
                 _("Daily calories"),
                 _(
                     "Each of the last 30 days, today included, with the exact figures "
-                    "in a table below."
+                    "in a table below. A dashed line marks your current target."
                 ),
                 optional=True,
             ),

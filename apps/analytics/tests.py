@@ -1,5 +1,6 @@
 import re
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from datetime import timezone as dt_timezone
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -9,6 +10,7 @@ from django.utils import timezone, translation
 from django.utils.formats import number_format
 
 from apps.exercises.models import Exercise, MuscleGroup
+from apps.measurements.models import BodyMeasurement, MeasurementType
 from apps.records import services as records_services
 from apps.records.models import PersonalRecord, PRType
 from apps.workouts import services as workout_services
@@ -672,6 +674,141 @@ class MemberProfileViewTests(TestCase):
         self.assertContains(
             response, reverse("analytics:member-profile", args=[self.bob.username])
         )
+
+
+class BodyMeasurementProgressTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def _log(self, name, days_ago, value):
+        BodyMeasurement.objects.create(
+            user=self.alice,
+            measurement_type=MeasurementType.objects.get(name=name, owner=None),
+            value=Decimal(value),
+            recorded_at=timezone.now() - timedelta(days=days_ago),
+        )
+
+    def _rows(self, key="30d"):
+        rows = services.body_measurement_progress(self.alice, dateranges.resolve(key))
+        return {row.measurement_type.name: row for row in rows}
+
+    def test_weight_change_in_kg_and_percent(self):
+        self._log("Body weight", 20, "80")
+        self._log("Body weight", 10, "90")
+        self._log("Body weight", 1, "78")
+        row = self._rows()["Body weight"]
+        self.assertEqual(row.value, Decimal("78.0"))
+        self.assertEqual(row.unit_label, "kg")
+        self.assertEqual(row.change, Decimal("-2.0"))
+        self.assertEqual(row.change_percent, Decimal("-2.5"))
+
+    def test_weight_change_follows_the_users_units(self):
+        self.alice.unit_system = "imperial"
+        self.alice.save()
+        self._log("Body weight", 20, "100")
+        self._log("Body weight", 1, "90")
+        row = self._rows()["Body weight"]
+        self.assertEqual(row.unit_label, "lb")
+        self.assertEqual(row.value, Decimal("198.4"))
+        self.assertEqual(row.change, Decimal("-22.1"))
+        self.assertEqual(row.change_percent, Decimal("-10.0"))
+
+    def test_length_is_shown_in_centimeters(self):
+        self._log("Waist", 20, "0.9")
+        self._log("Waist", 1, "0.88")
+        row = self._rows()["Waist"]
+        self.assertEqual(row.unit_label, "cm")
+        self.assertEqual(row.change, Decimal("-2.0"))
+
+    def test_length_follows_the_users_units(self):
+        self.alice.unit_system = "imperial"
+        self.alice.save()
+        self._log("Waist", 20, "1")
+        self._log("Waist", 1, "0.9")
+        row = self._rows()["Waist"]
+        self.assertEqual(row.unit_label, "in")
+        self.assertEqual(row.value, Decimal("35.4"))
+        self.assertEqual(row.change, Decimal("-4.0"))
+        self.assertEqual(row.change_percent, Decimal("-10.0"))
+
+    def test_page_uses_the_users_units_language_and_number_format(self):
+        self.alice.unit_system = "imperial"
+        self.alice.language = "fi"
+        self.alice.save()
+        self._log("Body weight", 20, "100")
+        self._log("Body weight", 1, "90")
+        response = self.client.get(reverse("analytics:dashboard"))
+        self.assertContains(response, "198,4 lb")
+        self.assertContains(response, "-22,1 lb (-10 %)")
+        self.assertContains(response, "Kehon mittaukset")
+        self.assertNotContains(response, "198.4")
+
+    def test_the_range_follows_the_users_timezone(self):
+        self.alice.timezone = "Pacific/Auckland"
+        self.alice.save()
+        # Fixed "now" in Auckland: a reading from early on Oct 2 local time
+        # is still Oct 1 in UTC, and must count as Oct 2 for this user.
+        BodyMeasurement.objects.create(
+            user=self.alice,
+            measurement_type=MeasurementType.objects.get(name="Body weight", owner=None),
+            value=Decimal("80"),
+            recorded_at=datetime(2026, 10, 1, 12, 0, tzinfo=dt_timezone.utc),
+        )
+        with timezone.override("Pacific/Auckland"):
+            inside = dateranges.resolve(None, start=date(2026, 10, 2), end=date(2026, 10, 2))
+            outside = dateranges.resolve(None, start=date(2026, 10, 1), end=date(2026, 10, 1))
+            self.assertEqual(len(services.body_measurement_progress(self.alice, inside)), 1)
+            self.assertEqual(services.body_measurement_progress(self.alice, outside), [])
+
+    def test_a_percentage_measurement_has_no_relative_change(self):
+        self._log("Body fat %", 20, "20")
+        self._log("Body fat %", 1, "19.2")
+        row = self._rows()["Body fat %"]
+        self.assertEqual(row.change, Decimal("-0.8"))
+        self.assertIsNone(row.change_percent)
+
+    def test_a_first_value_of_zero_has_no_relative_change(self):
+        self._log("Waist", 20, "0")
+        self._log("Waist", 1, "0.5")
+        self.assertIsNone(self._rows()["Waist"].change_percent)
+
+    def test_a_single_reading_has_no_change(self):
+        self._log("Body weight", 1, "80")
+        self.assertIsNone(self._rows()["Body weight"].change)
+
+    def test_the_range_decides_which_readings_count(self):
+        self._log("Body weight", 100, "90")
+        self._log("Body weight", 20, "80")
+        self._log("Body weight", 1, "78")
+        self.assertEqual(self._rows("30d")["Body weight"].change, Decimal("-2.0"))
+        self.assertEqual(self._rows("all")["Body weight"].change, Decimal("-12.0"))
+
+    def test_page_shows_the_card_with_body_weight_first(self):
+        self._log("Arm", 2, "0.4")
+        self._log("Body weight", 20, "80")
+        self._log("Body weight", 1, "78")
+        response = self.client.get(reverse("analytics:dashboard"))
+        rows = response.context["body_progress"]
+        self.assertEqual(
+            [row.measurement_type.name for row in rows], ["Body weight", "Arm"]
+        )
+        self.assertContains(response, 'data-tour="progress-body"')
+        self.assertContains(response, "78 kg")
+        self.assertContains(response, "-2 kg")
+        self.assertContains(response, "One reading in this range")
+
+    def test_page_shows_a_rising_change_with_a_plus_sign(self):
+        self._log("Body weight", 20, "80")
+        self._log("Body weight", 1, "82")
+        response = self.client.get(reverse("analytics:dashboard"))
+        self.assertContains(response, "+2 kg (+2")
+
+    def test_page_shows_an_empty_state_without_readings(self):
+        response = self.client.get(reverse("analytics:dashboard"))
+        self.assertNotContains(response, 'data-tour="progress-body"')
+        self.assertContains(response, "No body measurements in this range.")
+        self.assertContains(response, reverse("measurements:type-list"))
 
 
 class AnalyticsDashboardViewTests(TestCase):

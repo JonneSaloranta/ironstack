@@ -78,6 +78,16 @@ Track:
 - circumference trends
 - custom measurement trends
 
+The Progress page's body measurements card
+(`services.body_measurement_progress`, over
+`apps.measurements.services.progress_in_range`) shows each active measurement
+type logged in the selected range: the latest value and the change from the
+range's first reading, as logged rather than smoothed. It follows the user's
+unit system, language and timezone (a reading belongs to the local date it was
+logged on). A measurement that is itself a percentage shows only its change in
+percentage points. Changes aren't colored good or bad, since the direction
+depends on the user's goal.
+
 ## Activity analytics
 
 Track:

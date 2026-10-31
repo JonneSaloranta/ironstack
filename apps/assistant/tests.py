@@ -616,6 +616,13 @@ class ToolScopingTests(TestCase):
         self.assertEqual(data["median_daily"]["calories"], 1000)
         self.assertIs(data["possible_logging_gaps"], False)
 
+    def test_calorie_adjustment_shows_observed_maintenance_only_with_the_food_scope(self):
+        data, _is_error = self.run_tool("get_calorie_adjustment", {})
+        self.assertIn("observed_maintenance", data)
+        with mock.patch.object(self.ctx, "may_read", lambda scope: scope != DataScope.FOOD):
+            data, _is_error = self.run_tool("get_calorie_adjustment", {})
+        self.assertNotIn("observed_maintenance", data)
+
     def test_calorie_adjustment_without_goal(self):
         data, is_error = self.run_tool("get_calorie_adjustment", {})
         self.assertFalse(is_error)

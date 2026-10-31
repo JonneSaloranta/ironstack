@@ -41,6 +41,9 @@ bar whose value is None has no data: it shows "-" instead of a figure.
       <text class="bar-label" x="{{ bar.label_x }}" y="{{ bar.label_y }}"
             transform="rotate(-40 {{ bar.label_x }} {{ bar.label_y }})">{% trans bar.label %}</text>
     {% endfor %}
+    {% if chart.reference_y is not None %}
+      <line class="chart-reference-line" x1="{{ chart.reference_x1 }}" y1="{{ chart.reference_y }}" x2="{{ chart.reference_x2 }}" y2="{{ chart.reference_y }}"></line>
+    {% endif %}
   </svg>
   {% endlocalize %}
   <table class="bar-chart-table">
