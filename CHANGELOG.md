@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.29.0] - 2026-10-31
+
 ### Changed
 - Nutrition statistics lead with mean daily calories, which show your real
   total intake, with the median beside it as a typical day. Macros stay
