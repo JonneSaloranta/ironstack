@@ -61,6 +61,9 @@ from .serializers import (
     ActivitySerializer,
     ActivityTypeSerializer,
     BodyMeasurementSerializer,
+    DailyTotalsSerializer,
+    DiaryCopyDayResultSerializer,
+    DiaryCopyDaySerializer,
     DiaryEntrySerializer,
     DietPlanItemSerializer,
     DietPlanMealSerializer,
@@ -794,13 +797,33 @@ class DiaryEntryViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     api_context = ApiContext.NUTRITION
 
     def get_queryset(self):
-        queryset = DiaryEntry.objects.filter(user=self.request.user)
+        # food/recipe for each entry's name and, without a snapshot, its
+        # nutrition (DiaryEntrySerializer).
+        queryset = DiaryEntry.objects.filter(user=self.request.user).select_related(
+            "food", "recipe"
+        )
         if self.action != "list":
             return queryset
         day = _query_date(self.request, "date")
         if day is not None:
             queryset = queryset.filter(date=day)
         return _filter_by_dates(self.request, queryset, "date")
+
+    @extend_schema(request=DiaryCopyDaySerializer, responses={201: DiaryCopyDayResultSerializer})
+    @action(detail=False, methods=["post"], url_path="copy-day")
+    def copy_day(self, request):
+        """Copies one day's whole diary onto another date
+        (apps.nutrition.services.copy_diary_day), like the web's "Copy
+        day": each copy keeps the source entry's nutrition, and entries
+        of a since-deleted recipe are copied too. Purely additive."""
+        serializer = DiaryCopyDaySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        copied = nutrition_services.copy_diary_day(
+            request.user,
+            serializer.validated_data["source_date"],
+            serializer.validated_data["target_date"],
+        )
+        return Response({"copied": copied}, status=status.HTTP_201_CREATED)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -845,6 +868,25 @@ class NutritionProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return get_object_or_404(NutritionProfile, user=self.request.user)
+
+
+class DailyTotalsView(APIView):
+    """`nutrition/daily-totals/?date=YYYY-MM-DD` (default today): the
+    day's diary added up (apps.nutrition.services.daily_totals) - the
+    same total the web diary's header shows, from each entry's logged
+    snapshot (issue #27)."""
+
+    api_context = ApiContext.NUTRITION
+
+    # See TrainingSummaryView's own comment for why this is here.
+    @extend_schema(
+        responses=DailyTotalsSerializer,
+        parameters=[OpenApiParameter("date", description="YYYY-MM-DD; default today.")],
+    )
+    def get(self, request):
+        day = _query_date(request, "date") or timezone.localdate()
+        totals = nutrition_services.daily_totals(request.user, day)
+        return Response(DailyTotalsSerializer({"date": day, "totals": totals}).data)
 
 
 class DietPlanViewSet(viewsets.ModelViewSet):

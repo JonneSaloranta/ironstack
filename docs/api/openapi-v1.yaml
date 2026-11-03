@@ -633,6 +633,37 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/diary-entries/copy-day/:
+    post:
+      operationId: diary_entries_copy_day_create
+      description: |-
+        Copies one day's whole diary onto another date
+        (apps.nutrition.services.copy_diary_day), like the web's "Copy
+        day": each copy keeps the source entry's nutrition, and entries
+        of a since-deleted recipe are copied too. Purely additive.
+      tags:
+      - diary-entries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiaryCopyDayRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DiaryCopyDayRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DiaryCopyDayRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiaryCopyDayResult'
+          description: ''
   /api/v1/diet-plan-items/:
     get:
       operationId: diet_plan_items_list
@@ -2359,6 +2390,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NutritionTarget'
+          description: ''
+  /api/v1/nutrition/daily-totals/:
+    get:
+      operationId: nutrition_daily_totals_retrieve
+      description: |-
+        `nutrition/daily-totals/?date=YYYY-MM-DD` (default today): the
+        day's diary added up (apps.nutrition.services.daily_totals) - the
+        same total the web diary's header shows, from each entry's logged
+        snapshot (issue #27).
+      parameters:
+      - in: query
+        name: date
+        schema:
+          type: string
+        description: YYYY-MM-DD; default today.
+      tags:
+      - nutrition
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyTotals'
           description: ''
   /api/v1/nutrition/profile/:
     get:
@@ -4862,6 +4918,36 @@ components:
       required:
       - measurement_type
       - value
+    DailyTotals:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        totals:
+          $ref: '#/components/schemas/NutritionValues'
+      required:
+      - date
+      - totals
+    DiaryCopyDayRequest:
+      type: object
+      properties:
+        source_date:
+          type: string
+          format: date
+        target_date:
+          type: string
+          format: date
+      required:
+      - source_date
+      - target_date
+    DiaryCopyDayResult:
+      type: object
+      properties:
+        copied:
+          type: integer
+      required:
+      - copied
     DiaryEntry:
       type: object
       properties:
@@ -4876,9 +4962,15 @@ components:
         food:
           type: integer
           nullable: true
+        food_name:
+          type: string
+          readOnly: true
         recipe:
           type: integer
           nullable: true
+        recipe_name:
+          type: string
+          readOnly: true
         quantity:
           type: string
           format: decimal
@@ -4911,11 +5003,18 @@ components:
           format: decimal
           pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
           nullable: true
+        nutrition:
+          allOf:
+          - $ref: '#/components/schemas/NutritionValues'
+          readOnly: true
       required:
       - date
+      - food_name
       - id
       - meal_slot
+      - nutrition
       - quantity
+      - recipe_name
       - user
     DiaryEntryRequest:
       type: object
@@ -6238,6 +6337,57 @@ components:
       - reason
       - source
       - started_at
+    NutritionValues:
+      type: object
+      description: |-
+        apps.nutrition.services.ScaledNutrition - one amount's nutrition,
+        already scaled. The optional nutrients are null when unknown.
+      properties:
+        calories:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        protein_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        carbohydrate_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        fat_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        fiber_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        sugar_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        saturated_fat_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        sodium_mg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+      required:
+      - calories
+      - carbohydrate_grams
+      - fat_grams
+      - fiber_grams
+      - protein_grams
+      - saturated_fat_grams
+      - sodium_mg
+      - sugar_grams
     PaginatedActivityList:
       type: object
       required:

@@ -27,6 +27,9 @@ narrated summary of the same version.
 - API: logging a set answers with the personal records it broke.
 - API: diary entries, body measurements, activities and stretching sessions
   accept an `Idempotency-Key`, so a retried quick log isn't saved twice.
+- API: diary entries show their logged nutrition and food or recipe name, a
+  day's totals and "Copy day" are available, so totals match the web even
+  after a food is edited or a recipe deleted.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

@@ -11,6 +11,7 @@ never applied to convert any other endpoint's numbers.
 """
 
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from apps.activities.models import Activity, ActivityType
@@ -711,15 +712,47 @@ class RecipeSerializer(serializers.ModelSerializer):
         read_only_fields = ["owner"]
 
 
+class NutritionValuesSerializer(serializers.Serializer):
+    """apps.nutrition.services.ScaledNutrition - one amount's nutrition,
+    already scaled. The optional nutrients are null when unknown."""
+
+    calories = serializers.DecimalField(max_digits=12, decimal_places=2)
+    protein_grams = serializers.DecimalField(max_digits=12, decimal_places=2)
+    carbohydrate_grams = serializers.DecimalField(max_digits=12, decimal_places=2)
+    fat_grams = serializers.DecimalField(max_digits=12, decimal_places=2)
+    fiber_grams = serializers.DecimalField(max_digits=12, decimal_places=2, allow_null=True)
+    sugar_grams = serializers.DecimalField(max_digits=12, decimal_places=2, allow_null=True)
+    saturated_fat_grams = serializers.DecimalField(
+        max_digits=12, decimal_places=2, allow_null=True
+    )
+    sodium_mg = serializers.DecimalField(max_digits=12, decimal_places=2, allow_null=True)
+
+
 class DiaryEntrySerializer(serializers.ModelSerializer):
+    # The entry's nutrition for its quantity, from the values snapshotted
+    # when it was logged (services.diary_entry_nutrition) - the same
+    # figures the web diary adds up, even after the food or recipe was
+    # edited or deleted (issue #27). The names are there for the same
+    # reason: a deleted recipe can't be fetched from recipes/.
+    nutrition = serializers.SerializerMethodField()
+    food_name = serializers.CharField(source="food.name", read_only=True, default=None)
+    recipe_name = serializers.CharField(source="recipe.name", read_only=True, default=None)
+
     class Meta:
         model = DiaryEntry
         fields = [
-            "id", "date", "meal_slot", "food", "recipe", "quantity", "notes", "user",
+            "id", "date", "meal_slot", "food", "food_name", "recipe", "recipe_name",
+            "quantity", "notes", "user",
             "quick_name", "quick_calories", "quick_protein_grams",
-            "quick_carbohydrate_grams", "quick_fat_grams",
+            "quick_carbohydrate_grams", "quick_fat_grams", "nutrition",
         ]
         read_only_fields = ["user"]
+
+    @extend_schema_field(NutritionValuesSerializer)
+    def get_nutrition(self, entry):
+        from apps.nutrition import services as nutrition_services
+
+        return NutritionValuesSerializer(nutrition_services.diary_entry_nutrition(entry)).data
 
     def validate(self, attrs):
         # Mirrors DiaryEntry.clean() / its own CheckConstraint -
@@ -753,6 +786,8 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
 
         if value is None:
             return value
+        if self.instance is not None and value.pk == self.instance.food_id:
+            return value  # unchanged - see validate_recipe
         request = self.context["request"]
         visible = Food.objects.filter(
             Q(owner=request.user) | Q(owner__isnull=True), active=True
@@ -764,6 +799,11 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
     def validate_recipe(self, value):
         if value is None:
             return value
+        if self.instance is not None and value.pk == self.instance.recipe_id:
+            # Unchanged - fine even if the recipe has since been deleted
+            # (hidden), so a client can resend the whole entry when only
+            # editing its quantity, as the web's diary edit does.
+            return value
         # The user's own or a built-in template recipe - logging a
         # template to your own diary is what it's there for, same as
         # the web's recipe_log (issue #38).
@@ -771,6 +811,20 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
         if value.owner_id not in (request.user.id, None) or not value.active:
             raise serializers.ValidationError("Not a recipe you can log.")
         return value
+
+
+class DiaryCopyDaySerializer(serializers.Serializer):
+    source_date = serializers.DateField()
+    target_date = serializers.DateField()
+
+
+class DiaryCopyDayResultSerializer(serializers.Serializer):
+    copied = serializers.IntegerField()
+
+
+class DailyTotalsSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    totals = NutritionValuesSerializer()
 
 
 # Goals/targets are historized and only ever change through

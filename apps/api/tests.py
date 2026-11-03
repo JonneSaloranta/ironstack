@@ -1695,6 +1695,65 @@ class NutritionEndpointTests(APITestCase):
         )
         self.assertEqual(patch_response.status_code, 200)
 
+    def test_entry_nutrition_comes_from_the_logged_snapshot(self):
+        # Issue #27: editing the food later must not change a past day.
+        response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "food": self.food.pk, "quantity": "200",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["food_name"], "Chicken")
+        self.assertIsNone(response.data["recipe_name"])
+        self.assertEqual(Decimal(response.data["nutrition"]["calories"]), Decimal("330"))
+        self.food.calories = 1000
+        self.food.save()
+        entry = self.client.get(
+            reverse("api:diary-entry-detail", args=[response.data["id"]]), **self._auth()
+        )
+        self.assertEqual(Decimal(entry.data["nutrition"]["calories"]), Decimal("330"))
+        totals = self.client.get(
+            reverse("api:nutrition-daily-totals"), {"date": "2026-01-01"}, **self._auth()
+        )
+        self.assertEqual(totals.status_code, 200)
+        self.assertEqual(totals.data["date"], "2026-01-01")
+        self.assertEqual(Decimal(totals.data["totals"]["calories"]), Decimal("330"))
+        self.assertEqual(Decimal(totals.data["totals"]["protein_grams"]), Decimal("62"))
+
+    def test_entry_of_a_deleted_recipe_keeps_name_and_nutrition_and_is_copied(self):
+        from apps.nutrition import services as nutrition_services
+        from apps.nutrition.models import DiaryEntry, RecipeIngredient
+
+        RecipeIngredient.objects.create(recipe=self.recipe, food=self.food, quantity=Decimal("200"))
+        entry = DiaryEntry.objects.create(
+            user=self.alice, date="2026-01-01", meal_slot=self.breakfast,
+            recipe=self.recipe, quantity=Decimal("1"),
+        )
+        nutrition_services.delete_recipe(self.recipe)  # used, so only hidden
+        detail = self.client.get(
+            reverse("api:diary-entry-detail", args=[entry.pk]), **self._auth()
+        )
+        self.assertEqual(detail.data["recipe_name"], "Bowl")
+        self.assertEqual(Decimal(detail.data["nutrition"]["calories"]), Decimal("165"))
+        # Resending the unchanged recipe while editing the quantity works.
+        patch = self.client.patch(
+            reverse("api:diary-entry-detail", args=[entry.pk]),
+            {"recipe": self.recipe.pk, "quantity": "2"}, format="json", **self._auth(),
+        )
+        self.assertEqual(patch.status_code, 200, patch.data)
+        copy = self.client.post(
+            reverse("api:diary-entry-copy-day"),
+            {"source_date": "2026-01-01", "target_date": "2026-01-02"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(copy.status_code, 201)
+        self.assertEqual(copy.data["copied"], 1)
+        copied = DiaryEntry.objects.get(user=self.alice, date="2026-01-02")
+        self.assertEqual(copied.recipe_id, self.recipe.pk)
+
     def test_null_food_and_recipe_without_quick_macros_is_rejected(self):
         response = self.client.post(
             reverse("api:diary-entry-list"),
