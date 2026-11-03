@@ -565,6 +565,460 @@ paths:
               schema:
                 $ref: '#/components/schemas/VolumeAnalytics'
           description: ''
+  /api/v1/coaching/clients/:
+    get:
+      operationId: coaching_clients_list
+      description: '`GET coaching/clients/` - a trainer''s active clients.'
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoachingRelationship'
+          description: ''
+  /api/v1/coaching/clients/{username}/:
+    get:
+      operationId: coaching_clients_retrieve
+      description: |-
+        `GET coaching/clients/<username>/` - a trainer's view of one active
+        client, as on the web: training in the last 30 days, highlights, the
+        latest personal records, the latest reading of each body measurement
+        and the shared programs they've imported. 404 unless the client is
+        actively coached by the user - accepting the request is the client's
+        consent to this.
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientDetail'
+          description: ''
+  /api/v1/coaching/coaches/:
+    get:
+      operationId: coaching_coaches_list
+      description: '`GET coaching/coaches/` - the user''s active coaches.'
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoachingRelationship'
+          description: ''
+  /api/v1/coaching/diet-plans/{id}/clients/:
+    get:
+      operationId: coaching_diet_plans_clients_retrieve
+      description: |-
+        `GET`/`PUT coaching/programs/<id>/clients/` (and `diet-plans/`) -
+        which of the trainer's active clients a plan of theirs is shared
+        with. `PUT {clients: [user ids]}` replaces the list; only active
+        clients can be on it, as on the web.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientIds'
+          description: ''
+    put:
+      operationId: coaching_diet_plans_clients_update
+      description: |-
+        `GET`/`PUT coaching/programs/<id>/clients/` (and `diet-plans/`) -
+        which of the trainer's active clients a plan of theirs is shared
+        with. `PUT {clients: [user ids]}` replaces the list; only active
+        clients can be on it, as on the web.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientIds'
+          description: ''
+  /api/v1/coaching/diet-plans/{id}/update/:
+    get:
+      operationId: coaching_diet_plans_update_retrieve
+      description: '`GET`/`POST coaching/diet-plans/<id>/update/` - as for programs.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachUpdate'
+          description: ''
+    post:
+      operationId: coaching_diet_plans_update_create
+      description: '`GET`/`POST coaching/diet-plans/<id>/update/` - as for programs.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DietPlan'
+          description: ''
+  /api/v1/coaching/programs/{id}/clients/:
+    get:
+      operationId: coaching_programs_clients_retrieve
+      description: |-
+        `GET`/`PUT coaching/programs/<id>/clients/` (and `diet-plans/`) -
+        which of the trainer's active clients a plan of theirs is shared
+        with. `PUT {clients: [user ids]}` replaces the list; only active
+        clients can be on it, as on the web.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientIds'
+          description: ''
+    put:
+      operationId: coaching_programs_clients_update
+      description: |-
+        `GET`/`PUT coaching/programs/<id>/clients/` (and `diet-plans/`) -
+        which of the trainer's active clients a plan of theirs is shared
+        with. `PUT {clients: [user ids]}` replaces the list; only active
+        clients can be on it, as on the web.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientIds'
+          description: ''
+  /api/v1/coaching/programs/{id}/update/:
+    get:
+      operationId: coaching_programs_update_retrieve
+      description: |-
+        `GET coaching/programs/<id>/update/` - whether the coach changed
+        the program this copy was imported from, and the diff. `POST`
+        replaces the copy's workouts with the coach's version (name and
+        description stay yours); not calling it is skipping.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachUpdate'
+          description: ''
+    post:
+      operationId: coaching_programs_update_create
+      description: |-
+        `GET coaching/programs/<id>/update/` - whether the coach changed
+        the program this copy was imported from, and the diff. `POST`
+        replaces the copy's workouts with the coach's version (name and
+        description stay yours); not calling it is skipping.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+          description: ''
+  /api/v1/coaching/relationships/{id}/end/:
+    post:
+      operationId: coaching_relationships_end_create
+      description: |-
+        `POST coaching/relationships/<id>/end/` - either side ends it; the
+        history of having been coached stays.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachingRelationship'
+          description: ''
+  /api/v1/coaching/requests/:
+    get:
+      operationId: coaching_requests_list
+      description: |-
+        `GET coaching/requests/` - pending requests the user sent (as a
+        client) or received (as a trainer). `POST {username}` asks a trainer
+        to coach you.
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoachingRequest'
+          description: ''
+    post:
+      operationId: coaching_requests_create
+      description: |-
+        `GET coaching/requests/` - pending requests the user sent (as a
+        client) or received (as a trainer). `POST {username}` asks a trainer
+        to coach you.
+      tags:
+      - coaching
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoachingRequestCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CoachingRequestCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CoachingRequestCreateRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachingRequest'
+          description: ''
+  /api/v1/coaching/requests/{id}/accept/:
+    post:
+      operationId: coaching_requests_accept_create
+      description: |-
+        `POST coaching/requests/<id>/accept/` or `.../decline/` - a
+        trainer answering a request to them.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachingRequest'
+          description: ''
+  /api/v1/coaching/requests/{id}/decline/:
+    post:
+      operationId: coaching_requests_decline_create
+      description: |-
+        `POST coaching/requests/<id>/accept/` or `.../decline/` - a
+        trainer answering a request to them.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachingRequest'
+          description: ''
+  /api/v1/coaching/shared/:
+    get:
+      operationId: coaching_shared_retrieve
+      description: |-
+        `GET coaching/shared/` - the programs and diet plans the user's
+        active coaches have shared with them, each with `imported` when the
+        user already has their own copy.
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SharedPlans'
+          description: ''
+  /api/v1/coaching/shared/diet-plans/{id}/import/:
+    post:
+      operationId: coaching_shared_diet_plans_import_create
+      description: '`POST coaching/shared/diet-plans/<id>/import/` - as for programs.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DietPlan'
+          description: ''
+  /api/v1/coaching/shared/programs/{id}/import/:
+    post:
+      operationId: coaching_shared_programs_import_create
+      description: |-
+        `POST coaching/shared/programs/<id>/import/` - the user's own copy
+        of a program their coach shared, which can later pull the coach's
+        updates. 201 with the copy.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+          description: ''
   /api/v1/diary-entries/:
     get:
       operationId: diary_entries_list
@@ -6293,6 +6747,24 @@ components:
         * `dark` - Dark
         * `light` - Light
         * `auto` - Auto (match device)
+    AssignedProgram:
+      type: object
+      properties:
+        program:
+          type: integer
+        name:
+          type: string
+        client_copy:
+          type: integer
+        last_session_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - client_copy
+      - last_session_at
+      - name
+      - program
     BiologicalSexEnum:
       enum:
       - male
@@ -6339,6 +6811,163 @@ components:
       required:
       - measurement_type
       - value
+    ClientDetail:
+      type: object
+      properties:
+        client:
+          $ref: '#/components/schemas/CoachingUser'
+        relationship:
+          $ref: '#/components/schemas/CoachingRelationship'
+        training_summary:
+          $ref: '#/components/schemas/TrainingSummary'
+        highlights:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achievement'
+        recent_records:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonalRecord'
+        measurements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientMeasurement'
+        assigned_programs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssignedProgram'
+      required:
+      - assigned_programs
+      - client
+      - highlights
+      - measurements
+      - recent_records
+      - relationship
+      - training_summary
+    ClientIds:
+      type: object
+      properties:
+        clients:
+          type: array
+          items:
+            type: integer
+      required:
+      - clients
+    ClientIdsRequest:
+      type: object
+      properties:
+        clients:
+          type: array
+          items:
+            type: integer
+      required:
+      - clients
+    ClientMeasurement:
+      type: object
+      properties:
+        measurement_type:
+          type: integer
+        name:
+          type: string
+        unit_kind:
+          type: string
+        latest_value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,4})?$
+          nullable: true
+        latest_recorded_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - latest_recorded_at
+      - latest_value
+      - measurement_type
+      - name
+      - unit_kind
+    CoachUpdate:
+      type: object
+      properties:
+        available:
+          type: boolean
+        diff:
+          type: string
+          nullable: true
+          description: Unified diff of your copy against the coach's version.
+      required:
+      - available
+      - diff
+    CoachingRelationship:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        coach:
+          $ref: '#/components/schemas/CoachingUser'
+        coachee:
+          $ref: '#/components/schemas/CoachingUser'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ended_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - coach
+      - coachee
+      - created_at
+      - id
+    CoachingRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        coach:
+          $ref: '#/components/schemas/CoachingUser'
+        coachee:
+          $ref: '#/components/schemas/CoachingUser'
+        status:
+          $ref: '#/components/schemas/SocialRequestStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        responded_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - coach
+      - coachee
+      - created_at
+      - id
+    CoachingRequestCreateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: The trainer's username.
+      required:
+      - username
+    CoachingUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        display_name:
+          type: string
+      required:
+      - display_name
+      - id
+      - username
     Conversations:
       type: object
       properties:
@@ -10228,6 +10857,22 @@ components:
       - estimated_one_rep_max
       - reps
       - weight
+    SharedPlans:
+      type: object
+      properties:
+        programs:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        diet_plans:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+      required:
+      - diet_plans
+      - programs
     ShoppingDayAmount:
       type: object
       properties:

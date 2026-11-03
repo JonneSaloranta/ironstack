@@ -35,6 +35,7 @@ def _all_permissions(**overrides):
         "nutrition",
         "stretching",
         "social",
+        "coaching",
     ]
     base = {
         context: {"can_create": True, "can_read": True, "can_update": True, "can_delete": True}
@@ -3283,3 +3284,119 @@ class SocialEndpointTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         alice = next(row for row in response.data if row["username"] == "alice")
         self.assertTrue(alice["is_in_progress"])
+
+
+class CoachingEndpointTests(APITestCase):
+    """Issue #37 - both sides of coaching through apps.coaching.services."""
+
+    def setUp(self):
+        self.coach = User.objects.create_user(
+            username="coach", password="s3cret-pass", is_personal_trainer=True
+        )
+        self.client_user = User.objects.create_user(username="client", password="s3cret-pass")
+        self.other = User.objects.create_user(username="other", password="s3cret-pass")
+        _key, coach_secret = _create_key(self.coach)
+        _key, client_secret = _create_key(self.client_user)
+        self.as_coach = {"HTTP_AUTHORIZATION": f"Bearer {coach_secret}"}
+        self.as_client = {"HTTP_AUTHORIZATION": f"Bearer {client_secret}"}
+
+    def _start_coaching(self):
+        sent = self.client.post(
+            reverse("api:coaching-requests"), {"username": "coach"},
+            format="json", **self.as_client,
+        )
+        self.assertEqual(sent.status_code, 201, sent.data)
+        accepted = self.client.post(
+            reverse("api:coaching-request-accept", args=[sent.data["id"]]), **self.as_coach
+        )
+        self.assertEqual(accepted.data["status"], "accepted")
+
+    def test_request_and_relationship(self):
+        not_a_trainer = self.client.post(
+            reverse("api:coaching-requests"), {"username": "other"},
+            format="json", **self.as_client,
+        )
+        self.assertEqual(not_a_trainer.status_code, 400)
+        self._start_coaching()
+        coaches = self.client.get(reverse("api:coaching-coaches"), **self.as_client)
+        self.assertEqual(coaches.data[0]["coach"]["username"], "coach")
+        clients = self.client.get(reverse("api:coaching-clients"), **self.as_coach)
+        self.assertEqual(clients.data[0]["coachee"]["username"], "client")
+        detail = self.client.get(
+            reverse("api:coaching-client", args=["client"]), **self.as_coach
+        )
+        self.assertEqual(detail.status_code, 200, detail.data)
+        self.assertEqual(detail.data["client"]["username"], "client")
+        self.assertIn("training_summary", detail.data)
+        # Not a client: 404, never which case it is.
+        self.assertEqual(
+            self.client.get(
+                reverse("api:coaching-client", args=["other"]), **self.as_coach
+            ).status_code,
+            404,
+        )
+        ended = self.client.post(
+            reverse("api:coaching-relationship-end", args=[clients.data[0]["id"]]),
+            **self.as_client,
+        )
+        self.assertIsNotNone(ended.data["ended_at"])
+        self.assertEqual(
+            self.client.get(
+                reverse("api:coaching-client", args=["client"]), **self.as_coach
+            ).status_code,
+            404,
+        )
+
+    def test_share_import_and_update_a_program(self):
+        from apps.programs.models import Program, Workout
+
+        self._start_coaching()
+        program = Program.objects.create(owner=self.coach, name="Block 1")
+        Workout.objects.create(program=program, name="Day A")
+        share_url = reverse("api:coaching-program-clients", args=[program.pk])
+        self.assertEqual(
+            self.client.put(
+                share_url, {"clients": [self.other.pk]}, format="json", **self.as_coach
+            ).status_code,
+            400,
+        )
+        shared = self.client.put(
+            share_url, {"clients": [self.client_user.pk]}, format="json", **self.as_coach
+        )
+        self.assertEqual(shared.data["clients"], [self.client_user.pk])
+        self.assertEqual(
+            self.client.get(share_url, **self.as_client).status_code, 403
+        )  # not a trainer
+
+        listed = self.client.get(reverse("api:coaching-shared"), **self.as_client)
+        self.assertEqual(listed.data["programs"][0]["id"], program.pk)
+        self.assertFalse(listed.data["programs"][0]["imported"])
+        imported = self.client.post(
+            reverse("api:coaching-shared-program-import", args=[program.pk]), **self.as_client
+        )
+        self.assertEqual(imported.status_code, 201, imported.data)
+        copy_id = imported.data["id"]
+        update_url = reverse("api:coaching-program-update", args=[copy_id])
+        self.assertFalse(self.client.get(update_url, **self.as_client).data["available"])
+        self.assertEqual(self.client.post(update_url, **self.as_client).status_code, 409)
+
+        Workout.objects.create(program=program, name="Day B")
+        program.bump_version()
+        preview = self.client.get(update_url, **self.as_client)
+        self.assertTrue(preview.data["available"])
+        self.assertIn("Day B", preview.data["diff"])
+        applied = self.client.post(update_url, **self.as_client)
+        self.assertEqual(applied.status_code, 200)
+        self.assertEqual(
+            sorted(w["name"] for w in applied.data["workouts"]), ["Day A", "Day B"]
+        )
+
+    def test_import_needs_sharing(self):
+        from apps.programs.models import Program
+
+        self._start_coaching()
+        program = Program.objects.create(owner=self.coach, name="Private")
+        response = self.client.post(
+            reverse("api:coaching-shared-program-import", args=[program.pk]), **self.as_client
+        )
+        self.assertEqual(response.status_code, 400)

@@ -45,6 +45,9 @@ narrated summary of the same version.
 - API: friends, friend requests, blocking, messages and groups, and the
   "Recently active" list. Existing API keys have no access to friends and
   groups; create a new key with the "Friends and groups" area allowed.
+- API: coaching - asking a trainer, answering requests, a trainer's view of a
+  client, and sharing, importing and updating programs and diet plans. Needs
+  a key with the new "Coaching" area allowed.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

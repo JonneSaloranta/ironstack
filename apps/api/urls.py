@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from . import views, views_social, views_tutorials
+from . import views, views_coaching, views_social, views_tutorials
 
 app_name = "api"
 
@@ -159,6 +159,68 @@ social_urlpatterns = [
     ),
 ]
 
+_coaching = views_coaching
+coaching_urlpatterns = [
+    path(
+        "coaching/requests/",
+        _coaching.CoachingRequestListView.as_view(),
+        name="coaching-requests",
+    ),
+    path(
+        "coaching/requests/<int:pk>/accept/",
+        _coaching.CoachingRequestRespondView.as_view(accept=True),
+        name="coaching-request-accept",
+    ),
+    path(
+        "coaching/requests/<int:pk>/decline/",
+        _coaching.CoachingRequestRespondView.as_view(accept=False),
+        name="coaching-request-decline",
+    ),
+    path("coaching/coaches/", _coaching.CoachListView.as_view(), name="coaching-coaches"),
+    path("coaching/clients/", _coaching.ClientListView.as_view(), name="coaching-clients"),
+    path(
+        "coaching/clients/<str:username>/",
+        _coaching.ClientDetailView.as_view(),
+        name="coaching-client",
+    ),
+    path(
+        "coaching/relationships/<int:pk>/end/",
+        _coaching.RelationshipEndView.as_view(),
+        name="coaching-relationship-end",
+    ),
+    path("coaching/shared/", _coaching.SharedPlanListView.as_view(), name="coaching-shared"),
+    path(
+        "coaching/shared/programs/<int:pk>/import/",
+        _coaching.SharedProgramImportView.as_view(),
+        name="coaching-shared-program-import",
+    ),
+    path(
+        "coaching/shared/diet-plans/<int:pk>/import/",
+        _coaching.SharedDietPlanImportView.as_view(),
+        name="coaching-shared-diet-plan-import",
+    ),
+    path(
+        "coaching/programs/<int:pk>/update/",
+        _coaching.ProgramCoachUpdateView.as_view(),
+        name="coaching-program-update",
+    ),
+    path(
+        "coaching/diet-plans/<int:pk>/update/",
+        _coaching.DietPlanCoachUpdateView.as_view(),
+        name="coaching-diet-plan-update",
+    ),
+    path(
+        "coaching/programs/<int:pk>/clients/",
+        _coaching.ProgramShareView.as_view(),
+        name="coaching-program-clients",
+    ),
+    path(
+        "coaching/diet-plans/<int:pk>/clients/",
+        _coaching.DietPlanShareView.as_view(),
+        name="coaching-diet-plan-clients",
+    ),
+]
+
 urlpatterns = [
     path("profile/", views.ProfileView.as_view(), name="profile"),
     path("tutorials/", views_tutorials.TutorialListView.as_view(), name="tutorial-list"),
@@ -219,4 +281,4 @@ urlpatterns = [
         views.AchievementsView.as_view(),
         name="analytics-achievements",
     ),
-] + social_urlpatterns + router.urls
+] + social_urlpatterns + coaching_urlpatterns + router.urls
