@@ -288,7 +288,10 @@ class WorkoutSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Workout
-        fields = ["id", "program", "name", "display_name", "order", "scheduled_weekday", "notes", "prescriptions"]
+        fields = [
+            "id", "program", "name", "display_name", "order", "scheduled_weekday", "notes",
+            "prescriptions",
+        ]
 
     def validate_program(self, value):
         # Same reasoning as ExercisePrescriptionSerializer.validate_workout
@@ -1226,7 +1229,9 @@ class StretchRoutineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StretchRoutine
-        fields = ["id", "name", "display_name", "description", "items", "active", "is_custom", "owner"]
+        fields = [
+            "id", "name", "display_name", "description", "items", "active", "is_custom", "owner",
+        ]
         read_only_fields = ["active", "owner"]
 
 
