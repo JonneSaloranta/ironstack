@@ -25,6 +25,9 @@ narrated summary of the same version.
 - API: `nutrition/maintenance/` (the observed maintenance estimate and the
   figures behind it) and `nutrition/stats/?range=` (the nutrition statistics
   page) (#44).
+- API: translated `display_*` twins for nested names (`exercise_display_name`,
+  `stretch_display_name`, ...), recipe names and the long texts (instructions,
+  descriptions), in the request's language (#42).
 
 ### Fixed
 - API: editing a program, its workouts or prescriptions (or renaming a diet

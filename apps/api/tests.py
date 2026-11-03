@@ -3288,6 +3288,84 @@ class DisplayNameTests(APITestCase):
             self._get(url, HTTP_ACCEPT_LANGUAGE="en").data["display_name"], "Breakfast"
         )
 
+    def test_nested_names_and_long_texts(self):
+        # Issue #42 - the display_* twins next to the stored values.
+        from django.utils import translation
+
+        from apps.nutrition.models import Recipe
+        from apps.programs.models import ExercisePrescription
+        from apps.stretching import services as stretching_services
+        from apps.stretching.models import Stretch, StretchRoutine
+
+        fi = {"HTTP_ACCEPT_LANGUAGE": "fi"}
+
+        def fi_text(value):
+            with translation.override("fi"):
+                return translation.gettext(value)
+
+        squat = Exercise.objects.get(name="Barbell Back Squat")
+        exercise = self._get(reverse("api:exercise-detail", args=[squat.pk]), **fi).data
+        self.assertEqual(exercise["instructions"], squat.instructions)
+        self.assertEqual(exercise["display_instructions"], fi_text(squat.instructions))
+        self.assertNotEqual(exercise["display_instructions"], squat.instructions)
+
+        program = Program.objects.get(name="5x5 Strength (A/B)", owner=None)
+        data = self._get(reverse("api:program-detail", args=[program.pk]), **fi).data
+        self.assertEqual(data["display_description"], fi_text(program.description))
+        self.assertNotEqual(data["display_description"], program.description)
+
+        mine = Program.objects.create(owner=self.alice, name="Mine")
+        workout = Workout.objects.create(program=mine, name="Day 1")
+        prescription = ExercisePrescription.objects.create(workout=workout, exercise=squat)
+        data = self._get(reverse("api:prescription-detail", args=[prescription.pk]), **fi).data
+        self.assertEqual(data["exercise_name"], "Barbell Back Squat")
+        self.assertEqual(data["exercise_display_name"], "Takakyykky tangolla")
+
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, squat)
+        data = self._get(
+            reverse("api:performed-exercise-detail", args=[performed.pk]), **fi
+        ).data
+        self.assertEqual(data["exercise_display_name"], "Takakyykky tangolla")
+        created = self.client.post(
+            reverse("api:set-list"),
+            {"performed_exercise": performed.pk, "weight": "100", "reps": 5},
+            format="json", HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}", **fi,
+        )
+        self.assertEqual(created.status_code, 201, created.data)
+        self.assertTrue(created.data["new_records"])
+        self.assertEqual(
+            created.data["new_records"][0]["exercise_display_name"], "Takakyykky tangolla"
+        )
+        records = self._get(reverse("api:record-list"), **fi).data["results"]
+        self.assertEqual(records[0]["exercise_display_name"], "Takakyykky tangolla")
+
+        recipe = Recipe.objects.get(name="Balanced breakfast - Eggs on toast", owner=None)
+        data = self._get(reverse("api:recipe-detail", args=[recipe.pk]), **fi).data
+        self.assertEqual(data["display_name"], "Tasapainoinen aamiainen - munat paahtoleivällä")
+        self.assertEqual(data["display_instructions"], fi_text(recipe.instructions))
+        self.assertNotEqual(data["display_instructions"], recipe.instructions)
+
+        quad = Stretch.objects.get(name="Standing Quad Stretch")
+        data = self._get(reverse("api:stretch-detail", args=[quad.pk]), **fi).data
+        self.assertNotEqual(data["display_instructions"], quad.instructions)
+        routine = StretchRoutine.objects.get(name="Lower Body Cool-Down")
+        data = self._get(reverse("api:stretch-routine-detail", args=[routine.pk]), **fi).data
+        self.assertNotEqual(data["display_description"], routine.description)
+        stretch_session = stretching_services.start_session(self.alice, stretches=[quad])
+        data = self._get(
+            reverse("api:stretch-session-detail", args=[stretch_session.pk]), **fi
+        ).data
+        self.assertEqual(
+            data["performed_stretches"][0]["stretch_display_name"], "Etureiden venytys seisten"
+        )
+
+        # A user's own text comes back as typed, and an empty one stays empty.
+        own = Exercise.objects.create(name="Oma liike", owner=self.alice, instructions="")
+        data = self._get(reverse("api:exercise-detail", args=[own.pk]), **fi).data
+        self.assertEqual(data["display_name"], "Oma liike")
+        self.assertEqual(data["display_instructions"], "")
+
     def test_nested_and_custom_names(self):
         from apps.stretching.models import StretchRoutine
 

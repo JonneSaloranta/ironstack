@@ -811,7 +811,9 @@ class MuscleGroupAnalyticsView(APIView):
             )
         ]
         return Response(
-            MuscleGroupAnalyticsSerializer({"range": date_range, "muscle_groups": rows}).data
+            MuscleGroupAnalyticsSerializer(
+                {"range": date_range, "muscle_groups": rows}, context={"request": request}
+            ).data
         )
 
 
@@ -1671,7 +1673,9 @@ class StretchSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
         stretching_services.mark_performed(
             performed, done=data["done"], actual_seconds=data.get("actual_seconds")
         )
-        return Response(PerformedStretchSerializer(performed).data)
+        return Response(
+            PerformedStretchSerializer(performed, context={"request": request}).data
+        )
 
     @extend_schema(request=None, responses=StretchSessionSerializer)
     @action(detail=True, methods=["post"])

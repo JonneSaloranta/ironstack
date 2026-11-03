@@ -7676,6 +7676,9 @@ components:
         recipe_name:
           type: string
           readOnly: true
+        recipe_display_name:
+          type: string
+          readOnly: true
         quantity:
           type: string
           format: decimal
@@ -7719,6 +7722,7 @@ components:
       - meal_slot
       - nutrition
       - quantity
+      - recipe_display_name
       - recipe_name
       - user
     DiaryEntryRequest:
@@ -8032,6 +8036,9 @@ components:
           type: string
         instructions:
           type: string
+        display_instructions:
+          type: string
+          readOnly: true
         instructions_attribution:
           type: string
           readOnly: true
@@ -8070,6 +8077,7 @@ components:
           description: Null for built-in system exercises.
       required:
       - active
+      - display_instructions
       - display_name
       - id
       - images
@@ -8154,6 +8162,9 @@ components:
         exercise_name:
           type: string
           readOnly: true
+        exercise_display_name:
+          type: string
+          readOnly: true
         order:
           type: integer
           maximum: 2147483647
@@ -8206,6 +8217,7 @@ components:
           type: string
       required:
       - exercise
+      - exercise_display_name
       - exercise_name
       - id
       - workout
@@ -9130,12 +9142,16 @@ components:
           type: integer
         muscle_group_name:
           type: string
+        muscle_group_display_name:
+          type: string
+          readOnly: true
         volume:
           type: string
           format: decimal
           pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
       required:
       - muscle_group
+      - muscle_group_display_name
       - muscle_group_name
       - volume
     NewRecord:
@@ -9151,6 +9167,9 @@ components:
         exercise:
           type: integer
         exercise_name:
+          type: string
+          readOnly: true
+        exercise_display_name:
           type: string
           readOnly: true
         record_type:
@@ -9188,6 +9207,7 @@ components:
       required:
       - achieved_at
       - exercise
+      - exercise_display_name
       - exercise_name
       - id
       - previous_value
@@ -11041,6 +11061,9 @@ components:
         exercise_name:
           type: string
           readOnly: true
+        exercise_display_name:
+          type: string
+          readOnly: true
         order:
           type: integer
           maximum: 2147483647
@@ -11092,6 +11115,7 @@ components:
           readOnly: true
       required:
       - exercise
+      - exercise_display_name
       - exercise_name
       - id
       - max_reps
@@ -11132,6 +11156,9 @@ components:
         stretch_name:
           type: string
           maxLength: 100
+        stretch_display_name:
+          type: string
+          readOnly: true
         order:
           type: integer
           maximum: 2147483647
@@ -11159,6 +11186,7 @@ components:
           nullable: true
       required:
       - id
+      - stretch_display_name
       - stretch_name
       - target_hold_seconds
     PerformedStretchMarkRequest:
@@ -11237,6 +11265,9 @@ components:
         exercise_name:
           type: string
           readOnly: true
+        exercise_display_name:
+          type: string
+          readOnly: true
         record_type:
           $ref: '#/components/schemas/RecordTypeEnum'
         record_type_display:
@@ -11266,6 +11297,7 @@ components:
       required:
       - achieved_at
       - exercise
+      - exercise_display_name
       - exercise_name
       - id
       - record_type
@@ -11410,6 +11442,9 @@ components:
           readOnly: true
         description:
           type: string
+        display_description:
+          type: string
+          readOnly: true
         is_continuous:
           type: boolean
           title: Continuous
@@ -11433,6 +11468,7 @@ components:
             $ref: '#/components/schemas/Workout'
           readOnly: true
       required:
+      - display_description
       - display_name
       - id
       - is_system_template
@@ -11566,12 +11602,18 @@ components:
         name:
           type: string
           maxLength: 200
+        display_name:
+          type: string
+          readOnly: true
         servings:
           type: integer
           maximum: 32767
           minimum: 0
         instructions:
           type: string
+        display_instructions:
+          type: string
+          readOnly: true
         owner:
           type: integer
           readOnly: true
@@ -11582,6 +11624,8 @@ components:
             $ref: '#/components/schemas/RecipeIngredient'
           readOnly: true
       required:
+      - display_instructions
+      - display_name
       - id
       - ingredients
       - name
@@ -11952,6 +11996,9 @@ components:
             type: integer
         instructions:
           type: string
+        display_instructions:
+          type: string
+          readOnly: true
         active:
           type: boolean
           readOnly: true
@@ -11965,6 +12012,7 @@ components:
           description: Null for built-in system stretches.
       required:
       - active
+      - display_instructions
       - display_name
       - id
       - is_custom
@@ -12012,6 +12060,9 @@ components:
           readOnly: true
         description:
           type: string
+        display_description:
+          type: string
+          readOnly: true
         items:
           type: array
           items:
@@ -12030,6 +12081,7 @@ components:
           description: Null for built-in system routines.
       required:
       - active
+      - display_description
       - display_name
       - id
       - is_custom

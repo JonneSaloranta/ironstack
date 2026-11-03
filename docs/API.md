@@ -155,6 +155,15 @@ when the server supports that language, else to the user's profile
 user typed - comes back unchanged, so a client can always show
 `display_name`.
 
+The same goes for names nested in other rows and for the long texts,
+each as a `display_*` twin next to the stored value: `exercise_display_name`
+on prescriptions, performed exercises, records and a set's `new_records`;
+`stretch_display_name` on performed stretches; `muscle_group_display_name`
+in `analytics/muscle-groups/`; `display_name` on recipes and
+`recipe_display_name` on diary entries; `display_instructions` on
+exercises, stretches and recipes; and `display_description` on programs
+and stretch routines. An empty text stays empty.
+
 ## Managing keys
 
 Self-service, from the Profile page → "API keys" (`/api/keys/` -

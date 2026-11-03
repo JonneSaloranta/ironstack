@@ -77,12 +77,15 @@ def display_language(request):
 
 @extend_schema_field(OpenApiTypes.STR)
 class DisplayNameField(serializers.ReadOnlyField):
-    """`name` as the web shows it (issue #36): built-in names are stored
-    in English and translated where they're rendered (`{% trans %}`,
+    """`name` (or another `source`) as the web shows it (issues #36 and
+    #42): built-in names and texts are stored in English and translated
+    where they're rendered (`{% trans %}`,
     apps.core.templatetags.core_extras.translate_content), so a client
     gets the same text without shipping its own translations. Plain
-    gettext, like translate_content - a name nobody translated, such as
-    one a user typed, comes back unchanged."""
+    gettext, like translate_content - a text nobody translated, such as
+    one a user typed, comes back unchanged. Used for the `display_*`
+    twins next to the stored values: `display_name`,
+    `exercise_display_name`, `display_instructions` and so on."""
 
     def __init__(self, **kwargs):
         kwargs.setdefault("source", "name")
@@ -171,6 +174,7 @@ class ExerciseImageSerializer(serializers.ModelSerializer):
 
 class ExerciseSerializer(serializers.ModelSerializer):
     display_name = DisplayNameField()
+    display_instructions = DisplayNameField(source="instructions")
     is_custom = serializers.BooleanField(read_only=True)
     # Read-only, same pattern as e.g. DietPlanMealSerializer.items below -
     # a client manages its own exercise's gallery through the same
@@ -189,6 +193,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
             "display_name",
             "description",
             "instructions",
+            "display_instructions",
             "instructions_attribution",
             "images",
             "primary_muscle_groups",
@@ -213,6 +218,7 @@ class ExercisePrescriptionSerializer(serializers.ModelSerializer):
     # every exercise separately (issue #19) - same field
     # PerformedExerciseSerializer already has.
     exercise_name = serializers.CharField(source="exercise.name", read_only=True)
+    exercise_display_name = DisplayNameField(source="exercise.name")
 
     class Meta:
         model = ExercisePrescription
@@ -221,6 +227,7 @@ class ExercisePrescriptionSerializer(serializers.ModelSerializer):
             "workout",
             "exercise",
             "exercise_name",
+            "exercise_display_name",
             "order",
             "set_count",
             "min_reps",
@@ -308,6 +315,7 @@ class WorkoutSerializer(serializers.ModelSerializer):
 
 class ProgramSerializer(serializers.ModelSerializer):
     display_name = DisplayNameField()
+    display_description = DisplayNameField(source="description")
     workouts = WorkoutSerializer(many=True, read_only=True)
     is_system_template = serializers.BooleanField(read_only=True)
 
@@ -318,6 +326,7 @@ class ProgramSerializer(serializers.ModelSerializer):
             "name",
             "display_name",
             "description",
+            "display_description",
             "is_continuous",
             "is_template",
             "version",
@@ -359,7 +368,7 @@ class ExerciseSetSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         if "new_records" in self.context:
             data["new_records"] = NewRecordSerializer(
-                self.context["new_records"], many=True
+                self.context["new_records"], many=True, context=self.context
             ).data
         return data
 
@@ -388,6 +397,7 @@ class PerformedExerciseSerializer(serializers.ModelSerializer):
     sets = ExerciseSetSerializer(many=True, read_only=True)
     # The name as it was when logged (PerformedExercise.exercise_name).
     exercise_name = serializers.CharField(source="display_name", read_only=True)
+    exercise_display_name = DisplayNameField(source="display_name")
 
     class Meta:
         model = PerformedExercise
@@ -396,6 +406,7 @@ class PerformedExerciseSerializer(serializers.ModelSerializer):
             "session",
             "exercise",
             "exercise_name",
+            "exercise_display_name",
             "order",
             "set_count",
             "min_reps",
@@ -583,6 +594,7 @@ class ActivitySerializer(serializers.ModelSerializer):
 class PersonalRecordSerializer(serializers.ModelSerializer):
     record_type_display = serializers.CharField(source="get_record_type_display", read_only=True)
     exercise_name = serializers.CharField(source="exercise.name", read_only=True)
+    exercise_display_name = DisplayNameField(source="exercise.name")
 
     class Meta:
         model = PersonalRecord
@@ -590,6 +602,7 @@ class PersonalRecordSerializer(serializers.ModelSerializer):
             "id",
             "exercise",
             "exercise_name",
+            "exercise_display_name",
             "record_type",
             "record_type_display",
             "rep_count",
@@ -703,6 +716,7 @@ class VolumeAnalyticsSerializer(serializers.Serializer):
 class MuscleGroupVolumeSerializer(serializers.Serializer):
     muscle_group = serializers.IntegerField(source="muscle_group.pk")
     muscle_group_name = serializers.CharField(source="muscle_group.name")
+    muscle_group_display_name = DisplayNameField(source="muscle_group.name")
     volume = serializers.DecimalField(max_digits=14, decimal_places=2)
 
 
@@ -859,11 +873,16 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
+    display_instructions = DisplayNameField(source="instructions")
     ingredients = RecipeIngredientSerializer(many=True, read_only=True)
 
     class Meta:
         model = Recipe
-        fields = ["id", "name", "servings", "instructions", "owner", "ingredients"]
+        fields = [
+            "id", "name", "display_name", "servings", "instructions", "display_instructions",
+            "owner", "ingredients",
+        ]
         read_only_fields = ["owner"]
 
 
@@ -892,11 +911,13 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
     nutrition = serializers.SerializerMethodField()
     food_name = serializers.CharField(source="food.name", read_only=True, default=None)
     recipe_name = serializers.CharField(source="recipe.name", read_only=True, default=None)
+    recipe_display_name = DisplayNameField(source="recipe.name", default=None)
 
     class Meta:
         model = DiaryEntry
         fields = [
             "id", "date", "meal_slot", "food", "food_name", "recipe", "recipe_name",
+            "recipe_display_name",
             "quantity", "notes", "user",
             "quick_name", "quick_calories", "quick_protein_grams",
             "quick_carbohydrate_grams", "quick_fat_grams", "nutrition",
@@ -1260,6 +1281,7 @@ class DietPlanSerializer(serializers.ModelSerializer):
 
 class StretchSerializer(serializers.ModelSerializer):
     display_name = DisplayNameField()
+    display_instructions = DisplayNameField(source="instructions")
     is_custom = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -1273,6 +1295,7 @@ class StretchSerializer(serializers.ModelSerializer):
             "default_hold_seconds",
             "muscle_groups",
             "instructions",
+            "display_instructions",
             "active",
             "is_custom",
             "owner",
@@ -1304,24 +1327,29 @@ class RoutineItemSerializer(serializers.ModelSerializer):
 
 class StretchRoutineSerializer(serializers.ModelSerializer):
     display_name = DisplayNameField()
+    display_description = DisplayNameField(source="description")
     items = RoutineItemSerializer(many=True, read_only=True)
     is_custom = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = StretchRoutine
         fields = [
-            "id", "name", "display_name", "description", "items", "active", "is_custom", "owner",
+            "id", "name", "display_name", "description", "display_description", "items",
+            "active", "is_custom", "owner",
         ]
         read_only_fields = ["active", "owner"]
 
 
 class PerformedStretchSerializer(serializers.ModelSerializer):
+    stretch_display_name = DisplayNameField(source="stretch_name")
+
     class Meta:
         model = PerformedStretch
         fields = [
             "id",
             "stretch",
             "stretch_name",
+            "stretch_display_name",
             "order",
             "per_side",
             "target_hold_seconds",
