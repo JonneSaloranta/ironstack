@@ -2948,3 +2948,60 @@ class TrainingAnalyticsEndpointTests(APITestCase):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
         private = Exercise.objects.create(name="Bob's lift", owner=bob)
         self.assertEqual(self._get("api:analytics-exercise", private.pk).status_code, 404)
+
+
+class DisplayNameTests(APITestCase):
+    """Issue #36 - built-in names translated like the web shows them."""
+
+    def setUp(self):
+        from apps.nutrition.models import MealSlot
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+
+    def _get(self, url, **headers):
+        return self.client.get(url, HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}", **headers)
+
+    def test_profile_language_by_default(self):
+        url = reverse("api:meal-slot-detail", args=[self.breakfast.pk])
+        self.assertEqual(self._get(url).data["display_name"], "Breakfast")
+        self.alice.language = "fi"
+        self.alice.save(update_fields=["language"])
+        data = self._get(url).data
+        self.assertEqual(data["name"], "Breakfast")
+        self.assertEqual(data["display_name"], "Aamiainen")
+
+    def test_accept_language_wins_and_unsupported_falls_back(self):
+        url = reverse("api:meal-slot-detail", args=[self.breakfast.pk])
+        self.assertEqual(
+            self._get(url, HTTP_ACCEPT_LANGUAGE="fi-FI,fi;q=0.9").data["display_name"],
+            "Aamiainen",
+        )
+        self.alice.language = "fi"
+        self.alice.save(update_fields=["language"])
+        self.assertEqual(
+            self._get(url, HTTP_ACCEPT_LANGUAGE="xx").data["display_name"], "Aamiainen"
+        )
+        self.assertEqual(
+            self._get(url, HTTP_ACCEPT_LANGUAGE="en").data["display_name"], "Breakfast"
+        )
+
+    def test_nested_and_custom_names(self):
+        from apps.stretching.models import StretchRoutine
+
+        routine = StretchRoutine.objects.get(name="Lower Body Cool-Down")
+        mine = StretchRoutine.objects.create(owner=self.alice, name="Iltavenyttely")
+        fi = {"HTTP_ACCEPT_LANGUAGE": "fi"}
+        self.assertEqual(
+            self._get(reverse("api:stretch-routine-detail", args=[routine.pk]), **fi).data[
+                "display_name"
+            ],
+            "Jäähdyttely: alavartalo",
+        )
+        self.assertEqual(
+            self._get(reverse("api:stretch-routine-detail", args=[mine.pk]), **fi).data[
+                "display_name"
+            ],
+            "Iltavenyttely",
+        )

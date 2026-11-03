@@ -11,6 +11,7 @@ never applied to convert any other endpoint's numbers.
 """
 
 from django.contrib.auth import get_user_model
+from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
@@ -44,6 +45,60 @@ from apps.workouts import services as workout_services
 from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSession
 
 User = get_user_model()
+
+def display_language(request):
+    """The language a display name is shown in: the request's
+    Accept-Language when this server supports it, else the user's own
+    profile language, else the site default. Worked out once per
+    request."""
+    from django.conf import settings
+    from django.utils.translation import get_supported_language_variant
+    from django.utils.translation.trans_real import parse_accept_lang_header
+
+    if request is None:
+        return None
+    cached = getattr(request, "_display_language", None)
+    if cached is not None:
+        return cached
+    language = None
+    for code, _quality in parse_accept_lang_header(request.headers.get("Accept-Language", "")):
+        if code == "*":
+            break
+        try:
+            language = get_supported_language_variant(code)
+            break
+        except LookupError:
+            continue
+    user = getattr(request, "user", None)
+    language = language or getattr(user, "language", "") or settings.LANGUAGE_CODE
+    request._display_language = language
+    return language
+
+
+@extend_schema_field(OpenApiTypes.STR)
+class DisplayNameField(serializers.ReadOnlyField):
+    """`name` as the web shows it (issue #36): built-in names are stored
+    in English and translated where they're rendered (`{% trans %}`,
+    apps.core.templatetags.core_extras.translate_content), so a client
+    gets the same text without shipping its own translations. Plain
+    gettext, like translate_content - a name nobody translated, such as
+    one a user typed, comes back unchanged."""
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault("source", "name")
+        super().__init__(**kwargs)
+
+    def to_representation(self, value):
+        from django.utils import translation
+
+        if not value:
+            return value
+        language = display_language(self.context.get("request"))
+        if language is None:
+            return translation.gettext(value)
+        with translation.override(language):
+            return translation.gettext(value)
+
 
 # --------------------------------------------------------------------
 # Profile
@@ -94,15 +149,17 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class MuscleGroupSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
     class Meta:
         model = MuscleGroup
-        fields = ["id", "name"]
+        fields = ["id", "name", "display_name"]
 
 
 class EquipmentSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
     class Meta:
         model = Equipment
-        fields = ["id", "name"]
+        fields = ["id", "name", "display_name"]
 
 
 class ExerciseImageSerializer(serializers.ModelSerializer):
@@ -112,6 +169,7 @@ class ExerciseImageSerializer(serializers.ModelSerializer):
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
     is_custom = serializers.BooleanField(read_only=True)
     # Read-only, same pattern as e.g. DietPlanMealSerializer.items below -
     # a client manages its own exercise's gallery through the same
@@ -127,6 +185,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "display_name",
             "description",
             "instructions",
             "instructions_attribution",
@@ -224,11 +283,12 @@ class ExercisePrescriptionSerializer(serializers.ModelSerializer):
 
 
 class WorkoutSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
     prescriptions = ExercisePrescriptionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Workout
-        fields = ["id", "program", "name", "order", "scheduled_weekday", "notes", "prescriptions"]
+        fields = ["id", "program", "name", "display_name", "order", "scheduled_weekday", "notes", "prescriptions"]
 
     def validate_program(self, value):
         # Same reasoning as ExercisePrescriptionSerializer.validate_workout
@@ -243,6 +303,7 @@ class WorkoutSerializer(serializers.ModelSerializer):
 
 
 class ProgramSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
     workouts = WorkoutSerializer(many=True, read_only=True)
     is_system_template = serializers.BooleanField(read_only=True)
 
@@ -251,6 +312,7 @@ class ProgramSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "display_name",
             "description",
             "is_continuous",
             "is_template",
@@ -443,11 +505,12 @@ class WorkoutSessionSerializer(serializers.ModelSerializer):
 
 
 class MeasurementTypeSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
     is_custom = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = MeasurementType
-        fields = ["id", "name", "unit_kind", "active", "is_custom", "owner"]
+        fields = ["id", "name", "display_name", "unit_kind", "active", "is_custom", "owner"]
         read_only_fields = ["active", "owner"]
 
 
@@ -476,11 +539,12 @@ class BodyMeasurementSerializer(serializers.ModelSerializer):
 
 
 class ActivityTypeSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
     is_custom = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = ActivityType
-        fields = ["id", "name", "active", "is_custom", "owner"]
+        fields = ["id", "name", "display_name", "active", "is_custom", "owner"]
         read_only_fields = ["active", "owner"]
 
 
@@ -744,11 +808,12 @@ class OffSearchSerializer(serializers.Serializer):
 
 
 class MealSlotSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
     is_custom = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = MealSlot
-        fields = ["id", "name", "order", "active", "is_custom", "owner"]
+        fields = ["id", "name", "display_name", "order", "active", "is_custom", "owner"]
         read_only_fields = ["active", "owner"]
 
 
@@ -1111,6 +1176,7 @@ class DietPlanSerializer(serializers.ModelSerializer):
 
 
 class StretchSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
     is_custom = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -1118,6 +1184,7 @@ class StretchSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "display_name",
             "kind",
             "per_side",
             "default_hold_seconds",
@@ -1153,12 +1220,13 @@ class RoutineItemSerializer(serializers.ModelSerializer):
 
 
 class StretchRoutineSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
     items = RoutineItemSerializer(many=True, read_only=True)
     is_custom = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = StretchRoutine
-        fields = ["id", "name", "description", "items", "active", "is_custom", "owner"]
+        fields = ["id", "name", "display_name", "description", "items", "active", "is_custom", "owner"]
         read_only_fields = ["active", "owner"]
 
 

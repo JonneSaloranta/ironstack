@@ -139,6 +139,19 @@ Datetimes are ISO 8601, always UTC on the wire (`USE_TZ=True`) -
 converting to a user's `timezone` preference for *display* is a client
 concern, the same reasoning as units.
 
+## Display names
+
+Built-in exercises, programs, workouts, muscle groups, equipment,
+measurement and activity types, meal slots, stretches and stretch
+routines are stored with English names and translated where the web
+shows them. Their API rows keep the stored `name` (stable, what
+`?search=` and imports match) and add a read-only `display_name`: the
+same text the web shows, translated to the request's `Accept-Language`
+when the server supports that language, else to the user's profile
+`language`, else the site default. A name nobody translated - one a
+user typed - comes back unchanged, so a client can always show
+`display_name`.
+
 ## Managing keys
 
 Self-service, from the Profile page → "API keys" (`/api/keys/` -

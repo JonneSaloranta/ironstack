@@ -39,6 +39,8 @@ narrated summary of the same version.
   skipped, and finished, and a session can be marked as a workout's cool-down.
 - API: training volume per week and per muscle group, and an exercise's
   progress with its best set and estimated 1RM per session.
+- API: built-in exercises, programs, meal slots, stretches and other content
+  have a `display_name` in the request's or the user's language.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

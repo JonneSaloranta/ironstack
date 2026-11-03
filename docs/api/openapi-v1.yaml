@@ -5246,6 +5246,9 @@ components:
         name:
           type: string
           maxLength: 50
+        display_name:
+          type: string
+          readOnly: true
         active:
           type: boolean
           readOnly: true
@@ -5259,6 +5262,7 @@ components:
           description: Null for built-in system activity types.
       required:
       - active
+      - display_name
       - id
       - is_custom
       - name
@@ -5769,7 +5773,11 @@ components:
         name:
           type: string
           maxLength: 50
+        display_name:
+          type: string
+          readOnly: true
       required:
+      - display_name
       - id
       - name
     Exercise:
@@ -5781,6 +5789,9 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         description:
           type: string
         instructions:
@@ -5823,6 +5834,7 @@ components:
           description: Null for built-in system exercises.
       required:
       - active
+      - display_name
       - id
       - images
       - instructions_attribution
@@ -6481,6 +6493,9 @@ components:
         name:
           type: string
           maxLength: 50
+        display_name:
+          type: string
+          readOnly: true
         order:
           type: integer
           maximum: 32767
@@ -6498,6 +6513,7 @@ components:
           description: Null for the built-in default meal slots.
       required:
       - active
+      - display_name
       - id
       - is_custom
       - name
@@ -6524,6 +6540,9 @@ components:
         name:
           type: string
           maxLength: 50
+        display_name:
+          type: string
+          readOnly: true
         unit_kind:
           $ref: '#/components/schemas/UnitKindEnum'
         active:
@@ -6539,6 +6558,7 @@ components:
           description: Null for built-in system measurement types.
       required:
       - active
+      - display_name
       - id
       - is_custom
       - name
@@ -6573,7 +6593,11 @@ components:
         name:
           type: string
           maxLength: 50
+        display_name:
+          type: string
+          readOnly: true
       required:
+      - display_name
       - id
       - name
     MuscleGroupAnalytics:
@@ -8704,6 +8728,9 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         description:
           type: string
         is_continuous:
@@ -8729,6 +8756,7 @@ components:
             $ref: '#/components/schemas/Workout'
           readOnly: true
       required:
+      - display_name
       - id
       - is_system_template
       - name
@@ -9107,6 +9135,9 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         kind:
           allOf:
           - $ref: '#/components/schemas/KindEnum'
@@ -9139,6 +9170,7 @@ components:
           description: Null for built-in system stretches.
       required:
       - active
+      - display_name
       - id
       - is_custom
       - name
@@ -9180,6 +9212,9 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         description:
           type: string
         items:
@@ -9200,6 +9235,7 @@ components:
           description: Null for built-in system routines.
       required:
       - active
+      - display_name
       - id
       - is_custom
       - items
@@ -9500,6 +9536,9 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         order:
           type: integer
           maximum: 2147483647
@@ -9519,6 +9558,7 @@ components:
             $ref: '#/components/schemas/ExercisePrescription'
           readOnly: true
       required:
+      - display_name
       - id
       - name
       - prescriptions
