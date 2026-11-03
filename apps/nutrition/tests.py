@@ -971,6 +971,33 @@ class MaintenanceEstimateTests(TestCase):
         )
         self.assertEqual(self._estimate().calories, 2500)
 
+    def test_the_figures_behind_the_estimate(self):
+        # Issue #44 - the API shows what the estimate rests on.
+        self._log_food(20)
+        self._log_weights("-0.5")
+        estimate = self._estimate()
+        self.assertEqual(estimate.days_logged, 20)
+        self.assertEqual(estimate.mean_calories, Decimal("2500"))
+        self.assertFalse(estimate.possible_logging_gaps)
+        self.assertEqual(estimate.weight_rate_kg_per_week, Decimal("-0.5"))
+        self.assertEqual(estimate.weight_days, 4)
+        self.assertEqual(estimate.span_days, 21)
+
+    def test_without_weigh_ins_only_the_food_figures_are_there(self):
+        self._log_food(20)
+        estimate = self._estimate()
+        self.assertEqual(estimate.days_logged, 20)
+        self.assertIsNone(estimate.weight_rate_kg_per_week)
+        self.assertIsNone(estimate.span_days)
+
+    def test_period_keys_match_the_periods(self):
+        from apps.nutrition import services as nutrition_services
+
+        self.assertEqual(
+            [period.key for period in nutrition_services.nutrition_stats_by_period(self.alice)],
+            nutrition_services.NUTRITION_STATS_PERIOD_KEYS,
+        )
+
     def test_too_few_food_days(self):
         self._log_food(13)
         self._log_weights()

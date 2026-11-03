@@ -763,6 +763,110 @@ class ExercisePrescriptionOwnershipTests(APITestCase):
         self.assertEqual(detail.data["exercise_name"], "System Bench")
 
 
+class ProgramVersionBumpTests(APITestCase):
+    """GitHub issue #46: an API edit to a program, its workouts or its
+    prescriptions bumps the program's version like the web's views do,
+    so a coach's clients are offered the update."""
+
+    def setUp(self):
+        from apps.programs.models import ExercisePrescription
+
+        self.coach = User.objects.create_user(username="coach", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="System Squat", owner=None)
+        self.program = Program.objects.create(owner=self.coach, name="Strength")
+        self.workout = Workout.objects.create(program=self.program, name="Day 1")
+        self.prescription = ExercisePrescription.objects.create(
+            workout=self.workout, exercise=self.exercise
+        )
+        self.client_copy = Program.objects.create(
+            owner=User.objects.create_user(username="client", password="s3cret-pass"),
+            name="Strength",
+            imported_from=self.program,
+            coach_snapshot_version=self.program.version,
+        )
+        _api_key, self.raw_secret = _create_key(self.coach)
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def _assert_bumped(self, program=None, by=1):
+        program = program or self.program
+        before = program.version
+        program.refresh_from_db()
+        self.assertEqual(program.version, before + by)
+
+    def test_editing_the_program_bumps_it_past_the_clients_snapshot(self):
+        # coaching.services.program_update_available compares exactly these.
+        response = self.client.patch(
+            reverse("api:program-detail", args=[self.program.pk]),
+            {"name": "Strength 2"}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self._assert_bumped()
+        self.assertNotEqual(self.program.version, self.client_copy.coach_snapshot_version)
+
+    def test_workout_create_update_and_delete_bump_the_program(self):
+        response = self.client.post(
+            reverse("api:workout-list"),
+            {"program": self.program.pk, "name": "Day 2"}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+        self._assert_bumped()
+        workout_pk = response.data["id"]
+        response = self.client.patch(
+            reverse("api:workout-detail", args=[workout_pk]),
+            {"name": "Day 2b"}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self._assert_bumped()
+        response = self.client.delete(
+            reverse("api:workout-detail", args=[workout_pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        self._assert_bumped()
+
+    def test_moving_a_workout_to_another_program_bumps_both(self):
+        other = Program.objects.create(owner=self.coach, name="Other")
+        response = self.client.patch(
+            reverse("api:workout-detail", args=[self.workout.pk]),
+            {"program": other.pk}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self._assert_bumped()
+        self._assert_bumped(other)
+
+    def test_prescription_create_update_and_delete_bump_the_program(self):
+        response = self.client.post(
+            reverse("api:prescription-list"),
+            {
+                "workout": self.workout.pk, "exercise": self.exercise.pk, "order": 1,
+                "set_count": 3, "min_reps": 5, "max_reps": 5,
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+        self._assert_bumped()
+        response = self.client.patch(
+            reverse("api:prescription-detail", args=[self.prescription.pk]),
+            {"set_count": 4}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self._assert_bumped()
+        response = self.client.delete(
+            reverse("api:prescription-detail", args=[self.prescription.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        self._assert_bumped()
+
+    def test_a_rejected_edit_does_not_bump(self):
+        response = self.client.patch(
+            reverse("api:prescription-detail", args=[self.prescription.pk]),
+            {"min_reps": 8, "max_reps": 5}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+        self._assert_bumped(by=0)
+
+
 class UpNextEndpointTests(APITestCase):
     """Issue #16 - the dashboard's "Up next" workout, for a client."""
 
@@ -1934,6 +2038,95 @@ class NutritionProfileEndpointTests(APITestCase):
         self.assertEqual(response.status_code, 404)
 
 
+class NutritionStatsEndpointTests(APITestCase):
+    """Issue #44 - the "Observed maintenance" card and the nutrition
+    statistics page."""
+
+    def setUp(self):
+        from apps.nutrition.models import MealSlot
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.slot = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.today = timezone.localdate()
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def _log_food(self, days_ago, calories):
+        from apps.nutrition.models import DiaryEntry
+
+        DiaryEntry.objects.create(
+            user=self.alice, date=self.today - timedelta(days=days_ago),
+            meal_slot=self.slot, quantity=Decimal("1"), quick_calories=calories,
+        )
+
+    def test_maintenance_without_enough_data_says_why(self):
+        for days_ago in range(1, 6):
+            self._log_food(days_ago, 2500)
+        response = self.client.get(reverse("api:nutrition-maintenance"), **self._auth())
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.data["calories"])
+        self.assertIsNone(response.data["confidence"])
+        self.assertIn("5", response.data["reason"])
+        self.assertEqual(response.data["days_logged"], 5)
+        self.assertEqual(response.data["mean_calories"], "2500")
+        self.assertEqual(response.data["window_days"], 28)
+        self.assertIsNone(response.data["weight_rate_kg_per_week"])
+
+    def test_maintenance_with_food_and_weight(self):
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        for days_ago in range(1, 21):
+            self._log_food(days_ago, 2500)
+        body_weight = MeasurementType.objects.get(name="Body weight", owner=None)
+        for days_ago in (22, 15, 8, 1):
+            BodyMeasurement.objects.create(
+                user=self.alice, measurement_type=body_weight, value=Decimal("80"),
+                recorded_at=timezone.now() - timedelta(days=days_ago),
+            )
+        response = self.client.get(reverse("api:nutrition-maintenance"), **self._auth())
+        self.assertEqual(response.data["calories"], 2500)
+        self.assertIsNotNone(response.data["confidence"])
+        self.assertEqual(response.data["weight_days"], 4)
+        self.assertEqual(Decimal(response.data["weight_rate_kg_per_week"]), Decimal("0"))
+
+    def test_stats_for_a_range(self):
+        self._log_food(1, 2000)
+        self._log_food(2, 3000)
+        self._log_food(10, 1000)
+        self._log_food(0, 500)  # today: charted, not counted
+        url = reverse("api:nutrition-stats")
+        response = self.client.get(url, {"range": "7d"}, **self._auth())
+        self.assertEqual(response.status_code, 200)
+        period = response.data["period"]
+        self.assertEqual(period["key"], "7d")
+        self.assertEqual(period["end"], str(self.today - timedelta(days=1)))
+        self.assertEqual(period["summary"]["days_logged"], 2)
+        self.assertEqual(period["summary"]["days_in_range"], 7)
+        self.assertEqual(period["summary"]["mean_calories"], "2500")
+        self.assertFalse(period["summary"]["possible_logging_gaps"])
+        daily = response.data["daily"]
+        self.assertEqual(len(daily), 8)
+        self.assertEqual(daily[-1], {"date": str(self.today), "calories": 500})
+        self.assertEqual(daily[-2]["calories"], 2000)
+        self.assertIsNone(daily[0]["calories"])
+        self.assertIsNone(response.data["target_calories"])
+        self.assertEqual(
+            [row["key"] for row in response.data["periods"]],
+            ["7d", "14d", "30d", "3m", "ytd", "1y", "all"],
+        )
+        default = self.client.get(url, **self._auth())
+        self.assertEqual(default.data["period"]["key"], "30d")
+        self.assertEqual(default.data["period"]["summary"]["days_logged"], 3)
+
+    def test_stats_rejects_an_unknown_range(self):
+        response = self.client.get(
+            reverse("api:nutrition-stats"), {"range": "5y"}, **self._auth()
+        )
+        self.assertEqual(response.status_code, 400)
+
+
 class DietPlanEndpointTests(APITestCase):
     """DietPlan's mutating actions all route through
     apps.nutrition.diet_builder/services rather than a raw
@@ -1969,6 +2162,22 @@ class DietPlanEndpointTests(APITestCase):
         return self.client.post(
             reverse("api:diet-plan-list"), payload, format="json", **self._auth()
         )
+
+    def test_renaming_a_plan_bumps_its_version_but_changing_the_goal_does_not(self):
+        # GitHub issue #46: `name` and `is_weekly` are part of what a
+        # coach's client imports, so changing them offers an update.
+        from apps.nutrition.models import DietPlan
+
+        plan = DietPlan.objects.get(pk=self._create_plan().data["id"])
+        url = reverse("api:diet-plan-detail", args=[plan.pk])
+        response = self.client.patch(url, {"name": "Renamed"}, format="json", **self._auth())
+        self.assertEqual(response.status_code, 200)
+        version = plan.version
+        plan.refresh_from_db()
+        self.assertEqual(plan.version, version + 1)
+        self.client.patch(url, {"name": "Renamed", "goal": None}, format="json", **self._auth())
+        plan.refresh_from_db()
+        self.assertEqual(plan.version, version + 1)
 
     def test_creating_a_diet_plan_builds_meals_and_items(self):
         response = self._create_plan()
@@ -2269,6 +2478,95 @@ class StretchingEndpointTests(APITestCase):
         session = workout_services.start_session(user or self.alice, workout=None)
         workout_services.complete_session(session)
         return session
+
+    def _workout_with(self, *exercise_names):
+        session = workout_services.start_session(self.alice, workout=None)
+        for name in exercise_names:
+            workout_services.add_performed_exercise(session, Exercise.objects.get(name=name))
+        return workout_services.complete_session(session)
+
+    def test_cooldown_suggests_a_routine_for_a_finished_workout(self):
+        # Issue #43 - the same suggestion as the web's cool-down card.
+        workout = self._workout_with("Barbell Back Squat", "Leg Curl")
+        url = reverse("api:session-cooldown", args=[workout.pk])
+        response = self.client.get(url, **self._auth())
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["routine"]["id"], self.system_routine.pk)
+        self.assertEqual(response.data["stretches"], [])
+        self.assertTrue(response.data["muscle_groups"])
+        self.assertGreater(response.data["planned_seconds"], 0)
+        self.assertIsNone(response.data["done"])
+
+        from apps.stretching import services as stretching_services
+
+        done = stretching_services.start_session(
+            self.alice, routine=self.system_routine, after_workout=workout
+        )
+        response = self.client.get(url, **self._auth())
+        self.assertEqual(response.data["done"]["id"], done.pk)
+
+    def test_cooldown_without_a_match_is_empty(self):
+        response = self.client.get(
+            reverse("api:session-cooldown", args=[self._finished_workout().pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data,
+            {
+                "muscle_groups": [], "routine": None, "stretches": [],
+                "planned_seconds": None, "done": None,
+            },
+        )
+
+    def test_cooldown_refuses_unfinished_others_and_keys_without_stretching(self):
+        in_progress = workout_services.start_session(self.alice, workout=None)
+        self.assertEqual(
+            self.client.get(
+                reverse("api:session-cooldown", args=[in_progress.pk]), **self._auth()
+            ).status_code,
+            409,
+        )
+        bobs = self._finished_workout(self.bob)
+        self.assertEqual(
+            self.client.get(
+                reverse("api:session-cooldown", args=[bobs.pk]), **self._auth()
+            ).status_code,
+            404,
+        )
+        _key, secret = _create_key(
+            self.alice,
+            stretching={
+                "can_create": False, "can_read": False, "can_update": False, "can_delete": False,
+            },
+        )
+        workout = self._finished_workout()
+        self.assertEqual(
+            self.client.get(
+                reverse("api:session-cooldown", args=[workout.pk]),
+                HTTP_AUTHORIZATION=f"Bearer {secret}",
+            ).status_code,
+            403,
+        )
+
+    def test_stretch_sessions_filter_by_after_workout(self):
+        from apps.stretching import services as stretching_services
+
+        workout = self._finished_workout()
+        cooldown = stretching_services.quick_log(
+            self.alice, date=timezone.localdate(), duration=timedelta(minutes=5),
+            after_workout=workout,
+        )
+        stretching_services.quick_log(
+            self.alice, date=timezone.localdate(), duration=timedelta(minutes=5)
+        )
+        url = reverse("api:stretch-session-list")
+        response = self.client.get(url, {"after_workout": workout.pk}, **self._auth())
+        self.assertEqual(
+            [row["id"] for row in response.data["results"]], [cooldown.pk]
+        )
+        self.assertEqual(
+            self.client.get(url, {"after_workout": "x"}, **self._auth()).status_code, 400
+        )
 
     def test_guided_session_start_mark_complete(self):
         # Issue #34: a client's own player records each stretch.
@@ -2990,6 +3288,84 @@ class DisplayNameTests(APITestCase):
             self._get(url, HTTP_ACCEPT_LANGUAGE="en").data["display_name"], "Breakfast"
         )
 
+    def test_nested_names_and_long_texts(self):
+        # Issue #42 - the display_* twins next to the stored values.
+        from django.utils import translation
+
+        from apps.nutrition.models import Recipe
+        from apps.programs.models import ExercisePrescription
+        from apps.stretching import services as stretching_services
+        from apps.stretching.models import Stretch, StretchRoutine
+
+        fi = {"HTTP_ACCEPT_LANGUAGE": "fi"}
+
+        def fi_text(value):
+            with translation.override("fi"):
+                return translation.gettext(value)
+
+        squat = Exercise.objects.get(name="Barbell Back Squat")
+        exercise = self._get(reverse("api:exercise-detail", args=[squat.pk]), **fi).data
+        self.assertEqual(exercise["instructions"], squat.instructions)
+        self.assertEqual(exercise["display_instructions"], fi_text(squat.instructions))
+        self.assertNotEqual(exercise["display_instructions"], squat.instructions)
+
+        program = Program.objects.get(name="5x5 Strength (A/B)", owner=None)
+        data = self._get(reverse("api:program-detail", args=[program.pk]), **fi).data
+        self.assertEqual(data["display_description"], fi_text(program.description))
+        self.assertNotEqual(data["display_description"], program.description)
+
+        mine = Program.objects.create(owner=self.alice, name="Mine")
+        workout = Workout.objects.create(program=mine, name="Day 1")
+        prescription = ExercisePrescription.objects.create(workout=workout, exercise=squat)
+        data = self._get(reverse("api:prescription-detail", args=[prescription.pk]), **fi).data
+        self.assertEqual(data["exercise_name"], "Barbell Back Squat")
+        self.assertEqual(data["exercise_display_name"], "Takakyykky tangolla")
+
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, squat)
+        data = self._get(
+            reverse("api:performed-exercise-detail", args=[performed.pk]), **fi
+        ).data
+        self.assertEqual(data["exercise_display_name"], "Takakyykky tangolla")
+        created = self.client.post(
+            reverse("api:set-list"),
+            {"performed_exercise": performed.pk, "weight": "100", "reps": 5},
+            format="json", HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}", **fi,
+        )
+        self.assertEqual(created.status_code, 201, created.data)
+        self.assertTrue(created.data["new_records"])
+        self.assertEqual(
+            created.data["new_records"][0]["exercise_display_name"], "Takakyykky tangolla"
+        )
+        records = self._get(reverse("api:record-list"), **fi).data["results"]
+        self.assertEqual(records[0]["exercise_display_name"], "Takakyykky tangolla")
+
+        recipe = Recipe.objects.get(name="Balanced breakfast - Eggs on toast", owner=None)
+        data = self._get(reverse("api:recipe-detail", args=[recipe.pk]), **fi).data
+        self.assertEqual(data["display_name"], "Tasapainoinen aamiainen - munat paahtoleivällä")
+        self.assertEqual(data["display_instructions"], fi_text(recipe.instructions))
+        self.assertNotEqual(data["display_instructions"], recipe.instructions)
+
+        quad = Stretch.objects.get(name="Standing Quad Stretch")
+        data = self._get(reverse("api:stretch-detail", args=[quad.pk]), **fi).data
+        self.assertNotEqual(data["display_instructions"], quad.instructions)
+        routine = StretchRoutine.objects.get(name="Lower Body Cool-Down")
+        data = self._get(reverse("api:stretch-routine-detail", args=[routine.pk]), **fi).data
+        self.assertNotEqual(data["display_description"], routine.description)
+        stretch_session = stretching_services.start_session(self.alice, stretches=[quad])
+        data = self._get(
+            reverse("api:stretch-session-detail", args=[stretch_session.pk]), **fi
+        ).data
+        self.assertEqual(
+            data["performed_stretches"][0]["stretch_display_name"], "Etureiden venytys seisten"
+        )
+
+        # A user's own text comes back as typed, and an empty one stays empty.
+        own = Exercise.objects.create(name="Oma liike", owner=self.alice, instructions="")
+        data = self._get(reverse("api:exercise-detail", args=[own.pk]), **fi).data
+        self.assertEqual(data["display_name"], "Oma liike")
+        self.assertEqual(data["display_instructions"], "")
+
     def test_nested_and_custom_names(self):
         from apps.stretching.models import StretchRoutine
 
@@ -3214,7 +3590,11 @@ class SocialEndpointTests(APITestCase):
         self.assertEqual(
             self.client.get(reverse("api:social-groups"), **self.as_alice).data[0]["unread"], 1
         )
-        members = self.client.get(
+        # GitHub issue #45: the sender's own message isn't unread for them.
+        self.assertEqual(
+            self.client.get(reverse("api:social-groups"), **self.as_bob).data[0]["unread"], 0
+        )
+        members =self.client.get(
             reverse("api:social-group-members", args=[group_id]), **self.as_alice
         )
         self.assertEqual(len(members.data), 2)

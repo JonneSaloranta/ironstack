@@ -18,6 +18,25 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.31.0] - 2026-11-04
+
+### Added
+- API: `sessions/<id>/cooldown/` - the cool-down suggestion for a finished
+  workout, and the one already done after it; `stretch-sessions/` filters by
+  `?after_workout=` (#43).
+- API: `nutrition/maintenance/` (the observed maintenance estimate and the
+  figures behind it) and `nutrition/stats/?range=` (the nutrition statistics
+  page) (#44).
+- API: translated `display_*` twins for nested names (`exercise_display_name`,
+  `stretch_display_name`, ...), recipe names and the long texts (instructions,
+  descriptions), in the request's language (#42).
+
+### Fixed
+- API: editing a program, its workouts or prescriptions (or renaming a diet
+  plan) bumps its version like the web does, so a coach's clients are offered
+  the update (#46).
+- A group member's own messages no longer count as unread for them (#45).
+
 ## [1.30.0] - 2026-11-03
 
 ### Added

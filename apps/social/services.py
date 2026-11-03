@@ -469,7 +469,9 @@ def is_group_muted(group, user):
 def unread_group_message_count(user, group=None):
     """Total unread group-message count across every group `user`
     belongs to, or for one specific `group` if given. One query
-    regardless of how many groups that is: `GroupMembership.
+    regardless of how many groups that is. `user`'s own messages never
+    count as unread - posting over the API doesn't mark the thread
+    read the way the web's redirect does (GitHub issue #45). `GroupMembership.
     last_read_at` always has a value (see its own field comment for
     why it's never null), so "unread" is a single `created_at > ...`
     comparison joined straight through to each message's own
@@ -486,17 +488,21 @@ def unread_group_message_count(user, group=None):
     }
     if group is not None:
         filters["group"] = group
-    return GroupMessage.objects.filter(**filters).count()
+    return GroupMessage.objects.filter(**filters).exclude(sender=user).count()
 
 
 def has_unread_group_messages(user):
     """Same query as unread_group_message_count(user), but .exists()
     instead of .count() - the badge only ever needs a boolean, and
     can stop at the first match instead of counting every row."""
-    return GroupMessage.objects.filter(
-        group__memberships__user=user,
-        created_at__gt=models.F("group__memberships__last_read_at"),
-    ).exists()
+    return (
+        GroupMessage.objects.filter(
+            group__memberships__user=user,
+            created_at__gt=models.F("group__memberships__last_read_at"),
+        )
+        .exclude(sender=user)
+        .exists()
+    )
 
 
 def unread_group_message_counts_by_group(user):
@@ -512,6 +518,7 @@ def unread_group_message_counts_by_group(user):
             group__memberships__user=user,
             created_at__gt=models.F("group__memberships__last_read_at"),
         )
+        .exclude(sender=user)
         .values("group")
         .annotate(unread=models.Count("id"))
     )

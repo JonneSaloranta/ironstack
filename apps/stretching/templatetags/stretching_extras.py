@@ -1,7 +1,6 @@
 from django import template
 
 from apps.stretching import services
-from apps.stretching.models import StretchSessionStatus
 from apps.workouts.models import WorkoutSessionStatus
 
 register = template.Library()
@@ -32,29 +31,13 @@ def cooldown_card(context, workout_session):
         return empty
     if workout_session.status != WorkoutSessionStatus.COMPLETED:
         return empty
-    done = (
-        workout_session.cooldown_stretch_sessions.filter(user=user)
-        .exclude(status=StretchSessionStatus.ABANDONED)
-        .first()
-    )
+    done = services.cooldown_done_after(workout_session)
     if done is not None:
         return {"show": True, "done": done, "request": request}
     suggestion = services.suggest_cooldown(workout_session)
     if suggestion is None:
         return empty
-    seconds = (
-        services.routine_seconds(suggestion.routine)
-        if suggestion.routine is not None
-        else sum(
-            services.item_seconds(
-                hold_seconds=stretch.default_hold_seconds,
-                sets=1,
-                per_side=stretch.per_side,
-                rest_seconds=services.AD_HOC_REST_SECONDS,
-            )
-            for stretch in suggestion.stretches
-        )
-    )
+    seconds = services.cooldown_seconds(suggestion)
     return {
         "show": True,
         "suggestion": suggestion,

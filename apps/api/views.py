@@ -11,6 +11,7 @@ as much a "view" as a Django one in that sense.
 
 from contextlib import nullcontext
 from datetime import datetime, time
+from decimal import Decimal
 
 from django.shortcuts import get_object_or_404
 from django.utils import timezone, translation
@@ -62,6 +63,7 @@ from .serializers import (
     ActivityTypeSerializer,
     AdjustmentSuggestionSerializer,
     BodyMeasurementSerializer,
+    CooldownSuggestionSerializer,
     DailyTotalsSerializer,
     DiaryCopyDayResultSerializer,
     DiaryCopyDaySerializer,
@@ -78,6 +80,7 @@ from .serializers import (
     FoodImportOffSerializer,
     FoodSerializer,
     LastPerformanceSerializer,
+    MaintenanceEstimateSerializer,
     MealSlotSerializer,
     MeasurementTypeSerializer,
     MuscleGroupAnalyticsSerializer,
@@ -86,6 +89,7 @@ from .serializers import (
     NutritionGoalCreateSerializer,
     NutritionGoalSerializer,
     NutritionProfileSerializer,
+    NutritionStatsSerializer,
     NutritionTargetSerializer,
     OffSearchSerializer,
     PerformedExerciseSerializer,
@@ -211,6 +215,11 @@ class ProgramViewSet(OwnedResourceViewSet):
     def editable_queryset(self):
         return program_services.editable_by(self.request.user)
 
+    def perform_update(self, serializer):
+        # Every edit bumps the version, like the web's ProgramUpdateView -
+        # it's what offers a coach's clients the update (GitHub issue #46).
+        serializer.save().bump_version()
+
     @extend_schema(request=None, responses={201: ProgramSerializer})
     @action(detail=True, methods=["post"])
     def copy(self, request, pk=None):
@@ -224,9 +233,38 @@ class ProgramViewSet(OwnedResourceViewSet):
         )
 
 
-class WorkoutViewSet(viewsets.ModelViewSet):
+# Creating, editing or deleting a program's workout or prescription
+# bumps the program's version, the same as the web's views in
+# apps.programs.views - without it a coach's edit over the API never
+# offers their clients' imported copies an update (GitHub issue #46).
+# An edit moving a row to another program bumps both. (A comment, not a
+# docstring: drf-spectacular would put a docstring into the schema.)
+class _BumpsProgramVersionMixin:
+    def _program_of(self, instance):
+        raise NotImplementedError
+
+    def perform_create(self, serializer):
+        self._program_of(serializer.save()).bump_version()
+
+    def perform_update(self, serializer):
+        before = self._program_of(serializer.instance)
+        after = self._program_of(serializer.save())
+        after.bump_version()
+        if before.pk != after.pk:
+            before.bump_version()
+
+    def perform_destroy(self, instance):
+        program = self._program_of(instance)
+        instance.delete()
+        program.bump_version()
+
+
+class WorkoutViewSet(_BumpsProgramVersionMixin, viewsets.ModelViewSet):
     serializer_class = WorkoutSerializer
     api_context = ApiContext.PROGRAMS
+
+    def _program_of(self, instance):
+        return instance.program
 
     def get_queryset(self):
         if self.action in ("update", "partial_update", "destroy"):
@@ -238,9 +276,12 @@ class WorkoutViewSet(viewsets.ModelViewSet):
         )
 
 
-class ExercisePrescriptionViewSet(viewsets.ModelViewSet):
+class ExercisePrescriptionViewSet(_BumpsProgramVersionMixin, viewsets.ModelViewSet):
     serializer_class = ExercisePrescriptionSerializer
     api_context = ApiContext.PROGRAMS
+
+    def _program_of(self, instance):
+        return instance.workout.program
 
     def get_queryset(self):
         if self.action in ("update", "partial_update", "destroy"):
@@ -405,6 +446,36 @@ class WorkoutSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
         exercise_ids = list(instance.performed_exercises.values_list("exercise_id", flat=True))
         instance.delete()
         records_services.rebuild_records_for_exercises(self.request.user, exercise_ids)
+
+    @extend_schema(responses={200: CooldownSuggestionSerializer})
+    @action(detail=True, methods=["get"])
+    def cooldown(self, request, pk=None):
+        """The cool-down suggestion for one finished workout, and the
+        cool-down already done after it (issue #43). Needs the key's
+        stretching read permission too; 409 while the workout isn't
+        completed."""
+        from rest_framework.exceptions import PermissionDenied
+
+        from .permissions import has_context_permission
+
+        if not has_context_permission(request, ApiContext.STRETCHING):
+            raise PermissionDenied("This key can't read stretching.")
+        session = self.get_object()
+        if session.status != WorkoutSessionStatus.COMPLETED:
+            return Response(
+                {"detail": "This workout isn't completed."}, status=status.HTTP_409_CONFLICT
+            )
+        suggestion = stretching_services.suggest_cooldown(session)
+        data = {
+            "muscle_groups": suggestion.muscle_groups if suggestion else [],
+            "routine": suggestion.routine if suggestion else None,
+            "stretches": suggestion.stretches if suggestion else [],
+            "planned_seconds": (
+                stretching_services.cooldown_seconds(suggestion) if suggestion else None
+            ),
+            "done": stretching_services.cooldown_done_after(session),
+        }
+        return Response(CooldownSuggestionSerializer(data, context={"request": request}).data)
 
 
 @extend_schema_view(create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]))
@@ -740,7 +811,9 @@ class MuscleGroupAnalyticsView(APIView):
             )
         ]
         return Response(
-            MuscleGroupAnalyticsSerializer({"range": date_range, "muscle_groups": rows}).data
+            MuscleGroupAnalyticsSerializer(
+                {"range": date_range, "muscle_groups": rows}, context={"request": request}
+            ).data
         )
 
 
@@ -1093,6 +1166,82 @@ class AdjustmentSuggestionView(APIView):
             return Response(AdjustmentSuggestionSerializer(suggestion).data)
 
 
+class MaintenanceEstimateView(APIView):
+    """`GET nutrition/maintenance/` - the nutrition dashboard's "Observed
+    maintenance" card (apps.nutrition.maintenance, issue #44)."""
+
+    api_context = ApiContext.NUTRITION
+
+    # See TrainingSummaryView's own comment for why this is here.
+    @extend_schema(responses=MaintenanceEstimateSerializer)
+    def get(self, request):
+        from dataclasses import asdict
+
+        from apps.nutrition import maintenance
+
+        with _user_language(request.user):
+            estimate = maintenance.estimate_maintenance(request.user)
+            data = {**asdict(estimate), "window_days": maintenance.WINDOW_DAYS}
+            return Response(MaintenanceEstimateSerializer(data).data)
+
+
+class NutritionStatsView(APIView):
+    """`GET nutrition/stats/?range=` - the nutrition statistics page
+    (apps.nutrition.services.nutrition_stats_by_period and
+    calorie_history, issue #44). `range` is one of the page's fixed
+    periods, default `30d`."""
+
+    api_context = ApiContext.NUTRITION
+
+    @extend_schema(
+        responses=NutritionStatsSerializer,
+        parameters=[
+            OpenApiParameter(
+                "range", enum=nutrition_services.NUTRITION_STATS_PERIOD_KEYS,
+                description="One of the fixed periods; default 30d.",
+            )
+        ],
+    )
+    def get(self, request):
+        from apps.nutrition.models import NutritionTarget
+
+        key = request.query_params.get("range", "30d")
+        if key not in nutrition_services.NUTRITION_STATS_PERIOD_KEYS:
+            return Response(
+                {
+                    "range": "Must be one of: "
+                    f"{', '.join(nutrition_services.NUTRITION_STATS_PERIOD_KEYS)}."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        with _user_language(request.user):
+            periods = [
+                {**vars(period), "label": str(period.label)}
+                for period in nutrition_services.nutrition_stats_by_period(request.user)
+            ]
+        for period in periods:
+            summary = period["summary"]
+            period["summary"] = {
+                **vars(summary), "possible_logging_gaps": summary.possible_logging_gaps
+            }
+        period = next(period for period in periods if period["key"] == key)
+        today = timezone.localdate()
+        history = nutrition_services.calorie_history(
+            request.user, days=max((today - period["start"]).days + 1, 1)
+        )
+        target = NutritionTarget.objects.filter(user=request.user, ended_at__isnull=True).first()
+        data = {
+            "period": period,
+            "daily": [
+                {"date": day, "calories": totals and int(totals.calories.quantize(Decimal("1")))}
+                for day, totals in history
+            ],
+            "target_calories": target.daily_calories if target else None,
+            "periods": periods,
+        }
+        return Response(NutritionStatsSerializer(data).data)
+
+
 class AdjustmentSuggestionAcceptView(APIView):
     """`POST nutrition/adjustment-suggestion/accept/` - accepting the
     suggestion, the web's accept_adjustment_suggestion: the suggestion
@@ -1209,11 +1358,19 @@ class DietPlanViewSet(viewsets.ModelViewSet):
         "target_carbohydrate_grams",
         "target_fat_grams",
     )
+    _SNAPSHOT_FIELDS = ("name", "is_weekly")
 
     def perform_update(self, serializer):
         for field in self._UPDATE_ONLY_DISCARDED_FIELDS:
             serializer.validated_data.pop(field, None)
-        serializer.save()
+        before = {field: getattr(serializer.instance, field) for field in self._SNAPSHOT_FIELDS}
+        plan = serializer.save()
+        # `name` and `is_weekly` are part of what a coach's client
+        # imports (nutrition.services.export_diet_plan), so changing
+        # them offers the clients an update, like the program edits in
+        # GitHub issue #46. `goal` isn't exported, so it doesn't.
+        if any(getattr(plan, field) != value for field, value in before.items()):
+            plan.bump_version()
 
     @action(detail=True, methods=["post"])
     def activate(self, request, pk=None):
@@ -1406,6 +1563,14 @@ class RoutineItemViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "after_workout", int,
+                description="Only the cool-downs done after this workout session.",
+            )
+        ]
+    ),
     create=extend_schema(
         parameters=[idempotency.SCHEMA_PARAMETER],
         request=StretchSessionQuickLogSerializer,
@@ -1422,9 +1587,16 @@ class StretchSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     api_context = ApiContext.STRETCHING
 
     def get_queryset(self):
-        return stretching_services.sessions_for(self.request.user).prefetch_related(
+        queryset = stretching_services.sessions_for(self.request.user).prefetch_related(
             "performed_stretches"
         )
+        if self.action == "list":
+            raw = self.request.query_params.get("after_workout")
+            if raw is not None:
+                if not raw.isdigit():
+                    raise serializers.ValidationError({"after_workout": "Must be a session id."})
+                queryset = queryset.filter(after_workout_id=int(raw))
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "create":
@@ -1501,7 +1673,9 @@ class StretchSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
         stretching_services.mark_performed(
             performed, done=data["done"], actual_seconds=data.get("actual_seconds")
         )
-        return Response(PerformedStretchSerializer(performed).data)
+        return Response(
+            PerformedStretchSerializer(performed, context={"request": request}).data
+        )
 
     @extend_schema(request=None, responses=StretchSessionSerializer)
     @action(detail=True, methods=["post"])

@@ -3434,6 +3434,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/DailyTotals'
           description: ''
+  /api/v1/nutrition/maintenance/:
+    get:
+      operationId: nutrition_maintenance_retrieve
+      description: |-
+        `GET nutrition/maintenance/` - the nutrition dashboard's "Observed
+        maintenance" card (apps.nutrition.maintenance, issue #44).
+      tags:
+      - nutrition
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintenanceEstimate'
+          description: ''
   /api/v1/nutrition/profile/:
     get:
       operationId: nutrition_profile_retrieve
@@ -3514,6 +3531,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NutritionProfile'
+          description: ''
+  /api/v1/nutrition/stats/:
+    get:
+      operationId: nutrition_stats_retrieve
+      description: |-
+        `GET nutrition/stats/?range=` - the nutrition statistics page
+        (apps.nutrition.services.nutrition_stats_by_period and
+        calorie_history, issue #44). `range` is one of the page's fixed
+        periods, default `30d`.
+      parameters:
+      - in: query
+        name: range
+        schema:
+          type: string
+          enum:
+          - 14d
+          - 1y
+          - 30d
+          - 3m
+          - 7d
+          - all
+          - ytd
+        description: One of the fixed periods; default 30d.
+      tags:
+      - nutrition
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NutritionStats'
           description: ''
   /api/v1/performed-exercises/:
     get:
@@ -4627,6 +4677,31 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/sessions/{id}/cooldown/:
+    get:
+      operationId: sessions_cooldown_retrieve
+      description: |-
+        The cool-down suggestion for one finished workout, and the
+        cool-down already done after it (issue #43). Needs the key's
+        stretching read permission too; 409 while the workout isn't
+        completed.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - sessions
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CooldownSuggestion'
+          description: ''
   /api/v1/sets/:
     get:
       operationId: sets_list
@@ -6093,6 +6168,11 @@ paths:
         services as the web player (issue #34). Only one guided session can
         be in progress at a time.
       parameters:
+      - in: query
+        name: after_workout
+        schema:
+          type: integer
+        description: Only the cool-downs done after this workout session.
       - name: page
         required: false
         in: query
@@ -7243,6 +7323,18 @@ components:
       required:
       - measurement_type
       - value
+    CalorieDay:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        calories:
+          type: integer
+          nullable: true
+      required:
+      - calories
+      - date
     ClientDetail:
       type: object
       properties:
@@ -7494,6 +7586,43 @@ components:
       - groups
       - pending_friend_requests
       - pending_group_invites
+    CooldownSuggestion:
+      type: object
+      description: |-
+        `GET sessions/<id>/cooldown/` - what to stretch after a finished
+        workout (stretching.services.suggest_cooldown, the web's cool-down
+        card): the trained primary muscle groups, then either a `routine`
+        that covers them or up to six library `stretches` (one of the two,
+        both empty when nothing matches), and `planned_seconds` for it.
+        `done` is the cool-down already started or done after this workout,
+        if any; `POST stretch-sessions/start/` with `after_workout` starts
+        one.
+      properties:
+        muscle_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/MuscleGroup'
+        routine:
+          allOf:
+          - $ref: '#/components/schemas/StretchRoutine'
+          nullable: true
+        stretches:
+          type: array
+          items:
+            $ref: '#/components/schemas/Stretch'
+        planned_seconds:
+          type: integer
+          nullable: true
+        done:
+          allOf:
+          - $ref: '#/components/schemas/StretchSession'
+          nullable: true
+      required:
+      - done
+      - muscle_groups
+      - planned_seconds
+      - routine
+      - stretches
     DailyTotals:
       type: object
       properties:
@@ -7547,6 +7676,9 @@ components:
         recipe_name:
           type: string
           readOnly: true
+        recipe_display_name:
+          type: string
+          readOnly: true
         quantity:
           type: string
           format: decimal
@@ -7590,6 +7722,7 @@ components:
       - meal_slot
       - nutrition
       - quantity
+      - recipe_display_name
       - recipe_name
       - user
     DiaryEntryRequest:
@@ -7903,6 +8036,9 @@ components:
           type: string
         instructions:
           type: string
+        display_instructions:
+          type: string
+          readOnly: true
         instructions_attribution:
           type: string
           readOnly: true
@@ -7941,6 +8077,7 @@ components:
           description: Null for built-in system exercises.
       required:
       - active
+      - display_instructions
       - display_name
       - id
       - images
@@ -8025,6 +8162,9 @@ components:
         exercise_name:
           type: string
           readOnly: true
+        exercise_display_name:
+          type: string
+          readOnly: true
         order:
           type: integer
           maximum: 2147483647
@@ -8077,6 +8217,7 @@ components:
           type: string
       required:
       - exercise
+      - exercise_display_name
       - exercise_name
       - id
       - workout
@@ -8775,6 +8916,62 @@ components:
       - session
       - sets
       - started_at
+    MaintenanceEstimate:
+      type: object
+      description: |-
+        apps.nutrition.maintenance.MaintenanceEstimate - the nutrition
+        dashboard's "Observed maintenance" card: what the user's intake and
+        weight trend over the last 28 finished days say their real
+        maintenance is. `calories`/`confidence` are null when there isn't
+        enough data, and `reason` says what's missing. The figures behind
+        it are null until the estimate got that far: the food diary's
+        (`days_logged`, `mean_calories`, `possible_logging_gaps`), then the
+        weight trend's (`weight_rate_kg_per_week`, `weight_days`,
+        `span_days`). Information only - it never changes a target.
+      properties:
+        calories:
+          type: integer
+          nullable: true
+        confidence:
+          type: string
+          nullable: true
+        reason:
+          type: string
+        window_days:
+          type: integer
+        days_logged:
+          type: integer
+          nullable: true
+        mean_calories:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,0})?$
+          nullable: true
+        possible_logging_gaps:
+          type: boolean
+          nullable: true
+        weight_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,3})?$
+          nullable: true
+        weight_days:
+          type: integer
+          nullable: true
+        span_days:
+          type: integer
+          nullable: true
+      required:
+      - calories
+      - confidence
+      - days_logged
+      - mean_calories
+      - possible_logging_gaps
+      - reason
+      - span_days
+      - weight_days
+      - weight_rate_kg_per_week
+      - window_days
     MealSlot:
       type: object
       properties:
@@ -8945,12 +9142,16 @@ components:
           type: integer
         muscle_group_name:
           type: string
+        muscle_group_display_name:
+          type: string
+          readOnly: true
         volume:
           type: string
           format: decimal
           pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
       required:
       - muscle_group
+      - muscle_group_display_name
       - muscle_group_name
       - volume
     NewRecord:
@@ -8966,6 +9167,9 @@ components:
         exercise:
           type: integer
         exercise_name:
+          type: string
+          readOnly: true
+        exercise_display_name:
           type: string
           readOnly: true
         record_type:
@@ -9003,6 +9207,7 @@ components:
       required:
       - achieved_at
       - exercise
+      - exercise_display_name
       - exercise_name
       - id
       - previous_value
@@ -9231,6 +9436,98 @@ components:
       - activity_level
       - biological_sex
       - birth_date
+    NutritionStats:
+      type: object
+      description: |-
+        `GET nutrition/stats/?range=` - the nutrition statistics page.
+        `period` is the chosen range's figures (every period ends yesterday,
+        the last finished day); `daily` has one row per day from its start
+        through today for the chart, `calories` null on a day with nothing
+        logged; `target_calories` is the active target, the chart's
+        reference line (null without one); `periods` is every fixed period,
+        the page's table.
+      properties:
+        period:
+          $ref: '#/components/schemas/NutritionStatsPeriod'
+        daily:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalorieDay'
+        target_calories:
+          type: integer
+          nullable: true
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/NutritionStatsPeriod'
+      required:
+      - daily
+      - period
+      - periods
+      - target_calories
+    NutritionStatsPeriod:
+      type: object
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        start:
+          type: string
+          format: date
+        end:
+          type: string
+          format: date
+        summary:
+          $ref: '#/components/schemas/NutritionStatsSummary'
+      required:
+      - end
+      - key
+      - label
+      - start
+      - summary
+    NutritionStatsSummary:
+      type: object
+      description: |-
+        apps.nutrition.services.NutritionStatsSummary - only days with
+        something logged count; `possible_logging_gaps` is true when the mean
+        is low enough against the median to suggest partly logged days.
+      properties:
+        days_logged:
+          type: integer
+        days_in_range:
+          type: integer
+        mean_calories:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,0})?$
+        median_calories:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,0})?$
+        median_protein_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,7}(?:\.\d{0,1})?$
+        median_carbohydrate_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,7}(?:\.\d{0,1})?$
+        median_fat_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,7}(?:\.\d{0,1})?$
+        possible_logging_gaps:
+          type: boolean
+      required:
+      - days_in_range
+      - days_logged
+      - mean_calories
+      - median_calories
+      - median_carbohydrate_grams
+      - median_fat_grams
+      - median_protein_grams
+      - possible_logging_gaps
     NutritionTarget:
       type: object
       properties:
@@ -10764,6 +11061,9 @@ components:
         exercise_name:
           type: string
           readOnly: true
+        exercise_display_name:
+          type: string
+          readOnly: true
         order:
           type: integer
           maximum: 2147483647
@@ -10815,6 +11115,7 @@ components:
           readOnly: true
       required:
       - exercise
+      - exercise_display_name
       - exercise_name
       - id
       - max_reps
@@ -10855,6 +11156,9 @@ components:
         stretch_name:
           type: string
           maxLength: 100
+        stretch_display_name:
+          type: string
+          readOnly: true
         order:
           type: integer
           maximum: 2147483647
@@ -10882,6 +11186,7 @@ components:
           nullable: true
       required:
       - id
+      - stretch_display_name
       - stretch_name
       - target_hold_seconds
     PerformedStretchMarkRequest:
@@ -10960,6 +11265,9 @@ components:
         exercise_name:
           type: string
           readOnly: true
+        exercise_display_name:
+          type: string
+          readOnly: true
         record_type:
           $ref: '#/components/schemas/RecordTypeEnum'
         record_type_display:
@@ -10989,6 +11297,7 @@ components:
       required:
       - achieved_at
       - exercise
+      - exercise_display_name
       - exercise_name
       - id
       - record_type
@@ -11133,6 +11442,9 @@ components:
           readOnly: true
         description:
           type: string
+        display_description:
+          type: string
+          readOnly: true
         is_continuous:
           type: boolean
           title: Continuous
@@ -11156,6 +11468,7 @@ components:
             $ref: '#/components/schemas/Workout'
           readOnly: true
       required:
+      - display_description
       - display_name
       - id
       - is_system_template
@@ -11289,12 +11602,18 @@ components:
         name:
           type: string
           maxLength: 200
+        display_name:
+          type: string
+          readOnly: true
         servings:
           type: integer
           maximum: 32767
           minimum: 0
         instructions:
           type: string
+        display_instructions:
+          type: string
+          readOnly: true
         owner:
           type: integer
           readOnly: true
@@ -11305,6 +11624,8 @@ components:
             $ref: '#/components/schemas/RecipeIngredient'
           readOnly: true
       required:
+      - display_instructions
+      - display_name
       - id
       - ingredients
       - name
@@ -11675,6 +11996,9 @@ components:
             type: integer
         instructions:
           type: string
+        display_instructions:
+          type: string
+          readOnly: true
         active:
           type: boolean
           readOnly: true
@@ -11688,6 +12012,7 @@ components:
           description: Null for built-in system stretches.
       required:
       - active
+      - display_instructions
       - display_name
       - id
       - is_custom
@@ -11735,6 +12060,9 @@ components:
           readOnly: true
         description:
           type: string
+        display_description:
+          type: string
+          readOnly: true
         items:
           type: array
           items:
@@ -11753,6 +12081,7 @@ components:
           description: Null for built-in system routines.
       required:
       - active
+      - display_description
       - display_name
       - id
       - is_custom
