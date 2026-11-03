@@ -3214,7 +3214,11 @@ class SocialEndpointTests(APITestCase):
         self.assertEqual(
             self.client.get(reverse("api:social-groups"), **self.as_alice).data[0]["unread"], 1
         )
-        members = self.client.get(
+        # GitHub issue #45: the sender's own message isn't unread for them.
+        self.assertEqual(
+            self.client.get(reverse("api:social-groups"), **self.as_bob).data[0]["unread"], 0
+        )
+        members =self.client.get(
             reverse("api:social-group-members", args=[group_id]), **self.as_alice
         )
         self.assertEqual(len(members.data), 2)

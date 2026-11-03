@@ -520,6 +520,25 @@ class GroupMessageServiceTests(TestCase):
         services.send_group_message(self.group, self.alice, "three")
         self.assertEqual(services.unread_group_message_count(self.bob, self.group), 1)
 
+    def test_the_senders_own_messages_are_never_unread_for_them(self):
+        # GitHub issue #45: posting over the API doesn't mark the thread
+        # read, so the sender's own message used to count as unread.
+        services.enable_invite(self.group)
+        services.join_group_by_code(self.bob, self.group.invite_code)
+        services.send_group_message(self.group, self.alice, "mine")
+        services.send_group_message(self.group, self.bob, "theirs")
+        self.assertEqual(services.unread_group_message_count(self.alice, self.group), 1)
+        self.assertEqual(services.unread_group_message_count(self.alice), 1)
+        self.assertEqual(
+            services.unread_group_message_counts_by_group(self.alice), {self.group.pk: 1}
+        )
+        self.assertEqual(services.unread_group_message_count(self.bob, self.group), 1)
+        services.mark_group_read(self.group, self.alice)
+        services.send_group_message(self.group, self.alice, "again")
+        self.assertEqual(services.unread_group_message_count(self.alice), 0)
+        self.assertEqual(services.unread_group_message_counts_by_group(self.alice), {})
+        self.assertFalse(services.has_unread_group_messages(self.alice))
+
     def test_deleting_a_group_deletes_its_messages(self):
         services.send_group_message(self.group, self.alice, "hi")
         services.delete_group(self.group, self.alice)
