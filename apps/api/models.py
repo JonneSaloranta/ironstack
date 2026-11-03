@@ -32,6 +32,7 @@ class ApiContext(models.TextChoices):
     ANALYTICS = "analytics", _("Analytics")
     NUTRITION = "nutrition", _("Nutrition")
     STRETCHING = "stretching", _("Stretching")
+    SOCIAL = "social", _("Friends and groups")
 
 
 class RateLimitTier(models.Model):

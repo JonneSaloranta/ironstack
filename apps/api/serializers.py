@@ -728,6 +728,17 @@ class ExerciseAnalyticsSerializer(serializers.Serializer):
     sessions = SessionBestSerializer(many=True)
 
 
+class RecentActivitySerializer(serializers.Serializer):
+    """apps.analytics.achievements.RecentActivity - one opted-in user's
+    latest training, the dashboard's "Recently active" list."""
+
+    display_name = serializers.CharField()
+    username = serializers.CharField()
+    last_active_at = serializers.DateTimeField()
+    is_in_progress = serializers.BooleanField()
+    is_recent = serializers.BooleanField()
+
+
 class AchievementSerializer(serializers.Serializer):
     icon = serializers.CharField()
     label = serializers.CharField()

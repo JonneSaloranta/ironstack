@@ -493,6 +493,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/MuscleGroupAnalytics'
           description: ''
+  /api/v1/analytics/recently-active/:
+    get:
+      operationId: analytics_recently_active_list
+      description: |-
+        `analytics/recently-active/` - the dashboard's "Recently active"
+        list (apps.analytics.achievements.recently_active_users, issue
+        #37): every user who shares their training (`show_achievements`),
+        by when they last trained, `is_in_progress` while they're training
+        now. Shared across users, like achievements.
+      tags:
+      - analytics
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecentActivity'
+          description: ''
   /api/v1/analytics/summary/:
     get:
       operationId: analytics_summary_retrieve
@@ -4069,6 +4091,866 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/social/blocks/:
+    get:
+      operationId: social_blocks_list
+      description: |-
+        `GET social/blocks/` - who the user has blocked. `POST {user}`
+        blocks someone: ends the friendship and declines pending requests
+        between you, as on the web.
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SocialUser'
+          description: ''
+    post:
+      operationId: social_blocks_create
+      description: |-
+        `GET social/blocks/` - who the user has blocked. `POST {user}`
+        blocks someone: ends the friendship and declines pending requests
+        between you, as on the web.
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/blocks/{user_id}/:
+    delete:
+      operationId: social_blocks_destroy
+      description: '`DELETE social/blocks/<user_id>/` - unblock.'
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/conversations/:
+    get:
+      operationId: social_conversations_retrieve
+      description: |-
+        `GET social/conversations/` - the web's messages hub: a thread per
+        friend and per group with its unread count, and how many friend
+        requests and group invites wait for an answer.
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversations'
+          description: ''
+  /api/v1/social/friend-requests/:
+    get:
+      operationId: social_friend_requests_list
+      description: |-
+        `GET social/friend-requests/` - pending requests to and from the
+        user. `POST {user}` sends one (or accepts theirs, when they asked
+        first).
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FriendRequest'
+          description: ''
+    post:
+      operationId: social_friend_requests_create
+      description: |-
+        `GET social/friend-requests/` - pending requests to and from the
+        user. `POST {user}` sends one (or accepts theirs, when they asked
+        first).
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequest'
+          description: ''
+  /api/v1/social/friend-requests/{id}/accept/:
+    post:
+      operationId: social_friend_requests_accept_create
+      description: |-
+        `POST social/friend-requests/<id>/accept/` or `.../decline/` - a
+        request to the user.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequest'
+          description: ''
+  /api/v1/social/friend-requests/{id}/decline/:
+    post:
+      operationId: social_friend_requests_decline_create
+      description: |-
+        `POST social/friend-requests/<id>/accept/` or `.../decline/` - a
+        request to the user.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequest'
+          description: ''
+  /api/v1/social/friends/:
+    get:
+      operationId: social_friends_list
+      description: '`GET social/friends/` - the user''s friends.'
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Friend'
+          description: ''
+  /api/v1/social/friends/{user_id}/:
+    delete:
+      operationId: social_friends_destroy
+      description: '`DELETE social/friends/<user_id>/` - unfriend.'
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/friends/{user_id}/mute/:
+    post:
+      operationId: social_friends_mute_create
+      description: |-
+        `POST social/friends/<user_id>/mute/` and `.../unmute/` - push
+        notifications from a friend; nothing else changes.
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/friends/{user_id}/unmute/:
+    post:
+      operationId: social_friends_unmute_create
+      description: |-
+        `POST social/friends/<user_id>/mute/` and `.../unmute/` - push
+        notifications from a friend; nothing else changes.
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/group-invites/:
+    get:
+      operationId: social_group_invites_list
+      description: '`GET social/group-invites/` - pending invites to the user.'
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupInvite'
+          description: ''
+  /api/v1/social/group-invites/{id}/accept/:
+    post:
+      operationId: social_group_invites_accept_create
+      description: '`POST social/group-invites/<id>/accept/` or `.../decline/`.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupInvite'
+          description: ''
+  /api/v1/social/group-invites/{id}/decline/:
+    post:
+      operationId: social_group_invites_decline_create
+      description: '`POST social/group-invites/<id>/accept/` or `.../decline/`.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupInvite'
+          description: ''
+  /api/v1/social/groups/:
+    get:
+      operationId: social_groups_list
+      description: |-
+        `GET social/groups/` - the groups the user is in. `POST {name,
+        description}` creates one, owned by the user.
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+          description: ''
+    post:
+      operationId: social_groups_create
+      description: |-
+        `GET social/groups/` - the groups the user is in. `POST {name,
+        description}` creates one, owned by the user.
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupWriteRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/social/groups/{id}/:
+    get:
+      operationId: social_groups_retrieve
+      description: |-
+        `social/groups/<id>/` - members only (404 otherwise). `PATCH
+        {name, description}` for an owner or admin; `DELETE` for the owner.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+    patch:
+      operationId: social_groups_partial_update
+      description: |-
+        `social/groups/<id>/` - members only (404 otherwise). `PATCH
+        {name, description}` for an owner or admin; `DELETE` for the owner.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupWriteRequest'
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+    delete:
+      operationId: social_groups_destroy
+      description: |-
+        `social/groups/<id>/` - members only (404 otherwise). `PATCH
+        {name, description}` for an owner or admin; `DELETE` for the owner.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/groups/{id}/invite-link/:
+    post:
+      operationId: social_groups_invite_link_create
+      description: |-
+        `POST social/groups/<id>/invite-link/ {enabled?, regenerate?}` -
+        an owner or admin turns the group's invite code on or off, or
+        replaces it so the old one stops working.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupInviteLinkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupInviteLinkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupInviteLinkRequest'
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/social/groups/{id}/invites/:
+    post:
+      operationId: social_groups_invites_create
+      description: |-
+        `POST social/groups/<id>/invites/ {user}` - any member invites one
+        of their friends who allows group invites.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupInvite'
+          description: ''
+  /api/v1/social/groups/{id}/leave/:
+    post:
+      operationId: social_groups_leave_create
+      description: |-
+        `POST social/groups/<id>/leave/` - an owner has to transfer the
+        group first.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/groups/{id}/members/:
+    get:
+      operationId: social_groups_members_list
+      description: '`GET social/groups/<id>/members/`.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupMember'
+          description: ''
+  /api/v1/social/groups/{id}/members/{user_id}/:
+    patch:
+      operationId: social_groups_members_partial_update
+      description: |-
+        `DELETE social/groups/<id>/members/<user_id>/` removes a member
+        (owner or admin); `PATCH {role}` makes them an admin or a member
+        (owner only).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRoleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRoleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRoleRequest'
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupMember'
+          description: ''
+    delete:
+      operationId: social_groups_members_destroy
+      description: |-
+        `DELETE social/groups/<id>/members/<user_id>/` removes a member
+        (owner or admin); `PATCH {role}` makes them an admin or a member
+        (owner only).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/groups/{id}/messages/:
+    get:
+      operationId: social_groups_messages_list
+      description: |-
+        `GET social/groups/<id>/messages/` - the group's thread, the last
+        100 messages oldest first (`?after=<id>` for only newer ones),
+        marking it read. `POST {body}` sends one.
+      parameters:
+      - in: query
+        name: after
+        schema:
+          type: integer
+        description: Only messages newer than this message id (for polling).
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+          description: ''
+    post:
+      operationId: social_groups_messages_create
+      description: |-
+        `GET social/groups/<id>/messages/` - the group's thread, the last
+        100 messages oldest first (`?after=<id>` for only newer ones),
+        marking it read. `POST {body}` sends one.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/v1/social/groups/{id}/mute/:
+    post:
+      operationId: social_groups_mute_create
+      description: |-
+        `POST social/groups/<id>/mute/ {muted}` - the user's own push
+        notifications for the group.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupMuteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupMuteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupMuteRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/social/groups/{id}/transfer/:
+    post:
+      operationId: social_groups_transfer_create
+      description: |-
+        `POST social/groups/<id>/transfer/ {user}` - the owner hands the
+        group to another member and becomes an admin.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/social/groups/join/:
+    post:
+      operationId: social_groups_join_create
+      description: |-
+        `POST social/groups/join/ {code}` - joins with a group's invite
+        code (the code at the end of its invite link).
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupJoinRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupJoinRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupJoinRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/social/messages/{user_id}/:
+    get:
+      operationId: social_messages_list
+      description: |-
+        `GET social/messages/<user_id>/` - the thread with a friend, the
+        last 100 messages oldest first (`?after=<id>` for only newer ones),
+        marking theirs read. `POST {body}` sends one.
+      parameters:
+      - in: query
+        name: after
+        schema:
+          type: integer
+        description: Only messages newer than this message id (for polling).
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+          description: ''
+    post:
+      operationId: social_messages_create
+      description: |-
+        `GET social/messages/<user_id>/` - the thread with a friend, the
+        last 100 messages oldest first (`?after=<id>` for only newer ones),
+        marking theirs read. `POST {body}` sends one.
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/v1/social/users/:
+    get:
+      operationId: social_users_list
+      description: |-
+        `GET social/users/?search=` - people to send a friend request to,
+        like the web's friend search: by username, at most 20, never
+        yourself, a friend, or anyone blocked either way.
+      parameters:
+      - in: query
+        name: search
+        schema:
+          type: string
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SocialUser'
+          description: ''
   /api/v1/stretch-routine-items/:
     get:
       operationId: stretch_routine_items_list
@@ -5457,6 +6339,28 @@ components:
       required:
       - measurement_type
       - value
+    Conversations:
+      type: object
+      properties:
+        friends:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        groups:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        pending_friend_requests:
+          type: integer
+        pending_group_invites:
+          type: integer
+      required:
+      - friends
+      - groups
+      - pending_friend_requests
+      - pending_group_invites
     DailyTotals:
       type: object
       properties:
@@ -6491,6 +7395,45 @@ components:
       - protein_grams
       - serving_size
       - serving_unit
+    Friend:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        muted:
+          type: boolean
+          description: Push notifications from them muted by you.
+      required:
+      - id
+      - muted
+      - username
+    FriendRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        from_user:
+          $ref: '#/components/schemas/SocialUser'
+        to_user:
+          $ref: '#/components/schemas/SocialUser'
+        status:
+          $ref: '#/components/schemas/SocialRequestStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        responded_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - created_at
+      - from_user
+      - id
+      - to_user
     GoalTypeEnum:
       enum:
       - fat_loss_aggressive
@@ -6509,6 +7452,143 @@ components:
         * `muscle_gain_lean` - Muscle gain - lean bulk
         * `muscle_gain_moderate` - Muscle gain - moderate bulk
         * `muscle_gain_aggressive` - Muscle gain - aggressive bulk
+    Group:
+      type: object
+      description: |-
+        `role`, `unread` and `notifications_muted` are the user's own;
+        `invite_code` is only shown to an owner or admin, as on the web.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+        role:
+          type: string
+          readOnly: true
+        member_count:
+          type: integer
+          readOnly: true
+        unread:
+          type: integer
+          readOnly: true
+        notifications_muted:
+          type: boolean
+          readOnly: true
+        invite_enabled:
+          type: boolean
+          readOnly: true
+        invite_code:
+          type: string
+          nullable: true
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - invite_code
+      - invite_enabled
+      - member_count
+      - name
+      - notifications_muted
+      - role
+      - unread
+    GroupInvite:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        group:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        invited_by:
+          $ref: '#/components/schemas/SocialUser'
+        status:
+          $ref: '#/components/schemas/SocialRequestStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - group
+      - id
+      - invited_by
+    GroupInviteLinkRequest:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        regenerate:
+          type: boolean
+          default: false
+    GroupJoinRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 16
+      required:
+      - code
+    GroupMember:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/SocialUser'
+        role:
+          $ref: '#/components/schemas/GroupMemberRoleEnum'
+        joined_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - joined_at
+      - user
+    GroupMemberRoleEnum:
+      enum:
+      - owner
+      - admin
+      - member
+      type: string
+      description: |-
+        * `owner` - Owner
+        * `admin` - Admin
+        * `member` - Member
+    GroupMuteRequest:
+      type: object
+      properties:
+        muted:
+          type: boolean
+      required:
+      - muted
+    GroupRoleRoleEnum:
+      enum:
+      - admin
+      - member
+      type: string
+      description: |-
+        * `admin` - admin
+        * `member` - member
+    GroupWriteRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+      required:
+      - name
     KindEnum:
       enum:
       - static
@@ -6646,6 +7726,32 @@ components:
       required:
       - name
       - unit_kind
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        sender:
+          $ref: '#/components/schemas/SocialUser'
+        body:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - body
+      - created_at
+      - id
+      - sender
+    MessageBodyRequest:
+      type: object
+      properties:
+        body:
+          type: string
+          minLength: 1
+          maxLength: 4000
+      required:
+      - body
     MovementTypeEnum:
       enum:
       - compound
@@ -8144,6 +9250,20 @@ components:
           format: decimal
           pattern: ^-?\d{0,4}(?:\.\d{0,3})?$
           nullable: true
+    PatchedGroupRoleRequest:
+      type: object
+      properties:
+        role:
+          $ref: '#/components/schemas/GroupRoleRoleEnum'
+    PatchedGroupWriteRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
     PatchedMealSlotRequest:
       type: object
       properties:
@@ -8874,6 +9994,29 @@ components:
         * `rep_range` - Rep range
         * `maintenance` - Maintenance
         * `manual` - Manual
+    RecentActivity:
+      type: object
+      description: |-
+        apps.analytics.achievements.RecentActivity - one opted-in user's
+        latest training, the dashboard's "Recently active" list.
+      properties:
+        display_name:
+          type: string
+        username:
+          type: string
+        last_active_at:
+          type: string
+          format: date-time
+        is_in_progress:
+          type: boolean
+        is_recent:
+          type: boolean
+      required:
+      - display_name
+      - is_in_progress
+      - is_recent
+      - last_active_at
+      - username
     Recipe:
       type: object
       properties:
@@ -9192,6 +10335,26 @@ components:
       required:
       - days
       - weekday
+    SocialRequestStatusEnum:
+      enum:
+      - pending
+      - accepted
+      - declined
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `accepted` - Accepted
+        * `declined` - Declined
+    SocialUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+      required:
+      - id
+      - username
     SourceEnum:
       enum:
       - calculated
@@ -9610,6 +10773,13 @@ components:
       required:
       - id
       - name
+    UserIdRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+      required:
+      - user
     VolumeAnalytics:
       type: object
       description: '`analytics/volume/` - kg x reps of working sets, canonical kg.'

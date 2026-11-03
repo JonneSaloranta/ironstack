@@ -34,6 +34,7 @@ def _all_permissions(**overrides):
         "analytics",
         "nutrition",
         "stretching",
+        "social",
     ]
     base = {
         context: {"can_create": True, "can_read": True, "can_update": True, "can_delete": True}
@@ -3061,3 +3062,224 @@ class TutorialEndpointTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.alice.refresh_from_db()
         self.assertFalse(self.alice.tutorials_enabled)
+
+
+class SocialEndpointTests(APITestCase):
+    """Issue #37 - friends, messages and groups through
+    apps.social.services, with the same rules as the web."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.carol = User.objects.create_user(username="carol", password="s3cret-pass")
+        _key, alice_secret = _create_key(self.alice)
+        _key, bob_secret = _create_key(self.bob)
+        self.as_alice = {"HTTP_AUTHORIZATION": f"Bearer {alice_secret}"}
+        self.as_bob = {"HTTP_AUTHORIZATION": f"Bearer {bob_secret}"}
+
+    def _befriend(self):
+        from apps.social import services as social_services
+
+        request = social_services.send_friend_request(self.alice, self.bob)
+        social_services.accept_friend_request(request, acting_user=self.bob)
+
+    def test_friend_request_flow(self):
+        search = self.client.get(reverse("api:social-users"), {"search": "bo"}, **self.as_alice)
+        self.assertEqual([u["username"] for u in search.data], ["bob"])
+        sent = self.client.post(
+            reverse("api:social-friend-requests"), {"user": self.bob.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(sent.status_code, 201, sent.data)
+        again = self.client.post(
+            reverse("api:social-friend-requests"), {"user": self.bob.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(again.status_code, 400)
+        self.assertIn("detail", again.data)
+        # Only the recipient can answer.
+        self.assertEqual(
+            self.client.post(
+                reverse("api:social-friend-request-accept", args=[sent.data["id"]]),
+                **self.as_alice,
+            ).status_code,
+            404,
+        )
+        incoming = self.client.get(reverse("api:social-friend-requests"), **self.as_bob)
+        self.assertEqual(incoming.data[0]["from_user"]["username"], "alice")
+        accepted = self.client.post(
+            reverse("api:social-friend-request-accept", args=[sent.data["id"]]), **self.as_bob
+        )
+        self.assertEqual(accepted.data["status"], "accepted")
+        friends = self.client.get(reverse("api:social-friends"), **self.as_alice)
+        self.assertEqual(friends.data, [{"id": self.bob.pk, "username": "bob", "muted": False}])
+        self.client.post(reverse("api:social-friend-mute", args=[self.bob.pk]), **self.as_alice)
+        friends = self.client.get(reverse("api:social-friends"), **self.as_alice)
+        self.assertTrue(friends.data[0]["muted"])
+        removed = self.client.delete(
+            reverse("api:social-friend", args=[self.bob.pk]), **self.as_alice
+        )
+        self.assertEqual(removed.status_code, 204)
+        self.assertEqual(self.client.get(reverse("api:social-friends"), **self.as_alice).data, [])
+
+    def test_private_setting_is_respected_in_the_users_language(self):
+        self.bob.allow_friend_requests = False
+        self.bob.save()
+        self.alice.language = "fi"
+        self.alice.save()
+        response = self.client.post(
+            reverse("api:social-friend-requests"), {"user": self.bob.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertNotEqual(response.data["detail"], "This user isn't accepting friend requests.")
+
+    def test_direct_messages_only_between_friends(self):
+        url = reverse("api:social-messages", args=[self.bob.pk])
+        self.assertEqual(self.client.get(url, **self.as_alice).status_code, 404)
+        self._befriend()
+        sent = self.client.post(url, {"body": "Hi"}, format="json", **self.as_alice)
+        self.assertEqual(sent.status_code, 201)
+        conversations = self.client.get(reverse("api:social-conversations"), **self.as_bob)
+        self.assertEqual(conversations.data["friends"][0]["unread"], 1)
+        thread = self.client.get(
+            reverse("api:social-messages", args=[self.alice.pk]), **self.as_bob
+        )
+        self.assertEqual([m["body"] for m in thread.data], ["Hi"])
+        conversations = self.client.get(reverse("api:social-conversations"), **self.as_bob)
+        self.assertEqual(conversations.data["friends"][0]["unread"], 0)
+        newer = self.client.get(url, {"after": sent.data["id"]}, **self.as_alice)
+        self.assertEqual(newer.data, [])
+
+    def test_blocking_ends_the_friendship(self):
+        self._befriend()
+        blocked = self.client.post(
+            reverse("api:social-blocks"), {"user": self.bob.pk}, format="json", **self.as_alice
+        )
+        self.assertEqual(blocked.status_code, 204)
+        self.assertEqual(self.client.get(reverse("api:social-friends"), **self.as_alice).data, [])
+        self.assertEqual(
+            self.client.get(reverse("api:social-blocks"), **self.as_alice).data[0]["id"],
+            self.bob.pk,
+        )
+        search = self.client.get(reverse("api:social-users"), {"search": "bo"}, **self.as_alice)
+        self.assertEqual(search.data, [])
+        unblock = self.client.delete(
+            reverse("api:social-block", args=[self.bob.pk]), **self.as_alice
+        )
+        self.assertEqual(unblock.status_code, 204)
+
+    def test_group_lifecycle(self):
+        self._befriend()
+        created = self.client.post(
+            reverse("api:social-groups"), {"name": "Lifters"}, format="json", **self.as_alice
+        )
+        self.assertEqual(created.status_code, 201, created.data)
+        self.assertEqual(created.data["role"], "owner")
+        group_id = created.data["id"]
+        # Not a member: invisible.
+        group_url = reverse("api:social-group", args=[group_id])
+        self.assertEqual(self.client.get(group_url, **self.as_bob).status_code, 404)
+        invited = self.client.post(
+            reverse("api:social-group-invites", args=[group_id]), {"user": self.bob.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(invited.status_code, 201, invited.data)
+        stranger = self.client.post(
+            reverse("api:social-group-invites", args=[group_id]), {"user": self.carol.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(stranger.status_code, 400)  # only friends
+        invites = self.client.get(reverse("api:social-group-invite-list"), **self.as_bob)
+        self.client.post(
+            reverse("api:social-group-invite-accept", args=[invites.data[0]["id"]]), **self.as_bob
+        )
+        as_member = self.client.get(reverse("api:social-group", args=[group_id]), **self.as_bob)
+        self.assertEqual(as_member.data["role"], "member")
+        self.assertIsNone(as_member.data["invite_code"])
+        self.assertEqual(
+            self.client.patch(
+                reverse("api:social-group", args=[group_id]), {"name": "Mine"},
+                format="json", **self.as_bob,
+            ).status_code,
+            403,
+        )
+        message = self.client.post(
+            reverse("api:social-group-messages", args=[group_id]), {"body": "Leg day"},
+            format="json", **self.as_bob,
+        )
+        self.assertEqual(message.status_code, 201)
+        self.assertEqual(
+            self.client.get(reverse("api:social-groups"), **self.as_alice).data[0]["unread"], 1
+        )
+        members = self.client.get(
+            reverse("api:social-group-members", args=[group_id]), **self.as_alice
+        )
+        self.assertEqual(len(members.data), 2)
+        promoted = self.client.patch(
+            reverse("api:social-group-member", args=[group_id, self.bob.pk]), {"role": "admin"},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(promoted.data["role"], "admin")
+        leave_url = reverse("api:social-group-leave", args=[group_id])
+        owner_leaves = self.client.post(leave_url, **self.as_alice)
+        self.assertEqual(owner_leaves.status_code, 400)
+        transferred = self.client.post(
+            reverse("api:social-group-transfer", args=[group_id]), {"user": self.bob.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(transferred.data["role"], "admin")
+        self.assertEqual(
+            self.client.post(leave_url, **self.as_alice).status_code,
+            204,
+        )
+        self.assertEqual(
+            self.client.delete(group_url, **self.as_bob).status_code,
+            204,
+        )
+
+    def test_invite_code_join(self):
+        created = self.client.post(
+            reverse("api:social-groups"), {"name": "Open"}, format="json", **self.as_alice
+        )
+        group_id = created.data["id"]
+        link = self.client.post(
+            reverse("api:social-group-invite-link", args=[group_id]), {"enabled": True},
+            format="json", **self.as_alice,
+        )
+        code = link.data["invite_code"]
+        self.assertTrue(link.data["invite_enabled"])
+        joined = self.client.post(
+            reverse("api:social-group-join"), {"code": code}, format="json", **self.as_bob
+        )
+        self.assertEqual(joined.status_code, 200, joined.data)
+        self.assertEqual(joined.data["member_count"], 2)
+        regenerated = self.client.post(
+            reverse("api:social-group-invite-link", args=[group_id]), {"regenerate": True},
+            format="json", **self.as_alice,
+        )
+        self.assertNotEqual(regenerated.data["invite_code"], code)
+        bad = self.client.post(
+            reverse("api:social-group-join"), {"code": code}, format="json", **self.as_bob
+        )
+        self.assertEqual(bad.status_code, 400)
+
+    def test_key_without_social_permission(self):
+        _key, secret = _create_key(
+            self.alice,
+            social={
+                "can_create": False, "can_read": False, "can_update": False, "can_delete": False,
+            },
+        )
+        response = self.client.get(
+            reverse("api:social-friends"), HTTP_AUTHORIZATION=f"Bearer {secret}"
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_recently_active(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        self.assertIsNotNone(session)
+        response = self.client.get(reverse("api:analytics-recently-active"), **self.as_bob)
+        self.assertEqual(response.status_code, 200)
+        alice = next(row for row in response.data if row["username"] == "alice")
+        self.assertTrue(alice["is_in_progress"])

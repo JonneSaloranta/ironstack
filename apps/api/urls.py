@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from . import views, views_tutorials
+from . import views, views_social, views_tutorials
 
 app_name = "api"
 
@@ -52,6 +52,112 @@ router.register("stretches", views.StretchViewSet, basename="stretch")
 router.register("stretch-routines", views.StretchRoutineViewSet, basename="stretch-routine")
 router.register("stretch-routine-items", views.RoutineItemViewSet, basename="stretch-routine-item")
 router.register("stretch-sessions", views.StretchSessionViewSet, basename="stretch-session")
+
+_social = views_social
+social_urlpatterns = [
+    path("social/friends/", _social.FriendListView.as_view(), name="social-friends"),
+    path(
+        "social/friends/<int:user_id>/",
+        _social.FriendDetailView.as_view(),
+        name="social-friend",
+    ),
+    path(
+        "social/friends/<int:user_id>/mute/",
+        _social.FriendMuteView.as_view(mute=True),
+        name="social-friend-mute",
+    ),
+    path(
+        "social/friends/<int:user_id>/unmute/",
+        _social.FriendMuteView.as_view(mute=False),
+        name="social-friend-unmute",
+    ),
+    path("social/users/", _social.UserSearchView.as_view(), name="social-users"),
+    path(
+        "social/friend-requests/",
+        _social.FriendRequestListView.as_view(),
+        name="social-friend-requests",
+    ),
+    path(
+        "social/friend-requests/<int:pk>/accept/",
+        _social.FriendRequestRespondView.as_view(accept=True),
+        name="social-friend-request-accept",
+    ),
+    path(
+        "social/friend-requests/<int:pk>/decline/",
+        _social.FriendRequestRespondView.as_view(accept=False),
+        name="social-friend-request-decline",
+    ),
+    path("social/blocks/", _social.BlockListView.as_view(), name="social-blocks"),
+    path(
+        "social/blocks/<int:user_id>/", _social.BlockDetailView.as_view(), name="social-block"
+    ),
+    path(
+        "social/conversations/",
+        _social.ConversationListView.as_view(),
+        name="social-conversations",
+    ),
+    path(
+        "social/messages/<int:user_id>/",
+        _social.DirectMessageView.as_view(),
+        name="social-messages",
+    ),
+    path("social/groups/", _social.GroupListView.as_view(), name="social-groups"),
+    path("social/groups/join/", _social.GroupJoinView.as_view(), name="social-group-join"),
+    path("social/groups/<int:pk>/", _social.GroupDetailView.as_view(), name="social-group"),
+    path(
+        "social/groups/<int:pk>/members/",
+        _social.GroupMemberListView.as_view(),
+        name="social-group-members",
+    ),
+    path(
+        "social/groups/<int:pk>/members/<int:user_id>/",
+        _social.GroupMemberView.as_view(),
+        name="social-group-member",
+    ),
+    path(
+        "social/groups/<int:pk>/transfer/",
+        _social.GroupTransferView.as_view(),
+        name="social-group-transfer",
+    ),
+    path(
+        "social/groups/<int:pk>/leave/",
+        _social.GroupLeaveView.as_view(),
+        name="social-group-leave",
+    ),
+    path(
+        "social/groups/<int:pk>/mute/", _social.GroupMuteView.as_view(), name="social-group-mute"
+    ),
+    path(
+        "social/groups/<int:pk>/invite-link/",
+        _social.GroupInviteLinkView.as_view(),
+        name="social-group-invite-link",
+    ),
+    path(
+        "social/groups/<int:pk>/invites/",
+        _social.GroupInviteSendView.as_view(),
+        name="social-group-invites",
+    ),
+    path(
+        "social/groups/<int:pk>/messages/",
+        _social.GroupMessageView.as_view(),
+        name="social-group-messages",
+    ),
+    path(
+        "social/group-invites/",
+        _social.GroupInviteListView.as_view(),
+        name="social-group-invite-list",
+    ),
+    path(
+        "social/group-invites/<int:pk>/accept/",
+        _social.GroupInviteRespondView.as_view(accept=True),
+        name="social-group-invite-accept",
+    ),
+    path(
+        "social/group-invites/<int:pk>/decline/",
+        _social.GroupInviteRespondView.as_view(accept=False),
+        name="social-group-invite-decline",
+    ),
+]
 
 urlpatterns = [
     path("profile/", views.ProfileView.as_view(), name="profile"),
@@ -104,8 +210,13 @@ urlpatterns = [
         name="analytics-exercise",
     ),
     path(
+        "analytics/recently-active/",
+        views.RecentlyActiveView.as_view(),
+        name="analytics-recently-active",
+    ),
+    path(
         "analytics/achievements/",
         views.AchievementsView.as_view(),
         name="analytics-achievements",
     ),
-] + router.urls
+] + social_urlpatterns + router.urls

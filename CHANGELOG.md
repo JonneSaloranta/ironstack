@@ -42,6 +42,9 @@ narrated summary of the same version.
 - API: built-in exercises, programs, meal slots, stretches and other content
   have a `display_name` in the request's or the user's language.
 - API: guided tours can be listed, completed and reset, shared with the web.
+- API: friends, friend requests, blocking, messages and groups, and the
+  "Recently active" list. Existing API keys have no access to friends and
+  groups; create a new key with the "Friends and groups" area allowed.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

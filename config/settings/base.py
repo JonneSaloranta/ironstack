@@ -335,6 +335,11 @@ SPECTACULAR_SETTINGS = {
     # rather than drf-spectacular's own CDN-hosted default.
     "SWAGGER_UI_DIST": "SIDECAR",
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    # Friend requests and group invites share one set of statuses; named
+    # here so it doesn't collide with the other `status` choice sets.
+    "ENUM_NAME_OVERRIDES": {
+        "SocialRequestStatusEnum": "apps.social.models.FriendRequestStatus",
+    },
 }
 
 # docs/SECURITY.md "Email" - needed for password reset

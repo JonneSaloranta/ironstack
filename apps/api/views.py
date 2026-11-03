@@ -94,6 +94,7 @@ from .serializers import (
     PersonalRecordSerializer,
     ProfileSerializer,
     ProgramSerializer,
+    RecentActivitySerializer,
     RecipeIngredientSerializer,
     RecipeSerializer,
     RoutineItemSerializer,
@@ -769,6 +770,22 @@ class ExerciseAnalyticsView(APIView):
                 }
             ).data
         )
+
+
+class RecentlyActiveView(APIView):
+    """`analytics/recently-active/` - the dashboard's "Recently active"
+    list (apps.analytics.achievements.recently_active_users, issue
+    #37): every user who shares their training (`show_achievements`),
+    by when they last trained, `is_in_progress` while they're training
+    now. Shared across users, like achievements."""
+
+    api_context = ApiContext.ANALYTICS
+
+    # See TrainingSummaryView's own comment for why this is here.
+    @extend_schema(responses=RecentActivitySerializer(many=True))
+    def get(self, request):
+        activity = achievement_services.recently_active_users()
+        return Response(RecentActivitySerializer(activity, many=True).data)
 
 
 class AchievementsView(APIView):
