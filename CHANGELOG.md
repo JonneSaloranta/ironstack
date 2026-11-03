@@ -22,6 +22,8 @@ narrated summary of the same version.
 - API: diary entries can be filtered by day or date range, body measurements
   by type and time, activities by type and date, and foods searched by name,
   brand or barcode.
+- API: the profile has the body tracking reminder setting, the join date and
+  whether the reminder is due.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

@@ -7158,6 +7158,10 @@ components:
           $ref: '#/components/schemas/ThemeEnum'
         appearance:
           $ref: '#/components/schemas/AppearanceEnum'
+        body_tracking_reminders_enabled:
+          type: boolean
+          description: Shows a dashboard card nudging you to log a body measurement
+            when you haven't logged one in a while. Turn off to never see that reminder.
     PatchedProgramRequest:
       type: object
       properties:
@@ -7566,6 +7570,10 @@ components:
           format: email
           readOnly: true
           title: Email address
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
         unit_system:
           $ref: '#/components/schemas/UnitSystemEnum'
         timezone:
@@ -7607,8 +7615,17 @@ components:
           $ref: '#/components/schemas/ThemeEnum'
         appearance:
           $ref: '#/components/schemas/AppearanceEnum'
+        body_tracking_reminders_enabled:
+          type: boolean
+          description: Shows a dashboard card nudging you to log a body measurement
+            when you haven't logged one in a while. Turn off to never see that reminder.
+        needs_body_tracking_reminder:
+          type: boolean
+          readOnly: true
       required:
+      - date_joined
       - email
+      - needs_body_tracking_reminder
       - username
     ProfileRequest:
       type: object
@@ -7655,6 +7672,10 @@ components:
           $ref: '#/components/schemas/ThemeEnum'
         appearance:
           $ref: '#/components/schemas/AppearanceEnum'
+        body_tracking_reminders_enabled:
+          type: boolean
+          description: Shows a dashboard card nudging you to log a body measurement
+            when you haven't logged one in a while. Turn off to never see that reminder.
     Program:
       type: object
       properties:

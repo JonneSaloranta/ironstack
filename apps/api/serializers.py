@@ -49,11 +49,18 @@ User = get_user_model()
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    # The web dashboard's "Time to log your body measurements?" rule
+    # (apps.measurements.services.needs_body_tracking_reminder, issue
+    # #40), so a client shows the same nudge without reimplementing it.
+    # Just a yes/no - no reading is exposed through the profile context.
+    needs_body_tracking_reminder = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
             "username",
             "email",
+            "date_joined",
             "unit_system",
             "timezone",
             "height",
@@ -64,12 +71,19 @@ class ProfileSerializer(serializers.ModelSerializer):
             "language",
             "theme",
             "appearance",
+            "body_tracking_reminders_enabled",
+            "needs_body_tracking_reminder",
         ]
         # email too: an API key is a narrower credential than the
         # password, and changing the email would let whoever holds the
         # key request a password reset to themselves - a full account
         # takeover. Change it on the Account details page instead.
-        read_only_fields = ["username", "email"]
+        read_only_fields = ["username", "email", "date_joined"]
+
+    def get_needs_body_tracking_reminder(self, user) -> bool:
+        from apps.measurements import services as measurement_services
+
+        return measurement_services.needs_body_tracking_reminder(user)
 
 
 # --------------------------------------------------------------------

@@ -359,6 +359,31 @@ class ProfileEndpointTests(APITestCase):
         self.assertFalse(self.alice.allow_group_invites)
 
 
+    def test_body_tracking_reminder_fields(self):
+        # Issue #40: the web's setting, join date and reminder rule.
+        response = self.client.get(reverse("api:profile"), **self._auth())
+        self.assertIn("date_joined", response.data)
+        self.assertTrue(response.data["body_tracking_reminders_enabled"])
+        self.assertFalse(response.data["needs_body_tracking_reminder"])  # joined just now
+
+        User.objects.filter(pk=self.alice.pk).update(
+            date_joined=timezone.now() - timedelta(days=30)
+        )
+        response = self.client.get(reverse("api:profile"), **self._auth())
+        self.assertTrue(response.data["needs_body_tracking_reminder"])
+
+        response = self.client.patch(
+            reverse("api:profile"),
+            {"body_tracking_reminders_enabled": False, "date_joined": "2000-01-01T00:00:00Z"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.data["needs_body_tracking_reminder"])
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.body_tracking_reminders_enabled)
+        self.assertNotEqual(self.alice.date_joined.year, 2000)
+
+
 class WorkoutLoggingEndpointTests(APITestCase):
     """The most important end-to-end path: logging a set via the API
     must trigger PR detection exactly like apps.workouts.views.set_log
