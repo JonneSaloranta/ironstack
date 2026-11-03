@@ -30,6 +30,8 @@ narrated summary of the same version.
 - API: diary entries show their logged nutrition and food or recipe name, a
   day's totals and "Copy day" are available, so totals match the web even
   after a food is edited or a recipe deleted.
+- API: foods can be imported from Open Food Facts by barcode and searched
+  there through the server, keeping Nutri-Score, NOVA group and the OFF link.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

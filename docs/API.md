@@ -269,7 +269,7 @@ not refused).
 | activities | `activity-types/`, `activity-types/<id>/`, `activities/` (`?activity_type=<id>`, `?date_after=` (inclusive) and `?date_before=` (exclusive), `YYYY-MM-DD`), `activities/<id>/` |
 | records | `records/`, `records/<id>/` (read-only, with `exercise_name`) |
 | analytics | `analytics/summary/?range=7d\|30d\|all` (default 30d), `analytics/achievements/` (both read-only) |
-| nutrition | `foods/` (`?search=<text>` matches the name or brand, a barcode matches `off_id`; `?ids=1,2,3`), `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/` (`?date=YYYY-MM-DD` for one day, `?date_after=` (inclusive) / `?date_before=` (exclusive) for a range; each entry has a read-only `nutrition` object for its quantity, from the values snapshotted when it was logged, and `food_name`/`recipe_name`, so entries of a since-deleted recipe still show and count), `diary-entries/<id>/`, `diary-entries/copy-day/` (`POST` `{source_date, target_date}` - the web's "Copy day", answers `{copied}`), `nutrition/daily-totals/?date=` (`GET` - the day's diary added up, default today), `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton - no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plans/<id>/shopping-list/` (`GET`), `diet-plans/<id>/shopping-settings/` (`GET`/`PUT`/`PATCH`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
+| nutrition | `foods/` (`?search=<text>` matches the name or brand, a barcode matches `off_id`; `?ids=1,2,3`), `foods/<id>/`, `foods/import-off/` (`POST`), `foods/search-off/?q=` (`GET`), `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/` (`?date=YYYY-MM-DD` for one day, `?date_after=` (inclusive) / `?date_before=` (exclusive) for a range; each entry has a read-only `nutrition` object for its quantity, from the values snapshotted when it was logged, and `food_name`/`recipe_name`, so entries of a since-deleted recipe still show and count), `diary-entries/<id>/`, `diary-entries/copy-day/` (`POST` `{source_date, target_date}` - the web's "Copy day", answers `{copied}`), `nutrition/daily-totals/?date=` (`GET` - the day's diary added up, default today), `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton - no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plans/<id>/shopping-list/` (`GET`), `diet-plans/<id>/shopping-settings/` (`GET`/`PUT`/`PATCH`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
 | stretching | `stretches/`, `stretches/<id>/`, `stretch-routines/`, `stretch-routines/<id>/` (items nested read-only), `stretch-routine-items/`, `stretch-routine-items/<id>/` (own routines only), `stretch-sessions/`, `stretch-sessions/<id>/` (create = quick log with `duration`; name/routine/status and the per-stretch snapshot are read-only) |
 
 Every endpoint goes through the exact same domain service functions the
@@ -319,10 +319,18 @@ search_foods`/`visible_meal_slots` already enforce for the web UI,
 re-checked here since a `PrimaryKeyRelatedField` has no ownership
 concept of its own (same pattern `WorkoutSerializer.validate_program`
 and `BodyMeasurementSerializer.validate_measurement_type` already use
-elsewhere in this file). Importing a food from OpenFoodFacts by
-barcode isn't exposed here - a client creates a food the same way the
-web form does, by supplying its own values directly; see "What's
-deliberately not here" below.
+elsewhere in this file). `POST foods/` creates a plain hand-entered
+food, like the web form. An Open Food Facts product is saved with
+`POST foods/import-off/` `{"barcode": "..."}` instead, through the same
+service as the web (`apps.nutrition.services.import_or_refresh_food_
+from_off`): a shared food with its Nutri-Score, NOVA group and OFF link,
+`200` with the existing food when the barcode is already known (`201`
+when new), `404` when OFF has no usable product, `429` when the
+server's OFF budget is spent and `503` when the integration is off.
+`GET foods/search-off/?q=` searches the visible foods and OFF together
+(`status`, `local` foods, OFF `results` not imported yet) through the
+server's cache and rate budget, so call it once per user action, not
+while typing.
 
 `nutrition/profile/` is a singleton like `profile/` itself - every
 field of `apps.nutrition.models.NutritionProfile` is plainly
@@ -407,12 +415,6 @@ e.g. a UUID, per queued write, sent unchanged with every retry of it).
   "connect your account to another service" flow, since this is a
   self-hosted, typically single-household instance, not a multi-tenant
   SaaS with external integrators.
-- **Importing a food from OpenFoodFacts by barcode.** The web UI's
-  search-and-import flow (`docs/NUTRITION.md` "OpenFoodFacts
-  integration") isn't mirrored here yet - `POST foods/` creates a
-  plain hand-entered food (matching `FoodForm`), the same shape a
-  user typing their own values in gets. Deliberately deferred rather
-  than half-built alongside everything else in this pass.
 
 None of these are ruled out for later, they just aren't part of this
 first pass - see the phased-implementation principle in `CLAUDE.md`.

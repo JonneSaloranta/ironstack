@@ -2568,3 +2568,81 @@ class ListFilterTests(APITestCase):
             {self.oats.pk, self.rice.pk},
         )
         self.assertEqual(self._status("api:food-list", {"ids": "1,a"}), 400)
+
+
+class OpenFoodFactsEndpointTests(APITestCase):
+    """Issue #41 - importing a food by barcode goes through the same
+    service as the web, so it keeps its Nutri-Score, NOVA and OFF link
+    and doesn't duplicate an already-imported product."""
+
+    def setUp(self):
+        from apps.nutrition.models import OpenFoodFactsSettings
+        from apps.nutrition.tests import RAW_OFF_PRODUCT
+
+        OpenFoodFactsSettings.objects.all().delete()  # enabled by default
+        self.raw = RAW_OFF_PRODUCT
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _import(self, barcode="1234567890123"):
+        return self.client.post(
+            reverse("api:food-import-off"), {"barcode": barcode}, format="json",
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+
+    def test_import_creates_once_then_returns_the_existing_food(self):
+        from unittest import mock
+
+        from apps.nutrition import openfoodfacts
+        from apps.nutrition.models import Food
+
+        with mock.patch.object(openfoodfacts, "get_product", return_value=self.raw):
+            first = self._import()
+            second = self._import()
+        self.assertEqual(first.status_code, 201)
+        self.assertEqual(first.data["off_id"], "1234567890123")
+        self.assertIsNone(first.data["owner"])
+        self.assertEqual(second.status_code, 200)
+        self.assertEqual(second.data["id"], first.data["id"])
+        self.assertEqual(Food.objects.filter(off_id="1234567890123").count(), 1)
+
+    def test_unknown_barcode_is_404_and_a_bad_one_400(self):
+        from unittest import mock
+
+        from apps.nutrition import openfoodfacts
+
+        with mock.patch.object(openfoodfacts, "get_product", return_value=None):
+            self.assertEqual(self._import().status_code, 404)
+        self.assertEqual(self._import("12ab").status_code, 400)
+
+    def test_rate_limited_without_a_local_copy_is_429(self):
+        from unittest import mock
+
+        from apps.nutrition import openfoodfacts
+
+        with mock.patch.object(
+            openfoodfacts, "get_product",
+            side_effect=openfoodfacts.OpenFoodFactsRateLimited("busy"),
+        ):
+            self.assertEqual(self._import().status_code, 429)
+
+    def test_disabled_integration_is_503(self):
+        from apps.nutrition.models import OpenFoodFactsSettings
+
+        OpenFoodFactsSettings.objects.create(pk=1, enabled=False)
+        self.assertEqual(self._import().status_code, 503)
+
+    def test_search_returns_local_foods_and_off_products(self):
+        from unittest import mock
+
+        from apps.nutrition import openfoodfacts
+
+        with mock.patch.object(openfoodfacts, "search_products", return_value=[self.raw]):
+            response = self.client.get(
+                reverse("api:food-search-off"), {"q": "muesli"},
+                HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+            )
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["status"], "ok")
+        self.assertEqual(response.data["results"][0]["off_id"], "1234567890123")
+        self.assertEqual(response.data["results"][0]["name"], "Test Muesli")

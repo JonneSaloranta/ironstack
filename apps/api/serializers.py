@@ -658,14 +658,40 @@ class FoodSerializer(serializers.ModelSerializer):
         ]
         # nutri_score/nova_group/off_id are only ever set by an
         # OpenFoodFacts import (apps.nutrition.services.import_or_
-        # refresh_food_from_off), never hand-entered - same reasoning
-        # as docs/NUTRITION.md's own "Food" section. Importing a food
-        # by barcode isn't exposed as a create here at all yet; a
-        # client creates a plain hand-entered food the same way the
-        # web form does (see "What's deliberately not here" below).
+        # refresh_food_from_off, `POST foods/import-off/`), never
+        # hand-entered - same reasoning as docs/NUTRITION.md's own
+        # "Food" section.
         read_only_fields = [
             "other_nutrients", "nutri_score", "nova_group", "off_id", "active", "owner",
         ]
+
+
+class FoodImportOffSerializer(serializers.Serializer):
+    barcode = serializers.RegexField(r"^\d{8,14}$", help_text="8-14 digits.")
+
+
+class OffSearchResultSerializer(serializers.Serializer):
+    """One Open Food Facts product not imported yet - per 100 g/ml.
+    `POST foods/import-off/` with its `off_id` saves it as a food."""
+
+    off_id = serializers.CharField()
+    name = serializers.CharField()
+    brand = serializers.CharField(allow_blank=True)
+    serving_size = serializers.DecimalField(max_digits=10, decimal_places=2)
+    serving_unit = serializers.CharField()
+    calories = serializers.IntegerField()
+    protein_grams = serializers.DecimalField(max_digits=10, decimal_places=2)
+    carbohydrate_grams = serializers.DecimalField(max_digits=10, decimal_places=2)
+    fat_grams = serializers.DecimalField(max_digits=10, decimal_places=2)
+    nutri_score = serializers.CharField(allow_blank=True, allow_null=True)
+    nova_group = serializers.IntegerField(allow_null=True)
+    image_thumb_url = serializers.CharField(allow_blank=True)
+
+
+class OffSearchSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(choices=["ok", "disabled", "busy", "error"])
+    local = FoodSerializer(many=True)
+    results = OffSearchResultSerializer(many=True)
 
 
 class MealSlotSerializer(serializers.ModelSerializer):

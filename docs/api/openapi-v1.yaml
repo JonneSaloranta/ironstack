@@ -1621,6 +1621,75 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/foods/import-off/:
+    post:
+      operationId: foods_import_off_create
+      description: |-
+        Saves an Open Food Facts product by barcode, the same way the
+        web does (services.import_or_refresh_food_from_off, issue #41):
+        a shared food with its Nutri-Score, NOVA group and OFF link.
+        200 with the existing food when the barcode is already known
+        (refreshed if stale), 201 when it's new, 404 when OFF has no
+        usable product (or couldn't be reached), 429 when the server's
+        Open Food Facts budget is spent, 503 when the integration is
+        turned off.
+      tags:
+      - foods
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodImportOffRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoodImportOffRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoodImportOffRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Food'
+          description: ''
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Food'
+          description: ''
+  /api/v1/foods/search-off/:
+    get:
+      operationId: foods_search_off_retrieve
+      description: |-
+        Searches the visible foods and Open Food Facts together, as
+        the web's "Search Open Food Facts" button does
+        (services.search_foods with online=True) - through the server's
+        cache and rate budget, shared by every client. `local` are foods
+        already here; `results` are OFF products not imported yet.
+        Call it once per user action, not while typing.
+      parameters:
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Text or a barcode.
+        required: true
+      tags:
+      - foods
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OffSearch'
+          description: ''
   /api/v1/meal-slots/:
     get:
       operationId: meal_slots_list
@@ -5830,6 +5899,16 @@ components:
       - protein_grams
       - serving_size
       - serving_unit
+    FoodImportOffRequest:
+      type: object
+      properties:
+        barcode:
+          type: string
+          minLength: 1
+          description: 8-14 digits.
+          pattern: ^\d{8,14}$
+      required:
+      - barcode
     FoodRequest:
       type: object
       properties:
@@ -6388,6 +6467,88 @@ components:
       - saturated_fat_grams
       - sodium_mg
       - sugar_grams
+    OffSearch:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/OffSearchStatusEnum'
+        local:
+          type: array
+          items:
+            $ref: '#/components/schemas/Food'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OffSearchResult'
+      required:
+      - local
+      - results
+      - status
+    OffSearchResult:
+      type: object
+      description: |-
+        One Open Food Facts product not imported yet - per 100 g/ml.
+        `POST foods/import-off/` with its `off_id` saves it as a food.
+      properties:
+        off_id:
+          type: string
+        name:
+          type: string
+        brand:
+          type: string
+        serving_size:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        serving_unit:
+          type: string
+        calories:
+          type: integer
+        protein_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        carbohydrate_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        fat_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        nutri_score:
+          type: string
+          nullable: true
+        nova_group:
+          type: integer
+          nullable: true
+        image_thumb_url:
+          type: string
+      required:
+      - brand
+      - calories
+      - carbohydrate_grams
+      - fat_grams
+      - image_thumb_url
+      - name
+      - nova_group
+      - nutri_score
+      - off_id
+      - protein_grams
+      - serving_size
+      - serving_unit
+    OffSearchStatusEnum:
+      enum:
+      - ok
+      - disabled
+      - busy
+      - error
+      type: string
+      description: |-
+        * `ok` - ok
+        * `disabled` - disabled
+        * `busy` - busy
+        * `error` - error
     PaginatedActivityList:
       type: object
       required:

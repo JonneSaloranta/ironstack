@@ -73,9 +73,11 @@ from .serializers import (
     ExerciseSerializer,
     ExerciseSetCreatedSerializer,
     ExerciseSetSerializer,
+    FoodImportOffSerializer,
     FoodSerializer,
     LastPerformanceSerializer,
     MealSlotSerializer,
+    OffSearchSerializer,
     MeasurementTypeSerializer,
     MuscleGroupSerializer,
     NutritionGoalSerializer,
@@ -728,6 +730,79 @@ class FoodViewSet(OwnedResourceViewSet):
                 Q(name__icontains=query) | Q(brand__icontains=query) | Q(off_id=query)
             )
         return queryset
+
+    @extend_schema(
+        request=FoodImportOffSerializer,
+        responses={200: FoodSerializer, 201: FoodSerializer},
+    )
+    @action(detail=False, methods=["post"], url_path="import-off")
+    def import_off(self, request):
+        """Saves an Open Food Facts product by barcode, the same way the
+        web does (services.import_or_refresh_food_from_off, issue #41):
+        a shared food with its Nutri-Score, NOVA group and OFF link.
+        200 with the existing food when the barcode is already known
+        (refreshed if stale), 201 when it's new, 404 when OFF has no
+        usable product (or couldn't be reached), 429 when the server's
+        Open Food Facts budget is spent, 503 when the integration is
+        turned off."""
+        from apps.nutrition import openfoodfacts
+        from apps.nutrition.models import OpenFoodFactsSettings
+
+        serializer = FoodImportOffSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        barcode = serializer.validated_data["barcode"]
+        if not OpenFoodFactsSettings.load().enabled:
+            return Response(
+                {"detail": "Open Food Facts is turned off on this server."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        existed = Food.objects.filter(off_id=barcode).exists()
+        try:
+            food = nutrition_services.import_or_refresh_food_from_off(
+                barcode, raise_on_rate_limit=True
+            )
+        except openfoodfacts.OpenFoodFactsRateLimited:
+            food = Food.objects.filter(off_id=barcode).first()
+            if food is None:
+                return Response(
+                    {"detail": "Open Food Facts is busy, try again in a minute."},
+                    status=status.HTTP_429_TOO_MANY_REQUESTS,
+                )
+        if food is None:
+            return Response(
+                {"detail": "Open Food Facts has no usable product for this barcode."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return Response(
+            FoodSerializer(food).data,
+            status=status.HTTP_200_OK if existed else status.HTTP_201_CREATED,
+        )
+
+    @extend_schema(
+        responses=OffSearchSerializer,
+        parameters=[OpenApiParameter("q", required=True, description="Text or a barcode.")],
+    )
+    @action(detail=False, methods=["get"], url_path="search-off")
+    def search_off(self, request):
+        """Searches the visible foods and Open Food Facts together, as
+        the web's "Search Open Food Facts" button does
+        (services.search_foods with online=True) - through the server's
+        cache and rate budget, shared by every client. `local` are foods
+        already here; `results` are OFF products not imported yet.
+        Call it once per user action, not while typing."""
+        query = (request.query_params.get("q") or "").strip()
+        if not query:
+            raise serializers.ValidationError({"q": "This field is required."})
+        language = request.user.language
+        with translation.override(language) if language else nullcontext():
+            local, results, off_status = nutrition_services.search_foods(
+                request.user, query, online=True
+            )
+        return Response(
+            OffSearchSerializer(
+                {"status": off_status, "local": local, "results": results}
+            ).data
+        )
 
 
 class MealSlotViewSet(OwnedResourceViewSet):
