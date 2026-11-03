@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.30.0] - 2026-11-03
+
 ### Added
 - API: diary entries can be filtered by day or date range, body measurements
   by type and time, activities by type and date, and foods searched by name,
