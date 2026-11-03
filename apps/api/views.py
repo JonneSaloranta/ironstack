@@ -163,12 +163,7 @@ class ExerciseViewSet(OwnedResourceViewSet):
         queryset = super().get_queryset()
         if self.action != "list":
             return queryset
-        raw_ids = self.request.query_params.get("ids")
-        if raw_ids is not None:
-            parts = [part.strip() for part in raw_ids.split(",") if part.strip()]
-            if not all(part.isdigit() for part in parts):
-                raise serializers.ValidationError({"ids": "Must be comma-separated ids."})
-            queryset = queryset.filter(pk__in=[int(part) for part in parts])
+        queryset = _filter_by_ids(self.request, queryset)
         query = self.request.query_params.get("search")
         if query:
             # An API key's request never passes through
@@ -253,6 +248,62 @@ def _query_datetime(request, name):
     if timezone.is_naive(value):
         value = timezone.make_aware(value)
     return value
+
+
+def _query_date(request, name):
+    """`?<name>=YYYY-MM-DD` as a date; None when absent, a 400 when
+    present but unparseable."""
+    raw = request.query_params.get(name)
+    if raw is None:
+        return None
+    try:
+        value = parse_date(raw)
+    except ValueError:  # well-formed but impossible, e.g. month 13
+        value = None
+    if value is None:
+        raise serializers.ValidationError({name: "Must be a date, YYYY-MM-DD."})
+    return value
+
+
+def _query_id(request, name):
+    """`?<name>=<id>` as an int; None when absent, a 400 otherwise."""
+    raw = request.query_params.get(name)
+    if raw is None:
+        return None
+    if not raw.strip().isdigit():
+        raise serializers.ValidationError({name: "Must be an id."})
+    return int(raw)
+
+
+def _filter_by_ids(request, queryset):
+    """`?ids=1,2,3` narrows `queryset` to those ids (a 400 when malformed)."""
+    raw_ids = request.query_params.get("ids")
+    if raw_ids is None:
+        return queryset
+    parts = [part.strip() for part in raw_ids.split(",") if part.strip()]
+    if not all(part.isdigit() for part in parts):
+        raise serializers.ValidationError({"ids": "Must be comma-separated ids."})
+    return queryset.filter(pk__in=[int(part) for part in parts])
+
+
+def _filter_by_dates(request, queryset, field, *, after="date_after", before="date_before"):
+    """`?date_after=` (inclusive) / `?date_before=` (exclusive) on a
+    DateField - the same semantics as sessions/' started_after/
+    started_before."""
+    start = _query_date(request, after)
+    if start is not None:
+        queryset = queryset.filter(**{f"{field}__gte": start})
+    end = _query_date(request, before)
+    if end is not None:
+        queryset = queryset.filter(**{f"{field}__lt": end})
+    return queryset
+
+
+def _date_range_parameters(after="date_after", before="date_before", *, what="date"):
+    return [
+        OpenApiParameter(after, description=f"Inclusive: {what} on or after this date."),
+        OpenApiParameter(before, description=f"Exclusive: {what} before this date."),
+    ]
 
 
 @extend_schema_view(
@@ -433,12 +484,41 @@ class MeasurementTypeViewSet(OwnedResourceViewSet):
         return measurement_services.visible_to(self.request.user)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter("measurement_type", int, description="Only this type's readings."),
+            OpenApiParameter(
+                "recorded_after", description="Inclusive: recorded at or after this date/time."
+            ),
+            OpenApiParameter(
+                "recorded_before", description="Exclusive: recorded before this date/time."
+            ),
+        ]
+    )
+)
 class BodyMeasurementViewSet(viewsets.ModelViewSet):
+    """`?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+    narrow the list (issue #29) - one type's history page without
+    fetching every reading of every type."""
+
     serializer_class = BodyMeasurementSerializer
     api_context = ApiContext.MEASUREMENTS
 
     def get_queryset(self):
-        return BodyMeasurement.objects.filter(user=self.request.user)
+        queryset = BodyMeasurement.objects.filter(user=self.request.user)
+        if self.action != "list":
+            return queryset
+        measurement_type = _query_id(self.request, "measurement_type")
+        if measurement_type is not None:
+            queryset = queryset.filter(measurement_type_id=measurement_type)
+        recorded_after = _query_datetime(self.request, "recorded_after")
+        if recorded_after is not None:
+            queryset = queryset.filter(recorded_at__gte=recorded_after)
+        recorded_before = _query_datetime(self.request, "recorded_before")
+        if recorded_before is not None:
+            queryset = queryset.filter(recorded_at__lt=recorded_before)
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -457,12 +537,29 @@ class ActivityTypeViewSet(OwnedResourceViewSet):
         return activity_services.visible_to(self.request.user)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter("activity_type", int, description="Only this type's activities."),
+            *_date_range_parameters(),
+        ]
+    )
+)
 class ActivityViewSet(viewsets.ModelViewSet):
+    """`?activity_type=` and `?date_after=`/`?date_before=` narrow the
+    list (issue #29)."""
+
     serializer_class = ActivitySerializer
     api_context = ApiContext.ACTIVITIES
 
     def get_queryset(self):
-        return Activity.objects.filter(user=self.request.user)
+        queryset = Activity.objects.filter(user=self.request.user)
+        if self.action != "list":
+            return queryset
+        activity_type = _query_id(self.request, "activity_type")
+        if activity_type is not None:
+            queryset = queryset.filter(activity_type_id=activity_type)
+        return _filter_by_dates(self.request, queryset, "date")
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -577,7 +674,25 @@ class AchievementsView(APIView):
 # --------------------------------------------------------------------
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "search",
+                description="Matches the name or brand; a barcode matches `off_id` exactly.",
+            ),
+            OpenApiParameter("ids", description="Comma-separated ids, e.g. 1,2,3."),
+        ]
+    )
+)
 class FoodViewSet(OwnedResourceViewSet):
+    """`?search=` and `?ids=` narrow the list (issue #28) - a client
+    finds a food without downloading the whole library. Matched against
+    the stored name and brand only, not a translation: unlike the
+    exercise library, foods can run to thousands of rows, so the
+    in-Python translated match exercises use doesn't apply (see
+    apps.exercises.services.search)."""
+
     serializer_class = FoodSerializer
     api_context = ApiContext.NUTRITION
 
@@ -585,6 +700,20 @@ class FoodViewSet(OwnedResourceViewSet):
         from django.db.models import Q
 
         return Food.objects.filter(Q(owner=self.request.user) | Q(owner__isnull=True))
+
+    def get_queryset(self):
+        from django.db.models import Q
+
+        queryset = super().get_queryset()
+        if self.action != "list":
+            return queryset
+        queryset = _filter_by_ids(self.request, queryset)
+        query = (self.request.query_params.get("search") or "").strip()
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query) | Q(brand__icontains=query) | Q(off_id=query)
+            )
+        return queryset
 
 
 class MealSlotViewSet(OwnedResourceViewSet):
@@ -637,12 +766,29 @@ class RecipeIngredientViewSet(viewsets.ModelViewSet):
         return RecipeIngredient.objects.filter(recipe__in=_visible_recipes(self.request.user))
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter("date", description="Only this day's entries, YYYY-MM-DD."),
+            *_date_range_parameters(),
+        ]
+    )
+)
 class DiaryEntryViewSet(viewsets.ModelViewSet):
+    """`?date=` (one day, like the web diary) and `?date_after=`/
+    `?date_before=` narrow the list (issue #26)."""
+
     serializer_class = DiaryEntrySerializer
     api_context = ApiContext.NUTRITION
 
     def get_queryset(self):
-        return DiaryEntry.objects.filter(user=self.request.user)
+        queryset = DiaryEntry.objects.filter(user=self.request.user)
+        if self.action != "list":
+            return queryset
+        day = _query_date(self.request, "date")
+        if day is not None:
+            queryset = queryset.filter(date=day)
+        return _filter_by_dates(self.request, queryset, "date")
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

@@ -2279,3 +2279,134 @@ class ApiVersioningTests(APITestCase):
             "/api/v1/exercises/abc/", HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
         )
         self.assertEqual(response.status_code, 404)
+
+
+class ListFilterTests(APITestCase):
+    """Issues #26, #28, #29 - list filters so a client doesn't page
+    through everything it ever logged to find one day or one type."""
+
+    def setUp(self):
+        from datetime import date
+
+        from apps.activities.models import Activity, ActivityType
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+        from apps.nutrition.models import DiaryEntry, Food, MealSlot, ServingUnit
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.weight = MeasurementType.objects.get(name="Body weight", owner=None)
+        self.chest = MeasurementType.objects.get(name="Chest", owner=None)
+        aware = lambda day: timezone.make_aware(timezone.datetime(2026, 10, day, 8))  # noqa: E731
+        self.w1 = BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.weight, value=80, recorded_at=aware(1)
+        )
+        self.w2 = BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.weight, value=79, recorded_at=aware(10)
+        )
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.chest, value=100, recorded_at=aware(10)
+        )
+        self.cycling = ActivityType.objects.get(name="Cycling", owner=None)
+        self.hiking = ActivityType.objects.get(name="Hiking", owner=None)
+        self.a1 = Activity.objects.create(
+            user=self.alice, activity_type=self.cycling, date=date(2026, 10, 1),
+            duration=timedelta(minutes=30),
+        )
+        self.a2 = Activity.objects.create(
+            user=self.alice, activity_type=self.cycling, date=date(2026, 10, 10),
+            duration=timedelta(minutes=30),
+        )
+        Activity.objects.create(
+            user=self.alice, activity_type=self.hiking, date=date(2026, 10, 10),
+            duration=timedelta(minutes=60),
+        )
+        self.oats = Food.objects.create(
+            owner=self.alice, name="Oats", brand="Elovena", serving_size=Decimal("100"),
+            serving_unit=ServingUnit.GRAM, calories=370, protein_grams=Decimal("13"),
+            carbohydrate_grams=Decimal("60"), fat_grams=Decimal("7"), off_id="6408430000000",
+        )
+        self.rice = Food.objects.create(
+            owner=self.alice, name="Rice", serving_size=Decimal("100"),
+            serving_unit=ServingUnit.GRAM, calories=130, protein_grams=Decimal("2.7"),
+            carbohydrate_grams=Decimal("28"), fat_grams=Decimal("0.3"),
+        )
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.entries = {
+            day: DiaryEntry.objects.create(
+                user=self.alice, date=date(2026, 10, day), meal_slot=breakfast,
+                food=self.oats, quantity=Decimal("50"),
+            )
+            for day in (1, 2, 3)
+        }
+
+    def _ids(self, name, query):
+        response = self.client.get(
+            reverse(name), query, HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        return {row["id"] for row in response.data["results"]}
+
+    def _status(self, name, query):
+        return self.client.get(
+            reverse(name), query, HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        ).status_code
+
+    def test_diary_entries_by_date(self):
+        self.assertEqual(
+            self._ids("api:diary-entry-list", {"date": "2026-10-02"}), {self.entries[2].pk}
+        )
+        self.assertEqual(
+            self._ids(
+                "api:diary-entry-list", {"date_after": "2026-10-02", "date_before": "2026-10-03"}
+            ),
+            {self.entries[2].pk},
+        )
+        self.assertEqual(self._status("api:diary-entry-list", {"date": "2026-13-01"}), 400)
+
+    def test_measurements_by_type_and_time(self):
+        self.assertEqual(
+            self._ids("api:measurement-list", {"measurement_type": self.weight.pk}),
+            {self.w1.pk, self.w2.pk},
+        )
+        self.assertEqual(
+            self._ids(
+                "api:measurement-list",
+                {"measurement_type": self.weight.pk, "recorded_after": "2026-10-05"},
+            ),
+            {self.w2.pk},
+        )
+        self.assertEqual(
+            self._ids(
+                "api:measurement-list",
+                {"measurement_type": self.weight.pk, "recorded_before": "2026-10-05"},
+            ),
+            {self.w1.pk},
+        )
+        self.assertEqual(self._status("api:measurement-list", {"measurement_type": "x"}), 400)
+
+    def test_activities_by_type_and_date(self):
+        self.assertEqual(
+            self._ids("api:activity-list", {"activity_type": self.cycling.pk}),
+            {self.a1.pk, self.a2.pk},
+        )
+        self.assertEqual(
+            self._ids(
+                "api:activity-list",
+                {"activity_type": self.cycling.pk, "date_after": "2026-10-05"},
+            ),
+            {self.a2.pk},
+        )
+        self.assertEqual(self._status("api:activity-list", {"date_before": "nope"}), 400)
+
+    def test_food_search_matches_name_brand_and_barcode(self):
+        # Shared seeded foods may match too - only ours are checked.
+        for query in ("oat", "elovena"):
+            ids = self._ids("api:food-list", {"search": query})
+            self.assertIn(self.oats.pk, ids)
+            self.assertNotIn(self.rice.pk, ids)
+        self.assertEqual(self._ids("api:food-list", {"search": "6408430000000"}), {self.oats.pk})
+        self.assertEqual(
+            self._ids("api:food-list", {"ids": f"{self.rice.pk},{self.oats.pk}"}),
+            {self.oats.pk, self.rice.pk},
+        )
+        self.assertEqual(self._status("api:food-list", {"ids": "1,a"}), 400)

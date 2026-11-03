@@ -10,7 +10,25 @@ paths:
   /api/v1/activities/:
     get:
       operationId: activities_list
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
       parameters:
+      - in: query
+        name: activity_type
+        schema:
+          type: integer
+        description: Only this type's activities.
+      - in: query
+        name: date_after
+        schema:
+          type: string
+        description: 'Inclusive: date on or after this date.'
+      - in: query
+        name: date_before
+        schema:
+          type: string
+        description: 'Exclusive: date before this date.'
       - name: page
         required: false
         in: query
@@ -36,6 +54,9 @@ paths:
           description: ''
     post:
       operationId: activities_create
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
       tags:
       - activities
       requestBody:
@@ -62,6 +83,9 @@ paths:
   /api/v1/activities/{id}/:
     get:
       operationId: activities_retrieve
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
       parameters:
       - in: path
         name: id
@@ -81,6 +105,9 @@ paths:
           description: ''
     put:
       operationId: activities_update
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
       parameters:
       - in: path
         name: id
@@ -112,6 +139,9 @@ paths:
           description: ''
     patch:
       operationId: activities_partial_update
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
       parameters:
       - in: path
         name: id
@@ -142,6 +172,9 @@ paths:
           description: ''
     delete:
       operationId: activities_destroy
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
       parameters:
       - in: path
         name: id
@@ -406,7 +439,25 @@ paths:
   /api/v1/diary-entries/:
     get:
       operationId: diary_entries_list
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
       parameters:
+      - in: query
+        name: date
+        schema:
+          type: string
+        description: Only this day's entries, YYYY-MM-DD.
+      - in: query
+        name: date_after
+        schema:
+          type: string
+        description: 'Inclusive: date on or after this date.'
+      - in: query
+        name: date_before
+        schema:
+          type: string
+        description: 'Exclusive: date before this date.'
       - name: page
         required: false
         in: query
@@ -432,6 +483,9 @@ paths:
           description: ''
     post:
       operationId: diary_entries_create
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
       tags:
       - diary-entries
       requestBody:
@@ -458,6 +512,9 @@ paths:
   /api/v1/diary-entries/{id}/:
     get:
       operationId: diary_entries_retrieve
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
       parameters:
       - in: path
         name: id
@@ -477,6 +534,9 @@ paths:
           description: ''
     put:
       operationId: diary_entries_update
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
       parameters:
       - in: path
         name: id
@@ -508,6 +568,9 @@ paths:
           description: ''
     patch:
       operationId: diary_entries_partial_update
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
       parameters:
       - in: path
         name: id
@@ -538,6 +601,9 @@ paths:
           description: ''
     delete:
       operationId: diary_entries_destroy
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
       parameters:
       - in: path
         name: id
@@ -1312,16 +1378,18 @@ paths:
     get:
       operationId: foods_list
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       parameters:
+      - in: query
+        name: ids
+        schema:
+          type: string
+        description: Comma-separated ids, e.g. 1,2,3.
       - name: page
         required: false
         in: query
@@ -1334,6 +1402,11 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Matches the name or brand; a barcode matches `off_id` exactly.
       tags:
       - foods
       security:
@@ -1348,15 +1421,12 @@ paths:
     post:
       operationId: foods_create
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       tags:
       - foods
       requestBody:
@@ -1384,15 +1454,12 @@ paths:
     get:
       operationId: foods_retrieve
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       parameters:
       - in: path
         name: id
@@ -1413,15 +1480,12 @@ paths:
     put:
       operationId: foods_update
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       parameters:
       - in: path
         name: id
@@ -1454,15 +1518,12 @@ paths:
     patch:
       operationId: foods_partial_update
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       parameters:
       - in: path
         name: id
@@ -1494,15 +1555,12 @@ paths:
     delete:
       operationId: foods_destroy
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       parameters:
       - in: path
         name: id
@@ -1935,7 +1993,16 @@ paths:
   /api/v1/measurements/:
     get:
       operationId: measurements_list
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
       parameters:
+      - in: query
+        name: measurement_type
+        schema:
+          type: integer
+        description: Only this type's readings.
       - name: page
         required: false
         in: query
@@ -1948,6 +2015,16 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
+      - in: query
+        name: recorded_after
+        schema:
+          type: string
+        description: 'Inclusive: recorded at or after this date/time.'
+      - in: query
+        name: recorded_before
+        schema:
+          type: string
+        description: 'Exclusive: recorded before this date/time.'
       tags:
       - measurements
       security:
@@ -1961,6 +2038,10 @@ paths:
           description: ''
     post:
       operationId: measurements_create
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
       tags:
       - measurements
       requestBody:
@@ -1987,6 +2068,10 @@ paths:
   /api/v1/measurements/{id}/:
     get:
       operationId: measurements_retrieve
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
       parameters:
       - in: path
         name: id
@@ -2006,6 +2091,10 @@ paths:
           description: ''
     put:
       operationId: measurements_update
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
       parameters:
       - in: path
         name: id
@@ -2037,6 +2126,10 @@ paths:
           description: ''
     patch:
       operationId: measurements_partial_update
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
       parameters:
       - in: path
         name: id
@@ -2067,6 +2160,10 @@ paths:
           description: ''
     delete:
       operationId: measurements_destroy
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
       parameters:
       - in: path
         name: id
