@@ -716,9 +716,12 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
     def validate_recipe(self, value):
         if value is None:
             return value
+        # The user's own or a built-in template recipe - logging a
+        # template to your own diary is what it's there for, same as
+        # the web's recipe_log (issue #38).
         request = self.context["request"]
-        if value.owner_id != request.user.id or not value.active:
-            raise serializers.ValidationError("Not a recipe you own.")
+        if value.owner_id not in (request.user.id, None) or not value.active:
+            raise serializers.ValidationError("Not a recipe you can log.")
         return value
 
 

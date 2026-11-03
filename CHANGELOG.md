@@ -19,6 +19,9 @@ narrated summary of the same version.
 ## [Unreleased]
 
 ### Fixed
+- API: built-in recipes are listed and readable alongside your own, so diet
+  plan recipes can be shown, and they can be logged to the diary like on the
+  web.
 - API: a diary entry sent with `"food": null` or `"recipe": null` no longer
   fails with a server error.
 

@@ -302,10 +302,14 @@ Nutrition follows the same shapes: `foods/`/`meal-slots/` are
 soft-deletable, shared-or-own resources exactly like `measurement-
 types/`/`activity-types/` - a food or meal slot with no `owner` is
 visible to (and loggable by) every user but only ever editable by
-whoever created a *custom* one. `recipes/` is a real, permanent delete
-like `programs/` (a recipe has no `active` field either). A
-`diary-entries/` row must have exactly one of `food`/`recipe` set,
-never both or neither - the same `CheckConstraint` the model itself
+whoever created a *custom* one. `recipes/` lists the user's own recipes
+and the built-in template ones (`owner` null, the ones the diet plan
+wizard fills plans with) - both readable, with their ingredients, and
+both loggable to the diary, but only the user's own are writable.
+Deleting a recipe still used by diary entries or diet plans only hides
+it, like the web; an unused one is deleted for good. A
+`diary-entries/` row must have exactly one of `food`/`recipe`/quick
+macros set (an explicit `null` for the other two is fine) - the same `CheckConstraint` the model itself
 enforces, checked again in the serializer so a bad request gets a
 plain `400` with a message instead of a raw database error. A
 `recipe-ingredients/`/`diary-entries/` write is only accepted if the

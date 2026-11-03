@@ -1427,6 +1427,72 @@ class NutritionEndpointTests(APITestCase):
             404,
         )
 
+    def _builtin_recipe(self):
+        from decimal import Decimal
+
+        from apps.nutrition.models import Recipe, RecipeIngredient
+
+        recipe = Recipe.objects.create(owner=None, name="Template bowl", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=self.food, quantity=Decimal("100"))
+        return recipe
+
+    def test_builtin_recipes_are_listed_and_readable(self):
+        # Issue #38: diet plans are built from template recipes.
+        builtin = self._builtin_recipe()
+        list_response = self.client.get(reverse("api:recipe-list"), **self._auth())
+        ids = {row["id"] for row in list_response.data["results"]}
+        self.assertIn(builtin.pk, ids)
+        self.assertIn(self.recipe.pk, ids)
+        self.assertNotIn(self.bobs_recipe.pk, ids)
+        detail = self.client.get(reverse("api:recipe-detail", args=[builtin.pk]), **self._auth())
+        self.assertEqual(detail.status_code, 200)
+        self.assertIsNone(detail.data["owner"])
+        self.assertEqual(len(detail.data["ingredients"]), 1)
+        ingredient_id = detail.data["ingredients"][0]["id"]
+        self.assertEqual(
+            self.client.get(
+                reverse("api:recipe-ingredient-detail", args=[ingredient_id]), **self._auth()
+            ).status_code,
+            200,
+        )
+
+    def test_builtin_recipes_are_not_writable(self):
+        builtin = self._builtin_recipe()
+        url = reverse("api:recipe-detail", args=[builtin.pk])
+        self.assertEqual(
+            self.client.patch(url, {"name": "Hijacked"}, format="json", **self._auth()).status_code,
+            404,
+        )
+        self.assertEqual(self.client.delete(url, **self._auth()).status_code, 404)
+        ingredient = builtin.ingredients.get()
+        self.assertEqual(
+            self.client.patch(
+                reverse("api:recipe-ingredient-detail", args=[ingredient.pk]),
+                {"quantity": "1"}, format="json", **self._auth(),
+            ).status_code,
+            404,
+        )
+        self.assertEqual(
+            self.client.post(
+                reverse("api:recipe-ingredient-list"),
+                {"recipe": builtin.pk, "food": self.food.pk, "quantity": "10"},
+                format="json", **self._auth(),
+            ).status_code,
+            400,
+        )
+
+    def test_logging_a_builtin_recipe_to_the_diary(self):
+        builtin = self._builtin_recipe()
+        response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "recipe": builtin.pk, "quantity": "1",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+
     def test_adding_an_ingredient_to_my_own_recipe(self):
         response = self.client.post(
             reverse("api:recipe-ingredient-list"),

@@ -595,21 +595,29 @@ class MealSlotViewSet(OwnedResourceViewSet):
         return nutrition_services.visible_meal_slots(self.request.user)
 
 
-class RecipeViewSet(viewsets.ModelViewSet):
+def _visible_recipes(user):
+    """The user's own active recipes plus the built-in template ones
+    (owner=None), the same set the web's recipe list and detail show
+    (apps.nutrition.views._viewable_recipe_or_404, issue #38)."""
+    from django.db.models import Q
+
+    return Recipe.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True)
+
+
+class RecipeViewSet(OwnedResourceViewSet):
+    """Built-in recipes are listed and readable (a diet plan built by
+    the wizard is full of them), `owner` null telling them apart; only
+    the user's own are ever writable."""
+
     serializer_class = RecipeSerializer
     api_context = ApiContext.NUTRITION
 
-    def get_queryset(self):
+    def visible_queryset(self):
         # RecipeSerializer nests every ingredient (with its food) -
         # prefetched here so listing many recipes stays two queries
         # total (recipes + ingredients), not one ingredients query per
         # recipe in the list.
-        return Recipe.objects.filter(owner=self.request.user, active=True).prefetch_related(
-            "ingredients__food"
-        )
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        return _visible_recipes(self.request.user).prefetch_related("ingredients__food")
 
     def perform_destroy(self, instance):
         # Same as the web UI - a recipe still used by diary entries or
@@ -622,9 +630,11 @@ class RecipeIngredientViewSet(viewsets.ModelViewSet):
     api_context = ApiContext.NUTRITION
 
     def get_queryset(self):
-        return RecipeIngredient.objects.filter(
-            recipe__owner=self.request.user, recipe__active=True
-        )
+        if self.action in ("update", "partial_update", "destroy"):
+            return RecipeIngredient.objects.filter(
+                recipe__owner=self.request.user, recipe__active=True
+            )
+        return RecipeIngredient.objects.filter(recipe__in=_visible_recipes(self.request.user))
 
 
 class DiaryEntryViewSet(viewsets.ModelViewSet):

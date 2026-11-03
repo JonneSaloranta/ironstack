@@ -3027,6 +3027,10 @@ paths:
   /api/v1/recipes/:
     get:
       operationId: recipes_list
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       parameters:
       - name: page
         required: false
@@ -3053,6 +3057,10 @@ paths:
           description: ''
     post:
       operationId: recipes_create
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       tags:
       - recipes
       requestBody:
@@ -3079,6 +3087,10 @@ paths:
   /api/v1/recipes/{id}/:
     get:
       operationId: recipes_retrieve
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       parameters:
       - in: path
         name: id
@@ -3098,6 +3110,10 @@ paths:
           description: ''
     put:
       operationId: recipes_update
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       parameters:
       - in: path
         name: id
@@ -3129,6 +3145,10 @@ paths:
           description: ''
     patch:
       operationId: recipes_partial_update
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       parameters:
       - in: path
         name: id
@@ -3159,6 +3179,10 @@ paths:
           description: ''
     delete:
       operationId: recipes_destroy
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       parameters:
       - in: path
         name: id
