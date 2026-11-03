@@ -45,16 +45,19 @@ Every endpoint belongs to exactly one **context**
 
 | Context | Covers |
 |---|---|
-| `profile` | The authenticated user's own account/preferences |
+| `profile` | The authenticated user's own account/preferences, guided tours |
 | `exercises` | Exercises, muscle groups, equipment |
 | `programs` | Programs, workouts, exercise prescriptions |
 | `workouts` | Workout sessions, performed exercises, logged sets |
 | `measurements` | Measurement types, body measurement readings |
 | `activities` | Activity types, logged activities |
 | `records` | Personal records (read-only - see below) |
-| `analytics` | Training summaries, achievements (read-only) |
-| `nutrition` | Foods, meal slots, recipes, diary entries, nutrition goals/targets (goals/targets read-only), a nutrition profile, diet plans (generation/activation/apply are service-backed, not raw writes; a plan's meals/items are read-only - see below) |
-| `stretching` | Stretches, stretch routines and their items, stretching sessions (creating one is a quick log) |
+| `analytics` | Training summaries and charts, achievements, recently active users (read-only) |
+| `nutrition` | Foods, meal slots, recipes, diary entries, nutrition goals/targets (never edited - a new goal goes through the same service as the web), a nutrition profile, diet plans (generation/activation/apply are service-backed, not raw writes; a plan's meals/items are read-only - see below) |
+| `stretching` | Stretches, stretch routines and their items, stretching sessions (a quick log or a guided session) |
+| `social` | Friends, friend requests, blocks, direct messages, groups and their invites and messages |
+| `coaching` | Coaching requests and relationships, a trainer's clients and shared plans, importing and updating plans a coach shared |
+| `assistant` | The AI assistant: turning it on and off, its settings, conversations and their replies, accepting or dismissing its proposals |
 
 Each API key carries, per context, four independent flags - **Create**,
 **Read**, **Update**, **Delete** - checked fresh on every request
@@ -138,6 +141,19 @@ it just never changes what any other endpoint's numbers mean.
 Datetimes are ISO 8601, always UTC on the wire (`USE_TZ=True`) -
 converting to a user's `timezone` preference for *display* is a client
 concern, the same reasoning as units.
+
+## Display names
+
+Built-in exercises, programs, workouts, muscle groups, equipment,
+measurement and activity types, meal slots, stretches and stretch
+routines are stored with English names and translated where the web
+shows them. Their API rows keep the stored `name` (stable, what
+`?search=` and imports match) and add a read-only `display_name`: the
+same text the web shows, translated to the request's `Accept-Language`
+when the server supports that language, else to the user's profile
+`language`, else the site default. A name nobody translated - one a
+user typed - comes back unchanged, so a client can always show
+`display_name`.
 
 ## Managing keys
 
@@ -261,16 +277,19 @@ not refused).
 
 | Context | Endpoints |
 |---|---|
-| profile | `GET`/`PATCH` `profile/` (singleton - no id; `username` and `email` are read-only - an API key must not be able to redirect password resets) |
+| profile | `GET`/`PATCH` `profile/` (singleton - no id; `username` and `email` are read-only - an API key must not be able to redirect password resets; `date_joined` is read-only too; `body_tracking_reminders_enabled` is the web's on/off setting and `needs_body_tracking_reminder` is the web dashboard's own rule - true after 14 days without a reading, counted from `date_joined` when there's none; `tutorials_enabled` switches automatic tours), `tutorials/` (`GET` - every guided tour with its steps in the request's or user's language, `completed`, and the `web_url` it runs on), `tutorials/<key>/complete/`, `tutorials/<key>/reset/`, `tutorials/reset/` (all `POST`, `204`; completion is shared with the web) |
 | exercises | `exercises/` (`?search=<text>` matches the name, also as translated to your language; `?ids=1,2,3` fetches a known set), `exercises/<id>/`, `muscle-groups/` (read-only), `equipment/` (read-only) |
-| programs | `programs/`, `programs/<id>/`, `workouts/`, `workouts/<id>/`, `prescriptions/`, `prescriptions/<id>/` (each prescription, nested or not, carries a read-only `exercise_name`), `up-next/` (`GET` - the dashboard's "Up next": `program`, `workout` and the `day` a weekly program schedules it for, all null before the user has completed a workout from a program; answers even while a session is in progress) |
-| workouts | `exercises/<id>/last-performance/` (`GET` - the sets from the most recent completed session that included the exercise, warmups flagged; `session`/`started_at` null and `sets` empty if none), `sessions/`, `sessions/<id>/` (create = start; `PATCH status` to `completed`/`abandoned` = end; the list takes `?status=planned\|in_progress\|completed\|abandoned`, `?started_after=` (inclusive) and `?started_before=` (exclusive), each an ISO 8601 datetime or a date meaning its midnight in the server's time zone), `performed-exercises/` (create + read only), `performed-exercises/<id>/suggestion/` (`GET` - the smart weight suggestion the web shows when logging a set: `weight` in kg, `min_reps`/`max_reps`, the prescription's progression `method`, `action`, `confidence` and a plain-language `reason` in the user's language; every field null when no prescription is behind the exercise; only ever a default the user confirms), `sets/`, `sets/<id>/` |
-| measurements | `measurement-types/`, `measurement-types/<id>/`, `measurements/`, `measurements/<id>/` |
-| activities | `activity-types/`, `activity-types/<id>/`, `activities/`, `activities/<id>/` |
+| programs | `programs/`, `programs/<id>/`, `programs/<id>/copy/` (`POST` - your own editable copy of any visible program, workouts and prescriptions included, `201` with it), `workouts/`, `workouts/<id>/`, `prescriptions/`, `prescriptions/<id>/` (each prescription, nested or not, carries a read-only `exercise_name`), `up-next/` (`GET` - the dashboard's "Up next": `program`, `workout` and the `day` a weekly program schedules it for, all null before the user has completed a workout from a program; answers even while a session is in progress) |
+| workouts | `exercises/<id>/last-performance/` (`GET` - the sets from the most recent completed session that included the exercise, warmups flagged; `session`/`started_at` null and `sets` empty if none), `sessions/`, `sessions/<id>/` (create = start; `PATCH status` to `completed`/`abandoned` = end; the list takes `?status=planned\|in_progress\|completed\|abandoned`, `?started_after=` (inclusive) and `?started_before=` (exclusive), each an ISO 8601 datetime or a date meaning its midnight in the server's time zone), `performed-exercises/` (create + read only), `performed-exercises/<id>/suggestion/` (`GET` - the smart weight suggestion the web shows when logging a set: `weight` in kg, `min_reps`/`max_reps`, the prescription's progression `method`, `action`, `confidence` and a plain-language `reason` in the user's language; every field null when no prescription is behind the exercise; only ever a default the user confirms), `sets/`, `sets/<id>/` (a create response also has `new_records`: the personal records the set broke, same shape as `records/` plus the `previous_value` it beat - empty when none) |
+| measurements | `measurement-types/`, `measurement-types/<id>/`, `measurements/` (`?measurement_type=<id>`, `?recorded_after=` (inclusive) and `?recorded_before=` (exclusive), ISO 8601 datetimes or dates like `sessions/`), `measurements/<id>/` |
+| activities | `activity-types/`, `activity-types/<id>/`, `activities/` (`?activity_type=<id>`, `?date_after=` (inclusive) and `?date_before=` (exclusive), `YYYY-MM-DD`), `activities/<id>/` |
 | records | `records/`, `records/<id>/` (read-only, with `exercise_name`) |
-| analytics | `analytics/summary/?range=7d\|30d\|all` (default 30d), `analytics/achievements/` (both read-only) |
-| nutrition | `foods/`, `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/`, `diary-entries/<id>/`, `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton - no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plans/<id>/shopping-list/` (`GET`), `diet-plans/<id>/shopping-settings/` (`GET`/`PUT`/`PATCH`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
-| stretching | `stretches/`, `stretches/<id>/`, `stretch-routines/`, `stretch-routines/<id>/` (items nested read-only), `stretch-routine-items/`, `stretch-routine-items/<id>/` (own routines only), `stretch-sessions/`, `stretch-sessions/<id>/` (create = quick log with `duration`; name/routine/status and the per-stretch snapshot are read-only) |
+| analytics | `analytics/summary/?range=7d\|30d\|all` (default 30d), `analytics/volume/?range=` (volume per ISO week), `analytics/muscle-groups/?range=` (volume per primary muscle group), `analytics/exercises/<id>/?range=` (sessions and volume in range, and the best set per training day by estimated 1RM), `analytics/recently-active/` (the dashboard's "Recently active" list: users who share their training, by when they last trained), `analytics/achievements/` (all read-only; `range` also takes `3m`, `6m` and `1y`; volumes and weights in canonical kg) |
+| nutrition | `foods/` (`?search=<text>` matches the name or brand, a barcode matches `off_id`; `?ids=1,2,3`), `foods/<id>/`, `foods/import-off/` (`POST`), `foods/search-off/?q=` (`GET`), `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/` (`?date=YYYY-MM-DD` for one day, `?date_after=` (inclusive) / `?date_before=` (exclusive) for a range; each entry has a read-only `nutrition` object for its quantity, from the values snapshotted when it was logged, and `food_name`/`recipe_name`, so entries of a since-deleted recipe still show and count), `diary-entries/<id>/`, `diary-entries/copy-day/` (`POST` `{source_date, target_date}` - the web's "Copy day", answers `{copied}`), `nutrition/daily-totals/?date=` (`GET` - the day's diary added up, default today), `nutrition-goals/` (`POST` starts a new goal with a calculated target), `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/adjustment-suggestion/` (`GET`), `nutrition/adjustment-suggestion/accept/` (`POST`), `nutrition/profile/` (singleton - no id; `PUT` creates it), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plans/<id>/shopping-list/` (`GET`), `diet-plans/<id>/shopping-settings/` (`GET`/`PUT`/`PATCH`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
+| stretching | `stretches/`, `stretches/<id>/`, `stretch-routines/`, `stretch-routines/<id>/` (items nested read-only), `stretch-routines/<id>/copy/` (`POST` - your own editable copy, items included), `stretch-routine-items/`, `stretch-routine-items/<id>/` (own routines only), `stretch-sessions/`, `stretch-sessions/<id>/` (create = quick log with `duration`, optionally `after_workout` - one of your finished workout sessions - to mark it as its cool-down; name/routine/status, `after_workout` and the per-stretch snapshot are read-only afterwards), `stretch-sessions/start/` (`POST` `{routine}` or `{stretches: [ids], name?}`, plus `after_workout?` - a guided session, its plan snapshotted like the web player; `409` with the in-progress session's `id` when one is already running), `stretch-sessions/<id>/mark/` (`POST` `{performed_stretch, done, actual_seconds?}` - one stretch done or skipped), `stretch-sessions/<id>/complete/`, `stretch-sessions/<id>/abandon/` (`POST`; `409` unless in progress) |
+| social | `social/friends/` (`GET`), `social/friends/<user_id>/` (`DELETE` - unfriend), `social/friends/<user_id>/mute/` / `unmute/` (`POST` - push notifications only), `social/users/?search=` (`GET` - people to befriend by username, max 20, never friends or anyone blocked either way), `social/friend-requests/` (`GET` pending to and from you; `POST {user}` sends one, or accepts theirs if they asked first), `social/friend-requests/<id>/accept/` / `decline/` (`POST`), `social/blocks/` (`GET`; `POST {user}` blocks: ends the friendship and pending requests), `social/blocks/<user_id>/` (`DELETE` - unblock), `social/conversations/` (`GET` - a thread per friend and group with unread counts, and pending request/invite counts), `social/messages/<user_id>/` (`GET` the thread with a friend, last 100 oldest first, `?after=<message id>` for newer ones only, marks it read; `POST {body}` sends), `social/groups/` (`GET` yours; `POST {name, description}` creates one you own), `social/groups/join/` (`POST {code}` - an invite code), `social/groups/<id>/` (members only; `PATCH` owner/admin, `DELETE` owner; `invite_code` shown to owner/admin only), `social/groups/<id>/members/` (`GET`), `social/groups/<id>/members/<user_id>/` (`DELETE` removes - owner/admin; `PATCH {role: admin\|member}` - owner), `social/groups/<id>/transfer/` (`POST {user}` - owner), `social/groups/<id>/leave/`, `social/groups/<id>/mute/` (`POST {muted}`), `social/groups/<id>/invite-link/` (`POST {enabled?, regenerate?}` - owner/admin), `social/groups/<id>/invites/` (`POST {user}` - invite a friend), `social/groups/<id>/messages/` (like direct messages), `social/group-invites/` (`GET` pending to you), `social/group-invites/<id>/accept/` / `decline/` (`POST`) - every rule is apps.social.services' own, a broken one answers `400` with its message in your language; other users appear by `id` and `username` only |
+| coaching | `coaching/requests/` (`GET` pending ones you sent or received; `POST {username}` asks a trainer to coach you), `coaching/requests/<id>/accept/` / `decline/` (`POST` - the trainer), `coaching/coaches/` (`GET` - your active coaches), `coaching/clients/` (`GET` - a trainer's active clients), `coaching/clients/<username>/` (`GET` - one active client: 30-day training summary, highlights, latest records, latest body measurements, imported shared programs; `404` for anyone else), `coaching/relationships/<id>/end/` (`POST` - either side), `coaching/shared/` (`GET` - plans your coaches shared with you, `imported` when you have a copy), `coaching/shared/programs/<id>/import/`, `coaching/shared/diet-plans/<id>/import/` (`POST`, `201` with your copy), `coaching/programs/<id>/update/`, `coaching/diet-plans/<id>/update/` (on your imported copy: `GET` `{available, diff}`; `POST` replaces its contents with the coach's version, `409` when already up to date), `coaching/programs/<id>/clients/`, `coaching/diet-plans/<id>/clients/` (`GET`/`PUT {clients: [user ids]}` - a trainer's own plan, shared only with active clients; `403` for a non-trainer) - every rule is apps.coaching.services' own, a broken one answers `400` with its message in your language |
+| assistant | `assistant/` (`GET` - on/available, provider and model, today's allowance on the instance's provider), `assistant/enable/` / `disable/` (`POST` - enabling is the user's consent to send their data to the model: show the explanation from the web's assistant settings first), `assistant/settings/` (`GET`/`PATCH` - `reads_workouts`, `reads_body`, `reads_food`, `reads_activities`, `reads_stretching`, `reads_profile`, `about_me`, `own_key_model`, `own_key_effort`; the user's own Anthropic key is set on the web only, as a credential), `assistant/conversations/` (`GET` latest 50; `POST {text}` starts one, `201`), `assistant/conversations/<id>/` (`GET` with messages and proposals; `DELETE`), `assistant/conversations/<id>/messages/` (`POST {text}` - `201` with the reply bubble, `pending` until the assistant worker writes it; `400` while a reply is still being written), `assistant/messages/<id>/` (`GET` - poll a reply: `pending` -> `running` -> `done`/`error`), `assistant/proposals/<id>/accept/` (`POST` - `201` with the new inactive diet plan or program's `created_id`; `409` when it can't be created as proposed anymore), `assistant/proposals/<id>/dismiss/` (`POST`) |
 
 Every endpoint goes through the exact same domain service functions the
 server-rendered web views already use (`apps/exercises/services.py`,
@@ -302,10 +321,14 @@ Nutrition follows the same shapes: `foods/`/`meal-slots/` are
 soft-deletable, shared-or-own resources exactly like `measurement-
 types/`/`activity-types/` - a food or meal slot with no `owner` is
 visible to (and loggable by) every user but only ever editable by
-whoever created a *custom* one. `recipes/` is a real, permanent delete
-like `programs/` (a recipe has no `active` field either). A
-`diary-entries/` row must have exactly one of `food`/`recipe` set,
-never both or neither - the same `CheckConstraint` the model itself
+whoever created a *custom* one. `recipes/` lists the user's own recipes
+and the built-in template ones (`owner` null, the ones the diet plan
+wizard fills plans with) - both readable, with their ingredients, and
+both loggable to the diary, but only the user's own are writable.
+Deleting a recipe still used by diary entries or diet plans only hides
+it, like the web; an unused one is deleted for good. A
+`diary-entries/` row must have exactly one of `food`/`recipe`/quick
+macros set (an explicit `null` for the other two is fine) - the same `CheckConstraint` the model itself
 enforces, checked again in the serializer so a bad request gets a
 plain `400` with a message instead of a raw database error. A
 `recipe-ingredients/`/`diary-entries/` write is only accepted if the
@@ -315,16 +338,41 @@ search_foods`/`visible_meal_slots` already enforce for the web UI,
 re-checked here since a `PrimaryKeyRelatedField` has no ownership
 concept of its own (same pattern `WorkoutSerializer.validate_program`
 and `BodyMeasurementSerializer.validate_measurement_type` already use
-elsewhere in this file). Importing a food from OpenFoodFacts by
-barcode isn't exposed here - a client creates a food the same way the
-web form does, by supplying its own values directly; see "What's
-deliberately not here" below.
+elsewhere in this file). `POST foods/` creates a plain hand-entered
+food, like the web form. An Open Food Facts product is saved with
+`POST foods/import-off/` `{"barcode": "..."}` instead, through the same
+service as the web (`apps.nutrition.services.import_or_refresh_food_
+from_off`): a shared food with its Nutri-Score, NOVA group and OFF link,
+`200` with the existing food when the barcode is already known (`201`
+when new), `404` when OFF has no usable product, `429` when the
+server's OFF budget is spent and `503` when the integration is off.
+`GET foods/search-off/?q=` searches the visible foods and OFF together
+(`status`, `local` foods, OFF `results` not imported yet) through the
+server's cache and rate budget, so call it once per user action, not
+while typing.
 
 `nutrition/profile/` is a singleton like `profile/` itself - every
 field of `apps.nutrition.models.NutritionProfile` is plainly
 readable/writable, since (unlike a goal or target) these are inputs a
 user corrects in place, not decisions worth preserving as history. A
-user with no profile yet gets a plain `404`, not a `500`.
+user with no profile yet gets a plain `404`, not a `500`, and a `PUT`
+creates it (`201`).
+
+Goals and targets are history: never edited or deleted. Setting up
+nutrition through the API takes the web onboarding's steps: `PUT
+nutrition/profile/`, `height` on `profile/`, a body weight on
+`measurements/`, then `POST nutrition-goals/` `{goal_type,
+target_rate_kg_per_week, target_weight?, notes?}` - the same
+`apps.nutrition.services.change_goal` the web's goal page uses, so the
+open goal and target are ended and a target is calculated from the
+profile, height and latest weight. The response is the goal with its
+`target`; a `400` says what's missing, or that the rate's sign doesn't
+fit the goal. `nutrition/adjustment-suggestion/` is the dashboard's
+calorie adjustment card (rates in kg/week, `reason` in the user's
+language); `POST .../accept/` works it out again and, when its
+`action` is `adjust`, replaces the target with an `adjusted` one
+(`201`), otherwise `409` with the current suggestion. Nothing is ever
+adjusted without that explicit call.
 
 `diet-plans/` generates through
 `apps.nutrition.diet_builder.build_diet_plan` on `POST` rather than
@@ -374,7 +422,8 @@ read for `GET`, update for `PUT`/`PATCH`.
 A client on a bad connection retries a write until it gets an answer -
 but if the first attempt reached the server and only the response was
 lost, the retry would log the same set twice. `POST sets/`,
-`POST sessions/` and `POST performed-exercises/` therefore accept an
+`sessions/`, `performed-exercises/`, `diary-entries/`, `measurements/`,
+`activities/` and `stretch-sessions/` therefore accept an
 optional `Idempotency-Key` header (1-255 characters; one random value,
 e.g. a UUID, per queued write, sent unchanged with every retry of it).
 
@@ -402,12 +451,6 @@ e.g. a UUID, per queued write, sent unchanged with every retry of it).
   "connect your account to another service" flow, since this is a
   self-hosted, typically single-household instance, not a multi-tenant
   SaaS with external integrators.
-- **Importing a food from OpenFoodFacts by barcode.** The web UI's
-  search-and-import flow (`docs/NUTRITION.md` "OpenFoodFacts
-  integration") isn't mirrored here yet - `POST foods/` creates a
-  plain hand-entered food (matching `FoodForm`), the same shape a
-  user typing their own values in gets. Deliberately deferred rather
-  than half-built alongside everything else in this pass.
 
 None of these are ruled out for later, they just aren't part of this
 first pass - see the phased-implementation principle in `CLAUDE.md`.

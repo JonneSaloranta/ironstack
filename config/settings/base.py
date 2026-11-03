@@ -335,6 +335,14 @@ SPECTACULAR_SETTINGS = {
     # rather than drf-spectacular's own CDN-hosted default.
     "SWAGGER_UI_DIST": "SIDECAR",
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    # Friend requests and group invites share one set of statuses; named
+    # here so it doesn't collide with the other `status` choice sets.
+    # KindEnum is pinned to the stretch kind it has always named, so a
+    # later `kind` field (assistant proposals) can't rename it under v1.
+    "ENUM_NAME_OVERRIDES": {
+        "SocialRequestStatusEnum": "apps.social.models.FriendRequestStatus",
+        "KindEnum": "apps.stretching.models.StretchKind",
+    },
 }
 
 # docs/SECURITY.md "Email" - needed for password reset

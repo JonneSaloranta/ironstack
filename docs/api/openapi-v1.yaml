@@ -10,7 +10,25 @@ paths:
   /api/v1/activities/:
     get:
       operationId: activities_list
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
       parameters:
+      - in: query
+        name: activity_type
+        schema:
+          type: integer
+        description: Only this type's activities.
+      - in: query
+        name: date_after
+        schema:
+          type: string
+        description: 'Inclusive: date on or after this date.'
+      - in: query
+        name: date_before
+        schema:
+          type: string
+        description: 'Exclusive: date before this date.'
       - name: page
         required: false
         in: query
@@ -36,6 +54,17 @@ paths:
           description: ''
     post:
       operationId: activities_create
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Optional, e.g. a UUID per queued write. A retry with the same
+          key gets the first response back instead of creating another row. Remembered
+          for 24 hours.
       tags:
       - activities
       requestBody:
@@ -62,6 +91,9 @@ paths:
   /api/v1/activities/{id}/:
     get:
       operationId: activities_retrieve
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
       parameters:
       - in: path
         name: id
@@ -81,6 +113,9 @@ paths:
           description: ''
     put:
       operationId: activities_update
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
       parameters:
       - in: path
         name: id
@@ -112,6 +147,9 @@ paths:
           description: ''
     patch:
       operationId: activities_partial_update
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
       parameters:
       - in: path
         name: id
@@ -142,6 +180,9 @@ paths:
           description: ''
     delete:
       operationId: activities_destroy
+      description: |-
+        `?activity_type=` and `?date_after=`/`?date_before=` narrow the
+        list (issue #29).
       parameters:
       - in: path
         name: id
@@ -384,6 +425,96 @@ paths:
                 items:
                   $ref: '#/components/schemas/Achievement'
           description: ''
+  /api/v1/analytics/exercises/{id}/:
+    get:
+      operationId: analytics_exercises_retrieve
+      description: |-
+        `analytics/exercises/<id>/?range=` - one exercise's progress:
+        sessions and volume in range, and its best set per training day by
+        estimated 1RM, the web's strength trend (issue #35). Canonical kg;
+        404 for an exercise the user can't see.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: range
+        schema:
+          type: string
+          enum:
+          - 1y
+          - 30d
+          - 3m
+          - 6m
+          - 7d
+          - all
+        description: Default 30d.
+      tags:
+      - analytics
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExerciseAnalytics'
+          description: ''
+  /api/v1/analytics/muscle-groups/:
+    get:
+      operationId: analytics_muscle_groups_retrieve
+      description: |-
+        `analytics/muscle-groups/?range=` - see VolumeAnalyticsView. A
+        set counts in full toward each of its exercise's primary muscle
+        groups, as on the web.
+      parameters:
+      - in: query
+        name: range
+        schema:
+          type: string
+          enum:
+          - 1y
+          - 30d
+          - 3m
+          - 6m
+          - 7d
+          - all
+        description: Default 30d.
+      tags:
+      - analytics
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MuscleGroupAnalytics'
+          description: ''
+  /api/v1/analytics/recently-active/:
+    get:
+      operationId: analytics_recently_active_list
+      description: |-
+        `analytics/recently-active/` - the dashboard's "Recently active"
+        list (apps.analytics.achievements.recently_active_users, issue
+        #37): every user who shares their training (`show_achievements`),
+        by when they last trained, `is_in_progress` while they're training
+        now. Shared across users, like achievements.
+      tags:
+      - analytics
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecentActivity'
+          description: ''
   /api/v1/analytics/summary/:
     get:
       operationId: analytics_summary_retrieve
@@ -403,10 +534,811 @@ paths:
               schema:
                 $ref: '#/components/schemas/TrainingSummary'
           description: ''
+  /api/v1/analytics/volume/:
+    get:
+      operationId: analytics_volume_retrieve
+      description: |-
+        `analytics/volume/?range=` - training volume per ISO week (and
+        `analytics/muscle-groups/` per primary muscle group), the web
+        Analytics page's bar charts as data (issue #35). Canonical kg.
+      parameters:
+      - in: query
+        name: range
+        schema:
+          type: string
+          enum:
+          - 1y
+          - 30d
+          - 3m
+          - 6m
+          - 7d
+          - all
+        description: Default 30d.
+      tags:
+      - analytics
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolumeAnalytics'
+          description: ''
+  /api/v1/assistant/:
+    get:
+      operationId: assistant_retrieve
+      description: |-
+        `GET assistant/` - whether the assistant is on and usable, with
+        which provider and model, and today's allowance on the instance's
+        own provider (null with the user's own key).
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantStatus'
+          description: ''
+  /api/v1/assistant/conversations/:
+    get:
+      operationId: assistant_conversations_list
+      description: |-
+        `GET assistant/conversations/` - the latest 50, newest first.
+        `POST {text}` starts one; 201 with it, its first reply `pending`
+        until the assistant worker writes it - poll `assistant/messages/
+        <id>/`.
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
+          description: ''
+    post:
+      operationId: assistant_conversations_create
+      description: |-
+        `GET assistant/conversations/` - the latest 50, newest first.
+        `POST {text}` starts one; 201 with it, its first reply `pending`
+        until the assistant worker writes it - poll `assistant/messages/
+        <id>/`.
+      tags:
+      - assistant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationDetail'
+          description: ''
+  /api/v1/assistant/conversations/{id}/:
+    get:
+      operationId: assistant_conversations_retrieve
+      description: |-
+        `GET assistant/conversations/<id>/` - with every message and its
+        proposals. `DELETE` removes it.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationDetail'
+          description: ''
+    delete:
+      operationId: assistant_conversations_destroy
+      description: |-
+        `GET assistant/conversations/<id>/` - with every message and its
+        proposals. `DELETE` removes it.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/assistant/conversations/{id}/messages/:
+    post:
+      operationId: assistant_conversations_messages_create
+      description: |-
+        `POST assistant/conversations/<id>/messages/ {text}` - sends the
+        next message; 201 with the assistant's reply bubble, `pending` until
+        it's written. A 400 while the previous reply is still being written,
+        or once today's allowance is used.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantMessage'
+          description: ''
+  /api/v1/assistant/disable/:
+    post:
+      operationId: assistant_disable_create
+      description: |-
+        `POST assistant/enable/` - the user's consent to send their data
+        to the model (show them what the web's settings page explains
+        first); `POST assistant/disable/` turns it off.
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantStatus'
+          description: ''
+  /api/v1/assistant/enable/:
+    post:
+      operationId: assistant_enable_create
+      description: |-
+        `POST assistant/enable/` - the user's consent to send their data
+        to the model (show them what the web's settings page explains
+        first); `POST assistant/disable/` turns it off.
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantStatus'
+          description: ''
+  /api/v1/assistant/messages/{id}/:
+    get:
+      operationId: assistant_messages_retrieve
+      description: |-
+        `GET assistant/messages/<id>/` - one message, to poll a reply while
+        it's written (the web polls every couple of seconds).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantMessage'
+          description: ''
+  /api/v1/assistant/proposals/{id}/accept/:
+    post:
+      operationId: assistant_proposals_accept_create
+      description: |-
+        `POST assistant/proposals/<id>/accept/` - creates the proposed diet
+        plan or program, inactive, for the user to review (201). 409 with
+        the reason when it can't be created as proposed anymore (a food
+        deleted since, say).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProposalAccepted'
+          description: ''
+  /api/v1/assistant/proposals/{id}/dismiss/:
+    post:
+      operationId: assistant_proposals_dismiss_create
+      description: '`POST assistant/proposals/<id>/dismiss/` - kept as a record.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proposal'
+          description: ''
+  /api/v1/assistant/settings/:
+    get:
+      operationId: assistant_settings_retrieve
+      description: |-
+        `GET`/`PATCH assistant/settings/` - `reads_*` (what the assistant
+        may read), `about_me`, and the model and effort used with the user's
+        own key ("" for the instance default).
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantSettings'
+          description: ''
+    patch:
+      operationId: assistant_settings_partial_update
+      description: |-
+        `GET`/`PATCH assistant/settings/` - `reads_*` (what the assistant
+        may read), `about_me`, and the model and effort used with the user's
+        own key ("" for the instance default).
+      tags:
+      - assistant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAssistantSettingsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAssistantSettingsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAssistantSettingsRequest'
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantSettings'
+          description: ''
+  /api/v1/coaching/clients/:
+    get:
+      operationId: coaching_clients_list
+      description: '`GET coaching/clients/` - a trainer''s active clients.'
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoachingRelationship'
+          description: ''
+  /api/v1/coaching/clients/{username}/:
+    get:
+      operationId: coaching_clients_retrieve
+      description: |-
+        `GET coaching/clients/<username>/` - a trainer's view of one active
+        client, as on the web: training in the last 30 days, highlights, the
+        latest personal records, the latest reading of each body measurement
+        and the shared programs they've imported. 404 unless the client is
+        actively coached by the user - accepting the request is the client's
+        consent to this.
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientDetail'
+          description: ''
+  /api/v1/coaching/coaches/:
+    get:
+      operationId: coaching_coaches_list
+      description: '`GET coaching/coaches/` - the user''s active coaches.'
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoachingRelationship'
+          description: ''
+  /api/v1/coaching/diet-plans/{id}/clients/:
+    get:
+      operationId: coaching_diet_plans_clients_retrieve
+      description: |-
+        `GET`/`PUT coaching/programs/<id>/clients/` (and `diet-plans/`) -
+        which of the trainer's active clients a plan of theirs is shared
+        with. `PUT {clients: [user ids]}` replaces the list; only active
+        clients can be on it, as on the web.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientIds'
+          description: ''
+    put:
+      operationId: coaching_diet_plans_clients_update
+      description: |-
+        `GET`/`PUT coaching/programs/<id>/clients/` (and `diet-plans/`) -
+        which of the trainer's active clients a plan of theirs is shared
+        with. `PUT {clients: [user ids]}` replaces the list; only active
+        clients can be on it, as on the web.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientIds'
+          description: ''
+  /api/v1/coaching/diet-plans/{id}/update/:
+    get:
+      operationId: coaching_diet_plans_update_retrieve
+      description: '`GET`/`POST coaching/diet-plans/<id>/update/` - as for programs.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachUpdate'
+          description: ''
+    post:
+      operationId: coaching_diet_plans_update_create
+      description: '`GET`/`POST coaching/diet-plans/<id>/update/` - as for programs.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DietPlan'
+          description: ''
+  /api/v1/coaching/programs/{id}/clients/:
+    get:
+      operationId: coaching_programs_clients_retrieve
+      description: |-
+        `GET`/`PUT coaching/programs/<id>/clients/` (and `diet-plans/`) -
+        which of the trainer's active clients a plan of theirs is shared
+        with. `PUT {clients: [user ids]}` replaces the list; only active
+        clients can be on it, as on the web.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientIds'
+          description: ''
+    put:
+      operationId: coaching_programs_clients_update
+      description: |-
+        `GET`/`PUT coaching/programs/<id>/clients/` (and `diet-plans/`) -
+        which of the trainer's active clients a plan of theirs is shared
+        with. `PUT {clients: [user ids]}` replaces the list; only active
+        clients can be on it, as on the web.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClientIdsRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientIds'
+          description: ''
+  /api/v1/coaching/programs/{id}/update/:
+    get:
+      operationId: coaching_programs_update_retrieve
+      description: |-
+        `GET coaching/programs/<id>/update/` - whether the coach changed
+        the program this copy was imported from, and the diff. `POST`
+        replaces the copy's workouts with the coach's version (name and
+        description stay yours); not calling it is skipping.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachUpdate'
+          description: ''
+    post:
+      operationId: coaching_programs_update_create
+      description: |-
+        `GET coaching/programs/<id>/update/` - whether the coach changed
+        the program this copy was imported from, and the diff. `POST`
+        replaces the copy's workouts with the coach's version (name and
+        description stay yours); not calling it is skipping.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+          description: ''
+  /api/v1/coaching/relationships/{id}/end/:
+    post:
+      operationId: coaching_relationships_end_create
+      description: |-
+        `POST coaching/relationships/<id>/end/` - either side ends it; the
+        history of having been coached stays.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachingRelationship'
+          description: ''
+  /api/v1/coaching/requests/:
+    get:
+      operationId: coaching_requests_list
+      description: |-
+        `GET coaching/requests/` - pending requests the user sent (as a
+        client) or received (as a trainer). `POST {username}` asks a trainer
+        to coach you.
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoachingRequest'
+          description: ''
+    post:
+      operationId: coaching_requests_create
+      description: |-
+        `GET coaching/requests/` - pending requests the user sent (as a
+        client) or received (as a trainer). `POST {username}` asks a trainer
+        to coach you.
+      tags:
+      - coaching
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoachingRequestCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CoachingRequestCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CoachingRequestCreateRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachingRequest'
+          description: ''
+  /api/v1/coaching/requests/{id}/accept/:
+    post:
+      operationId: coaching_requests_accept_create
+      description: |-
+        `POST coaching/requests/<id>/accept/` or `.../decline/` - a
+        trainer answering a request to them.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachingRequest'
+          description: ''
+  /api/v1/coaching/requests/{id}/decline/:
+    post:
+      operationId: coaching_requests_decline_create
+      description: |-
+        `POST coaching/requests/<id>/accept/` or `.../decline/` - a
+        trainer answering a request to them.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachingRequest'
+          description: ''
+  /api/v1/coaching/shared/:
+    get:
+      operationId: coaching_shared_retrieve
+      description: |-
+        `GET coaching/shared/` - the programs and diet plans the user's
+        active coaches have shared with them, each with `imported` when the
+        user already has their own copy.
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SharedPlans'
+          description: ''
+  /api/v1/coaching/shared/diet-plans/{id}/import/:
+    post:
+      operationId: coaching_shared_diet_plans_import_create
+      description: '`POST coaching/shared/diet-plans/<id>/import/` - as for programs.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DietPlan'
+          description: ''
+  /api/v1/coaching/shared/programs/{id}/import/:
+    post:
+      operationId: coaching_shared_programs_import_create
+      description: |-
+        `POST coaching/shared/programs/<id>/import/` - the user's own copy
+        of a program their coach shared, which can later pull the coach's
+        updates. 201 with the copy.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - coaching
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+          description: ''
   /api/v1/diary-entries/:
     get:
       operationId: diary_entries_list
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
       parameters:
+      - in: query
+        name: date
+        schema:
+          type: string
+        description: Only this day's entries, YYYY-MM-DD.
+      - in: query
+        name: date_after
+        schema:
+          type: string
+        description: 'Inclusive: date on or after this date.'
+      - in: query
+        name: date_before
+        schema:
+          type: string
+        description: 'Exclusive: date before this date.'
       - name: page
         required: false
         in: query
@@ -432,6 +1364,17 @@ paths:
           description: ''
     post:
       operationId: diary_entries_create
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Optional, e.g. a UUID per queued write. A retry with the same
+          key gets the first response back instead of creating another row. Remembered
+          for 24 hours.
       tags:
       - diary-entries
       requestBody:
@@ -458,6 +1401,9 @@ paths:
   /api/v1/diary-entries/{id}/:
     get:
       operationId: diary_entries_retrieve
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
       parameters:
       - in: path
         name: id
@@ -477,6 +1423,9 @@ paths:
           description: ''
     put:
       operationId: diary_entries_update
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
       parameters:
       - in: path
         name: id
@@ -508,6 +1457,9 @@ paths:
           description: ''
     patch:
       operationId: diary_entries_partial_update
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
       parameters:
       - in: path
         name: id
@@ -538,6 +1490,9 @@ paths:
           description: ''
     delete:
       operationId: diary_entries_destroy
+      description: |-
+        `?date=` (one day, like the web diary) and `?date_after=`/
+        `?date_before=` narrow the list (issue #26).
       parameters:
       - in: path
         name: id
@@ -551,6 +1506,37 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/diary-entries/copy-day/:
+    post:
+      operationId: diary_entries_copy_day_create
+      description: |-
+        Copies one day's whole diary onto another date
+        (apps.nutrition.services.copy_diary_day), like the web's "Copy
+        day": each copy keeps the source entry's nutrition, and entries
+        of a since-deleted recipe are copied too. Purely additive.
+      tags:
+      - diary-entries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiaryCopyDayRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DiaryCopyDayRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DiaryCopyDayRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiaryCopyDayResult'
+          description: ''
   /api/v1/diet-plan-items/:
     get:
       operationId: diet_plan_items_list
@@ -1312,16 +2298,18 @@ paths:
     get:
       operationId: foods_list
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       parameters:
+      - in: query
+        name: ids
+        schema:
+          type: string
+        description: Comma-separated ids, e.g. 1,2,3.
       - name: page
         required: false
         in: query
@@ -1334,6 +2322,11 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Matches the name or brand; a barcode matches `off_id` exactly.
       tags:
       - foods
       security:
@@ -1348,15 +2341,12 @@ paths:
     post:
       operationId: foods_create
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       tags:
       - foods
       requestBody:
@@ -1384,15 +2374,12 @@ paths:
     get:
       operationId: foods_retrieve
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       parameters:
       - in: path
         name: id
@@ -1413,15 +2400,12 @@ paths:
     put:
       operationId: foods_update
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       parameters:
       - in: path
         name: id
@@ -1454,15 +2438,12 @@ paths:
     patch:
       operationId: foods_partial_update
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       parameters:
       - in: path
         name: id
@@ -1494,15 +2475,12 @@ paths:
     delete:
       operationId: foods_destroy
       description: |-
-        `visible_queryset()` (system rows + this user's own) backs list/
-        retrieve; `editable_queryset()` (this user's own only) backs update/
-        destroy - the exact same split each of these models' web views
-        already enforce (services.visible_to vs. an owner=request.user
-        filter, or services.editable_by for Program specifically), just
-        reused here instead of re-derived. Scoping the queryset itself
-        (rather than checking ownership after fetching the object) means a
-        request against someone else's row 404s the same way the
-        equivalent web view already does, not a 403.
+        `?search=` and `?ids=` narrow the list (issue #28) - a client
+        finds a food without downloading the whole library. Matched against
+        the stored name and brand only, not a translation: unlike the
+        exercise library, foods can run to thousands of rows, so the
+        in-Python translated match exercises use doesn't apply (see
+        apps.exercises.services.search).
       parameters:
       - in: path
         name: id
@@ -1516,6 +2494,75 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/foods/import-off/:
+    post:
+      operationId: foods_import_off_create
+      description: |-
+        Saves an Open Food Facts product by barcode, the same way the
+        web does (services.import_or_refresh_food_from_off, issue #41):
+        a shared food with its Nutri-Score, NOVA group and OFF link.
+        200 with the existing food when the barcode is already known
+        (refreshed if stale), 201 when it's new, 404 when OFF has no
+        usable product (or couldn't be reached), 429 when the server's
+        Open Food Facts budget is spent, 503 when the integration is
+        turned off.
+      tags:
+      - foods
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodImportOffRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoodImportOffRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoodImportOffRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Food'
+          description: ''
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Food'
+          description: ''
+  /api/v1/foods/search-off/:
+    get:
+      operationId: foods_search_off_retrieve
+      description: |-
+        Searches the visible foods and Open Food Facts together, as
+        the web's "Search Open Food Facts" button does
+        (services.search_foods with online=True) - through the server's
+        cache and rate budget, shared by every client. `local` are foods
+        already here; `results` are OFF products not imported yet.
+        Call it once per user action, not while typing.
+      parameters:
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Text or a barcode.
+        required: true
+      tags:
+      - foods
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OffSearch'
+          description: ''
   /api/v1/meal-slots/:
     get:
       operationId: meal_slots_list
@@ -1935,7 +2982,16 @@ paths:
   /api/v1/measurements/:
     get:
       operationId: measurements_list
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
       parameters:
+      - in: query
+        name: measurement_type
+        schema:
+          type: integer
+        description: Only this type's readings.
       - name: page
         required: false
         in: query
@@ -1948,6 +3004,16 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
+      - in: query
+        name: recorded_after
+        schema:
+          type: string
+        description: 'Inclusive: recorded at or after this date/time.'
+      - in: query
+        name: recorded_before
+        schema:
+          type: string
+        description: 'Exclusive: recorded before this date/time.'
       tags:
       - measurements
       security:
@@ -1961,6 +3027,18 @@ paths:
           description: ''
     post:
       operationId: measurements_create
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Optional, e.g. a UUID per queued write. A retry with the same
+          key gets the first response back instead of creating another row. Remembered
+          for 24 hours.
       tags:
       - measurements
       requestBody:
@@ -1987,6 +3065,10 @@ paths:
   /api/v1/measurements/{id}/:
     get:
       operationId: measurements_retrieve
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
       parameters:
       - in: path
         name: id
@@ -2006,6 +3088,10 @@ paths:
           description: ''
     put:
       operationId: measurements_update
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
       parameters:
       - in: path
         name: id
@@ -2037,6 +3123,10 @@ paths:
           description: ''
     patch:
       operationId: measurements_partial_update
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
       parameters:
       - in: path
         name: id
@@ -2067,6 +3157,10 @@ paths:
           description: ''
     delete:
       operationId: measurements_destroy
+      description: |-
+        `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
+        narrow the list (issue #29) - one type's history page without
+        fetching every reading of every type.
       parameters:
       - in: path
         name: id
@@ -2139,9 +3233,12 @@ paths:
     get:
       operationId: nutrition_goals_list
       description: |-
-        Read-only - see NutritionGoalSerializer's own docstring for why:
-        a goal is only ever created/superseded through
-        apps.nutrition.services.set_goal, never a raw PATCH.
+        Goals are historized: never edited or deleted, only superseded.
+        `POST` starts a new one through apps.nutrition.services.change_goal,
+        the same as the web's goal page (issue #33): the open goal and
+        target are ended and a target is calculated for the new goal from
+        the nutrition profile, height and latest body weight - a 400 says
+        which is missing.
       parameters:
       - name: page
         required: false
@@ -2166,13 +3263,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedNutritionGoalList'
           description: ''
+    post:
+      operationId: nutrition_goals_create
+      description: |-
+        Goals are historized: never edited or deleted, only superseded.
+        `POST` starts a new one through apps.nutrition.services.change_goal,
+        the same as the web's goal page (issue #33): the open goal and
+        target are ended and a target is calculated for the new goal from
+        the nutrition profile, height and latest body weight - a 400 says
+        which is missing.
+      tags:
+      - nutrition-goals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NutritionGoalCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NutritionGoalCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NutritionGoalCreateRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NutritionGoalCreated'
+          description: ''
   /api/v1/nutrition-goals/{id}/:
     get:
       operationId: nutrition_goals_retrieve
       description: |-
-        Read-only - see NutritionGoalSerializer's own docstring for why:
-        a goal is only ever created/superseded through
-        apps.nutrition.services.set_goal, never a raw PATCH.
+        Goals are historized: never edited or deleted, only superseded.
+        `POST` starts a new one through apps.nutrition.services.change_goal,
+        the same as the web's goal page (issue #33): the open goal and
+        target are ended and a target is calculated for the new goal from
+        the nutrition profile, height and latest body weight - a 400 says
+        which is missing.
       parameters:
       - in: path
         name: id
@@ -2239,6 +3371,69 @@ paths:
               schema:
                 $ref: '#/components/schemas/NutritionTarget'
           description: ''
+  /api/v1/nutrition/adjustment-suggestion/:
+    get:
+      operationId: nutrition_adjustment_suggestion_retrieve
+      description: |-
+        `GET nutrition/adjustment-suggestion/` - the nutrition dashboard's
+        calorie adjustment card (apps.nutrition.suggestions.
+        suggest_calorie_adjustment, issue #33). Only ever a suggestion.
+      tags:
+      - nutrition
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdjustmentSuggestion'
+          description: ''
+  /api/v1/nutrition/adjustment-suggestion/accept/:
+    post:
+      operationId: nutrition_adjustment_suggestion_accept_create
+      description: |-
+        `POST nutrition/adjustment-suggestion/accept/` - accepting the
+        suggestion, the web's accept_adjustment_suggestion: the suggestion
+        is worked out again here and, when it's `adjust`, a new target
+        (source `adjusted`) replaces the current one - 201 with it. A 409
+        with the current suggestion when there's nothing to accept.
+      tags:
+      - nutrition
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NutritionTarget'
+          description: ''
+  /api/v1/nutrition/daily-totals/:
+    get:
+      operationId: nutrition_daily_totals_retrieve
+      description: |-
+        `nutrition/daily-totals/?date=YYYY-MM-DD` (default today): the
+        day's diary added up (apps.nutrition.services.daily_totals) - the
+        same total the web diary's header shows, from each entry's logged
+        snapshot (issue #27).
+      parameters:
+      - in: query
+        name: date
+        schema:
+          type: string
+        description: YYYY-MM-DD; default today.
+      tags:
+      - nutrition
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyTotals'
+          description: ''
   /api/v1/nutrition/profile/:
     get:
       operationId: nutrition_profile_retrieve
@@ -2263,12 +3458,9 @@ paths:
     put:
       operationId: nutrition_profile_update
       description: |-
-        A singleton resource, the same shape as ProfileView above -
-        GET/PATCH always act on the authenticated key's own
-        NutritionProfile. get_object_or_404 rather than a bare attribute
-        lookup: a user who hasn't gone through nutrition onboarding yet
-        has no NutritionProfile row at all, and that's a plain 404, not a
-        500.
+        A `PUT` before onboarding creates the profile (201) - the
+        first step of setting up nutrition through the API (issue #33),
+        before `POST nutrition-goals/`.
       tags:
       - nutrition
       requestBody:
@@ -2876,6 +4068,30 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/programs/{id}/copy/:
+    post:
+      operationId: programs_copy_create
+      description: |-
+        The user's own editable copy of any visible program - workouts
+        and prescriptions included, in one step (programs.services.
+        copy_program, the web's "Copy", issue #32).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - programs
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+          description: ''
   /api/v1/recipe-ingredients/:
     get:
       operationId: recipe_ingredients_list
@@ -3027,6 +4243,10 @@ paths:
   /api/v1/recipes/:
     get:
       operationId: recipes_list
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       parameters:
       - name: page
         required: false
@@ -3053,6 +4273,10 @@ paths:
           description: ''
     post:
       operationId: recipes_create
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       tags:
       - recipes
       requestBody:
@@ -3079,6 +4303,10 @@ paths:
   /api/v1/recipes/{id}/:
     get:
       operationId: recipes_retrieve
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       parameters:
       - in: path
         name: id
@@ -3098,6 +4326,10 @@ paths:
           description: ''
     put:
       operationId: recipes_update
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       parameters:
       - in: path
         name: id
@@ -3129,6 +4361,10 @@ paths:
           description: ''
     patch:
       operationId: recipes_partial_update
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       parameters:
       - in: path
         name: id
@@ -3159,6 +4395,10 @@ paths:
           description: ''
     delete:
       operationId: recipes_destroy
+      description: |-
+        Built-in recipes are listed and readable (a diet plan built by
+        the wizard is full of them), `owner` null telling them apart; only
+        the user's own are ever writable.
       parameters:
       - in: path
         name: id
@@ -3465,7 +4705,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExerciseSet'
+                $ref: '#/components/schemas/ExerciseSetCreated'
           description: ''
   /api/v1/sets/{id}/:
     get:
@@ -3603,6 +4843,866 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/social/blocks/:
+    get:
+      operationId: social_blocks_list
+      description: |-
+        `GET social/blocks/` - who the user has blocked. `POST {user}`
+        blocks someone: ends the friendship and declines pending requests
+        between you, as on the web.
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SocialUser'
+          description: ''
+    post:
+      operationId: social_blocks_create
+      description: |-
+        `GET social/blocks/` - who the user has blocked. `POST {user}`
+        blocks someone: ends the friendship and declines pending requests
+        between you, as on the web.
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/blocks/{user_id}/:
+    delete:
+      operationId: social_blocks_destroy
+      description: '`DELETE social/blocks/<user_id>/` - unblock.'
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/conversations/:
+    get:
+      operationId: social_conversations_retrieve
+      description: |-
+        `GET social/conversations/` - the web's messages hub: a thread per
+        friend and per group with its unread count, and how many friend
+        requests and group invites wait for an answer.
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversations'
+          description: ''
+  /api/v1/social/friend-requests/:
+    get:
+      operationId: social_friend_requests_list
+      description: |-
+        `GET social/friend-requests/` - pending requests to and from the
+        user. `POST {user}` sends one (or accepts theirs, when they asked
+        first).
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FriendRequest'
+          description: ''
+    post:
+      operationId: social_friend_requests_create
+      description: |-
+        `GET social/friend-requests/` - pending requests to and from the
+        user. `POST {user}` sends one (or accepts theirs, when they asked
+        first).
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequest'
+          description: ''
+  /api/v1/social/friend-requests/{id}/accept/:
+    post:
+      operationId: social_friend_requests_accept_create
+      description: |-
+        `POST social/friend-requests/<id>/accept/` or `.../decline/` - a
+        request to the user.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequest'
+          description: ''
+  /api/v1/social/friend-requests/{id}/decline/:
+    post:
+      operationId: social_friend_requests_decline_create
+      description: |-
+        `POST social/friend-requests/<id>/accept/` or `.../decline/` - a
+        request to the user.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequest'
+          description: ''
+  /api/v1/social/friends/:
+    get:
+      operationId: social_friends_list
+      description: '`GET social/friends/` - the user''s friends.'
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Friend'
+          description: ''
+  /api/v1/social/friends/{user_id}/:
+    delete:
+      operationId: social_friends_destroy
+      description: '`DELETE social/friends/<user_id>/` - unfriend.'
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/friends/{user_id}/mute/:
+    post:
+      operationId: social_friends_mute_create
+      description: |-
+        `POST social/friends/<user_id>/mute/` and `.../unmute/` - push
+        notifications from a friend; nothing else changes.
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/friends/{user_id}/unmute/:
+    post:
+      operationId: social_friends_unmute_create
+      description: |-
+        `POST social/friends/<user_id>/mute/` and `.../unmute/` - push
+        notifications from a friend; nothing else changes.
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/group-invites/:
+    get:
+      operationId: social_group_invites_list
+      description: '`GET social/group-invites/` - pending invites to the user.'
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupInvite'
+          description: ''
+  /api/v1/social/group-invites/{id}/accept/:
+    post:
+      operationId: social_group_invites_accept_create
+      description: '`POST social/group-invites/<id>/accept/` or `.../decline/`.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupInvite'
+          description: ''
+  /api/v1/social/group-invites/{id}/decline/:
+    post:
+      operationId: social_group_invites_decline_create
+      description: '`POST social/group-invites/<id>/accept/` or `.../decline/`.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupInvite'
+          description: ''
+  /api/v1/social/groups/:
+    get:
+      operationId: social_groups_list
+      description: |-
+        `GET social/groups/` - the groups the user is in. `POST {name,
+        description}` creates one, owned by the user.
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+          description: ''
+    post:
+      operationId: social_groups_create
+      description: |-
+        `GET social/groups/` - the groups the user is in. `POST {name,
+        description}` creates one, owned by the user.
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupWriteRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/social/groups/{id}/:
+    get:
+      operationId: social_groups_retrieve
+      description: |-
+        `social/groups/<id>/` - members only (404 otherwise). `PATCH
+        {name, description}` for an owner or admin; `DELETE` for the owner.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+    patch:
+      operationId: social_groups_partial_update
+      description: |-
+        `social/groups/<id>/` - members only (404 otherwise). `PATCH
+        {name, description}` for an owner or admin; `DELETE` for the owner.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupWriteRequest'
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+    delete:
+      operationId: social_groups_destroy
+      description: |-
+        `social/groups/<id>/` - members only (404 otherwise). `PATCH
+        {name, description}` for an owner or admin; `DELETE` for the owner.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/groups/{id}/invite-link/:
+    post:
+      operationId: social_groups_invite_link_create
+      description: |-
+        `POST social/groups/<id>/invite-link/ {enabled?, regenerate?}` -
+        an owner or admin turns the group's invite code on or off, or
+        replaces it so the old one stops working.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupInviteLinkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupInviteLinkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupInviteLinkRequest'
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/social/groups/{id}/invites/:
+    post:
+      operationId: social_groups_invites_create
+      description: |-
+        `POST social/groups/<id>/invites/ {user}` - any member invites one
+        of their friends who allows group invites.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupInvite'
+          description: ''
+  /api/v1/social/groups/{id}/leave/:
+    post:
+      operationId: social_groups_leave_create
+      description: |-
+        `POST social/groups/<id>/leave/` - an owner has to transfer the
+        group first.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/groups/{id}/members/:
+    get:
+      operationId: social_groups_members_list
+      description: '`GET social/groups/<id>/members/`.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupMember'
+          description: ''
+  /api/v1/social/groups/{id}/members/{user_id}/:
+    patch:
+      operationId: social_groups_members_partial_update
+      description: |-
+        `DELETE social/groups/<id>/members/<user_id>/` removes a member
+        (owner or admin); `PATCH {role}` makes them an admin or a member
+        (owner only).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRoleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRoleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRoleRequest'
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupMember'
+          description: ''
+    delete:
+      operationId: social_groups_members_destroy
+      description: |-
+        `DELETE social/groups/<id>/members/<user_id>/` removes a member
+        (owner or admin); `PATCH {role}` makes them an admin or a member
+        (owner only).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/groups/{id}/messages/:
+    get:
+      operationId: social_groups_messages_list
+      description: |-
+        `GET social/groups/<id>/messages/` - the group's thread, the last
+        100 messages oldest first (`?after=<id>` for only newer ones),
+        marking it read. `POST {body}` sends one.
+      parameters:
+      - in: query
+        name: after
+        schema:
+          type: integer
+        description: Only messages newer than this message id (for polling).
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+          description: ''
+    post:
+      operationId: social_groups_messages_create
+      description: |-
+        `GET social/groups/<id>/messages/` - the group's thread, the last
+        100 messages oldest first (`?after=<id>` for only newer ones),
+        marking it read. `POST {body}` sends one.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/v1/social/groups/{id}/mute/:
+    post:
+      operationId: social_groups_mute_create
+      description: |-
+        `POST social/groups/<id>/mute/ {muted}` - the user's own push
+        notifications for the group.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupMuteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupMuteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupMuteRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/social/groups/{id}/transfer/:
+    post:
+      operationId: social_groups_transfer_create
+      description: |-
+        `POST social/groups/<id>/transfer/ {user}` - the owner hands the
+        group to another member and becomes an admin.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserIdRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/social/groups/join/:
+    post:
+      operationId: social_groups_join_create
+      description: |-
+        `POST social/groups/join/ {code}` - joins with a group's invite
+        code (the code at the end of its invite link).
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupJoinRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupJoinRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupJoinRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/social/messages/{user_id}/:
+    get:
+      operationId: social_messages_list
+      description: |-
+        `GET social/messages/<user_id>/` - the thread with a friend, the
+        last 100 messages oldest first (`?after=<id>` for only newer ones),
+        marking theirs read. `POST {body}` sends one.
+      parameters:
+      - in: query
+        name: after
+        schema:
+          type: integer
+        description: Only messages newer than this message id (for polling).
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+          description: ''
+    post:
+      operationId: social_messages_create
+      description: |-
+        `GET social/messages/<user_id>/` - the thread with a friend, the
+        last 100 messages oldest first (`?after=<id>` for only newer ones),
+        marking theirs read. `POST {body}` sends one.
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MessageBodyRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/v1/social/users/:
+    get:
+      operationId: social_users_list
+      description: |-
+        `GET social/users/?search=` - people to send a friend request to,
+        like the web's friend search: by username, at most 20, never
+        yourself, a friend, or anyone blocked either way.
+      parameters:
+      - in: query
+        name: search
+        schema:
+          type: string
+        required: true
+      tags:
+      - social
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SocialUser'
+          description: ''
   /api/v1/stretch-routine-items/:
     get:
       operationId: stretch_routine_items_list
@@ -3959,9 +6059,39 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/stretch-routines/{id}/copy/:
+    post:
+      operationId: stretch_routines_copy_create
+      description: |-
+        The user's own editable copy of any visible routine, items
+        included (stretching.services.copy_routine, issue #32). A
+        built-in routine's name is translated into the user's language
+        on the way, as on the web.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - stretch-routines
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StretchRoutine'
+          description: ''
   /api/v1/stretch-sessions/:
     get:
       operationId: stretch_sessions_list
+      description: |-
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
       parameters:
       - name: page
         required: false
@@ -3988,19 +6118,32 @@ paths:
           description: ''
     post:
       operationId: stretch_sessions_create
+      description: |-
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Optional, e.g. a UUID per queued write. A retry with the same
+          key gets the first response back instead of creating another row. Remembered
+          for 24 hours.
       tags:
       - stretch-sessions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StretchSessionRequest'
+              $ref: '#/components/schemas/StretchSessionQuickLogRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/StretchSessionRequest'
+              $ref: '#/components/schemas/StretchSessionQuickLogRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/StretchSessionRequest'
+              $ref: '#/components/schemas/StretchSessionQuickLogRequest'
         required: true
       security:
       - ApiKeyAuth: []
@@ -4014,6 +6157,11 @@ paths:
   /api/v1/stretch-sessions/{id}/:
     get:
       operationId: stretch_sessions_retrieve
+      description: |-
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
       parameters:
       - in: path
         name: id
@@ -4033,6 +6181,11 @@ paths:
           description: ''
     put:
       operationId: stretch_sessions_update
+      description: |-
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
       parameters:
       - in: path
         name: id
@@ -4064,6 +6217,11 @@ paths:
           description: ''
     patch:
       operationId: stretch_sessions_partial_update
+      description: |-
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
       parameters:
       - in: path
         name: id
@@ -4094,6 +6252,11 @@ paths:
           description: ''
     delete:
       operationId: stretch_sessions_destroy
+      description: |-
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
       parameters:
       - in: path
         name: id
@@ -4107,6 +6270,120 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/stretch-sessions/{id}/abandon/:
+    post:
+      operationId: stretch_sessions_abandon_create
+      description: |-
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - stretch-sessions
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StretchSession'
+          description: ''
+  /api/v1/stretch-sessions/{id}/complete/:
+    post:
+      operationId: stretch_sessions_complete_create
+      description: |-
+        Finishes the guided session; its duration is the time since
+        it started (services.complete_session).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - stretch-sessions
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StretchSession'
+          description: ''
+  /api/v1/stretch-sessions/{id}/mark/:
+    post:
+      operationId: stretch_sessions_mark_create
+      description: |-
+        Marks one of the session's stretches done (optionally with the
+        seconds actually held) or skipped (services.mark_performed).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - stretch-sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformedStretchMarkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PerformedStretchMarkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PerformedStretchMarkRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformedStretch'
+          description: ''
+  /api/v1/stretch-sessions/start/:
+    post:
+      operationId: stretch_sessions_start_create
+      description: |-
+        Starts a guided session from `routine`, or from `stretches`
+        at their default holds, snapshotting the plan like the web does
+        (services.start_session). `after_workout` marks it as that
+        finished workout's cool-down. 409 with the session's `id` when
+        one is already in progress - resume that one instead.
+      tags:
+      - stretch-sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StretchSessionStartRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StretchSessionStartRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StretchSessionStartRequest'
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StretchSession'
+          description: ''
   /api/v1/stretches/:
     get:
       operationId: stretches_list
@@ -4310,6 +6587,76 @@ paths:
         required: true
       tags:
       - stretches
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/tutorials/:
+    get:
+      operationId: tutorials_list
+      description: |-
+        `GET tutorials/` - every tour with its steps, in the request's or
+        the user's language, and whether the user has finished it.
+        Automatic tours are switched with `tutorials_enabled` on
+        `profile/`.
+      tags:
+      - tutorials
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tutorial'
+          description: ''
+  /api/v1/tutorials/{key}/complete/:
+    post:
+      operationId: tutorials_complete_create
+      description: |-
+        `POST tutorials/<key>/complete/` - finished or skipped, so it
+        isn't started by itself again (also on the web).
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - tutorials
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/tutorials/{key}/reset/:
+    post:
+      operationId: tutorials_reset_create
+      description: |-
+        `POST tutorials/<key>/reset/` - starts again next time ("Show
+        again").
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - tutorials
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/tutorials/reset/:
+    post:
+      operationId: tutorials_reset_all
+      description: '`POST tutorials/reset/` - every tour starts again next time.'
+      tags:
+      - tutorials
       security:
       - ApiKeyAuth: []
       responses:
@@ -4603,6 +6950,9 @@ components:
         name:
           type: string
           maxLength: 50
+        display_name:
+          type: string
+          readOnly: true
         active:
           type: boolean
           readOnly: true
@@ -4616,6 +6966,7 @@ components:
           description: Null for built-in system activity types.
       required:
       - active
+      - display_name
       - id
       - is_custom
       - name
@@ -4629,6 +6980,61 @@ components:
           maxLength: 50
       required:
       - name
+    AdjustmentSuggestion:
+      type: object
+      description: |-
+        apps.nutrition.suggestions.AdjustmentSuggestion - the nutrition
+        dashboard's calorie adjustment card. Rates in kg/week; `action` is
+        `adjust` only when there's something to accept.
+      properties:
+        action:
+          type: string
+        target_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,3})?$
+          nullable: true
+        actual_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,3})?$
+          nullable: true
+        suggested_daily_calories:
+          type: integer
+          nullable: true
+        delta_kcal:
+          type: integer
+          nullable: true
+        confidence:
+          type: string
+          nullable: true
+        reason:
+          type: string
+      required:
+      - action
+      - actual_rate_kg_per_week
+      - confidence
+      - delta_kcal
+      - reason
+      - suggested_daily_calories
+      - target_rate_kg_per_week
+    AnalyticsRange:
+      type: object
+      description: The resolved `?range=` - `start` is null for `all`.
+      properties:
+        range:
+          type: string
+        start:
+          type: string
+          format: date
+          nullable: true
+        end:
+          type: string
+          format: date
+      required:
+      - end
+      - range
+      - start
     AppearanceEnum:
       enum:
       - dark
@@ -4639,6 +7045,155 @@ components:
         * `dark` - Dark
         * `light` - Light
         * `auto` - Auto (match device)
+    AssignedProgram:
+      type: object
+      properties:
+        program:
+          type: integer
+        name:
+          type: string
+        client_copy:
+          type: integer
+        last_session_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - client_copy
+      - last_session_at
+      - name
+      - program
+    AssistantMessage:
+      type: object
+      description: |-
+        A chat bubble. An assistant reply starts `pending`, is `running`
+        while it's written (`text` grows, `activity` says what it's doing)
+        and ends `done` or `error`.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        role:
+          $ref: '#/components/schemas/AssistantMessageRoleEnum'
+        status:
+          $ref: '#/components/schemas/AssistantMessageStatusEnum'
+        text:
+          type: string
+        activity:
+          type: string
+          maxLength: 200
+        error:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        proposals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Proposal'
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - proposals
+      - role
+    AssistantMessageRoleEnum:
+      enum:
+      - user
+      - assistant
+      type: string
+      description: |-
+        * `user` - You
+        * `assistant` - Assistant
+    AssistantMessageStatusEnum:
+      enum:
+      - pending
+      - running
+      - done
+      - error
+      type: string
+      description: |-
+        * `pending` - Waiting
+        * `running` - Writing
+        * `done` - Done
+        * `error` - Failed
+    AssistantSettings:
+      type: object
+      description: |-
+        What the assistant may read about the user, what it should know
+        about them, and - with their own key - which model and effort.
+      properties:
+        about_me:
+          type: string
+          maxLength: 2000
+        own_key_model:
+          oneOf:
+          - $ref: '#/components/schemas/OwnKeyModelEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        own_key_effort:
+          oneOf:
+          - $ref: '#/components/schemas/OwnKeyEffortEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        reads_workouts:
+          type: boolean
+        reads_body:
+          type: boolean
+        reads_food:
+          type: boolean
+        reads_activities:
+          type: boolean
+        reads_stretching:
+          type: boolean
+        reads_profile:
+          type: boolean
+    AssistantStatus:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: The user has turned the assistant on.
+        available:
+          type: boolean
+          description: A model can be used for this user.
+        reason:
+          type: string
+          description: Why it isn't available, when it isn't.
+        key_source:
+          type: string
+          nullable: true
+        provider:
+          type: string
+          nullable: true
+        model:
+          type: string
+          nullable: true
+        has_own_key:
+          type: boolean
+        own_key_hint:
+          type: string
+          description: The key's last characters, e.g. ...abcd.
+        tokens_used_today:
+          type: integer
+          nullable: true
+        tokens_remaining:
+          type: integer
+          nullable: true
+        daily_limit:
+          type: integer
+          nullable: true
+      required:
+      - available
+      - daily_limit
+      - enabled
+      - has_own_key
+      - key_source
+      - model
+      - own_key_hint
+      - provider
+      - reason
+      - tokens_remaining
+      - tokens_used_today
     BiologicalSexEnum:
       enum:
       - male
@@ -4647,6 +7202,9 @@ components:
       description: |-
         * `male` - Male
         * `female` - Female
+    BlankEnum:
+      enum:
+      - ''
     BodyMeasurement:
       type: object
       properties:
@@ -4685,6 +7243,287 @@ components:
       required:
       - measurement_type
       - value
+    ClientDetail:
+      type: object
+      properties:
+        client:
+          $ref: '#/components/schemas/CoachingUser'
+        relationship:
+          $ref: '#/components/schemas/CoachingRelationship'
+        training_summary:
+          $ref: '#/components/schemas/TrainingSummary'
+        highlights:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achievement'
+        recent_records:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonalRecord'
+        measurements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientMeasurement'
+        assigned_programs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssignedProgram'
+      required:
+      - assigned_programs
+      - client
+      - highlights
+      - measurements
+      - recent_records
+      - relationship
+      - training_summary
+    ClientIds:
+      type: object
+      properties:
+        clients:
+          type: array
+          items:
+            type: integer
+      required:
+      - clients
+    ClientIdsRequest:
+      type: object
+      properties:
+        clients:
+          type: array
+          items:
+            type: integer
+      required:
+      - clients
+    ClientMeasurement:
+      type: object
+      properties:
+        measurement_type:
+          type: integer
+        name:
+          type: string
+        unit_kind:
+          type: string
+        latest_value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,4})?$
+          nullable: true
+        latest_recorded_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - latest_recorded_at
+      - latest_value
+      - measurement_type
+      - name
+      - unit_kind
+    CoachUpdate:
+      type: object
+      properties:
+        available:
+          type: boolean
+        diff:
+          type: string
+          nullable: true
+          description: Unified diff of your copy against the coach's version.
+      required:
+      - available
+      - diff
+    CoachingRelationship:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        coach:
+          $ref: '#/components/schemas/CoachingUser'
+        coachee:
+          $ref: '#/components/schemas/CoachingUser'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ended_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - coach
+      - coachee
+      - created_at
+      - id
+    CoachingRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        coach:
+          $ref: '#/components/schemas/CoachingUser'
+        coachee:
+          $ref: '#/components/schemas/CoachingUser'
+        status:
+          $ref: '#/components/schemas/SocialRequestStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        responded_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - coach
+      - coachee
+      - created_at
+      - id
+    CoachingRequestCreateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: The trainer's username.
+      required:
+      - username
+    CoachingUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        display_name:
+          type: string
+      required:
+      - display_name
+      - id
+      - username
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 120
+        provider:
+          type: string
+          maxLength: 20
+        model:
+          type: string
+          maxLength: 100
+        key_source:
+          $ref: '#/components/schemas/KeySourceEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - key_source
+      - model
+      - provider
+      - title
+      - updated_at
+    ConversationDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 120
+        provider:
+          type: string
+          maxLength: 20
+        model:
+          type: string
+          maxLength: 100
+        key_source:
+          $ref: '#/components/schemas/KeySourceEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssistantMessage'
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - key_source
+      - messages
+      - model
+      - provider
+      - title
+      - updated_at
+    Conversations:
+      type: object
+      properties:
+        friends:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        groups:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        pending_friend_requests:
+          type: integer
+        pending_group_invites:
+          type: integer
+      required:
+      - friends
+      - groups
+      - pending_friend_requests
+      - pending_group_invites
+    DailyTotals:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        totals:
+          $ref: '#/components/schemas/NutritionValues'
+      required:
+      - date
+      - totals
+    DiaryCopyDayRequest:
+      type: object
+      properties:
+        source_date:
+          type: string
+          format: date
+        target_date:
+          type: string
+          format: date
+      required:
+      - source_date
+      - target_date
+    DiaryCopyDayResult:
+      type: object
+      properties:
+        copied:
+          type: integer
+      required:
+      - copied
     DiaryEntry:
       type: object
       properties:
@@ -4699,9 +7538,15 @@ components:
         food:
           type: integer
           nullable: true
+        food_name:
+          type: string
+          readOnly: true
         recipe:
           type: integer
           nullable: true
+        recipe_name:
+          type: string
+          readOnly: true
         quantity:
           type: string
           format: decimal
@@ -4734,11 +7579,18 @@ components:
           format: decimal
           pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
           nullable: true
+        nutrition:
+          allOf:
+          - $ref: '#/components/schemas/NutritionValues'
+          readOnly: true
       required:
       - date
+      - food_name
       - id
       - meal_slot
+      - nutrition
       - quantity
+      - recipe_name
       - user
     DiaryEntryRequest:
       type: object
@@ -5028,7 +7880,11 @@ components:
         name:
           type: string
           maxLength: 50
+        display_name:
+          type: string
+          readOnly: true
       required:
+      - display_name
       - id
       - name
     Exercise:
@@ -5040,6 +7896,9 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         description:
           type: string
         instructions:
@@ -5082,12 +7941,37 @@ components:
           description: Null for built-in system exercises.
       required:
       - active
+      - display_name
       - id
       - images
       - instructions_attribution
       - is_custom
       - name
       - owner
+    ExerciseAnalytics:
+      type: object
+      description: '`analytics/exercises/<id>/` - canonical kg throughout.'
+      properties:
+        range:
+          $ref: '#/components/schemas/AnalyticsRange'
+        exercise:
+          type: integer
+        session_count:
+          type: integer
+        total_volume:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionBest'
+      required:
+      - exercise
+      - range
+      - session_count
+      - sessions
+      - total_volume
     ExerciseImage:
       type: object
       properties:
@@ -5337,6 +8221,66 @@ components:
       - reps
       - set_number
       - weight
+    ExerciseSetCreated:
+      type: object
+      description: |-
+        Schema only - the `sets/` create response, documenting the
+        `new_records` ExerciseSetSerializer.to_representation adds.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        performed_exercise:
+          type: integer
+        set_number:
+          type: integer
+          readOnly: true
+        weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+        reps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        target_reps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        rpe:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,1})?$
+          nullable: true
+        rir:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        is_failure:
+          type: boolean
+        is_warmup:
+          type: boolean
+          description: Excluded from PR, progression, and analytics calculations by
+            default.
+        notes:
+          type: string
+        performed_at:
+          type: string
+          format: date-time
+        new_records:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewRecord'
+          readOnly: true
+      required:
+      - id
+      - new_records
+      - performed_exercise
+      - reps
+      - set_number
+      - weight
     ExerciseSetRequest:
       type: object
       properties:
@@ -5494,6 +8438,16 @@ components:
       - protein_grams
       - serving_size
       - serving_unit
+    FoodImportOffRequest:
+      type: object
+      properties:
+        barcode:
+          type: string
+          minLength: 1
+          description: 8-14 digits.
+          pattern: ^\d{8,14}$
+      required:
+      - barcode
     FoodRequest:
       type: object
       properties:
@@ -5574,6 +8528,45 @@ components:
       - protein_grams
       - serving_size
       - serving_unit
+    Friend:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        muted:
+          type: boolean
+          description: Push notifications from them muted by you.
+      required:
+      - id
+      - muted
+      - username
+    FriendRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        from_user:
+          $ref: '#/components/schemas/SocialUser'
+        to_user:
+          $ref: '#/components/schemas/SocialUser'
+        status:
+          $ref: '#/components/schemas/SocialRequestStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        responded_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - created_at
+      - from_user
+      - id
+      - to_user
     GoalTypeEnum:
       enum:
       - fat_loss_aggressive
@@ -5592,6 +8585,151 @@ components:
         * `muscle_gain_lean` - Muscle gain - lean bulk
         * `muscle_gain_moderate` - Muscle gain - moderate bulk
         * `muscle_gain_aggressive` - Muscle gain - aggressive bulk
+    Group:
+      type: object
+      description: |-
+        `role`, `unread` and `notifications_muted` are the user's own;
+        `invite_code` is only shown to an owner or admin, as on the web.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+        role:
+          type: string
+          readOnly: true
+        member_count:
+          type: integer
+          readOnly: true
+        unread:
+          type: integer
+          readOnly: true
+        notifications_muted:
+          type: boolean
+          readOnly: true
+        invite_enabled:
+          type: boolean
+          readOnly: true
+        invite_code:
+          type: string
+          nullable: true
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - invite_code
+      - invite_enabled
+      - member_count
+      - name
+      - notifications_muted
+      - role
+      - unread
+    GroupInvite:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        group:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        invited_by:
+          $ref: '#/components/schemas/SocialUser'
+        status:
+          $ref: '#/components/schemas/SocialRequestStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - group
+      - id
+      - invited_by
+    GroupInviteLinkRequest:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        regenerate:
+          type: boolean
+          default: false
+    GroupJoinRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 16
+      required:
+      - code
+    GroupMember:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/SocialUser'
+        role:
+          $ref: '#/components/schemas/GroupMemberRoleEnum'
+        joined_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - joined_at
+      - user
+    GroupMemberRoleEnum:
+      enum:
+      - owner
+      - admin
+      - member
+      type: string
+      description: |-
+        * `owner` - Owner
+        * `admin` - Admin
+        * `member` - Member
+    GroupMuteRequest:
+      type: object
+      properties:
+        muted:
+          type: boolean
+      required:
+      - muted
+    GroupRoleRoleEnum:
+      enum:
+      - admin
+      - member
+      type: string
+      description: |-
+        * `admin` - admin
+        * `member` - member
+    GroupWriteRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+      required:
+      - name
+    KeySourceEnum:
+      enum:
+      - shared
+      - own
+      type: string
+      description: |-
+        * `shared` - This instance's provider
+        * `own` - Your own API key
     KindEnum:
       enum:
       - static
@@ -5646,6 +8784,9 @@ components:
         name:
           type: string
           maxLength: 50
+        display_name:
+          type: string
+          readOnly: true
         order:
           type: integer
           maximum: 32767
@@ -5663,6 +8804,7 @@ components:
           description: Null for the built-in default meal slots.
       required:
       - active
+      - display_name
       - id
       - is_custom
       - name
@@ -5689,6 +8831,9 @@ components:
         name:
           type: string
           maxLength: 50
+        display_name:
+          type: string
+          readOnly: true
         unit_kind:
           $ref: '#/components/schemas/UnitKindEnum'
         active:
@@ -5704,6 +8849,7 @@ components:
           description: Null for built-in system measurement types.
       required:
       - active
+      - display_name
       - id
       - is_custom
       - name
@@ -5721,6 +8867,41 @@ components:
       required:
       - name
       - unit_kind
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        sender:
+          $ref: '#/components/schemas/SocialUser'
+        body:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - body
+      - created_at
+      - id
+      - sender
+    MessageBodyRequest:
+      type: object
+      properties:
+        body:
+          type: string
+          minLength: 1
+          maxLength: 4000
+      required:
+      - body
+    MessageTextRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 4000
+      required:
+      - text
     MovementTypeEnum:
       enum:
       - compound
@@ -5738,9 +8919,98 @@ components:
         name:
           type: string
           maxLength: 50
+        display_name:
+          type: string
+          readOnly: true
       required:
+      - display_name
       - id
       - name
+    MuscleGroupAnalytics:
+      type: object
+      properties:
+        range:
+          $ref: '#/components/schemas/AnalyticsRange'
+        muscle_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/MuscleGroupVolume'
+      required:
+      - muscle_groups
+      - range
+    MuscleGroupVolume:
+      type: object
+      properties:
+        muscle_group:
+          type: integer
+        muscle_group_name:
+          type: string
+        volume:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+      required:
+      - muscle_group
+      - muscle_group_name
+      - volume
+    NewRecord:
+      type: object
+      description: |-
+        A record a just-logged set broke, plus the value it beat
+        (`previous_value`, null for a first-ever record) - what the web's
+        PR toast shows. Only ever in a `sets/` create response.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        exercise:
+          type: integer
+        exercise_name:
+          type: string
+          readOnly: true
+        record_type:
+          $ref: '#/components/schemas/RecordTypeEnum'
+        record_type_display:
+          type: string
+          readOnly: true
+        rep_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: The N in 'NRM' - only set for rep_specific_pr.
+        value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+        reps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        achieved_at:
+          type: string
+          format: date-time
+        previous_value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+      required:
+      - achieved_at
+      - exercise
+      - exercise_name
+      - id
+      - previous_value
+      - record_type
+      - record_type_display
+      - reps
+      - value
+      - weight
     NovaGroupEnum:
       enum:
       - 1
@@ -5801,6 +9071,71 @@ components:
       - goal_type
       - id
       - started_at
+      - target_rate_kg_per_week
+    NutritionGoalCreateRequest:
+      type: object
+      description: |-
+        `POST nutrition-goals/` - a new goal, through services.change_goal
+        exactly like the web's goal page: the open goal and target are
+        ended (kept in history) and a target is calculated for the new one.
+        `target_weight` is canonical kg, like every weight in this API.
+      properties:
+        goal_type:
+          $ref: '#/components/schemas/GoalTypeEnum'
+        target_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,3})?$
+        target_weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+        notes:
+          type: string
+          default: ''
+      required:
+      - goal_type
+      - target_rate_kg_per_week
+    NutritionGoalCreated:
+      type: object
+      description: |-
+        The `POST nutrition-goals/` response: the goal and the target
+        calculated for it.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        goal_type:
+          $ref: '#/components/schemas/GoalTypeEnum'
+        target_weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,4})?$
+          nullable: true
+        target_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,3})?$
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ended_at:
+          type: string
+          format: date-time
+          nullable: true
+        notes:
+          type: string
+        target:
+          allOf:
+          - $ref: '#/components/schemas/NutritionTarget'
+          readOnly: true
+      required:
+      - goal_type
+      - id
+      - started_at
+      - target
       - target_rate_kg_per_week
     NutritionProfile:
       type: object
@@ -5943,6 +9278,167 @@ components:
       - reason
       - source
       - started_at
+    NutritionValues:
+      type: object
+      description: |-
+        apps.nutrition.services.ScaledNutrition - one amount's nutrition,
+        already scaled. The optional nutrients are null when unknown.
+      properties:
+        calories:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        protein_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        carbohydrate_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        fat_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        fiber_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        sugar_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        saturated_fat_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        sodium_mg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+      required:
+      - calories
+      - carbohydrate_grams
+      - fat_grams
+      - fiber_grams
+      - protein_grams
+      - saturated_fat_grams
+      - sodium_mg
+      - sugar_grams
+    OffSearch:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/OffSearchStatusEnum'
+        local:
+          type: array
+          items:
+            $ref: '#/components/schemas/Food'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OffSearchResult'
+      required:
+      - local
+      - results
+      - status
+    OffSearchResult:
+      type: object
+      description: |-
+        One Open Food Facts product not imported yet - per 100 g/ml.
+        `POST foods/import-off/` with its `off_id` saves it as a food.
+      properties:
+        off_id:
+          type: string
+        name:
+          type: string
+        brand:
+          type: string
+        serving_size:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        serving_unit:
+          type: string
+        calories:
+          type: integer
+        protein_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        carbohydrate_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        fat_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        nutri_score:
+          type: string
+          nullable: true
+        nova_group:
+          type: integer
+          nullable: true
+        image_thumb_url:
+          type: string
+      required:
+      - brand
+      - calories
+      - carbohydrate_grams
+      - fat_grams
+      - image_thumb_url
+      - name
+      - nova_group
+      - nutri_score
+      - off_id
+      - protein_grams
+      - serving_size
+      - serving_unit
+    OffSearchStatusEnum:
+      enum:
+      - ok
+      - disabled
+      - busy
+      - error
+      type: string
+      description: |-
+        * `ok` - ok
+        * `disabled` - disabled
+        * `busy` - busy
+        * `error` - error
+    OwnKeyEffortEnum:
+      enum:
+      - low
+      - medium
+      - high
+      - xhigh
+      - max
+      type: string
+      description: |-
+        * `` - Default
+        * `low` - Low - quickest and cheapest; fine for everyday questions
+        * `medium` - Medium - balanced
+        * `high` - High - more thorough plans, more tokens
+        * `xhigh` - Extra high - for demanding planning
+        * `max` - Maximum - the most thorough and the most expensive
+    OwnKeyModelEnum:
+      enum:
+      - claude-opus-5-5
+      - claude-sonnet-5-5
+      - claude-haiku-4-5
+      - claude-fable-5-1
+      type: string
+      description: |-
+        * `` - Default
+        * `claude-opus-5-5` - Claude Opus 5.5 - best plans ($4 / $20)
+        * `claude-sonnet-5-5` - Claude Sonnet 5.5 - good and half the price ($2 / $10)
+        * `claude-haiku-4-5` - Claude Haiku 4.5 - fastest and cheapest, weaker plans ($1 / $5)
+        * `claude-fable-5-1` - Claude Fable 5.1 - most capable, most expensive ($10 / $50)
     PaginatedActivityList:
       type: object
       required:
@@ -6620,6 +10116,35 @@ components:
           type: string
           minLength: 1
           maxLength: 50
+    PatchedAssistantSettingsRequest:
+      type: object
+      description: |-
+        What the assistant may read about the user, what it should know
+        about them, and - with their own key - which model and effort.
+      properties:
+        about_me:
+          type: string
+          maxLength: 2000
+        own_key_model:
+          oneOf:
+          - $ref: '#/components/schemas/OwnKeyModelEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        own_key_effort:
+          oneOf:
+          - $ref: '#/components/schemas/OwnKeyEffortEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        reads_workouts:
+          type: boolean
+        reads_body:
+          type: boolean
+        reads_food:
+          type: boolean
+        reads_activities:
+          type: boolean
+        reads_stretching:
+          type: boolean
+        reads_profile:
+          type: boolean
     PatchedBodyMeasurementRequest:
       type: object
       properties:
@@ -6932,6 +10457,20 @@ components:
           format: decimal
           pattern: ^-?\d{0,4}(?:\.\d{0,3})?$
           nullable: true
+    PatchedGroupRoleRequest:
+      type: object
+      properties:
+        role:
+          $ref: '#/components/schemas/GroupRoleRoleEnum'
+    PatchedGroupWriteRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
     PatchedMealSlotRequest:
       type: object
       properties:
@@ -7037,6 +10576,12 @@ components:
           $ref: '#/components/schemas/ThemeEnum'
         appearance:
           $ref: '#/components/schemas/AppearanceEnum'
+        body_tracking_reminders_enabled:
+          type: boolean
+          description: Shows a dashboard card nudging you to log a body measurement
+            when you haven't logged one in a while. Turn off to never see that reminder.
+        tutorials_enabled:
+          type: boolean
     PatchedProgramRequest:
       type: object
       properties:
@@ -7158,11 +10703,13 @@ components:
     PatchedStretchSessionRequest:
       type: object
       description: |-
-        Creating one through the API is a quick log - a finished session
-        with a duration (services.quick_log); guided sessions only come from
-        the web player. Everything snapshotted at start (name, routine,
-        per-stretch plan) is read-only afterwards, same as the web edit
-        form: date, duration and notes stay editable.
+        Creating one here is a quick log - a finished session with a
+        duration (services.quick_log); a guided session starts with
+        `stretch-sessions/start/` instead. `after_workout` can be given on
+        create to mark it as that workout's cool-down. Everything
+        snapshotted at start (name, routine, per-stretch plan, the workout
+        it followed) is read-only afterwards, same as the web edit form:
+        date, duration and notes stay editable.
       properties:
         routine:
           type: integer
@@ -7337,6 +10884,23 @@ components:
       - id
       - stretch_name
       - target_hold_seconds
+    PerformedStretchMarkRequest:
+      type: object
+      description: |-
+        One stretch of a guided session done (optionally with the
+        seconds actually held) or skipped - services.mark_performed.
+      properties:
+        performed_stretch:
+          type: integer
+        done:
+          type: boolean
+        actual_seconds:
+          type: integer
+          minimum: 0
+          nullable: true
+      required:
+      - done
+      - performed_stretch
     PerformedStretchRequest:
       type: object
       properties:
@@ -7445,6 +11009,10 @@ components:
           format: email
           readOnly: true
           title: Email address
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
         unit_system:
           $ref: '#/components/schemas/UnitSystemEnum'
         timezone:
@@ -7486,8 +11054,19 @@ components:
           $ref: '#/components/schemas/ThemeEnum'
         appearance:
           $ref: '#/components/schemas/AppearanceEnum'
+        body_tracking_reminders_enabled:
+          type: boolean
+          description: Shows a dashboard card nudging you to log a body measurement
+            when you haven't logged one in a while. Turn off to never see that reminder.
+        needs_body_tracking_reminder:
+          type: boolean
+          readOnly: true
+        tutorials_enabled:
+          type: boolean
       required:
+      - date_joined
       - email
+      - needs_body_tracking_reminder
       - username
     ProfileRequest:
       type: object
@@ -7534,6 +11113,12 @@ components:
           $ref: '#/components/schemas/ThemeEnum'
         appearance:
           $ref: '#/components/schemas/AppearanceEnum'
+        body_tracking_reminders_enabled:
+          type: boolean
+          description: Shows a dashboard card nudging you to log a body measurement
+            when you haven't logged one in a while. Turn off to never see that reminder.
+        tutorials_enabled:
+          type: boolean
     Program:
       type: object
       properties:
@@ -7543,6 +11128,9 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         description:
           type: string
         is_continuous:
@@ -7568,6 +11156,7 @@ components:
             $ref: '#/components/schemas/Workout'
           readOnly: true
       required:
+      - display_name
       - id
       - is_system_template
       - name
@@ -7609,6 +11198,88 @@ components:
         * `rep_range` - Rep range
         * `maintenance` - Maintenance
         * `manual` - Manual
+    Proposal:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        kind:
+          $ref: '#/components/schemas/ProposalKindEnum'
+        title:
+          type: string
+          maxLength: 200
+        payload: {}
+        status:
+          $ref: '#/components/schemas/ProposalStatusEnum'
+        created_object_id:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+      required:
+      - id
+      - kind
+      - payload
+      - title
+    ProposalAccepted:
+      type: object
+      properties:
+        proposal:
+          $ref: '#/components/schemas/Proposal'
+        kind:
+          type: string
+          description: diet_plan or program.
+        created_id:
+          type: integer
+          description: The new, inactive diet plan or program - review it like any
+            other.
+      required:
+      - created_id
+      - kind
+      - proposal
+    ProposalKindEnum:
+      enum:
+      - diet_plan
+      - program
+      type: string
+      description: |-
+        * `diet_plan` - Diet plan
+        * `program` - Workout program
+    ProposalStatusEnum:
+      enum:
+      - pending
+      - accepted
+      - dismissed
+      type: string
+      description: |-
+        * `pending` - Waiting for you
+        * `accepted` - Created
+        * `dismissed` - Dismissed
+    RecentActivity:
+      type: object
+      description: |-
+        apps.analytics.achievements.RecentActivity - one opted-in user's
+        latest training, the dashboard's "Recently active" list.
+      properties:
+        display_name:
+          type: string
+        username:
+          type: string
+        last_active_at:
+          type: string
+          format: date-time
+        is_in_progress:
+          type: boolean
+        is_recent:
+          type: boolean
+      required:
+      - display_name
+      - is_in_progress
+      - is_recent
+      - last_active_at
+      - username
     Recipe:
       type: object
       properties:
@@ -7799,6 +11470,43 @@ components:
         * `g` - g
         * `ml` - ml
         * `piece` - piece
+    SessionBest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        estimated_one_rep_max:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        reps:
+          type: integer
+      required:
+      - date
+      - estimated_one_rep_max
+      - reps
+      - weight
+    SharedPlans:
+      type: object
+      properties:
+        programs:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        diet_plans:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+      required:
+      - diet_plans
+      - programs
     ShoppingDayAmount:
       type: object
       properties:
@@ -7906,6 +11614,26 @@ components:
       required:
       - days
       - weekday
+    SocialRequestStatusEnum:
+      enum:
+      - pending
+      - accepted
+      - declined
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `accepted` - Accepted
+        * `declined` - Declined
+    SocialUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+      required:
+      - id
+      - username
     SourceEnum:
       enum:
       - calculated
@@ -7925,6 +11653,9 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         kind:
           allOf:
           - $ref: '#/components/schemas/KindEnum'
@@ -7957,6 +11688,7 @@ components:
           description: Null for built-in system stretches.
       required:
       - active
+      - display_name
       - id
       - is_custom
       - name
@@ -7998,6 +11730,9 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         description:
           type: string
         items:
@@ -8018,6 +11753,7 @@ components:
           description: Null for built-in system routines.
       required:
       - active
+      - display_name
       - id
       - is_custom
       - items
@@ -8037,11 +11773,13 @@ components:
     StretchSession:
       type: object
       description: |-
-        Creating one through the API is a quick log - a finished session
-        with a duration (services.quick_log); guided sessions only come from
-        the web player. Everything snapshotted at start (name, routine,
-        per-stretch plan) is read-only afterwards, same as the web edit
-        form: date, duration and notes stay editable.
+        Creating one here is a quick log - a finished session with a
+        duration (services.quick_log); a guided session starts with
+        `stretch-sessions/start/` instead. `after_workout` can be given on
+        create to mark it as that workout's cool-down. Everything
+        snapshotted at start (name, routine, per-stretch plan, the workout
+        it followed) is read-only afterwards, same as the web edit form:
+        date, duration and notes stay editable.
       properties:
         id:
           type: integer
@@ -8090,14 +11828,40 @@ components:
       - performed_stretches
       - started_at
       - status
+    StretchSessionQuickLogRequest:
+      type: object
+      description: |-
+        The quick-log create's input: StretchSessionSerializer plus a
+        writable `after_workout`. A separate class so `after_workout` stays a
+        required, read-only property of every StretchSession response in the
+        schema - making it writable there would make it optional, a breaking
+        change for v1 clients.
+      properties:
+        routine:
+          type: integer
+          nullable: true
+        after_workout:
+          type: integer
+          nullable: true
+        date:
+          type: string
+          format: date
+        duration:
+          type: string
+        notes:
+          type: string
+      required:
+      - duration
     StretchSessionRequest:
       type: object
       description: |-
-        Creating one through the API is a quick log - a finished session
-        with a duration (services.quick_log); guided sessions only come from
-        the web player. Everything snapshotted at start (name, routine,
-        per-stretch plan) is read-only afterwards, same as the web edit
-        form: date, duration and notes stay editable.
+        Creating one here is a quick log - a finished session with a
+        duration (services.quick_log); a guided session starts with
+        `stretch-sessions/start/` instead. `after_workout` can be given on
+        create to mark it as that workout's cool-down. Everything
+        snapshotted at start (name, routine, per-stretch plan, the workout
+        it followed) is read-only afterwards, same as the web edit form:
+        date, duration and notes stay editable.
       properties:
         routine:
           type: integer
@@ -8111,6 +11875,26 @@ components:
           type: string
       required:
       - duration
+    StretchSessionStartRequest:
+      type: object
+      description: |-
+        `POST stretch-sessions/start/` - a guided session from a routine,
+        or from a plain list of stretches at their default holds (e.g. a
+        cool-down), exactly one of the two.
+      properties:
+        routine:
+          type: integer
+          nullable: true
+        stretches:
+          type: array
+          items:
+            type: integer
+        name:
+          type: string
+          default: ''
+        after_workout:
+          type: integer
+          nullable: true
     StretchSessionStatusEnum:
       enum:
       - in_progress
@@ -8192,6 +11976,49 @@ components:
       - session_count
       - total_duration_seconds
       - total_volume
+    Tutorial:
+      type: object
+      properties:
+        key:
+          type: string
+        section:
+          type: string
+        title:
+          type: string
+        completed:
+          type: boolean
+        web_url:
+          type: string
+          nullable: true
+          description: The web page the tour runs on; null when there's none yet.
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TutorialStep'
+      required:
+      - completed
+      - key
+      - section
+      - steps
+      - title
+      - web_url
+    TutorialStep:
+      type: object
+      properties:
+        anchor:
+          type: string
+          nullable: true
+        title:
+          type: string
+        body:
+          type: string
+        optional:
+          type: boolean
+      required:
+      - anchor
+      - body
+      - optional
+      - title
     UnitKindEnum:
       enum:
       - weight
@@ -8248,6 +12075,39 @@ components:
       required:
       - id
       - name
+    UserIdRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+      required:
+      - user
+    VolumeAnalytics:
+      type: object
+      description: '`analytics/volume/` - kg x reps of working sets, canonical kg.'
+      properties:
+        range:
+          $ref: '#/components/schemas/AnalyticsRange'
+        weeks:
+          type: array
+          items:
+            $ref: '#/components/schemas/WeeklyVolume'
+      required:
+      - range
+      - weeks
+    WeeklyVolume:
+      type: object
+      properties:
+        week_start:
+          type: string
+          format: date
+        volume:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+      required:
+      - volume
+      - week_start
     WeightInputModeEnum:
       enum:
       - total
@@ -8267,6 +12127,9 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         order:
           type: integer
           maximum: 2147483647
@@ -8286,6 +12149,7 @@ components:
             $ref: '#/components/schemas/ExercisePrescription'
           readOnly: true
       required:
+      - display_name
       - id
       - name
       - prescriptions

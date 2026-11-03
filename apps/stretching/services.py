@@ -240,13 +240,15 @@ def abandon_session(session):
     return session
 
 
-def quick_log(user, *, date, duration, routine=None, name="", notes=""):
+def quick_log(user, *, date, duration, routine=None, name="", notes="", after_workout=None):
     """Log a session after the fact, with just a duration - no guided
-    timer, no per-stretch detail."""
+    timer, no per-stretch detail. `after_workout` marks it as that
+    workout's cool-down."""
     now = timezone.now()
     return StretchSession.objects.create(
         user=user,
         routine=routine,
+        after_workout=after_workout,
         name=name or (routine.name if routine else ""),
         status=StretchSessionStatus.COMPLETED,
         date=date,

@@ -3,7 +3,7 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework.test import APITestCase
@@ -34,6 +34,9 @@ def _all_permissions(**overrides):
         "analytics",
         "nutrition",
         "stretching",
+        "social",
+        "coaching",
+        "assistant",
     ]
     base = {
         context: {"can_create": True, "can_read": True, "can_update": True, "can_delete": True}
@@ -359,6 +362,31 @@ class ProfileEndpointTests(APITestCase):
         self.assertFalse(self.alice.allow_group_invites)
 
 
+    def test_body_tracking_reminder_fields(self):
+        # Issue #40: the web's setting, join date and reminder rule.
+        response = self.client.get(reverse("api:profile"), **self._auth())
+        self.assertIn("date_joined", response.data)
+        self.assertTrue(response.data["body_tracking_reminders_enabled"])
+        self.assertFalse(response.data["needs_body_tracking_reminder"])  # joined just now
+
+        User.objects.filter(pk=self.alice.pk).update(
+            date_joined=timezone.now() - timedelta(days=30)
+        )
+        response = self.client.get(reverse("api:profile"), **self._auth())
+        self.assertTrue(response.data["needs_body_tracking_reminder"])
+
+        response = self.client.patch(
+            reverse("api:profile"),
+            {"body_tracking_reminders_enabled": False, "date_joined": "2000-01-01T00:00:00Z"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.data["needs_body_tracking_reminder"])
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.body_tracking_reminders_enabled)
+        self.assertNotEqual(self.alice.date_joined.year, 2000)
+
+
 class WorkoutLoggingEndpointTests(APITestCase):
     """The most important end-to-end path: logging a set via the API
     must trigger PR detection exactly like apps.workouts.views.set_log
@@ -400,6 +428,33 @@ class WorkoutLoggingEndpointTests(APITestCase):
         records_response = self.client.get(reverse("api:record-list"), **self._auth())
         self.assertGreater(records_response.data["count"], 0)
         self.assertEqual(records_response.data["results"][0]["exercise_name"], "API Test Squat")
+
+    def test_set_create_response_lists_the_new_records(self):
+        # Issue #30: the web's PR toast, without diffing records/.
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+
+        def post(weight):
+            return self.client.post(
+                reverse("api:set-list"),
+                {"performed_exercise": performed.pk, "weight": weight, "reps": 5},
+                format="json", **self._auth(),
+            )
+
+        first = post("100.00")
+        self.assertEqual(first.status_code, 201)
+        max_weight = [r for r in first.data["new_records"] if r["record_type"] == PRType.MAX_WEIGHT]
+        self.assertEqual(len(max_weight), 1)
+        self.assertEqual(Decimal(max_weight[0]["value"]), Decimal("100"))
+        self.assertEqual(max_weight[0]["exercise_name"], "API Test Squat")
+
+        lighter = post("50.00").data["new_records"]
+        self.assertFalse([r for r in lighter if r["record_type"] == PRType.MAX_WEIGHT])
+
+        detail = self.client.get(
+            reverse("api:set-detail", args=[first.data["id"]]), **self._auth()
+        )
+        self.assertNotIn("new_records", detail.data)
 
     def _logged_set(self, weight="600"):
         session = workout_services.start_session(self.alice, workout=None)
@@ -882,6 +937,53 @@ class IdempotencyKeyTests(APITestCase):
         self.assertEqual(retry.data["id"], first.data["id"])
 
 
+class IdempotentQuickLogTests(APITestCase):
+    """Issue #31 - the other quick logs a mobile client queues offline
+    honour Idempotency-Key the same way sets/ does."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _post_twice(self, url_name, payload):
+        headers = {
+            "HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}",
+            "HTTP_IDEMPOTENCY_KEY": f"key-{url_name}",
+        }
+        first = self.client.post(reverse(url_name), payload, format="json", **headers)
+        retry = self.client.post(reverse(url_name), payload, format="json", **headers)
+        self.assertEqual(first.status_code, 201, first.data)
+        self.assertEqual(retry.status_code, 201)
+        self.assertEqual(retry["Idempotent-Replayed"], "true")
+        self.assertEqual(retry.data, first.data)
+
+    def test_quick_log_creates_are_idempotent(self):
+        from apps.activities.models import Activity, ActivityType
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+        from apps.nutrition.models import DiaryEntry, MealSlot
+        from apps.stretching.models import StretchSession
+
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self._post_twice(
+            "api:diary-entry-list",
+            {"date": "2026-10-01", "meal_slot": breakfast.pk, "quantity": "1",
+             "quick_calories": 300},
+        )
+        weight = MeasurementType.objects.get(name="Body weight", owner=None)
+        self._post_twice("api:measurement-list", {"measurement_type": weight.pk, "value": "80"})
+        cycling = ActivityType.objects.get(name="Cycling", owner=None)
+        self._post_twice(
+            "api:activity-list",
+            {"activity_type": cycling.pk, "date": "2026-10-01", "duration": "00:30:00"},
+        )
+        self._post_twice("api:stretch-session-list", {"duration": "00:10:00"})
+
+        self.assertEqual(DiaryEntry.objects.filter(user=self.alice).count(), 1)
+        self.assertEqual(BodyMeasurement.objects.filter(user=self.alice).count(), 1)
+        self.assertEqual(Activity.objects.filter(user=self.alice).count(), 1)
+        self.assertEqual(StretchSession.objects.filter(user=self.alice).count(), 1)
+
+
 class SuggestionEndpointTests(APITestCase):
     """Issue #15 - the web's smart weight suggestion, for a client."""
 
@@ -1164,6 +1266,30 @@ class ProgramHardDeleteTests(APITestCase):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
         _api_key, self.raw_secret = _create_key(self.alice)
 
+    def test_copying_a_program_copies_workouts_and_prescriptions(self):
+        # Issue #32.
+        from apps.programs.models import ExercisePrescription, Program, Workout
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        template = Program.objects.create(owner=None, name="Template", is_template=True)
+        workout = Workout.objects.create(program=template, name="Day A")
+        squat = Exercise.objects.create(name="API Copy Squat", owner=None)
+        ExercisePrescription.objects.create(workout=workout, exercise=squat)
+        response = self.client.post(
+            reverse("api:program-copy", args=[template.pk]),
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        copy = Program.objects.get(pk=response.data["id"])
+        self.assertEqual(copy.owner, self.alice)
+        self.assertEqual(copy.workouts.get().prescriptions.get().exercise, squat)
+        bobs = Program.objects.create(owner=bob, name="Bob's")
+        hidden = self.client.post(
+            reverse("api:program-copy", args=[bobs.pk]),
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+        self.assertEqual(hidden.status_code, 404)
+
     def test_deleting_a_program_actually_removes_it(self):
         from apps.programs.models import Program
 
@@ -1427,6 +1553,72 @@ class NutritionEndpointTests(APITestCase):
             404,
         )
 
+    def _builtin_recipe(self):
+        from decimal import Decimal
+
+        from apps.nutrition.models import Recipe, RecipeIngredient
+
+        recipe = Recipe.objects.create(owner=None, name="Template bowl", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=self.food, quantity=Decimal("100"))
+        return recipe
+
+    def test_builtin_recipes_are_listed_and_readable(self):
+        # Issue #38: diet plans are built from template recipes.
+        builtin = self._builtin_recipe()
+        list_response = self.client.get(reverse("api:recipe-list"), **self._auth())
+        ids = {row["id"] for row in list_response.data["results"]}
+        self.assertIn(builtin.pk, ids)
+        self.assertIn(self.recipe.pk, ids)
+        self.assertNotIn(self.bobs_recipe.pk, ids)
+        detail = self.client.get(reverse("api:recipe-detail", args=[builtin.pk]), **self._auth())
+        self.assertEqual(detail.status_code, 200)
+        self.assertIsNone(detail.data["owner"])
+        self.assertEqual(len(detail.data["ingredients"]), 1)
+        ingredient_id = detail.data["ingredients"][0]["id"]
+        self.assertEqual(
+            self.client.get(
+                reverse("api:recipe-ingredient-detail", args=[ingredient_id]), **self._auth()
+            ).status_code,
+            200,
+        )
+
+    def test_builtin_recipes_are_not_writable(self):
+        builtin = self._builtin_recipe()
+        url = reverse("api:recipe-detail", args=[builtin.pk])
+        self.assertEqual(
+            self.client.patch(url, {"name": "Hijacked"}, format="json", **self._auth()).status_code,
+            404,
+        )
+        self.assertEqual(self.client.delete(url, **self._auth()).status_code, 404)
+        ingredient = builtin.ingredients.get()
+        self.assertEqual(
+            self.client.patch(
+                reverse("api:recipe-ingredient-detail", args=[ingredient.pk]),
+                {"quantity": "1"}, format="json", **self._auth(),
+            ).status_code,
+            404,
+        )
+        self.assertEqual(
+            self.client.post(
+                reverse("api:recipe-ingredient-list"),
+                {"recipe": builtin.pk, "food": self.food.pk, "quantity": "10"},
+                format="json", **self._auth(),
+            ).status_code,
+            400,
+        )
+
+    def test_logging_a_builtin_recipe_to_the_diary(self):
+        builtin = self._builtin_recipe()
+        response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "recipe": builtin.pk, "quantity": "1",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+
     def test_adding_an_ingredient_to_my_own_recipe(self):
         response = self.client.post(
             reverse("api:recipe-ingredient-list"),
@@ -1495,6 +1687,111 @@ class NutritionEndpointTests(APITestCase):
         )
         self.assertEqual(response.status_code, 400)
 
+    def test_explicit_null_recipe_or_food_is_accepted(self):
+        # Issue #39: an explicit null used to crash validate_<fk> with a 500.
+        food_response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "food": self.food.pk, "recipe": None, "quantity": "100",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(food_response.status_code, 201)
+        recipe_response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "food": None, "recipe": self.recipe.pk, "quantity": "1",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(recipe_response.status_code, 201)
+        quick_response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk, "food": None,
+                "recipe": None, "quantity": "1", "quick_calories": 300,
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(quick_response.status_code, 201)
+        patch_response = self.client.patch(
+            reverse("api:diary-entry-detail", args=[food_response.data["id"]]),
+            {"recipe": None, "quantity": "120"}, format="json", **self._auth(),
+        )
+        self.assertEqual(patch_response.status_code, 200)
+
+    def test_entry_nutrition_comes_from_the_logged_snapshot(self):
+        # Issue #27: editing the food later must not change a past day.
+        response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "food": self.food.pk, "quantity": "200",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["food_name"], "Chicken")
+        self.assertIsNone(response.data["recipe_name"])
+        self.assertEqual(Decimal(response.data["nutrition"]["calories"]), Decimal("330"))
+        self.food.calories = 1000
+        self.food.save()
+        entry = self.client.get(
+            reverse("api:diary-entry-detail", args=[response.data["id"]]), **self._auth()
+        )
+        self.assertEqual(Decimal(entry.data["nutrition"]["calories"]), Decimal("330"))
+        totals = self.client.get(
+            reverse("api:nutrition-daily-totals"), {"date": "2026-01-01"}, **self._auth()
+        )
+        self.assertEqual(totals.status_code, 200)
+        self.assertEqual(totals.data["date"], "2026-01-01")
+        self.assertEqual(Decimal(totals.data["totals"]["calories"]), Decimal("330"))
+        self.assertEqual(Decimal(totals.data["totals"]["protein_grams"]), Decimal("62"))
+
+    def test_entry_of_a_deleted_recipe_keeps_name_and_nutrition_and_is_copied(self):
+        from apps.nutrition import services as nutrition_services
+        from apps.nutrition.models import DiaryEntry, RecipeIngredient
+
+        RecipeIngredient.objects.create(recipe=self.recipe, food=self.food, quantity=Decimal("200"))
+        entry = DiaryEntry.objects.create(
+            user=self.alice, date="2026-01-01", meal_slot=self.breakfast,
+            recipe=self.recipe, quantity=Decimal("1"),
+        )
+        nutrition_services.delete_recipe(self.recipe)  # used, so only hidden
+        detail = self.client.get(
+            reverse("api:diary-entry-detail", args=[entry.pk]), **self._auth()
+        )
+        self.assertEqual(detail.data["recipe_name"], "Bowl")
+        self.assertEqual(Decimal(detail.data["nutrition"]["calories"]), Decimal("165"))
+        # Resending the unchanged recipe while editing the quantity works.
+        patch = self.client.patch(
+            reverse("api:diary-entry-detail", args=[entry.pk]),
+            {"recipe": self.recipe.pk, "quantity": "2"}, format="json", **self._auth(),
+        )
+        self.assertEqual(patch.status_code, 200, patch.data)
+        copy = self.client.post(
+            reverse("api:diary-entry-copy-day"),
+            {"source_date": "2026-01-01", "target_date": "2026-01-02"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(copy.status_code, 201)
+        self.assertEqual(copy.data["copied"], 1)
+        copied = DiaryEntry.objects.get(user=self.alice, date="2026-01-02")
+        self.assertEqual(copied.recipe_id, self.recipe.pk)
+
+    def test_null_food_and_recipe_without_quick_macros_is_rejected(self):
+        response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "food": None, "recipe": None, "quantity": "1",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
     def test_cannot_log_another_users_recipe(self):
         response = self.client.post(
             reverse("api:diary-entry-list"),
@@ -1520,7 +1817,7 @@ class NutritionEndpointTests(APITestCase):
 
     # -- Goals/targets: read-only ---------------------------------------
 
-    def test_nutrition_goals_are_read_only(self):
+    def test_nutrition_goals_are_never_edited(self):
         from decimal import Decimal
 
         from apps.nutrition import services as nutrition_services
@@ -1530,12 +1827,6 @@ class NutritionEndpointTests(APITestCase):
         )
         list_response = self.client.get(reverse("api:nutrition-goal-list"), **self._auth())
         self.assertEqual(list_response.status_code, 200)
-        post_response = self.client.post(
-            reverse("api:nutrition-goal-list"),
-            {"goal_type": "maintenance", "target_rate_kg_per_week": "0"},
-            format="json", **self._auth(),
-        )
-        self.assertEqual(post_response.status_code, 405)
         patch_response = self.client.patch(
             reverse("api:nutrition-goal-detail", args=[goal.pk]),
             {"notes": "hijacked"}, format="json", **self._auth(),
@@ -1916,6 +2207,20 @@ class StretchingEndpointTests(APITestCase):
         )
         self.assertEqual(len(routine.data["items"]), self.system_routine.items.count())
 
+    def test_copying_a_routine(self):
+        # Issue #32: one atomic request instead of rebuilding item by item.
+        response = self.client.post(
+            reverse("api:stretch-routine-copy", args=[self.system_routine.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["owner"], self.alice.pk)
+        self.assertNotEqual(response.data["id"], self.system_routine.pk)
+        self.assertEqual(len(response.data["items"]), self.system_routine.items.count())
+        hidden = self.client.post(
+            reverse("api:stretch-routine-copy", args=[self.bobs_routine.pk]), **self._auth()
+        )
+        self.assertEqual(hidden.status_code, 404)
+
     def test_system_routine_is_read_only(self):
         response = self.client.patch(
             reverse("api:stretch-routine-detail", args=[self.system_routine.pk]),
@@ -1959,6 +2264,113 @@ class StretchingEndpointTests(APITestCase):
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(response.data["status"], "completed")
         self.assertEqual(response.data["name"], "Lower Body Cool-Down")
+
+    def _finished_workout(self, user=None):
+        session = workout_services.start_session(user or self.alice, workout=None)
+        workout_services.complete_session(session)
+        return session
+
+    def test_guided_session_start_mark_complete(self):
+        # Issue #34: a client's own player records each stretch.
+        start = self.client.post(
+            reverse("api:stretch-session-start"),
+            {"routine": self.system_routine.pk}, format="json", **self._auth(),
+        )
+        self.assertEqual(start.status_code, 201, start.data)
+        self.assertEqual(start.data["status"], "in_progress")
+        performed = start.data["performed_stretches"]
+        self.assertEqual(len(performed), self.system_routine.items.count())
+
+        again = self.client.post(
+            reverse("api:stretch-session-start"),
+            {"routine": self.system_routine.pk}, format="json", **self._auth(),
+        )
+        self.assertEqual(again.status_code, 409)
+        self.assertEqual(again.data["id"], start.data["id"])
+
+        session_id = start.data["id"]
+        done = self.client.post(
+            reverse("api:stretch-session-mark", args=[session_id]),
+            {"performed_stretch": performed[0]["id"], "done": True, "actual_seconds": 28},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(done.status_code, 200, done.data)
+        self.assertEqual(done.data["status"], "done")
+        self.assertEqual(done.data["actual_seconds"], 28)
+        if len(performed) > 1:
+            skipped = self.client.post(
+                reverse("api:stretch-session-mark", args=[session_id]),
+                {"performed_stretch": performed[1]["id"], "done": False},
+                format="json", **self._auth(),
+            )
+            self.assertEqual(skipped.data["status"], "skipped")
+
+        complete = self.client.post(
+            reverse("api:stretch-session-complete", args=[session_id]), **self._auth()
+        )
+        self.assertEqual(complete.status_code, 200)
+        self.assertEqual(complete.data["status"], "completed")
+        self.assertIsNotNone(complete.data["duration"])
+        self.assertEqual(
+            self.client.post(
+                reverse("api:stretch-session-abandon", args=[session_id]), **self._auth()
+            ).status_code,
+            409,
+        )
+
+    def test_guided_cooldown_from_stretches_after_a_workout(self):
+        workout = self._finished_workout()
+        start = self.client.post(
+            reverse("api:stretch-session-start"),
+            {"stretches": [self.quad.pk], "name": "Cool-down", "after_workout": workout.pk},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(start.status_code, 201, start.data)
+        self.assertEqual(start.data["after_workout"], workout.pk)
+        self.assertEqual(start.data["name"], "Cool-down")
+        abandon = self.client.post(
+            reverse("api:stretch-session-abandon", args=[start.data["id"]]), **self._auth()
+        )
+        self.assertEqual(abandon.data["status"], "abandoned")
+
+    def test_start_needs_exactly_one_plan_and_own_workout(self):
+        url = reverse("api:stretch-session-start")
+        self.assertEqual(self.client.post(url, {}, format="json", **self._auth()).status_code, 400)
+        both = {"routine": self.system_routine.pk, "stretches": [self.quad.pk]}
+        self.assertEqual(
+            self.client.post(url, both, format="json", **self._auth()).status_code, 400
+        )
+        bobs_workout = self._finished_workout(self.bob)
+        self.assertEqual(
+            self.client.post(
+                url, {"stretches": [self.quad.pk], "after_workout": bobs_workout.pk},
+                format="json", **self._auth(),
+            ).status_code,
+            400,
+        )
+        self.assertEqual(
+            self.client.post(
+                url, {"routine": self.bobs_routine.pk}, format="json", **self._auth()
+            ).status_code,
+            400,
+        )
+
+    def test_quick_log_after_a_workout(self):
+        workout = self._finished_workout()
+        response = self.client.post(
+            reverse("api:stretch-session-list"),
+            {"duration": "00:10:00", "after_workout": workout.pk},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["after_workout"], workout.pk)
+        bobs = self._finished_workout(self.bob)
+        rejected = self.client.post(
+            reverse("api:stretch-session-list"),
+            {"duration": "00:10:00", "after_workout": bobs.pk},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(rejected.status_code, 400)
 
     def test_session_routine_must_be_visible(self):
         response = self.client.post(
@@ -2167,3 +2579,926 @@ class ApiVersioningTests(APITestCase):
             "/api/v1/exercises/abc/", HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
         )
         self.assertEqual(response.status_code, 404)
+
+
+class ListFilterTests(APITestCase):
+    """Issues #26, #28, #29 - list filters so a client doesn't page
+    through everything it ever logged to find one day or one type."""
+
+    def setUp(self):
+        from datetime import date
+
+        from apps.activities.models import Activity, ActivityType
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+        from apps.nutrition.models import DiaryEntry, Food, MealSlot, ServingUnit
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.weight = MeasurementType.objects.get(name="Body weight", owner=None)
+        self.chest = MeasurementType.objects.get(name="Chest", owner=None)
+        aware = lambda day: timezone.make_aware(timezone.datetime(2026, 10, day, 8))  # noqa: E731
+        self.w1 = BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.weight, value=80, recorded_at=aware(1)
+        )
+        self.w2 = BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.weight, value=79, recorded_at=aware(10)
+        )
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.chest, value=100, recorded_at=aware(10)
+        )
+        self.cycling = ActivityType.objects.get(name="Cycling", owner=None)
+        self.hiking = ActivityType.objects.get(name="Hiking", owner=None)
+        self.a1 = Activity.objects.create(
+            user=self.alice, activity_type=self.cycling, date=date(2026, 10, 1),
+            duration=timedelta(minutes=30),
+        )
+        self.a2 = Activity.objects.create(
+            user=self.alice, activity_type=self.cycling, date=date(2026, 10, 10),
+            duration=timedelta(minutes=30),
+        )
+        Activity.objects.create(
+            user=self.alice, activity_type=self.hiking, date=date(2026, 10, 10),
+            duration=timedelta(minutes=60),
+        )
+        self.oats = Food.objects.create(
+            owner=self.alice, name="Oats", brand="Elovena", serving_size=Decimal("100"),
+            serving_unit=ServingUnit.GRAM, calories=370, protein_grams=Decimal("13"),
+            carbohydrate_grams=Decimal("60"), fat_grams=Decimal("7"), off_id="6408430000000",
+        )
+        self.rice = Food.objects.create(
+            owner=self.alice, name="Rice", serving_size=Decimal("100"),
+            serving_unit=ServingUnit.GRAM, calories=130, protein_grams=Decimal("2.7"),
+            carbohydrate_grams=Decimal("28"), fat_grams=Decimal("0.3"),
+        )
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.entries = {
+            day: DiaryEntry.objects.create(
+                user=self.alice, date=date(2026, 10, day), meal_slot=breakfast,
+                food=self.oats, quantity=Decimal("50"),
+            )
+            for day in (1, 2, 3)
+        }
+
+    def _ids(self, name, query):
+        response = self.client.get(
+            reverse(name), query, HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        return {row["id"] for row in response.data["results"]}
+
+    def _status(self, name, query):
+        return self.client.get(
+            reverse(name), query, HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        ).status_code
+
+    def test_diary_entries_by_date(self):
+        self.assertEqual(
+            self._ids("api:diary-entry-list", {"date": "2026-10-02"}), {self.entries[2].pk}
+        )
+        self.assertEqual(
+            self._ids(
+                "api:diary-entry-list", {"date_after": "2026-10-02", "date_before": "2026-10-03"}
+            ),
+            {self.entries[2].pk},
+        )
+        self.assertEqual(self._status("api:diary-entry-list", {"date": "2026-13-01"}), 400)
+
+    def test_measurements_by_type_and_time(self):
+        self.assertEqual(
+            self._ids("api:measurement-list", {"measurement_type": self.weight.pk}),
+            {self.w1.pk, self.w2.pk},
+        )
+        self.assertEqual(
+            self._ids(
+                "api:measurement-list",
+                {"measurement_type": self.weight.pk, "recorded_after": "2026-10-05"},
+            ),
+            {self.w2.pk},
+        )
+        self.assertEqual(
+            self._ids(
+                "api:measurement-list",
+                {"measurement_type": self.weight.pk, "recorded_before": "2026-10-05"},
+            ),
+            {self.w1.pk},
+        )
+        self.assertEqual(self._status("api:measurement-list", {"measurement_type": "x"}), 400)
+
+    def test_activities_by_type_and_date(self):
+        self.assertEqual(
+            self._ids("api:activity-list", {"activity_type": self.cycling.pk}),
+            {self.a1.pk, self.a2.pk},
+        )
+        self.assertEqual(
+            self._ids(
+                "api:activity-list",
+                {"activity_type": self.cycling.pk, "date_after": "2026-10-05"},
+            ),
+            {self.a2.pk},
+        )
+        self.assertEqual(self._status("api:activity-list", {"date_before": "nope"}), 400)
+
+    def test_food_search_matches_name_brand_and_barcode(self):
+        # Shared seeded foods may match too - only ours are checked.
+        for query in ("oat", "elovena"):
+            ids = self._ids("api:food-list", {"search": query})
+            self.assertIn(self.oats.pk, ids)
+            self.assertNotIn(self.rice.pk, ids)
+        self.assertEqual(self._ids("api:food-list", {"search": "6408430000000"}), {self.oats.pk})
+        self.assertEqual(
+            self._ids("api:food-list", {"ids": f"{self.rice.pk},{self.oats.pk}"}),
+            {self.oats.pk, self.rice.pk},
+        )
+        self.assertEqual(self._status("api:food-list", {"ids": "1,a"}), 400)
+
+
+class OpenFoodFactsEndpointTests(APITestCase):
+    """Issue #41 - importing a food by barcode goes through the same
+    service as the web, so it keeps its Nutri-Score, NOVA and OFF link
+    and doesn't duplicate an already-imported product."""
+
+    def setUp(self):
+        from apps.nutrition.models import OpenFoodFactsSettings
+        from apps.nutrition.tests import RAW_OFF_PRODUCT
+
+        OpenFoodFactsSettings.objects.all().delete()  # enabled by default
+        self.raw = RAW_OFF_PRODUCT
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _import(self, barcode="1234567890123"):
+        return self.client.post(
+            reverse("api:food-import-off"), {"barcode": barcode}, format="json",
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+
+    def test_import_creates_once_then_returns_the_existing_food(self):
+        from unittest import mock
+
+        from apps.nutrition import openfoodfacts
+        from apps.nutrition.models import Food
+
+        with mock.patch.object(openfoodfacts, "get_product", return_value=self.raw):
+            first = self._import()
+            second = self._import()
+        self.assertEqual(first.status_code, 201)
+        self.assertEqual(first.data["off_id"], "1234567890123")
+        self.assertIsNone(first.data["owner"])
+        self.assertEqual(second.status_code, 200)
+        self.assertEqual(second.data["id"], first.data["id"])
+        self.assertEqual(Food.objects.filter(off_id="1234567890123").count(), 1)
+
+    def test_unknown_barcode_is_404_and_a_bad_one_400(self):
+        from unittest import mock
+
+        from apps.nutrition import openfoodfacts
+
+        with mock.patch.object(openfoodfacts, "get_product", return_value=None):
+            self.assertEqual(self._import().status_code, 404)
+        self.assertEqual(self._import("12ab").status_code, 400)
+
+    def test_rate_limited_without_a_local_copy_is_429(self):
+        from unittest import mock
+
+        from apps.nutrition import openfoodfacts
+
+        with mock.patch.object(
+            openfoodfacts, "get_product",
+            side_effect=openfoodfacts.OpenFoodFactsRateLimited("busy"),
+        ):
+            self.assertEqual(self._import().status_code, 429)
+
+    def test_disabled_integration_is_503(self):
+        from apps.nutrition.models import OpenFoodFactsSettings
+
+        OpenFoodFactsSettings.objects.create(pk=1, enabled=False)
+        self.assertEqual(self._import().status_code, 503)
+
+    def test_search_returns_local_foods_and_off_products(self):
+        from unittest import mock
+
+        from apps.nutrition import openfoodfacts
+
+        with mock.patch.object(openfoodfacts, "search_products", return_value=[self.raw]):
+            response = self.client.get(
+                reverse("api:food-search-off"), {"q": "muesli"},
+                HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+            )
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["status"], "ok")
+        self.assertEqual(response.data["results"][0]["off_id"], "1234567890123")
+        self.assertEqual(response.data["results"][0]["name"], "Test Muesli")
+
+
+class NutritionGoalEndpointTests(APITestCase):
+    """Issue #33 - nutrition onboarding and goal changes through the
+    API go through the same services as the web."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.auth = {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def _post_goal(self, **overrides):
+        payload = {"goal_type": "fat_loss_moderate", "target_rate_kg_per_week": "-0.5"}
+        payload.update(overrides)
+        return self.client.post(
+            reverse("api:nutrition-goal-list"), payload, format="json", **self.auth
+        )
+
+    def _onboard(self):
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        profile = self.client.put(
+            reverse("api:nutrition-profile"),
+            {
+                "biological_sex": "male", "birth_date": "1990-01-01",
+                "activity_job": "sedentary", "activity_level": "moderate",
+            },
+            format="json", **self.auth,
+        )
+        self.assertEqual(profile.status_code, 201, profile.data)
+        self.client.patch(reverse("api:profile"), {"height": "1.80"}, format="json", **self.auth)
+        BodyMeasurement.objects.create(
+            user=self.alice,
+            measurement_type=MeasurementType.objects.get(name="Body weight", owner=None),
+            value=Decimal("90"),
+        )
+
+    def test_onboarding_then_a_goal_with_a_calculated_target(self):
+        from apps.nutrition.models import NutritionGoal, NutritionTarget
+
+        self.assertEqual(self._post_goal().status_code, 400)  # no profile yet
+        self._onboard()
+        response = self._post_goal()
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["goal_type"], "fat_loss_moderate")
+        self.assertEqual(response.data["target"]["source"], "calculated")
+        self.assertGreater(response.data["target"]["daily_calories"], 1000)
+
+        second = self._post_goal(goal_type="maintenance", target_rate_kg_per_week="0")
+        self.assertEqual(second.status_code, 201)
+        # The first goal and target stay in history, ended.
+        self.assertEqual(NutritionGoal.objects.filter(user=self.alice).count(), 2)
+        self.assertEqual(
+            NutritionTarget.objects.filter(user=self.alice, ended_at__isnull=True).count(), 1
+        )
+        self.assertIsNotNone(NutritionGoal.objects.get(pk=response.data["id"]).ended_at)
+
+    def test_rate_must_match_the_goal(self):
+        self._onboard()
+        response = self._post_goal(target_rate_kg_per_week="0.5")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("target_rate_kg_per_week", response.data)
+
+    def test_profile_put_updates_once_it_exists(self):
+        self._onboard()
+        response = self.client.put(
+            reverse("api:nutrition-profile"),
+            {
+                "biological_sex": "male", "birth_date": "1990-01-01",
+                "activity_job": "sedentary", "activity_level": "active",
+            },
+            format="json", **self.auth,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["activity_level"], "active")
+
+    def test_adjustment_suggestion_and_accept(self):
+        from unittest import mock
+
+        from apps.nutrition import suggestions
+
+        no_goal = self.client.get(reverse("api:nutrition-adjustment-suggestion"), **self.auth)
+        self.assertEqual(no_goal.status_code, 200)
+        self.assertEqual(no_goal.data["action"], "no_active_goal")
+        refused = self.client.post(
+            reverse("api:nutrition-adjustment-suggestion-accept"), **self.auth
+        )
+        self.assertEqual(refused.status_code, 409)
+
+        self._onboard()
+        self._post_goal()
+        adjust = suggestions.AdjustmentSuggestion(
+            action=suggestions.AdjustmentAction.ADJUST,
+            target_rate_kg_per_week=Decimal("-0.5"),
+            actual_rate_kg_per_week=Decimal("-0.1"),
+            suggested_daily_calories=1900,
+            delta_kcal=-150,
+            confidence=suggestions.Confidence.HIGH,
+            reason="Losing slower than planned.",
+        )
+        with mock.patch.object(suggestions, "suggest_calorie_adjustment", return_value=adjust):
+            accepted = self.client.post(
+                reverse("api:nutrition-adjustment-suggestion-accept"), **self.auth
+            )
+        self.assertEqual(accepted.status_code, 201, accepted.data)
+        self.assertEqual(accepted.data["daily_calories"], 1900)
+        self.assertEqual(accepted.data["source"], "adjusted")
+
+
+class TrainingAnalyticsEndpointTests(APITestCase):
+    """Issue #35 - the web Analytics page's charts as data, canonical kg."""
+
+    def setUp(self):
+        from apps.exercises.models import MuscleGroup
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.alice.unit_system = "imperial"  # must not change anything here
+        self.alice.save()
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.exercise = Exercise.objects.create(name="API Analytics Squat", owner=None)
+        self.legs = MuscleGroup.objects.first()
+        self.exercise.primary_muscle_groups.add(self.legs)
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        workout_services.log_set(performed, weight=Decimal("100"), reps=5)
+        workout_services.log_set(performed, weight=Decimal("110"), reps=3)
+        workout_services.log_set(performed, weight=Decimal("40"), reps=10, is_warmup=True)
+        workout_services.complete_session(session)
+
+    def _get(self, name, *args, **query):
+        return self.client.get(
+            reverse(name, args=args), query, HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+
+    def test_weekly_volume(self):
+        response = self._get("api:analytics-volume", range="7d")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["range"]["range"], "7d")
+        self.assertEqual(len(response.data["weeks"]), 1)
+        self.assertEqual(Decimal(response.data["weeks"][0]["volume"]), Decimal("830"))
+
+    def test_muscle_group_volume(self):
+        response = self._get("api:analytics-muscle-groups")
+        self.assertEqual(response.status_code, 200)
+        row = response.data["muscle_groups"][0]
+        self.assertEqual(row["muscle_group"], self.legs.pk)
+        self.assertEqual(Decimal(row["volume"]), Decimal("830"))
+
+    def test_exercise_progress(self):
+        response = self._get("api:analytics-exercise", self.exercise.pk, range="all")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["range"]["start"], None)
+        self.assertEqual(response.data["session_count"], 1)
+        self.assertEqual(Decimal(response.data["total_volume"]), Decimal("830"))
+        best = response.data["sessions"][0]
+        self.assertEqual(Decimal(best["weight"]), Decimal("110"))
+        self.assertEqual(best["reps"], 3)
+        self.assertGreater(Decimal(best["estimated_one_rep_max"]), Decimal("110"))
+
+    def test_hidden_exercise_is_404(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        private = Exercise.objects.create(name="Bob's lift", owner=bob)
+        self.assertEqual(self._get("api:analytics-exercise", private.pk).status_code, 404)
+
+
+class DisplayNameTests(APITestCase):
+    """Issue #36 - built-in names translated like the web shows them."""
+
+    def setUp(self):
+        from apps.nutrition.models import MealSlot
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+
+    def _get(self, url, **headers):
+        return self.client.get(url, HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}", **headers)
+
+    def test_profile_language_by_default(self):
+        url = reverse("api:meal-slot-detail", args=[self.breakfast.pk])
+        self.assertEqual(self._get(url).data["display_name"], "Breakfast")
+        self.alice.language = "fi"
+        self.alice.save(update_fields=["language"])
+        data = self._get(url).data
+        self.assertEqual(data["name"], "Breakfast")
+        self.assertEqual(data["display_name"], "Aamiainen")
+
+    def test_accept_language_wins_and_unsupported_falls_back(self):
+        url = reverse("api:meal-slot-detail", args=[self.breakfast.pk])
+        self.assertEqual(
+            self._get(url, HTTP_ACCEPT_LANGUAGE="fi-FI,fi;q=0.9").data["display_name"],
+            "Aamiainen",
+        )
+        self.alice.language = "fi"
+        self.alice.save(update_fields=["language"])
+        self.assertEqual(
+            self._get(url, HTTP_ACCEPT_LANGUAGE="xx").data["display_name"], "Aamiainen"
+        )
+        self.assertEqual(
+            self._get(url, HTTP_ACCEPT_LANGUAGE="en").data["display_name"], "Breakfast"
+        )
+
+    def test_nested_and_custom_names(self):
+        from apps.stretching.models import StretchRoutine
+
+        routine = StretchRoutine.objects.get(name="Lower Body Cool-Down")
+        mine = StretchRoutine.objects.create(owner=self.alice, name="Iltavenyttely")
+        fi = {"HTTP_ACCEPT_LANGUAGE": "fi"}
+        self.assertEqual(
+            self._get(reverse("api:stretch-routine-detail", args=[routine.pk]), **fi).data[
+                "display_name"
+            ],
+            "Jäähdyttely: alavartalo",
+        )
+        self.assertEqual(
+            self._get(reverse("api:stretch-routine-detail", args=[mine.pk]), **fi).data[
+                "display_name"
+            ],
+            "Iltavenyttely",
+        )
+
+
+class TutorialEndpointTests(APITestCase):
+    """Issue #37 - tours and their shared completion state."""
+
+    def setUp(self):
+        from apps.tutorials.tours import TOURS
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.auth = {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+        self.tour = TOURS[0]
+
+    def test_list_completes_and_resets(self):
+        from apps.tutorials.models import TutorialCompletion
+
+        response = self.client.get(reverse("api:tutorial-list"), **self.auth)
+        self.assertEqual(response.status_code, 200)
+        first = response.data[0]
+        self.assertEqual(first["key"], self.tour.key)
+        self.assertFalse(first["completed"])
+        self.assertTrue(first["steps"])
+
+        url = reverse("api:tutorial-complete", args=[self.tour.key])
+        self.assertEqual(self.client.post(url, **self.auth).status_code, 204)
+        self.assertTrue(
+            TutorialCompletion.objects.filter(user=self.alice, tour=self.tour.key).exists()
+        )
+        listed = self.client.get(reverse("api:tutorial-list"), **self.auth).data
+        self.assertTrue(listed[0]["completed"])
+
+        reset = reverse("api:tutorial-reset", args=[self.tour.key])
+        self.assertEqual(self.client.post(reset, **self.auth).status_code, 204)
+        self.assertFalse(TutorialCompletion.objects.filter(user=self.alice).exists())
+        self.client.post(url, **self.auth)
+        self.client.post(reverse("api:tutorial-reset-all"), **self.auth)
+        self.assertFalse(TutorialCompletion.objects.filter(user=self.alice).exists())
+
+    def test_unknown_tour_is_404(self):
+        url = reverse("api:tutorial-complete", args=["nope"])
+        self.assertEqual(self.client.post(url, **self.auth).status_code, 404)
+
+    def test_texts_in_the_request_language(self):
+        english = self.client.get(reverse("api:tutorial-list"), **self.auth).data[0]["title"]
+        finnish = self.client.get(
+            reverse("api:tutorial-list"), HTTP_ACCEPT_LANGUAGE="fi", **self.auth
+        ).data[0]["title"]
+        self.assertNotEqual(english, finnish)
+
+    def test_tutorials_enabled_on_the_profile(self):
+        response = self.client.patch(
+            reverse("api:profile"), {"tutorials_enabled": False}, format="json", **self.auth
+        )
+        self.assertEqual(response.status_code, 200)
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.tutorials_enabled)
+
+
+class SocialEndpointTests(APITestCase):
+    """Issue #37 - friends, messages and groups through
+    apps.social.services, with the same rules as the web."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.carol = User.objects.create_user(username="carol", password="s3cret-pass")
+        _key, alice_secret = _create_key(self.alice)
+        _key, bob_secret = _create_key(self.bob)
+        self.as_alice = {"HTTP_AUTHORIZATION": f"Bearer {alice_secret}"}
+        self.as_bob = {"HTTP_AUTHORIZATION": f"Bearer {bob_secret}"}
+
+    def _befriend(self):
+        from apps.social import services as social_services
+
+        request = social_services.send_friend_request(self.alice, self.bob)
+        social_services.accept_friend_request(request, acting_user=self.bob)
+
+    def test_friend_request_flow(self):
+        search = self.client.get(reverse("api:social-users"), {"search": "bo"}, **self.as_alice)
+        self.assertEqual([u["username"] for u in search.data], ["bob"])
+        sent = self.client.post(
+            reverse("api:social-friend-requests"), {"user": self.bob.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(sent.status_code, 201, sent.data)
+        again = self.client.post(
+            reverse("api:social-friend-requests"), {"user": self.bob.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(again.status_code, 400)
+        self.assertIn("detail", again.data)
+        # Only the recipient can answer.
+        self.assertEqual(
+            self.client.post(
+                reverse("api:social-friend-request-accept", args=[sent.data["id"]]),
+                **self.as_alice,
+            ).status_code,
+            404,
+        )
+        incoming = self.client.get(reverse("api:social-friend-requests"), **self.as_bob)
+        self.assertEqual(incoming.data[0]["from_user"]["username"], "alice")
+        accepted = self.client.post(
+            reverse("api:social-friend-request-accept", args=[sent.data["id"]]), **self.as_bob
+        )
+        self.assertEqual(accepted.data["status"], "accepted")
+        friends = self.client.get(reverse("api:social-friends"), **self.as_alice)
+        self.assertEqual(friends.data, [{"id": self.bob.pk, "username": "bob", "muted": False}])
+        self.client.post(reverse("api:social-friend-mute", args=[self.bob.pk]), **self.as_alice)
+        friends = self.client.get(reverse("api:social-friends"), **self.as_alice)
+        self.assertTrue(friends.data[0]["muted"])
+        removed = self.client.delete(
+            reverse("api:social-friend", args=[self.bob.pk]), **self.as_alice
+        )
+        self.assertEqual(removed.status_code, 204)
+        self.assertEqual(self.client.get(reverse("api:social-friends"), **self.as_alice).data, [])
+
+    def test_private_setting_is_respected_in_the_users_language(self):
+        self.bob.allow_friend_requests = False
+        self.bob.save()
+        self.alice.language = "fi"
+        self.alice.save()
+        response = self.client.post(
+            reverse("api:social-friend-requests"), {"user": self.bob.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertNotEqual(response.data["detail"], "This user isn't accepting friend requests.")
+
+    def test_direct_messages_only_between_friends(self):
+        url = reverse("api:social-messages", args=[self.bob.pk])
+        self.assertEqual(self.client.get(url, **self.as_alice).status_code, 404)
+        self._befriend()
+        sent = self.client.post(url, {"body": "Hi"}, format="json", **self.as_alice)
+        self.assertEqual(sent.status_code, 201)
+        conversations = self.client.get(reverse("api:social-conversations"), **self.as_bob)
+        self.assertEqual(conversations.data["friends"][0]["unread"], 1)
+        thread = self.client.get(
+            reverse("api:social-messages", args=[self.alice.pk]), **self.as_bob
+        )
+        self.assertEqual([m["body"] for m in thread.data], ["Hi"])
+        conversations = self.client.get(reverse("api:social-conversations"), **self.as_bob)
+        self.assertEqual(conversations.data["friends"][0]["unread"], 0)
+        newer = self.client.get(url, {"after": sent.data["id"]}, **self.as_alice)
+        self.assertEqual(newer.data, [])
+
+    def test_blocking_ends_the_friendship(self):
+        self._befriend()
+        blocked = self.client.post(
+            reverse("api:social-blocks"), {"user": self.bob.pk}, format="json", **self.as_alice
+        )
+        self.assertEqual(blocked.status_code, 204)
+        self.assertEqual(self.client.get(reverse("api:social-friends"), **self.as_alice).data, [])
+        self.assertEqual(
+            self.client.get(reverse("api:social-blocks"), **self.as_alice).data[0]["id"],
+            self.bob.pk,
+        )
+        search = self.client.get(reverse("api:social-users"), {"search": "bo"}, **self.as_alice)
+        self.assertEqual(search.data, [])
+        unblock = self.client.delete(
+            reverse("api:social-block", args=[self.bob.pk]), **self.as_alice
+        )
+        self.assertEqual(unblock.status_code, 204)
+
+    def test_group_lifecycle(self):
+        self._befriend()
+        created = self.client.post(
+            reverse("api:social-groups"), {"name": "Lifters"}, format="json", **self.as_alice
+        )
+        self.assertEqual(created.status_code, 201, created.data)
+        self.assertEqual(created.data["role"], "owner")
+        group_id = created.data["id"]
+        # Not a member: invisible.
+        group_url = reverse("api:social-group", args=[group_id])
+        self.assertEqual(self.client.get(group_url, **self.as_bob).status_code, 404)
+        invited = self.client.post(
+            reverse("api:social-group-invites", args=[group_id]), {"user": self.bob.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(invited.status_code, 201, invited.data)
+        stranger = self.client.post(
+            reverse("api:social-group-invites", args=[group_id]), {"user": self.carol.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(stranger.status_code, 400)  # only friends
+        invites = self.client.get(reverse("api:social-group-invite-list"), **self.as_bob)
+        self.client.post(
+            reverse("api:social-group-invite-accept", args=[invites.data[0]["id"]]), **self.as_bob
+        )
+        as_member = self.client.get(reverse("api:social-group", args=[group_id]), **self.as_bob)
+        self.assertEqual(as_member.data["role"], "member")
+        self.assertIsNone(as_member.data["invite_code"])
+        self.assertEqual(
+            self.client.patch(
+                reverse("api:social-group", args=[group_id]), {"name": "Mine"},
+                format="json", **self.as_bob,
+            ).status_code,
+            403,
+        )
+        message = self.client.post(
+            reverse("api:social-group-messages", args=[group_id]), {"body": "Leg day"},
+            format="json", **self.as_bob,
+        )
+        self.assertEqual(message.status_code, 201)
+        self.assertEqual(
+            self.client.get(reverse("api:social-groups"), **self.as_alice).data[0]["unread"], 1
+        )
+        members = self.client.get(
+            reverse("api:social-group-members", args=[group_id]), **self.as_alice
+        )
+        self.assertEqual(len(members.data), 2)
+        promoted = self.client.patch(
+            reverse("api:social-group-member", args=[group_id, self.bob.pk]), {"role": "admin"},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(promoted.data["role"], "admin")
+        leave_url = reverse("api:social-group-leave", args=[group_id])
+        owner_leaves = self.client.post(leave_url, **self.as_alice)
+        self.assertEqual(owner_leaves.status_code, 400)
+        transferred = self.client.post(
+            reverse("api:social-group-transfer", args=[group_id]), {"user": self.bob.pk},
+            format="json", **self.as_alice,
+        )
+        self.assertEqual(transferred.data["role"], "admin")
+        self.assertEqual(
+            self.client.post(leave_url, **self.as_alice).status_code,
+            204,
+        )
+        self.assertEqual(
+            self.client.delete(group_url, **self.as_bob).status_code,
+            204,
+        )
+
+    def test_invite_code_join(self):
+        created = self.client.post(
+            reverse("api:social-groups"), {"name": "Open"}, format="json", **self.as_alice
+        )
+        group_id = created.data["id"]
+        link = self.client.post(
+            reverse("api:social-group-invite-link", args=[group_id]), {"enabled": True},
+            format="json", **self.as_alice,
+        )
+        code = link.data["invite_code"]
+        self.assertTrue(link.data["invite_enabled"])
+        joined = self.client.post(
+            reverse("api:social-group-join"), {"code": code}, format="json", **self.as_bob
+        )
+        self.assertEqual(joined.status_code, 200, joined.data)
+        self.assertEqual(joined.data["member_count"], 2)
+        regenerated = self.client.post(
+            reverse("api:social-group-invite-link", args=[group_id]), {"regenerate": True},
+            format="json", **self.as_alice,
+        )
+        self.assertNotEqual(regenerated.data["invite_code"], code)
+        bad = self.client.post(
+            reverse("api:social-group-join"), {"code": code}, format="json", **self.as_bob
+        )
+        self.assertEqual(bad.status_code, 400)
+
+    def test_key_without_social_permission(self):
+        _key, secret = _create_key(
+            self.alice,
+            social={
+                "can_create": False, "can_read": False, "can_update": False, "can_delete": False,
+            },
+        )
+        response = self.client.get(
+            reverse("api:social-friends"), HTTP_AUTHORIZATION=f"Bearer {secret}"
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_recently_active(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        self.assertIsNotNone(session)
+        response = self.client.get(reverse("api:analytics-recently-active"), **self.as_bob)
+        self.assertEqual(response.status_code, 200)
+        alice = next(row for row in response.data if row["username"] == "alice")
+        self.assertTrue(alice["is_in_progress"])
+
+
+class CoachingEndpointTests(APITestCase):
+    """Issue #37 - both sides of coaching through apps.coaching.services."""
+
+    def setUp(self):
+        self.coach = User.objects.create_user(
+            username="coach", password="s3cret-pass", is_personal_trainer=True
+        )
+        self.client_user = User.objects.create_user(username="client", password="s3cret-pass")
+        self.other = User.objects.create_user(username="other", password="s3cret-pass")
+        _key, coach_secret = _create_key(self.coach)
+        _key, client_secret = _create_key(self.client_user)
+        self.as_coach = {"HTTP_AUTHORIZATION": f"Bearer {coach_secret}"}
+        self.as_client = {"HTTP_AUTHORIZATION": f"Bearer {client_secret}"}
+
+    def _start_coaching(self):
+        sent = self.client.post(
+            reverse("api:coaching-requests"), {"username": "coach"},
+            format="json", **self.as_client,
+        )
+        self.assertEqual(sent.status_code, 201, sent.data)
+        accepted = self.client.post(
+            reverse("api:coaching-request-accept", args=[sent.data["id"]]), **self.as_coach
+        )
+        self.assertEqual(accepted.data["status"], "accepted")
+
+    def test_request_and_relationship(self):
+        not_a_trainer = self.client.post(
+            reverse("api:coaching-requests"), {"username": "other"},
+            format="json", **self.as_client,
+        )
+        self.assertEqual(not_a_trainer.status_code, 400)
+        self._start_coaching()
+        coaches = self.client.get(reverse("api:coaching-coaches"), **self.as_client)
+        self.assertEqual(coaches.data[0]["coach"]["username"], "coach")
+        clients = self.client.get(reverse("api:coaching-clients"), **self.as_coach)
+        self.assertEqual(clients.data[0]["coachee"]["username"], "client")
+        detail = self.client.get(
+            reverse("api:coaching-client", args=["client"]), **self.as_coach
+        )
+        self.assertEqual(detail.status_code, 200, detail.data)
+        self.assertEqual(detail.data["client"]["username"], "client")
+        self.assertIn("training_summary", detail.data)
+        # Not a client: 404, never which case it is.
+        self.assertEqual(
+            self.client.get(
+                reverse("api:coaching-client", args=["other"]), **self.as_coach
+            ).status_code,
+            404,
+        )
+        ended = self.client.post(
+            reverse("api:coaching-relationship-end", args=[clients.data[0]["id"]]),
+            **self.as_client,
+        )
+        self.assertIsNotNone(ended.data["ended_at"])
+        self.assertEqual(
+            self.client.get(
+                reverse("api:coaching-client", args=["client"]), **self.as_coach
+            ).status_code,
+            404,
+        )
+
+    def test_share_import_and_update_a_program(self):
+        from apps.programs.models import Program, Workout
+
+        self._start_coaching()
+        program = Program.objects.create(owner=self.coach, name="Block 1")
+        Workout.objects.create(program=program, name="Day A")
+        share_url = reverse("api:coaching-program-clients", args=[program.pk])
+        self.assertEqual(
+            self.client.put(
+                share_url, {"clients": [self.other.pk]}, format="json", **self.as_coach
+            ).status_code,
+            400,
+        )
+        shared = self.client.put(
+            share_url, {"clients": [self.client_user.pk]}, format="json", **self.as_coach
+        )
+        self.assertEqual(shared.data["clients"], [self.client_user.pk])
+        self.assertEqual(
+            self.client.get(share_url, **self.as_client).status_code, 403
+        )  # not a trainer
+
+        listed = self.client.get(reverse("api:coaching-shared"), **self.as_client)
+        self.assertEqual(listed.data["programs"][0]["id"], program.pk)
+        self.assertFalse(listed.data["programs"][0]["imported"])
+        imported = self.client.post(
+            reverse("api:coaching-shared-program-import", args=[program.pk]), **self.as_client
+        )
+        self.assertEqual(imported.status_code, 201, imported.data)
+        copy_id = imported.data["id"]
+        update_url = reverse("api:coaching-program-update", args=[copy_id])
+        self.assertFalse(self.client.get(update_url, **self.as_client).data["available"])
+        self.assertEqual(self.client.post(update_url, **self.as_client).status_code, 409)
+
+        Workout.objects.create(program=program, name="Day B")
+        program.bump_version()
+        preview = self.client.get(update_url, **self.as_client)
+        self.assertTrue(preview.data["available"])
+        self.assertIn("Day B", preview.data["diff"])
+        applied = self.client.post(update_url, **self.as_client)
+        self.assertEqual(applied.status_code, 200)
+        self.assertEqual(
+            sorted(w["name"] for w in applied.data["workouts"]), ["Day A", "Day B"]
+        )
+
+    def test_import_needs_sharing(self):
+        from apps.programs.models import Program
+
+        self._start_coaching()
+        program = Program.objects.create(owner=self.coach, name="Private")
+        response = self.client.post(
+            reverse("api:coaching-shared-program-import", args=[program.pk]), **self.as_client
+        )
+        self.assertEqual(response.status_code, 400)
+
+
+@override_settings(ASSISTANT_PROVIDER="anthropic", ASSISTANT_API_KEY="sk-ant-shared-key-123456")
+class AssistantEndpointTests(APITestCase):
+    """Issue #37 - the assistant through apps.assistant.services. Replies
+    are only queued here (ASSISTANT_RUN_INLINE is off), no model runs."""
+
+    def setUp(self):
+        from apps.assistant.models import AssistantSettings, SharedKeyAccess
+
+        site = AssistantSettings.load()
+        site.shared_key_access = SharedKeyAccess.EVERYONE
+        site.save()
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _key, secret = _create_key(self.alice)
+        self.auth = {"HTTP_AUTHORIZATION": f"Bearer {secret}"}
+
+    def test_off_until_enabled(self):
+        status_data = self.client.get(reverse("api:assistant-status"), **self.auth).data
+        self.assertFalse(status_data["enabled"])
+        self.assertTrue(status_data["available"])
+        self.assertEqual(status_data["key_source"], "shared")
+        refused = self.client.post(
+            reverse("api:assistant-conversations"), {"text": "Hi"}, format="json", **self.auth
+        )
+        self.assertEqual(refused.status_code, 400)
+        enabled = self.client.post(reverse("api:assistant-enable"), **self.auth)
+        self.assertTrue(enabled.data["enabled"])
+        disabled = self.client.post(reverse("api:assistant-disable"), **self.auth)
+        self.assertFalse(disabled.data["enabled"])
+
+    def test_conversation_flow(self):
+        self.client.post(reverse("api:assistant-enable"), **self.auth)
+        started = self.client.post(
+            reverse("api:assistant-conversations"), {"text": "Plan my week"},
+            format="json", **self.auth,
+        )
+        self.assertEqual(started.status_code, 201, started.data)
+        self.assertEqual(started.data["title"], "Plan my week")
+        user_message, reply = started.data["messages"]
+        self.assertEqual(user_message["role"], "user")
+        self.assertEqual(reply["status"], "pending")
+        busy = self.client.post(
+            reverse("api:assistant-conversation-messages", args=[started.data["id"]]),
+            {"text": "And?"}, format="json", **self.auth,
+        )
+        self.assertEqual(busy.status_code, 400)  # the reply is still being written
+        polled = self.client.get(reverse("api:assistant-message", args=[reply["id"]]), **self.auth)
+        self.assertEqual(polled.data["status"], "pending")
+        listed = self.client.get(reverse("api:assistant-conversations"), **self.auth)
+        self.assertEqual(listed.data[0]["id"], started.data["id"])
+        deleted = self.client.delete(
+            reverse("api:assistant-conversation", args=[started.data["id"]]), **self.auth
+        )
+        self.assertEqual(deleted.status_code, 204)
+
+    def test_another_users_conversation_is_404(self):
+        from apps.assistant.models import Conversation
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        theirs = Conversation.objects.create(
+            user=bob, title="x", provider="anthropic", model="m", key_source="shared"
+        )
+        url = reverse("api:assistant-conversation", args=[theirs.pk])
+        self.assertEqual(self.client.get(url, **self.auth).status_code, 404)
+
+    def test_settings(self):
+        response = self.client.patch(
+            reverse("api:assistant-settings"),
+            {"about_me": "Knee injury", "reads_food": False, "own_key_effort": "low"},
+            format="json", **self.auth,
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["about_me"], "Knee injury")
+        self.assertFalse(response.data["reads_food"])
+        self.assertTrue(response.data["reads_body"])
+        self.assertEqual(response.data["own_key_effort"], "low")
+        bad = self.client.patch(
+            reverse("api:assistant-settings"), {"own_key_model": "gpt"},
+            format="json", **self.auth,
+        )
+        self.assertEqual(bad.status_code, 400)
+
+    def test_proposals(self):
+        from apps.assistant.models import AssistantMessage, AssistantProposal, Conversation
+
+        conversation = Conversation.objects.create(
+            user=self.alice, title="x", provider="anthropic", model="m", key_source="shared"
+        )
+        message = AssistantMessage.objects.create(conversation=conversation, role="assistant")
+        broken = AssistantProposal.objects.create(
+            message=message, kind="program", title="Plan", payload={}
+        )
+        accepted = self.client.post(
+            reverse("api:assistant-proposal-accept", args=[broken.pk]), **self.auth
+        )
+        self.assertEqual(accepted.status_code, 409)
+        dismissed = self.client.post(
+            reverse("api:assistant-proposal-dismiss", args=[broken.pk]), **self.auth
+        )
+        self.assertEqual(dismissed.data["status"], "dismissed")

@@ -124,6 +124,85 @@ def calculate_target_for_goal(profile, *, weight_kg, height_cm, goal_type, targe
     return calorie_result, macro_result
 
 
+def goal_rate_error(goal_type, rate):
+    """Why `rate` (kg/week) doesn't fit `goal_type`, or None when it
+    does. The sign has to agree with the goal: a "Muscle gain" goal at
+    -0.5 kg/week would silently ask the calorie engine to cut. Shared
+    by GoalStepForm and the API's goal create."""
+    from .models import GoalType
+
+    if goal_type.startswith("fat_loss") and rate >= 0:
+        return gettext("A fat-loss goal needs a negative rate - you're asking to lose weight.")
+    if goal_type.startswith("muscle_gain") and rate <= 0:
+        return gettext(
+            "A muscle-gain goal needs a positive rate - you're asking to gain weight."
+        )
+    if goal_type == GoalType.MAINTENANCE and rate != 0:
+        return gettext("A maintenance goal's rate should be 0 kg/week.")
+    return None
+
+
+class GoalChangeError(Exception):
+    """`change_goal` can't derive a calorie target - the message says
+    what's missing."""
+
+
+@transaction.atomic
+def change_goal(user, *, goal_type, target_rate_kg_per_week, target_weight=None, notes=""):
+    """A new goal after onboarding, with a freshly calculated target to
+    match: the profile, the user's height and their latest body weight
+    go through calculate_target_for_goal, then set_goal/set_target
+    append both (the old goal and target stay in history). Used by the
+    web's goal page and the API. Returns `(goal, target)`; raises
+    GoalChangeError when the profile, height or a body weight is
+    missing."""
+    from apps.measurements.models import MeasurementType
+    from apps.measurements.services import latest_for
+
+    from .models import NutritionProfile
+
+    profile = NutritionProfile.objects.filter(user=user).first()
+    if profile is None:
+        raise GoalChangeError(gettext("Set up your nutrition profile first."))
+    if not user.height:
+        raise GoalChangeError(gettext("Add your height to your profile first."))
+    body_weight_type = MeasurementType.objects.filter(name="Body weight", owner=None).first()
+    latest_weight = latest_for(user, body_weight_type) if body_weight_type else None
+    if latest_weight is None:
+        # The calorie engine needs a current weight (Mifflin-St Jeor),
+        # so there's no reasonable number to fall back to.
+        raise GoalChangeError(
+            gettext(
+                "Log a body weight measurement before changing your goal - the "
+                "calorie target needs your current weight."
+            )
+        )
+    calorie_result, macro_result = calculate_target_for_goal(
+        profile,
+        weight_kg=latest_weight.value,
+        height_cm=user.height * 100,
+        goal_type=goal_type,
+        target_rate_kg_per_week=target_rate_kg_per_week,
+    )
+    goal = set_goal(
+        user,
+        goal_type=goal_type,
+        target_rate_kg_per_week=target_rate_kg_per_week,
+        target_weight=target_weight,
+        notes=notes,
+    )
+    target = set_target(
+        user,
+        goal=goal,
+        daily_calories=calorie_result.daily_calories,
+        macro_breakdown=macro_result,
+        source=TargetSource.CALCULATED,
+        reason=calorie_result.reason,
+        reason_data=calorie_result.reason_data,
+    )
+    return goal, target
+
+
 @transaction.atomic
 def set_active_diet_plan(user, plan):
     """Makes `plan` the one active plan for `user`, deactivating

@@ -133,18 +133,11 @@ class GoalStepForm(forms.Form):
         rate = cleaned.get("target_rate")
         if not goal_type or rate is None:
             return cleaned
-        if goal_type.startswith("fat_loss") and rate >= 0:
-            self.add_error(
-                "target_rate",
-                _("A fat-loss goal needs a negative rate - you're asking to lose weight."),
-            )
-        elif goal_type.startswith("muscle_gain") and rate <= 0:
-            self.add_error(
-                "target_rate",
-                _("A muscle-gain goal needs a positive rate - you're asking to gain weight."),
-            )
-        elif goal_type == GoalType.MAINTENANCE and rate != 0:
-            self.add_error("target_rate", _("A maintenance goal's rate should be 0 kg/week."))
+        from .services import goal_rate_error
+
+        error = goal_rate_error(goal_type, rate)
+        if error:
+            self.add_error("target_rate", error)
         return cleaned
 
     def canonical_target_weight_kg(self):

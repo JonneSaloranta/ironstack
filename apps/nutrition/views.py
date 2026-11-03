@@ -417,61 +417,28 @@ class GoalUpdateView(LoginRequiredMixin, View):
                 {"form": form, "goal": goal, "default_rates_json": DEFAULT_RATES_JSON_SAFE},
             )
 
-        from apps.measurements.models import MeasurementType
-        from apps.measurements.services import latest_for
-
-        body_weight_type = MeasurementType.objects.filter(name="Body weight", owner=None).first()
-        latest_weight = latest_for(request.user, body_weight_type) if body_weight_type else None
-        if latest_weight is None:
-            # Every onboarded user should have at least the body-
-            # weight measurement OnboardingReviewView's own POST
-            # creates - this only fires if that measurement was since
-            # deleted, or the "Body weight" MeasurementType itself
-            # isn't seeded on this install. The calorie engine needs a
-            # current weight (Mifflin-St Jeor), so there's no
-            # reasonable number to fall back to.
-            form.add_error(
-                None,
-                _(
-                    "Log a body weight measurement before changing your goal - the "
-                    "calorie target needs your current weight."
-                ),
+        # Every onboarded user has at least the body-weight measurement
+        # OnboardingReviewView's own POST creates - this only fails if
+        # that measurement was since deleted, or the "Body weight"
+        # MeasurementType isn't seeded on this install.
+        try:
+            _new_goal, new_target = services.change_goal(
+                request.user,
+                goal_type=form.cleaned_data["goal_type"],
+                target_rate_kg_per_week=form.cleaned_data["target_rate"],
+                target_weight=form.canonical_target_weight_kg(),
             )
+        except services.GoalChangeError as error:
+            form.add_error(None, str(error))
             return render(
                 request,
                 self.template_name,
                 {"form": form, "goal": goal, "default_rates_json": DEFAULT_RATES_JSON_SAFE},
             )
-
-        profile = request.user.nutrition_profile
-        weight_kg = latest_weight.value
-        height_cm = request.user.height * 100
-        calorie_result, macro_result = services.calculate_target_for_goal(
-            profile,
-            weight_kg=weight_kg,
-            height_cm=height_cm,
-            goal_type=form.cleaned_data["goal_type"],
-            target_rate_kg_per_week=form.cleaned_data["target_rate"],
-        )
-        new_goal = services.set_goal(
-            request.user,
-            goal_type=form.cleaned_data["goal_type"],
-            target_rate_kg_per_week=form.cleaned_data["target_rate"],
-            target_weight=form.canonical_target_weight_kg(),
-        )
-        services.set_target(
-            request.user,
-            goal=new_goal,
-            daily_calories=calorie_result.daily_calories,
-            macro_breakdown=macro_result,
-            source=TargetSource.CALCULATED,
-            reason=calorie_result.reason,
-            reason_data=calorie_result.reason_data,
-        )
         messages.success(
             request,
             _("Goal updated - new target is %(calories)d kcal/day.")
-            % {"calories": calorie_result.daily_calories},
+            % {"calories": new_target.daily_calories},
         )
         return redirect("nutrition:dashboard")
 

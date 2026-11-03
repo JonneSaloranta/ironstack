@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from . import views
+from . import views, views_assistant, views_coaching, views_social, views_tutorials
 
 app_name = "api"
 
@@ -53,9 +53,256 @@ router.register("stretch-routines", views.StretchRoutineViewSet, basename="stret
 router.register("stretch-routine-items", views.RoutineItemViewSet, basename="stretch-routine-item")
 router.register("stretch-sessions", views.StretchSessionViewSet, basename="stretch-session")
 
+_social = views_social
+social_urlpatterns = [
+    path("social/friends/", _social.FriendListView.as_view(), name="social-friends"),
+    path(
+        "social/friends/<int:user_id>/",
+        _social.FriendDetailView.as_view(),
+        name="social-friend",
+    ),
+    path(
+        "social/friends/<int:user_id>/mute/",
+        _social.FriendMuteView.as_view(mute=True),
+        name="social-friend-mute",
+    ),
+    path(
+        "social/friends/<int:user_id>/unmute/",
+        _social.FriendMuteView.as_view(mute=False),
+        name="social-friend-unmute",
+    ),
+    path("social/users/", _social.UserSearchView.as_view(), name="social-users"),
+    path(
+        "social/friend-requests/",
+        _social.FriendRequestListView.as_view(),
+        name="social-friend-requests",
+    ),
+    path(
+        "social/friend-requests/<int:pk>/accept/",
+        _social.FriendRequestRespondView.as_view(accept=True),
+        name="social-friend-request-accept",
+    ),
+    path(
+        "social/friend-requests/<int:pk>/decline/",
+        _social.FriendRequestRespondView.as_view(accept=False),
+        name="social-friend-request-decline",
+    ),
+    path("social/blocks/", _social.BlockListView.as_view(), name="social-blocks"),
+    path(
+        "social/blocks/<int:user_id>/", _social.BlockDetailView.as_view(), name="social-block"
+    ),
+    path(
+        "social/conversations/",
+        _social.ConversationListView.as_view(),
+        name="social-conversations",
+    ),
+    path(
+        "social/messages/<int:user_id>/",
+        _social.DirectMessageView.as_view(),
+        name="social-messages",
+    ),
+    path("social/groups/", _social.GroupListView.as_view(), name="social-groups"),
+    path("social/groups/join/", _social.GroupJoinView.as_view(), name="social-group-join"),
+    path("social/groups/<int:pk>/", _social.GroupDetailView.as_view(), name="social-group"),
+    path(
+        "social/groups/<int:pk>/members/",
+        _social.GroupMemberListView.as_view(),
+        name="social-group-members",
+    ),
+    path(
+        "social/groups/<int:pk>/members/<int:user_id>/",
+        _social.GroupMemberView.as_view(),
+        name="social-group-member",
+    ),
+    path(
+        "social/groups/<int:pk>/transfer/",
+        _social.GroupTransferView.as_view(),
+        name="social-group-transfer",
+    ),
+    path(
+        "social/groups/<int:pk>/leave/",
+        _social.GroupLeaveView.as_view(),
+        name="social-group-leave",
+    ),
+    path(
+        "social/groups/<int:pk>/mute/", _social.GroupMuteView.as_view(), name="social-group-mute"
+    ),
+    path(
+        "social/groups/<int:pk>/invite-link/",
+        _social.GroupInviteLinkView.as_view(),
+        name="social-group-invite-link",
+    ),
+    path(
+        "social/groups/<int:pk>/invites/",
+        _social.GroupInviteSendView.as_view(),
+        name="social-group-invites",
+    ),
+    path(
+        "social/groups/<int:pk>/messages/",
+        _social.GroupMessageView.as_view(),
+        name="social-group-messages",
+    ),
+    path(
+        "social/group-invites/",
+        _social.GroupInviteListView.as_view(),
+        name="social-group-invite-list",
+    ),
+    path(
+        "social/group-invites/<int:pk>/accept/",
+        _social.GroupInviteRespondView.as_view(accept=True),
+        name="social-group-invite-accept",
+    ),
+    path(
+        "social/group-invites/<int:pk>/decline/",
+        _social.GroupInviteRespondView.as_view(accept=False),
+        name="social-group-invite-decline",
+    ),
+]
+
+_coaching = views_coaching
+coaching_urlpatterns = [
+    path(
+        "coaching/requests/",
+        _coaching.CoachingRequestListView.as_view(),
+        name="coaching-requests",
+    ),
+    path(
+        "coaching/requests/<int:pk>/accept/",
+        _coaching.CoachingRequestRespondView.as_view(accept=True),
+        name="coaching-request-accept",
+    ),
+    path(
+        "coaching/requests/<int:pk>/decline/",
+        _coaching.CoachingRequestRespondView.as_view(accept=False),
+        name="coaching-request-decline",
+    ),
+    path("coaching/coaches/", _coaching.CoachListView.as_view(), name="coaching-coaches"),
+    path("coaching/clients/", _coaching.ClientListView.as_view(), name="coaching-clients"),
+    path(
+        "coaching/clients/<str:username>/",
+        _coaching.ClientDetailView.as_view(),
+        name="coaching-client",
+    ),
+    path(
+        "coaching/relationships/<int:pk>/end/",
+        _coaching.RelationshipEndView.as_view(),
+        name="coaching-relationship-end",
+    ),
+    path("coaching/shared/", _coaching.SharedPlanListView.as_view(), name="coaching-shared"),
+    path(
+        "coaching/shared/programs/<int:pk>/import/",
+        _coaching.SharedProgramImportView.as_view(),
+        name="coaching-shared-program-import",
+    ),
+    path(
+        "coaching/shared/diet-plans/<int:pk>/import/",
+        _coaching.SharedDietPlanImportView.as_view(),
+        name="coaching-shared-diet-plan-import",
+    ),
+    path(
+        "coaching/programs/<int:pk>/update/",
+        _coaching.ProgramCoachUpdateView.as_view(),
+        name="coaching-program-update",
+    ),
+    path(
+        "coaching/diet-plans/<int:pk>/update/",
+        _coaching.DietPlanCoachUpdateView.as_view(),
+        name="coaching-diet-plan-update",
+    ),
+    path(
+        "coaching/programs/<int:pk>/clients/",
+        _coaching.ProgramShareView.as_view(),
+        name="coaching-program-clients",
+    ),
+    path(
+        "coaching/diet-plans/<int:pk>/clients/",
+        _coaching.DietPlanShareView.as_view(),
+        name="coaching-diet-plan-clients",
+    ),
+]
+
+_assistant = views_assistant
+assistant_urlpatterns = [
+    path("assistant/", _assistant.AssistantStatusView.as_view(), name="assistant-status"),
+    path(
+        "assistant/enable/",
+        _assistant.AssistantToggleView.as_view(enable=True),
+        name="assistant-enable",
+    ),
+    path(
+        "assistant/disable/",
+        _assistant.AssistantToggleView.as_view(enable=False),
+        name="assistant-disable",
+    ),
+    path(
+        "assistant/settings/",
+        _assistant.AssistantSettingsView.as_view(),
+        name="assistant-settings",
+    ),
+    path(
+        "assistant/conversations/",
+        _assistant.ConversationListView.as_view(),
+        name="assistant-conversations",
+    ),
+    path(
+        "assistant/conversations/<int:pk>/",
+        _assistant.ConversationDetailView.as_view(),
+        name="assistant-conversation",
+    ),
+    path(
+        "assistant/conversations/<int:pk>/messages/",
+        _assistant.ConversationMessageView.as_view(),
+        name="assistant-conversation-messages",
+    ),
+    path(
+        "assistant/messages/<int:pk>/",
+        _assistant.AssistantMessageView.as_view(),
+        name="assistant-message",
+    ),
+    path(
+        "assistant/proposals/<int:pk>/accept/",
+        _assistant.ProposalAcceptView.as_view(),
+        name="assistant-proposal-accept",
+    ),
+    path(
+        "assistant/proposals/<int:pk>/dismiss/",
+        _assistant.ProposalDismissView.as_view(),
+        name="assistant-proposal-dismiss",
+    ),
+]
+
 urlpatterns = [
     path("profile/", views.ProfileView.as_view(), name="profile"),
+    path("tutorials/", views_tutorials.TutorialListView.as_view(), name="tutorial-list"),
+    path(
+        "tutorials/reset/",
+        views_tutorials.TutorialResetAllView.as_view(),
+        name="tutorial-reset-all",
+    ),
+    path(
+        "tutorials/<str:key>/complete/",
+        views_tutorials.TutorialCompleteView.as_view(),
+        name="tutorial-complete",
+    ),
+    path(
+        "tutorials/<str:key>/reset/",
+        views_tutorials.TutorialResetView.as_view(),
+        name="tutorial-reset",
+    ),
     path("nutrition/profile/", views.NutritionProfileView.as_view(), name="nutrition-profile"),
+    path(
+        "nutrition/daily-totals/", views.DailyTotalsView.as_view(), name="nutrition-daily-totals"
+    ),
+    path(
+        "nutrition/adjustment-suggestion/",
+        views.AdjustmentSuggestionView.as_view(),
+        name="nutrition-adjustment-suggestion",
+    ),
+    path(
+        "nutrition/adjustment-suggestion/accept/",
+        views.AdjustmentSuggestionAcceptView.as_view(),
+        name="nutrition-adjustment-suggestion-accept",
+    ),
     path("up-next/", views.UpNextView.as_view(), name="up-next"),
     path(
         "exercises/<int:pk>/last-performance/",
@@ -63,9 +310,27 @@ urlpatterns = [
         name="exercise-last-performance",
     ),
     path("analytics/summary/", views.TrainingSummaryView.as_view(), name="analytics-summary"),
+    path("analytics/volume/", views.VolumeAnalyticsView.as_view(), name="analytics-volume"),
+    path(
+        "analytics/muscle-groups/",
+        views.MuscleGroupAnalyticsView.as_view(),
+        name="analytics-muscle-groups",
+    ),
+    path(
+        "analytics/exercises/<int:pk>/",
+        views.ExerciseAnalyticsView.as_view(),
+        name="analytics-exercise",
+    ),
+    path(
+        "analytics/recently-active/",
+        views.RecentlyActiveView.as_view(),
+        name="analytics-recently-active",
+    ),
     path(
         "analytics/achievements/",
         views.AchievementsView.as_view(),
         name="analytics-achievements",
     ),
-] + router.urls
+]
+urlpatterns += social_urlpatterns + coaching_urlpatterns + assistant_urlpatterns
+urlpatterns += router.urls

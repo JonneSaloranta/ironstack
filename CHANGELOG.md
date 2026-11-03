@@ -18,6 +18,49 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.30.0] - 2026-11-03
+
+### Added
+- API: diary entries can be filtered by day or date range, body measurements
+  by type and time, activities by type and date, and foods searched by name,
+  brand or barcode.
+- API: the profile has the body tracking reminder setting, the join date and
+  whether the reminder is due.
+- API: logging a set answers with the personal records it broke.
+- API: diary entries, body measurements, activities and stretching sessions
+  accept an `Idempotency-Key`, so a retried quick log isn't saved twice.
+- API: diary entries show their logged nutrition and food or recipe name, a
+  day's totals and "Copy day" are available, so totals match the web even
+  after a food is edited or a recipe deleted.
+- API: foods can be imported from Open Food Facts by barcode and searched
+  there through the server, keeping Nutri-Score, NOVA group and the OFF link.
+- API: nutrition can be set up and a new goal started, with a calculated
+  target, and a calorie adjustment suggestion can be read and accepted.
+- API: a program or stretch routine can be copied in one request.
+- API: guided stretching sessions can be started, each stretch marked done or
+  skipped, and finished, and a session can be marked as a workout's cool-down.
+- API: training volume per week and per muscle group, and an exercise's
+  progress with its best set and estimated 1RM per session.
+- API: built-in exercises, programs, meal slots, stretches and other content
+  have a `display_name` in the request's or the user's language.
+- API: guided tours can be listed, completed and reset, shared with the web.
+- API: friends, friend requests, blocking, messages and groups, and the
+  "Recently active" list. Existing API keys have no access to friends and
+  groups; create a new key with the "Friends and groups" area allowed.
+- API: coaching - asking a trainer, answering requests, a trainer's view of a
+  client, and sharing, importing and updating programs and diet plans. Needs
+  a key with the new "Coaching" area allowed.
+- API: the AI assistant - turning it on, its settings, conversations and
+  replies, and accepting or dismissing its suggestions. Needs a key with the
+  new "AI assistant" area allowed.
+
+### Fixed
+- API: built-in recipes are listed and readable alongside your own, so diet
+  plan recipes can be shown, and they can be logged to the diary like on the
+  web.
+- API: a diary entry sent with `"food": null` or `"recipe": null` no longer
+  fails with a server error.
+
 ## [1.29.0] - 2026-10-31
 
 ### Changed
