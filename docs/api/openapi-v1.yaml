@@ -4355,9 +4355,10 @@ paths:
     get:
       operationId: stretch_sessions_list
       description: |-
-        For a DRF viewset whose `create` should honour `Idempotency-Key`.
-        Only a successful (2xx) response is stored: a failed attempt changed
-        nothing, so retrying it with the same key simply runs it again.
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
       parameters:
       - name: page
         required: false
@@ -4385,9 +4386,10 @@ paths:
     post:
       operationId: stretch_sessions_create
       description: |-
-        For a DRF viewset whose `create` should honour `Idempotency-Key`.
-        Only a successful (2xx) response is stored: a failed attempt changed
-        nothing, so retrying it with the same key simply runs it again.
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
       parameters:
       - in: header
         name: Idempotency-Key
@@ -4423,9 +4425,10 @@ paths:
     get:
       operationId: stretch_sessions_retrieve
       description: |-
-        For a DRF viewset whose `create` should honour `Idempotency-Key`.
-        Only a successful (2xx) response is stored: a failed attempt changed
-        nothing, so retrying it with the same key simply runs it again.
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
       parameters:
       - in: path
         name: id
@@ -4446,9 +4449,10 @@ paths:
     put:
       operationId: stretch_sessions_update
       description: |-
-        For a DRF viewset whose `create` should honour `Idempotency-Key`.
-        Only a successful (2xx) response is stored: a failed attempt changed
-        nothing, so retrying it with the same key simply runs it again.
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
       parameters:
       - in: path
         name: id
@@ -4481,9 +4485,10 @@ paths:
     patch:
       operationId: stretch_sessions_partial_update
       description: |-
-        For a DRF viewset whose `create` should honour `Idempotency-Key`.
-        Only a successful (2xx) response is stored: a failed attempt changed
-        nothing, so retrying it with the same key simply runs it again.
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
       parameters:
       - in: path
         name: id
@@ -4515,9 +4520,10 @@ paths:
     delete:
       operationId: stretch_sessions_destroy
       description: |-
-        For a DRF viewset whose `create` should honour `Idempotency-Key`.
-        Only a successful (2xx) response is stored: a failed attempt changed
-        nothing, so retrying it with the same key simply runs it again.
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
       parameters:
       - in: path
         name: id
@@ -4531,6 +4537,120 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/stretch-sessions/{id}/abandon/:
+    post:
+      operationId: stretch_sessions_abandon_create
+      description: |-
+        `POST` is a quick log; a guided session goes `start/` ->
+        `mark/` per stretch -> `complete/` (or `abandon/`), the same
+        services as the web player (issue #34). Only one guided session can
+        be in progress at a time.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - stretch-sessions
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StretchSession'
+          description: ''
+  /api/v1/stretch-sessions/{id}/complete/:
+    post:
+      operationId: stretch_sessions_complete_create
+      description: |-
+        Finishes the guided session; its duration is the time since
+        it started (services.complete_session).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - stretch-sessions
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StretchSession'
+          description: ''
+  /api/v1/stretch-sessions/{id}/mark/:
+    post:
+      operationId: stretch_sessions_mark_create
+      description: |-
+        Marks one of the session's stretches done (optionally with the
+        seconds actually held) or skipped (services.mark_performed).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - stretch-sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformedStretchMarkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PerformedStretchMarkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PerformedStretchMarkRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformedStretch'
+          description: ''
+  /api/v1/stretch-sessions/start/:
+    post:
+      operationId: stretch_sessions_start_create
+      description: |-
+        Starts a guided session from `routine`, or from `stretches`
+        at their default holds, snapshotting the plan like the web does
+        (services.start_session). `after_workout` marks it as that
+        finished workout's cool-down. 409 with the session's `id` when
+        one is already in progress - resume that one instead.
+      tags:
+      - stretch-sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StretchSessionStartRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StretchSessionStartRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StretchSessionStartRequest'
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StretchSession'
+          description: ''
   /api/v1/stretches/:
     get:
       operationId: stretches_list
@@ -7993,13 +8113,18 @@ components:
     PatchedStretchSessionRequest:
       type: object
       description: |-
-        Creating one through the API is a quick log - a finished session
-        with a duration (services.quick_log); guided sessions only come from
-        the web player. Everything snapshotted at start (name, routine,
-        per-stretch plan) is read-only afterwards, same as the web edit
-        form: date, duration and notes stay editable.
+        Creating one here is a quick log - a finished session with a
+        duration (services.quick_log); a guided session starts with
+        `stretch-sessions/start/` instead. `after_workout` can be given on
+        create to mark it as that workout's cool-down. Everything
+        snapshotted at start (name, routine, per-stretch plan, the workout
+        it followed) is read-only afterwards, same as the web edit form:
+        date, duration and notes stay editable.
       properties:
         routine:
+          type: integer
+          nullable: true
+        after_workout:
           type: integer
           nullable: true
         date:
@@ -8172,6 +8297,23 @@ components:
       - id
       - stretch_name
       - target_hold_seconds
+    PerformedStretchMarkRequest:
+      type: object
+      description: |-
+        One stretch of a guided session done (optionally with the
+        seconds actually held) or skipped - services.mark_performed.
+      properties:
+        performed_stretch:
+          type: integer
+        done:
+          type: boolean
+        actual_seconds:
+          type: integer
+          minimum: 0
+          nullable: true
+      required:
+      - done
+      - performed_stretch
     PerformedStretchRequest:
       type: object
       properties:
@@ -8889,11 +9031,13 @@ components:
     StretchSession:
       type: object
       description: |-
-        Creating one through the API is a quick log - a finished session
-        with a duration (services.quick_log); guided sessions only come from
-        the web player. Everything snapshotted at start (name, routine,
-        per-stretch plan) is read-only afterwards, same as the web edit
-        form: date, duration and notes stay editable.
+        Creating one here is a quick log - a finished session with a
+        duration (services.quick_log); a guided session starts with
+        `stretch-sessions/start/` instead. `after_workout` can be given on
+        create to mark it as that workout's cool-down. Everything
+        snapshotted at start (name, routine, per-stretch plan, the workout
+        it followed) is read-only afterwards, same as the web edit form:
+        date, duration and notes stay editable.
       properties:
         id:
           type: integer
@@ -8906,7 +9050,6 @@ components:
           nullable: true
         after_workout:
           type: integer
-          readOnly: true
           nullable: true
         status:
           allOf:
@@ -8934,7 +9077,6 @@ components:
             $ref: '#/components/schemas/PerformedStretch'
           readOnly: true
       required:
-      - after_workout
       - completed_at
       - duration
       - id
@@ -8945,13 +9087,18 @@ components:
     StretchSessionRequest:
       type: object
       description: |-
-        Creating one through the API is a quick log - a finished session
-        with a duration (services.quick_log); guided sessions only come from
-        the web player. Everything snapshotted at start (name, routine,
-        per-stretch plan) is read-only afterwards, same as the web edit
-        form: date, duration and notes stay editable.
+        Creating one here is a quick log - a finished session with a
+        duration (services.quick_log); a guided session starts with
+        `stretch-sessions/start/` instead. `after_workout` can be given on
+        create to mark it as that workout's cool-down. Everything
+        snapshotted at start (name, routine, per-stretch plan, the workout
+        it followed) is read-only afterwards, same as the web edit form:
+        date, duration and notes stay editable.
       properties:
         routine:
+          type: integer
+          nullable: true
+        after_workout:
           type: integer
           nullable: true
         date:
@@ -8963,6 +9110,26 @@ components:
           type: string
       required:
       - duration
+    StretchSessionStartRequest:
+      type: object
+      description: |-
+        `POST stretch-sessions/start/` - a guided session from a routine,
+        or from a plain list of stretches at their default holds (e.g. a
+        cool-down), exactly one of the two.
+      properties:
+        routine:
+          type: integer
+          nullable: true
+        stretches:
+          type: array
+          items:
+            type: integer
+        name:
+          type: string
+          default: ''
+        after_workout:
+          type: integer
+          nullable: true
     StretchSessionStatusEnum:
       enum:
       - in_progress

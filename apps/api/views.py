@@ -87,6 +87,8 @@ from .serializers import (
     NutritionTargetSerializer,
     OffSearchSerializer,
     PerformedExerciseSerializer,
+    PerformedStretchMarkSerializer,
+    PerformedStretchSerializer,
     PersonalRecordSerializer,
     ProfileSerializer,
     ProgramSerializer,
@@ -98,6 +100,7 @@ from .serializers import (
     StretchRoutineSerializer,
     StretchSerializer,
     StretchSessionSerializer,
+    StretchSessionStartSerializer,
     SuggestionSerializer,
     TrainingSummarySerializer,
     UpNextSerializer,
@@ -1310,6 +1313,11 @@ class RoutineItemViewSet(viewsets.ModelViewSet):
 
 @extend_schema_view(create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]))
 class StretchSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
+    """`POST` is a quick log; a guided session goes `start/` ->
+    `mark/` per stretch -> `complete/` (or `abandon/`), the same
+    services as the web player (issue #34). Only one guided session can
+    be in progress at a time."""
+
     serializer_class = StretchSessionSerializer
     api_context = ApiContext.STRETCHING
 
@@ -1326,4 +1334,86 @@ class StretchSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
             duration=data["duration"],
             routine=data.get("routine"),
             notes=data.get("notes", ""),
+            after_workout=data.get("after_workout"),
         )
+
+    def _in_progress_or_409(self):
+        from apps.stretching.models import StretchSessionStatus
+
+        session = self.get_object()
+        if session.status != StretchSessionStatus.IN_PROGRESS:
+            return session, Response(
+                {"detail": "This session isn't in progress."}, status=status.HTTP_409_CONFLICT
+            )
+        return session, None
+
+    @extend_schema(
+        request=StretchSessionStartSerializer, responses={201: StretchSessionSerializer}
+    )
+    @action(detail=False, methods=["post"])
+    def start(self, request):
+        """Starts a guided session from `routine`, or from `stretches`
+        at their default holds, snapshotting the plan like the web does
+        (services.start_session). `after_workout` marks it as that
+        finished workout's cool-down. 409 with the session's `id` when
+        one is already in progress - resume that one instead."""
+        serializer = StretchSessionStartSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        try:
+            with _user_language(request.user):
+                session = stretching_services.start_session(
+                    request.user,
+                    routine=data.get("routine"),
+                    stretches=data.get("stretches") or None,
+                    name=data.get("name", ""),
+                    after_workout=data.get("after_workout"),
+                )
+        except stretching_services.SessionAlreadyInProgress as exc:
+            return Response(
+                {"detail": str(exc), "id": exc.session.pk}, status=status.HTTP_409_CONFLICT
+            )
+        session = self.get_queryset().get(pk=session.pk)
+        return Response(
+            StretchSessionSerializer(session, context={"request": request}).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+    @extend_schema(request=PerformedStretchMarkSerializer, responses=PerformedStretchSerializer)
+    @action(detail=True, methods=["post"])
+    def mark(self, request, pk=None):
+        """Marks one of the session's stretches done (optionally with the
+        seconds actually held) or skipped (services.mark_performed)."""
+        session, conflict = self._in_progress_or_409()
+        if conflict:
+            return conflict
+        serializer = PerformedStretchMarkSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        performed = get_object_or_404(
+            session.performed_stretches.all(), pk=data["performed_stretch"]
+        )
+        stretching_services.mark_performed(
+            performed, done=data["done"], actual_seconds=data.get("actual_seconds")
+        )
+        return Response(PerformedStretchSerializer(performed).data)
+
+    @extend_schema(request=None, responses=StretchSessionSerializer)
+    @action(detail=True, methods=["post"])
+    def complete(self, request, pk=None):
+        """Finishes the guided session; its duration is the time since
+        it started (services.complete_session)."""
+        session, conflict = self._in_progress_or_409()
+        if conflict:
+            return conflict
+        stretching_services.complete_session(session)
+        return Response(self.get_serializer(self.get_queryset().get(pk=session.pk)).data)
+
+    @extend_schema(request=None, responses=StretchSessionSerializer)
+    @action(detail=True, methods=["post"])
+    def abandon(self, request, pk=None):
+        session, conflict = self._in_progress_or_409()
+        if conflict:
+            return conflict
+        stretching_services.abandon_session(session)
+        return Response(self.get_serializer(self.get_queryset().get(pk=session.pk)).data)

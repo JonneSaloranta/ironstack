@@ -1131,12 +1131,28 @@ class PerformedStretchSerializer(serializers.ModelSerializer):
         ]
 
 
+def _validate_after_workout(serializer, value):
+    """A cool-down belongs to one of the user's own finished workouts,
+    as on the web (stretching.views.session_start_cooldown)."""
+    from apps.workouts.models import WorkoutSessionStatus
+
+    if value is None:
+        return value
+    if value.user_id != serializer.context["request"].user.id or (
+        value.status != WorkoutSessionStatus.COMPLETED
+    ):
+        raise serializers.ValidationError("Not a finished workout of yours.")
+    return value
+
+
 class StretchSessionSerializer(serializers.ModelSerializer):
-    """Creating one through the API is a quick log - a finished session
-    with a duration (services.quick_log); guided sessions only come from
-    the web player. Everything snapshotted at start (name, routine,
-    per-stretch plan) is read-only afterwards, same as the web edit
-    form: date, duration and notes stay editable."""
+    """Creating one here is a quick log - a finished session with a
+    duration (services.quick_log); a guided session starts with
+    `stretch-sessions/start/` instead. `after_workout` can be given on
+    create to mark it as that workout's cool-down. Everything
+    snapshotted at start (name, routine, per-stretch plan, the workout
+    it followed) is read-only afterwards, same as the web edit form:
+    date, duration and notes stay editable."""
 
     performed_stretches = PerformedStretchSerializer(many=True, read_only=True)
 
@@ -1155,8 +1171,17 @@ class StretchSessionSerializer(serializers.ModelSerializer):
             "notes",
             "performed_stretches",
         ]
-        read_only_fields = ["name", "after_workout", "status", "started_at", "completed_at"]
+        read_only_fields = ["name", "status", "started_at", "completed_at"]
         extra_kwargs = {"duration": {"required": True, "allow_null": False}}
+
+    def validate_after_workout(self, value):
+        if self.instance is not None:
+            if value != self.instance.after_workout:
+                raise serializers.ValidationError(
+                    "A logged session's workout can't be changed."
+                )
+            return value
+        return _validate_after_workout(self, value)
 
     def validate_routine(self, value):
         from apps.stretching import services as stretching_services
@@ -1170,6 +1195,64 @@ class StretchSessionSerializer(serializers.ModelSerializer):
         ).exists():
             raise serializers.ValidationError("Not a routine you can use.")
         return value
+
+
+class StretchSessionStartSerializer(serializers.Serializer):
+    """`POST stretch-sessions/start/` - a guided session from a routine,
+    or from a plain list of stretches at their default holds (e.g. a
+    cool-down), exactly one of the two."""
+
+    routine = serializers.PrimaryKeyRelatedField(
+        queryset=StretchRoutine.objects.all(), required=False, allow_null=True
+    )
+    stretches = serializers.PrimaryKeyRelatedField(
+        queryset=Stretch.objects.all(), many=True, required=False
+    )
+    name = serializers.CharField(required=False, allow_blank=True, default="")
+    after_workout = serializers.PrimaryKeyRelatedField(
+        queryset=WorkoutSession.objects.all(), required=False, allow_null=True
+    )
+
+    def validate_routine(self, value):
+        from apps.stretching import services as stretching_services
+
+        if value is None:
+            return value
+        user = self.context["request"].user
+        if not stretching_services.visible_routines(user).filter(pk=value.pk).exists():
+            raise serializers.ValidationError("Not a routine you can use.")
+        if not value.items.exists():
+            raise serializers.ValidationError("This routine has no stretches yet.")
+        return value
+
+    def validate_stretches(self, value):
+        from apps.stretching import services as stretching_services
+
+        visible = set(
+            stretching_services.visible_stretches(self.context["request"].user).values_list(
+                "pk", flat=True
+            )
+        )
+        if any(stretch.pk not in visible for stretch in value):
+            raise serializers.ValidationError("Not a stretch you can use.")
+        return value
+
+    def validate_after_workout(self, value):
+        return _validate_after_workout(self, value)
+
+    def validate(self, attrs):
+        if bool(attrs.get("routine")) == bool(attrs.get("stretches")):
+            raise serializers.ValidationError("Give either a routine or stretches - exactly one.")
+        return attrs
+
+
+class PerformedStretchMarkSerializer(serializers.Serializer):
+    """One stretch of a guided session done (optionally with the
+    seconds actually held) or skipped - services.mark_performed."""
+
+    performed_stretch = serializers.IntegerField()
+    done = serializers.BooleanField()
+    actual_seconds = serializers.IntegerField(min_value=0, required=False, allow_null=True)
 
 
 # --------------------------------------------------------------------

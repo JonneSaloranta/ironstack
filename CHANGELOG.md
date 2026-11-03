@@ -35,6 +35,8 @@ narrated summary of the same version.
 - API: nutrition can be set up and a new goal started, with a calculated
   target, and a calorie adjustment suggestion can be read and accepted.
 - API: a program or stretch routine can be copied in one request.
+- API: guided stretching sessions can be started, each stretch marked done or
+  skipped, and finished, and a session can be marked as a workout's cool-down.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

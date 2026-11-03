@@ -2262,6 +2262,113 @@ class StretchingEndpointTests(APITestCase):
         self.assertEqual(response.data["status"], "completed")
         self.assertEqual(response.data["name"], "Lower Body Cool-Down")
 
+    def _finished_workout(self, user=None):
+        session = workout_services.start_session(user or self.alice, workout=None)
+        workout_services.complete_session(session)
+        return session
+
+    def test_guided_session_start_mark_complete(self):
+        # Issue #34: a client's own player records each stretch.
+        start = self.client.post(
+            reverse("api:stretch-session-start"),
+            {"routine": self.system_routine.pk}, format="json", **self._auth(),
+        )
+        self.assertEqual(start.status_code, 201, start.data)
+        self.assertEqual(start.data["status"], "in_progress")
+        performed = start.data["performed_stretches"]
+        self.assertEqual(len(performed), self.system_routine.items.count())
+
+        again = self.client.post(
+            reverse("api:stretch-session-start"),
+            {"routine": self.system_routine.pk}, format="json", **self._auth(),
+        )
+        self.assertEqual(again.status_code, 409)
+        self.assertEqual(again.data["id"], start.data["id"])
+
+        session_id = start.data["id"]
+        done = self.client.post(
+            reverse("api:stretch-session-mark", args=[session_id]),
+            {"performed_stretch": performed[0]["id"], "done": True, "actual_seconds": 28},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(done.status_code, 200, done.data)
+        self.assertEqual(done.data["status"], "done")
+        self.assertEqual(done.data["actual_seconds"], 28)
+        if len(performed) > 1:
+            skipped = self.client.post(
+                reverse("api:stretch-session-mark", args=[session_id]),
+                {"performed_stretch": performed[1]["id"], "done": False},
+                format="json", **self._auth(),
+            )
+            self.assertEqual(skipped.data["status"], "skipped")
+
+        complete = self.client.post(
+            reverse("api:stretch-session-complete", args=[session_id]), **self._auth()
+        )
+        self.assertEqual(complete.status_code, 200)
+        self.assertEqual(complete.data["status"], "completed")
+        self.assertIsNotNone(complete.data["duration"])
+        self.assertEqual(
+            self.client.post(
+                reverse("api:stretch-session-abandon", args=[session_id]), **self._auth()
+            ).status_code,
+            409,
+        )
+
+    def test_guided_cooldown_from_stretches_after_a_workout(self):
+        workout = self._finished_workout()
+        start = self.client.post(
+            reverse("api:stretch-session-start"),
+            {"stretches": [self.quad.pk], "name": "Cool-down", "after_workout": workout.pk},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(start.status_code, 201, start.data)
+        self.assertEqual(start.data["after_workout"], workout.pk)
+        self.assertEqual(start.data["name"], "Cool-down")
+        abandon = self.client.post(
+            reverse("api:stretch-session-abandon", args=[start.data["id"]]), **self._auth()
+        )
+        self.assertEqual(abandon.data["status"], "abandoned")
+
+    def test_start_needs_exactly_one_plan_and_own_workout(self):
+        url = reverse("api:stretch-session-start")
+        self.assertEqual(self.client.post(url, {}, format="json", **self._auth()).status_code, 400)
+        both = {"routine": self.system_routine.pk, "stretches": [self.quad.pk]}
+        self.assertEqual(
+            self.client.post(url, both, format="json", **self._auth()).status_code, 400
+        )
+        bobs_workout = self._finished_workout(self.bob)
+        self.assertEqual(
+            self.client.post(
+                url, {"stretches": [self.quad.pk], "after_workout": bobs_workout.pk},
+                format="json", **self._auth(),
+            ).status_code,
+            400,
+        )
+        self.assertEqual(
+            self.client.post(
+                url, {"routine": self.bobs_routine.pk}, format="json", **self._auth()
+            ).status_code,
+            400,
+        )
+
+    def test_quick_log_after_a_workout(self):
+        workout = self._finished_workout()
+        response = self.client.post(
+            reverse("api:stretch-session-list"),
+            {"duration": "00:10:00", "after_workout": workout.pk},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["after_workout"], workout.pk)
+        bobs = self._finished_workout(self.bob)
+        rejected = self.client.post(
+            reverse("api:stretch-session-list"),
+            {"duration": "00:10:00", "after_workout": bobs.pk},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(rejected.status_code, 400)
+
     def test_session_routine_must_be_visible(self):
         response = self.client.post(
             reverse("api:stretch-session-list"),
