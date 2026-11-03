@@ -41,6 +41,7 @@ narrated summary of the same version.
   progress with its best set and estimated 1RM per session.
 - API: built-in exercises, programs, meal slots, stretches and other content
   have a `display_name` in the request's or the user's language.
+- API: guided tours can be listed, completed and reset, shared with the web.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

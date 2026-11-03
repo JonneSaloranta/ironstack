@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from . import views
+from . import views, views_tutorials
 
 app_name = "api"
 
@@ -55,6 +55,22 @@ router.register("stretch-sessions", views.StretchSessionViewSet, basename="stret
 
 urlpatterns = [
     path("profile/", views.ProfileView.as_view(), name="profile"),
+    path("tutorials/", views_tutorials.TutorialListView.as_view(), name="tutorial-list"),
+    path(
+        "tutorials/reset/",
+        views_tutorials.TutorialResetAllView.as_view(),
+        name="tutorial-reset-all",
+    ),
+    path(
+        "tutorials/<str:key>/complete/",
+        views_tutorials.TutorialCompleteView.as_view(),
+        name="tutorial-complete",
+    ),
+    path(
+        "tutorials/<str:key>/reset/",
+        views_tutorials.TutorialResetView.as_view(),
+        name="tutorial-reset",
+    ),
     path("nutrition/profile/", views.NutritionProfileView.as_view(), name="nutrition-profile"),
     path(
         "nutrition/daily-totals/", views.DailyTotalsView.as_view(), name="nutrition-daily-totals"

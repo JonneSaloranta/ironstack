@@ -4958,6 +4958,76 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/tutorials/:
+    get:
+      operationId: tutorials_list
+      description: |-
+        `GET tutorials/` - every tour with its steps, in the request's or
+        the user's language, and whether the user has finished it.
+        Automatic tours are switched with `tutorials_enabled` on
+        `profile/`.
+      tags:
+      - tutorials
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tutorial'
+          description: ''
+  /api/v1/tutorials/{key}/complete/:
+    post:
+      operationId: tutorials_complete_create
+      description: |-
+        `POST tutorials/<key>/complete/` - finished or skipped, so it
+        isn't started by itself again (also on the web).
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - tutorials
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/tutorials/{key}/reset/:
+    post:
+      operationId: tutorials_reset_create
+      description: |-
+        `POST tutorials/<key>/reset/` - starts again next time ("Show
+        again").
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - tutorials
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/tutorials/reset/:
+    post:
+      operationId: tutorials_reset_all
+      description: '`POST tutorials/reset/` - every tour starts again next time.'
+      tags:
+      - tutorials
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/up-next/:
     get:
       operationId: up_next_retrieve
@@ -8183,6 +8253,8 @@ components:
           type: boolean
           description: Shows a dashboard card nudging you to log a body measurement
             when you haven't logged one in a while. Turn off to never see that reminder.
+        tutorials_enabled:
+          type: boolean
     PatchedProgramRequest:
       type: object
       properties:
@@ -8665,6 +8737,8 @@ components:
         needs_body_tracking_reminder:
           type: boolean
           readOnly: true
+        tutorials_enabled:
+          type: boolean
       required:
       - date_joined
       - email
@@ -8719,6 +8793,8 @@ components:
           type: boolean
           description: Shows a dashboard card nudging you to log a body measurement
             when you haven't logged one in a while. Turn off to never see that reminder.
+        tutorials_enabled:
+          type: boolean
     Program:
       type: object
       properties:
@@ -9435,6 +9511,49 @@ components:
       - session_count
       - total_duration_seconds
       - total_volume
+    Tutorial:
+      type: object
+      properties:
+        key:
+          type: string
+        section:
+          type: string
+        title:
+          type: string
+        completed:
+          type: boolean
+        web_url:
+          type: string
+          nullable: true
+          description: The web page the tour runs on; null when there's none yet.
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TutorialStep'
+      required:
+      - completed
+      - key
+      - section
+      - steps
+      - title
+      - web_url
+    TutorialStep:
+      type: object
+      properties:
+        anchor:
+          type: string
+          nullable: true
+        title:
+          type: string
+        body:
+          type: string
+        optional:
+          type: boolean
+      required:
+      - anchor
+      - body
+      - optional
+      - title
     UnitKindEnum:
       enum:
       - weight

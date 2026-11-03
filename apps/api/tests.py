@@ -3005,3 +3005,59 @@ class DisplayNameTests(APITestCase):
             ],
             "Iltavenyttely",
         )
+
+
+class TutorialEndpointTests(APITestCase):
+    """Issue #37 - tours and their shared completion state."""
+
+    def setUp(self):
+        from apps.tutorials.tours import TOURS
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.auth = {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+        self.tour = TOURS[0]
+
+    def test_list_completes_and_resets(self):
+        from apps.tutorials.models import TutorialCompletion
+
+        response = self.client.get(reverse("api:tutorial-list"), **self.auth)
+        self.assertEqual(response.status_code, 200)
+        first = response.data[0]
+        self.assertEqual(first["key"], self.tour.key)
+        self.assertFalse(first["completed"])
+        self.assertTrue(first["steps"])
+
+        url = reverse("api:tutorial-complete", args=[self.tour.key])
+        self.assertEqual(self.client.post(url, **self.auth).status_code, 204)
+        self.assertTrue(
+            TutorialCompletion.objects.filter(user=self.alice, tour=self.tour.key).exists()
+        )
+        listed = self.client.get(reverse("api:tutorial-list"), **self.auth).data
+        self.assertTrue(listed[0]["completed"])
+
+        reset = reverse("api:tutorial-reset", args=[self.tour.key])
+        self.assertEqual(self.client.post(reset, **self.auth).status_code, 204)
+        self.assertFalse(TutorialCompletion.objects.filter(user=self.alice).exists())
+        self.client.post(url, **self.auth)
+        self.client.post(reverse("api:tutorial-reset-all"), **self.auth)
+        self.assertFalse(TutorialCompletion.objects.filter(user=self.alice).exists())
+
+    def test_unknown_tour_is_404(self):
+        url = reverse("api:tutorial-complete", args=["nope"])
+        self.assertEqual(self.client.post(url, **self.auth).status_code, 404)
+
+    def test_texts_in_the_request_language(self):
+        english = self.client.get(reverse("api:tutorial-list"), **self.auth).data[0]["title"]
+        finnish = self.client.get(
+            reverse("api:tutorial-list"), HTTP_ACCEPT_LANGUAGE="fi", **self.auth
+        ).data[0]["title"]
+        self.assertNotEqual(english, finnish)
+
+    def test_tutorials_enabled_on_the_profile(self):
+        response = self.client.patch(
+            reverse("api:profile"), {"tutorials_enabled": False}, format="json", **self.auth
+        )
+        self.assertEqual(response.status_code, 200)
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.tutorials_enabled)
