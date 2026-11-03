@@ -76,6 +76,17 @@ urlpatterns = [
         name="exercise-last-performance",
     ),
     path("analytics/summary/", views.TrainingSummaryView.as_view(), name="analytics-summary"),
+    path("analytics/volume/", views.VolumeAnalyticsView.as_view(), name="analytics-volume"),
+    path(
+        "analytics/muscle-groups/",
+        views.MuscleGroupAnalyticsView.as_view(),
+        name="analytics-muscle-groups",
+    ),
+    path(
+        "analytics/exercises/<int:pk>/",
+        views.ExerciseAnalyticsView.as_view(),
+        name="analytics-exercise",
+    ),
     path(
         "analytics/achievements/",
         views.AchievementsView.as_view(),

@@ -37,6 +37,8 @@ narrated summary of the same version.
 - API: a program or stretch routine can be copied in one request.
 - API: guided stretching sessions can be started, each stretch marked done or
   skipped, and finished, and a session can be marked as a workout's cool-down.
+- API: training volume per week and per muscle group, and an exercise's
+  progress with its best set and estimated 1RM per session.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

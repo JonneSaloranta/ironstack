@@ -148,9 +148,10 @@ def training_summary_canonical(user, date_range) -> TrainingSummary:
     return _training_summary(user, date_range, convert=False)
 
 
-def weekly_volume_series(user, date_range):
-    """Bar chart: total training volume per ISO week -
-    docs/ANALYTICS.md "bar chart: weekly training volume"."""
+def weekly_volume(user, date_range):
+    """`(week_start, volume)` per ISO week with training in range, oldest
+    first, volume in canonical kg - the data behind weekly_volume_series,
+    and what apps.api returns as is."""
     weekly = {}
     for exercise_set in _training_sets(user, date_range):
         session_date = exercise_set.performed_exercise.session.started_at.date()
@@ -158,18 +159,26 @@ def weekly_volume_series(user, date_range):
         weekly[week_start] = weekly.get(week_start, Decimal("0")) + (
             exercise_set.weight * exercise_set.reps
         )
-    ordered = sorted(weekly.items())
+    return sorted(weekly.items())
+
+
+def weekly_volume_series(user, date_range):
+    """Bar chart: total training volume per ISO week -
+    docs/ANALYTICS.md "bar chart: weekly training volume"."""
     return build_bar_series(
-        [(week.strftime("%b %d"), _weight_display(volume, user)) for week, volume in ordered]
+        [
+            (week.strftime("%b %d"), _weight_display(volume, user))
+            for week, volume in weekly_volume(user, date_range)
+        ]
     )
 
 
-def muscle_group_volume_series(user, date_range):
-    """Bar chart: total volume attributed to each primary muscle group -
-    docs/ANALYTICS.md "bar chart: muscle-group volume". A set with
-    multiple primary muscle groups counts its full volume toward each -
-    simplest defensible split, rather than dividing volume fractionally
-    with no principled basis for the split."""
+def muscle_group_volume(user, date_range):
+    """`(muscle_group, volume)` per primary muscle group, largest first,
+    volume in canonical kg. A set with multiple primary muscle groups
+    counts its full volume toward each - simplest defensible split,
+    rather than dividing volume fractionally with no principled basis
+    for the split."""
     sets = _training_sets(user, date_range).prefetch_related(
         "performed_exercise__exercise__primary_muscle_groups"
     )
@@ -177,9 +186,19 @@ def muscle_group_volume_series(user, date_range):
     for exercise_set in sets:
         volume = exercise_set.weight * exercise_set.reps
         for muscle_group in exercise_set.performed_exercise.exercise.primary_muscle_groups.all():
-            totals[muscle_group.name] = totals.get(muscle_group.name, Decimal("0")) + volume
-    ordered = sorted(totals.items(), key=lambda item: item[1], reverse=True)
-    return build_bar_series([(label, _weight_display(volume, user)) for label, volume in ordered])
+            totals[muscle_group] = totals.get(muscle_group, Decimal("0")) + volume
+    return sorted(totals.items(), key=lambda item: item[1], reverse=True)
+
+
+def muscle_group_volume_series(user, date_range):
+    """Bar chart: total volume attributed to each primary muscle group -
+    docs/ANALYTICS.md "bar chart: muscle-group volume"."""
+    return build_bar_series(
+        [
+            (muscle_group.name, _weight_display(volume, user))
+            for muscle_group, volume in muscle_group_volume(user, date_range)
+        ]
+    )
 
 
 def pr_history(user, date_range, limit=None):
@@ -267,20 +286,41 @@ class ExerciseAnalyticsSummary:
     total_volume: Decimal
 
 
-def exercise_summary(user, exercise, date_range) -> ExerciseAnalyticsSummary:
+def _exercise_summary(user, exercise, date_range, *, convert) -> ExerciseAnalyticsSummary:
     sets = list(_training_sets(user, date_range, exercise=exercise))
     session_ids = {s.performed_exercise.session_id for s in sets}
     total_volume = sum((s.weight * s.reps for s in sets), Decimal("0"))
     return ExerciseAnalyticsSummary(
-        session_count=len(session_ids), total_volume=_weight_display(total_volume, user)
+        session_count=len(session_ids),
+        total_volume=_weight_display(total_volume, user) if convert else total_volume,
     )
 
 
-def exercise_one_rm_trend(user, exercise, date_range):
-    """Line chart: estimated 1RM over time - docs/ANALYTICS.md "line
-    chart: estimated 1RM over time" / "line chart: exercise strength
-    trend". One point per session (that session's best estimate), not
-    per set, so the trend stays readable."""
+def exercise_summary(user, exercise, date_range) -> ExerciseAnalyticsSummary:
+    return _exercise_summary(user, exercise, date_range, convert=True)
+
+
+def exercise_summary_canonical(user, exercise, date_range) -> ExerciseAnalyticsSummary:
+    """`exercise_summary` with `total_volume` in canonical kg, for
+    apps.api - see training_summary_canonical."""
+    return _exercise_summary(user, exercise, date_range, convert=False)
+
+
+@dataclass(frozen=True)
+class SessionBest:
+    """An exercise's best set of one training day, by estimated 1RM -
+    canonical kg."""
+
+    date: object
+    estimated_one_rep_max: Decimal
+    weight: Decimal
+    reps: int
+
+
+def exercise_session_bests(user, exercise, date_range):
+    """The best set by estimated 1RM per training day in range, oldest
+    first - the data behind exercise_one_rm_trend. Warmup and failed sets
+    don't count, like a PR."""
     sets = (
         ExerciseSet.objects.filter(
             performed_exercise__exercise=exercise,
@@ -299,10 +339,26 @@ def exercise_one_rm_trend(user, exercise, date_range):
     for exercise_set in sets:
         session_date = exercise_set.performed_exercise.session.started_at.date()
         estimate = _one_rep_max.estimate(exercise_set.weight, exercise_set.reps)
-        if session_date not in best_per_session or estimate > best_per_session[session_date]:
-            best_per_session[session_date] = estimate
+        best = best_per_session.get(session_date)
+        if best is None or estimate > best.estimated_one_rep_max:
+            best_per_session[session_date] = SessionBest(
+                date=session_date,
+                estimated_one_rep_max=estimate,
+                weight=exercise_set.weight,
+                reps=exercise_set.reps,
+            )
+    return [best_per_session[day] for day in sorted(best_per_session)]
 
-    readings = [(_weight_display(value, user), date) for date, value in best_per_session.items()]
+
+def exercise_one_rm_trend(user, exercise, date_range):
+    """Line chart: estimated 1RM over time - docs/ANALYTICS.md "line
+    chart: estimated 1RM over time" / "line chart: exercise strength
+    trend". One point per session (that session's best estimate), not
+    per set, so the trend stays readable."""
+    readings = [
+        (_weight_display(best.estimated_one_rep_max, user), best.date)
+        for best in exercise_session_bests(user, exercise, date_range)
+    ]
     return build_chart_series(readings)
 
 

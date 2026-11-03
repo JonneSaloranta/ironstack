@@ -612,6 +612,54 @@ class TrainingSummarySerializer(serializers.Serializer):
         return obj.total_duration.total_seconds()
 
 
+class AnalyticsRangeSerializer(serializers.Serializer):
+    """The resolved `?range=` - `start` is null for `all`."""
+
+    range = serializers.CharField(source="key")
+    start = serializers.DateField(allow_null=True)
+    end = serializers.DateField()
+
+
+class WeeklyVolumeSerializer(serializers.Serializer):
+    week_start = serializers.DateField()
+    volume = serializers.DecimalField(max_digits=14, decimal_places=2)
+
+
+class VolumeAnalyticsSerializer(serializers.Serializer):
+    """`analytics/volume/` - kg x reps of working sets, canonical kg."""
+
+    range = AnalyticsRangeSerializer()
+    weeks = WeeklyVolumeSerializer(many=True)
+
+
+class MuscleGroupVolumeSerializer(serializers.Serializer):
+    muscle_group = serializers.IntegerField(source="muscle_group.pk")
+    muscle_group_name = serializers.CharField(source="muscle_group.name")
+    volume = serializers.DecimalField(max_digits=14, decimal_places=2)
+
+
+class MuscleGroupAnalyticsSerializer(serializers.Serializer):
+    range = AnalyticsRangeSerializer()
+    muscle_groups = MuscleGroupVolumeSerializer(many=True)
+
+
+class SessionBestSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    estimated_one_rep_max = serializers.DecimalField(max_digits=10, decimal_places=2)
+    weight = serializers.DecimalField(max_digits=10, decimal_places=2)
+    reps = serializers.IntegerField()
+
+
+class ExerciseAnalyticsSerializer(serializers.Serializer):
+    """`analytics/exercises/<id>/` - canonical kg throughout."""
+
+    range = AnalyticsRangeSerializer()
+    exercise = serializers.IntegerField(source="exercise.pk")
+    session_count = serializers.IntegerField()
+    total_volume = serializers.DecimalField(max_digits=14, decimal_places=2)
+    sessions = SessionBestSerializer(many=True)
+
+
 class AchievementSerializer(serializers.Serializer):
     icon = serializers.CharField()
     label = serializers.CharField()

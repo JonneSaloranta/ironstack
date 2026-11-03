@@ -425,6 +425,74 @@ paths:
                 items:
                   $ref: '#/components/schemas/Achievement'
           description: ''
+  /api/v1/analytics/exercises/{id}/:
+    get:
+      operationId: analytics_exercises_retrieve
+      description: |-
+        `analytics/exercises/<id>/?range=` - one exercise's progress:
+        sessions and volume in range, and its best set per training day by
+        estimated 1RM, the web's strength trend (issue #35). Canonical kg;
+        404 for an exercise the user can't see.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: range
+        schema:
+          type: string
+          enum:
+          - 1y
+          - 30d
+          - 3m
+          - 6m
+          - 7d
+          - all
+        description: Default 30d.
+      tags:
+      - analytics
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExerciseAnalytics'
+          description: ''
+  /api/v1/analytics/muscle-groups/:
+    get:
+      operationId: analytics_muscle_groups_retrieve
+      description: |-
+        `analytics/muscle-groups/?range=` - see VolumeAnalyticsView. A
+        set counts in full toward each of its exercise's primary muscle
+        groups, as on the web.
+      parameters:
+      - in: query
+        name: range
+        schema:
+          type: string
+          enum:
+          - 1y
+          - 30d
+          - 3m
+          - 6m
+          - 7d
+          - all
+        description: Default 30d.
+      tags:
+      - analytics
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MuscleGroupAnalytics'
+          description: ''
   /api/v1/analytics/summary/:
     get:
       operationId: analytics_summary_retrieve
@@ -443,6 +511,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TrainingSummary'
+          description: ''
+  /api/v1/analytics/volume/:
+    get:
+      operationId: analytics_volume_retrieve
+      description: |-
+        `analytics/volume/?range=` - training volume per ISO week (and
+        `analytics/muscle-groups/` per primary muscle group), the web
+        Analytics page's bar charts as data (issue #35). Canonical kg.
+      parameters:
+      - in: query
+        name: range
+        schema:
+          type: string
+          enum:
+          - 1y
+          - 30d
+          - 3m
+          - 6m
+          - 7d
+          - all
+        description: Default 30d.
+      tags:
+      - analytics
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolumeAnalytics'
           description: ''
   /api/v1/diary-entries/:
     get:
@@ -5211,6 +5310,23 @@ components:
       - reason
       - suggested_daily_calories
       - target_rate_kg_per_week
+    AnalyticsRange:
+      type: object
+      description: The resolved `?range=` - `start` is null for `all`.
+      properties:
+        range:
+          type: string
+        start:
+          type: string
+          format: date
+          nullable: true
+        end:
+          type: string
+          format: date
+      required:
+      - end
+      - range
+      - start
     AppearanceEnum:
       enum:
       - dark
@@ -5713,6 +5829,30 @@ components:
       - is_custom
       - name
       - owner
+    ExerciseAnalytics:
+      type: object
+      description: '`analytics/exercises/<id>/` - canonical kg throughout.'
+      properties:
+        range:
+          $ref: '#/components/schemas/AnalyticsRange'
+        exercise:
+          type: integer
+        session_count:
+          type: integer
+        total_volume:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionBest'
+      required:
+      - exercise
+      - range
+      - session_count
+      - sessions
+      - total_volume
     ExerciseImage:
       type: object
       properties:
@@ -6436,6 +6576,33 @@ components:
       required:
       - id
       - name
+    MuscleGroupAnalytics:
+      type: object
+      properties:
+        range:
+          $ref: '#/components/schemas/AnalyticsRange'
+        muscle_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/MuscleGroupVolume'
+      required:
+      - muscle_groups
+      - range
+    MuscleGroupVolume:
+      type: object
+      properties:
+        muscle_group:
+          type: integer
+        muscle_group_name:
+          type: string
+        volume:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+      required:
+      - muscle_group
+      - muscle_group_name
+      - volume
     NewRecord:
       type: object
       description: |-
@@ -8793,6 +8960,27 @@ components:
         * `g` - g
         * `ml` - ml
         * `piece` - piece
+    SessionBest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        estimated_one_rep_max:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        reps:
+          type: integer
+      required:
+      - date
+      - estimated_one_rep_max
+      - reps
+      - weight
     ShoppingDayAmount:
       type: object
       properties:
@@ -9267,6 +9455,32 @@ components:
       required:
       - id
       - name
+    VolumeAnalytics:
+      type: object
+      description: '`analytics/volume/` - kg x reps of working sets, canonical kg.'
+      properties:
+        range:
+          $ref: '#/components/schemas/AnalyticsRange'
+        weeks:
+          type: array
+          items:
+            $ref: '#/components/schemas/WeeklyVolume'
+      required:
+      - range
+      - weeks
+    WeeklyVolume:
+      type: object
+      properties:
+        week_start:
+          type: string
+          format: date
+        volume:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+      required:
+      - volume
+      - week_start
     WeightInputModeEnum:
       enum:
       - total

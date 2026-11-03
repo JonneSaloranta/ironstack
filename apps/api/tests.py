@@ -2892,3 +2892,59 @@ class NutritionGoalEndpointTests(APITestCase):
         self.assertEqual(accepted.status_code, 201, accepted.data)
         self.assertEqual(accepted.data["daily_calories"], 1900)
         self.assertEqual(accepted.data["source"], "adjusted")
+
+
+class TrainingAnalyticsEndpointTests(APITestCase):
+    """Issue #35 - the web Analytics page's charts as data, canonical kg."""
+
+    def setUp(self):
+        from apps.exercises.models import MuscleGroup
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.alice.unit_system = "imperial"  # must not change anything here
+        self.alice.save()
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.exercise = Exercise.objects.create(name="API Analytics Squat", owner=None)
+        self.legs = MuscleGroup.objects.first()
+        self.exercise.primary_muscle_groups.add(self.legs)
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        workout_services.log_set(performed, weight=Decimal("100"), reps=5)
+        workout_services.log_set(performed, weight=Decimal("110"), reps=3)
+        workout_services.log_set(performed, weight=Decimal("40"), reps=10, is_warmup=True)
+        workout_services.complete_session(session)
+
+    def _get(self, name, *args, **query):
+        return self.client.get(
+            reverse(name, args=args), query, HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+
+    def test_weekly_volume(self):
+        response = self._get("api:analytics-volume", range="7d")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["range"]["range"], "7d")
+        self.assertEqual(len(response.data["weeks"]), 1)
+        self.assertEqual(Decimal(response.data["weeks"][0]["volume"]), Decimal("830"))
+
+    def test_muscle_group_volume(self):
+        response = self._get("api:analytics-muscle-groups")
+        self.assertEqual(response.status_code, 200)
+        row = response.data["muscle_groups"][0]
+        self.assertEqual(row["muscle_group"], self.legs.pk)
+        self.assertEqual(Decimal(row["volume"]), Decimal("830"))
+
+    def test_exercise_progress(self):
+        response = self._get("api:analytics-exercise", self.exercise.pk, range="all")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["range"]["start"], None)
+        self.assertEqual(response.data["session_count"], 1)
+        self.assertEqual(Decimal(response.data["total_volume"]), Decimal("830"))
+        best = response.data["sessions"][0]
+        self.assertEqual(Decimal(best["weight"]), Decimal("110"))
+        self.assertEqual(best["reps"], 3)
+        self.assertGreater(Decimal(best["estimated_one_rep_max"]), Decimal("110"))
+
+    def test_hidden_exercise_is_404(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        private = Exercise.objects.create(name="Bob's lift", owner=bob)
+        self.assertEqual(self._get("api:analytics-exercise", private.pk).status_code, 404)

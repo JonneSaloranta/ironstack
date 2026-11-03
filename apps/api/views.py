@@ -70,6 +70,7 @@ from .serializers import (
     DietPlanMealSerializer,
     DietPlanSerializer,
     EquipmentSerializer,
+    ExerciseAnalyticsSerializer,
     ExercisePrescriptionSerializer,
     ExerciseSerializer,
     ExerciseSetCreatedSerializer,
@@ -79,6 +80,7 @@ from .serializers import (
     LastPerformanceSerializer,
     MealSlotSerializer,
     MeasurementTypeSerializer,
+    MuscleGroupAnalyticsSerializer,
     MuscleGroupSerializer,
     NutritionGoalCreatedSerializer,
     NutritionGoalCreateSerializer,
@@ -104,6 +106,7 @@ from .serializers import (
     SuggestionSerializer,
     TrainingSummarySerializer,
     UpNextSerializer,
+    VolumeAnalyticsSerializer,
     WorkoutSerializer,
     WorkoutSessionSerializer,
 )
@@ -693,6 +696,79 @@ class TrainingSummaryView(APIView):
         date_range = dateranges.resolve(request.query_params.get("range", "30d"))
         summary = analytics_services.training_summary_canonical(request.user, date_range)
         return Response(TrainingSummarySerializer(summary).data)
+
+
+_RANGE_PARAMETER = OpenApiParameter(
+    "range", enum=["7d", "30d", "3m", "6m", "1y", "all"], description="Default 30d."
+)
+
+
+class VolumeAnalyticsView(APIView):
+    """`analytics/volume/?range=` - training volume per ISO week (and
+    `analytics/muscle-groups/` per primary muscle group), the web
+    Analytics page's bar charts as data (issue #35). Canonical kg."""
+
+    api_context = ApiContext.ANALYTICS
+
+    # See TrainingSummaryView's own comment for why this is here.
+    @extend_schema(responses=VolumeAnalyticsSerializer, parameters=[_RANGE_PARAMETER])
+    def get(self, request):
+        date_range = dateranges.resolve(request.query_params.get("range", "30d"))
+        weeks = [
+            {"week_start": week, "volume": volume}
+            for week, volume in analytics_services.weekly_volume(request.user, date_range)
+        ]
+        return Response(VolumeAnalyticsSerializer({"range": date_range, "weeks": weeks}).data)
+
+
+class MuscleGroupAnalyticsView(APIView):
+    """`analytics/muscle-groups/?range=` - see VolumeAnalyticsView. A
+    set counts in full toward each of its exercise's primary muscle
+    groups, as on the web."""
+
+    api_context = ApiContext.ANALYTICS
+
+    @extend_schema(responses=MuscleGroupAnalyticsSerializer, parameters=[_RANGE_PARAMETER])
+    def get(self, request):
+        date_range = dateranges.resolve(request.query_params.get("range", "30d"))
+        rows = [
+            {"muscle_group": muscle_group, "volume": volume}
+            for muscle_group, volume in analytics_services.muscle_group_volume(
+                request.user, date_range
+            )
+        ]
+        return Response(
+            MuscleGroupAnalyticsSerializer({"range": date_range, "muscle_groups": rows}).data
+        )
+
+
+class ExerciseAnalyticsView(APIView):
+    """`analytics/exercises/<id>/?range=` - one exercise's progress:
+    sessions and volume in range, and its best set per training day by
+    estimated 1RM, the web's strength trend (issue #35). Canonical kg;
+    404 for an exercise the user can't see."""
+
+    api_context = ApiContext.ANALYTICS
+
+    @extend_schema(responses=ExerciseAnalyticsSerializer, parameters=[_RANGE_PARAMETER])
+    def get(self, request, pk):
+        exercise = get_object_or_404(
+            exercise_services.visible_to(request.user, include_inactive=True), pk=pk
+        )
+        date_range = dateranges.resolve(request.query_params.get("range", "30d"))
+        summary = analytics_services.exercise_summary_canonical(request.user, exercise, date_range)
+        bests = analytics_services.exercise_session_bests(request.user, exercise, date_range)
+        return Response(
+            ExerciseAnalyticsSerializer(
+                {
+                    "range": date_range,
+                    "exercise": exercise,
+                    "session_count": summary.session_count,
+                    "total_volume": summary.total_volume,
+                    "sessions": bests,
+                }
+            ).data
+        )
 
 
 class AchievementsView(APIView):
