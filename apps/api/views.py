@@ -211,6 +211,11 @@ class ProgramViewSet(OwnedResourceViewSet):
     def editable_queryset(self):
         return program_services.editable_by(self.request.user)
 
+    def perform_update(self, serializer):
+        # Every edit bumps the version, like the web's ProgramUpdateView -
+        # it's what offers a coach's clients the update (GitHub issue #46).
+        serializer.save().bump_version()
+
     @extend_schema(request=None, responses={201: ProgramSerializer})
     @action(detail=True, methods=["post"])
     def copy(self, request, pk=None):
@@ -224,9 +229,38 @@ class ProgramViewSet(OwnedResourceViewSet):
         )
 
 
-class WorkoutViewSet(viewsets.ModelViewSet):
+# Creating, editing or deleting a program's workout or prescription
+# bumps the program's version, the same as the web's views in
+# apps.programs.views - without it a coach's edit over the API never
+# offers their clients' imported copies an update (GitHub issue #46).
+# An edit moving a row to another program bumps both. (A comment, not a
+# docstring: drf-spectacular would put a docstring into the schema.)
+class _BumpsProgramVersionMixin:
+    def _program_of(self, instance):
+        raise NotImplementedError
+
+    def perform_create(self, serializer):
+        self._program_of(serializer.save()).bump_version()
+
+    def perform_update(self, serializer):
+        before = self._program_of(serializer.instance)
+        after = self._program_of(serializer.save())
+        after.bump_version()
+        if before.pk != after.pk:
+            before.bump_version()
+
+    def perform_destroy(self, instance):
+        program = self._program_of(instance)
+        instance.delete()
+        program.bump_version()
+
+
+class WorkoutViewSet(_BumpsProgramVersionMixin, viewsets.ModelViewSet):
     serializer_class = WorkoutSerializer
     api_context = ApiContext.PROGRAMS
+
+    def _program_of(self, instance):
+        return instance.program
 
     def get_queryset(self):
         if self.action in ("update", "partial_update", "destroy"):
@@ -238,9 +272,12 @@ class WorkoutViewSet(viewsets.ModelViewSet):
         )
 
 
-class ExercisePrescriptionViewSet(viewsets.ModelViewSet):
+class ExercisePrescriptionViewSet(_BumpsProgramVersionMixin, viewsets.ModelViewSet):
     serializer_class = ExercisePrescriptionSerializer
     api_context = ApiContext.PROGRAMS
+
+    def _program_of(self, instance):
+        return instance.workout.program
 
     def get_queryset(self):
         if self.action in ("update", "partial_update", "destroy"):
@@ -1209,11 +1246,19 @@ class DietPlanViewSet(viewsets.ModelViewSet):
         "target_carbohydrate_grams",
         "target_fat_grams",
     )
+    _SNAPSHOT_FIELDS = ("name", "is_weekly")
 
     def perform_update(self, serializer):
         for field in self._UPDATE_ONLY_DISCARDED_FIELDS:
             serializer.validated_data.pop(field, None)
-        serializer.save()
+        before = {field: getattr(serializer.instance, field) for field in self._SNAPSHOT_FIELDS}
+        plan = serializer.save()
+        # `name` and `is_weekly` are part of what a coach's client
+        # imports (nutrition.services.export_diet_plan), so changing
+        # them offers the clients an update, like the program edits in
+        # GitHub issue #46. `goal` isn't exported, so it doesn't.
+        if any(getattr(plan, field) != value for field, value in before.items()):
+            plan.bump_version()
 
     @action(detail=True, methods=["post"])
     def activate(self, request, pk=None):

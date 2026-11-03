@@ -763,6 +763,110 @@ class ExercisePrescriptionOwnershipTests(APITestCase):
         self.assertEqual(detail.data["exercise_name"], "System Bench")
 
 
+class ProgramVersionBumpTests(APITestCase):
+    """GitHub issue #46: an API edit to a program, its workouts or its
+    prescriptions bumps the program's version like the web's views do,
+    so a coach's clients are offered the update."""
+
+    def setUp(self):
+        from apps.programs.models import ExercisePrescription
+
+        self.coach = User.objects.create_user(username="coach", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="System Squat", owner=None)
+        self.program = Program.objects.create(owner=self.coach, name="Strength")
+        self.workout = Workout.objects.create(program=self.program, name="Day 1")
+        self.prescription = ExercisePrescription.objects.create(
+            workout=self.workout, exercise=self.exercise
+        )
+        self.client_copy = Program.objects.create(
+            owner=User.objects.create_user(username="client", password="s3cret-pass"),
+            name="Strength",
+            imported_from=self.program,
+            coach_snapshot_version=self.program.version,
+        )
+        _api_key, self.raw_secret = _create_key(self.coach)
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def _assert_bumped(self, program=None, by=1):
+        program = program or self.program
+        before = program.version
+        program.refresh_from_db()
+        self.assertEqual(program.version, before + by)
+
+    def test_editing_the_program_bumps_it_past_the_clients_snapshot(self):
+        # coaching.services.program_update_available compares exactly these.
+        response = self.client.patch(
+            reverse("api:program-detail", args=[self.program.pk]),
+            {"name": "Strength 2"}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self._assert_bumped()
+        self.assertNotEqual(self.program.version, self.client_copy.coach_snapshot_version)
+
+    def test_workout_create_update_and_delete_bump_the_program(self):
+        response = self.client.post(
+            reverse("api:workout-list"),
+            {"program": self.program.pk, "name": "Day 2"}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+        self._assert_bumped()
+        workout_pk = response.data["id"]
+        response = self.client.patch(
+            reverse("api:workout-detail", args=[workout_pk]),
+            {"name": "Day 2b"}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self._assert_bumped()
+        response = self.client.delete(
+            reverse("api:workout-detail", args=[workout_pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        self._assert_bumped()
+
+    def test_moving_a_workout_to_another_program_bumps_both(self):
+        other = Program.objects.create(owner=self.coach, name="Other")
+        response = self.client.patch(
+            reverse("api:workout-detail", args=[self.workout.pk]),
+            {"program": other.pk}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self._assert_bumped()
+        self._assert_bumped(other)
+
+    def test_prescription_create_update_and_delete_bump_the_program(self):
+        response = self.client.post(
+            reverse("api:prescription-list"),
+            {
+                "workout": self.workout.pk, "exercise": self.exercise.pk, "order": 1,
+                "set_count": 3, "min_reps": 5, "max_reps": 5,
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+        self._assert_bumped()
+        response = self.client.patch(
+            reverse("api:prescription-detail", args=[self.prescription.pk]),
+            {"set_count": 4}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self._assert_bumped()
+        response = self.client.delete(
+            reverse("api:prescription-detail", args=[self.prescription.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        self._assert_bumped()
+
+    def test_a_rejected_edit_does_not_bump(self):
+        response = self.client.patch(
+            reverse("api:prescription-detail", args=[self.prescription.pk]),
+            {"min_reps": 8, "max_reps": 5}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+        self._assert_bumped(by=0)
+
+
 class UpNextEndpointTests(APITestCase):
     """Issue #16 - the dashboard's "Up next" workout, for a client."""
 
@@ -1969,6 +2073,22 @@ class DietPlanEndpointTests(APITestCase):
         return self.client.post(
             reverse("api:diet-plan-list"), payload, format="json", **self._auth()
         )
+
+    def test_renaming_a_plan_bumps_its_version_but_changing_the_goal_does_not(self):
+        # GitHub issue #46: `name` and `is_weekly` are part of what a
+        # coach's client imports, so changing them offers an update.
+        from apps.nutrition.models import DietPlan
+
+        plan = DietPlan.objects.get(pk=self._create_plan().data["id"])
+        url = reverse("api:diet-plan-detail", args=[plan.pk])
+        response = self.client.patch(url, {"name": "Renamed"}, format="json", **self._auth())
+        self.assertEqual(response.status_code, 200)
+        version = plan.version
+        plan.refresh_from_db()
+        self.assertEqual(plan.version, version + 1)
+        self.client.patch(url, {"name": "Renamed", "goal": None}, format="json", **self._auth())
+        plan.refresh_from_db()
+        self.assertEqual(plan.version, version + 1)
 
     def test_creating_a_diet_plan_builds_meals_and_items(self):
         response = self._create_plan()

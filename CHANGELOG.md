@@ -18,6 +18,12 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Fixed
+- API: editing a program, its workouts or prescriptions (or renaming a diet
+  plan) bumps its version like the web does, so a coach's clients are offered
+  the update (#46).
+- A group member's own messages no longer count as unread for them (#45).
+
 ## [1.30.0] - 2026-11-03
 
 ### Added
