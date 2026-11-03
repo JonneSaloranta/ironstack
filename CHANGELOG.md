@@ -18,6 +18,11 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- API: `sessions/<id>/cooldown/` - the cool-down suggestion for a finished
+  workout, and the one already done after it; `stretch-sessions/` filters by
+  `?after_workout=` (#43).
+
 ### Fixed
 - API: editing a program, its workouts or prescriptions (or renaming a diet
   plan) bumps its version like the web does, so a coach's clients are offered

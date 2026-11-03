@@ -62,6 +62,7 @@ from .serializers import (
     ActivityTypeSerializer,
     AdjustmentSuggestionSerializer,
     BodyMeasurementSerializer,
+    CooldownSuggestionSerializer,
     DailyTotalsSerializer,
     DiaryCopyDayResultSerializer,
     DiaryCopyDaySerializer,
@@ -442,6 +443,36 @@ class WorkoutSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
         exercise_ids = list(instance.performed_exercises.values_list("exercise_id", flat=True))
         instance.delete()
         records_services.rebuild_records_for_exercises(self.request.user, exercise_ids)
+
+    @extend_schema(responses={200: CooldownSuggestionSerializer})
+    @action(detail=True, methods=["get"])
+    def cooldown(self, request, pk=None):
+        """The cool-down suggestion for one finished workout, and the
+        cool-down already done after it (issue #43). Needs the key's
+        stretching read permission too; 409 while the workout isn't
+        completed."""
+        from rest_framework.exceptions import PermissionDenied
+
+        from .permissions import has_context_permission
+
+        if not has_context_permission(request, ApiContext.STRETCHING):
+            raise PermissionDenied("This key can't read stretching.")
+        session = self.get_object()
+        if session.status != WorkoutSessionStatus.COMPLETED:
+            return Response(
+                {"detail": "This workout isn't completed."}, status=status.HTTP_409_CONFLICT
+            )
+        suggestion = stretching_services.suggest_cooldown(session)
+        data = {
+            "muscle_groups": suggestion.muscle_groups if suggestion else [],
+            "routine": suggestion.routine if suggestion else None,
+            "stretches": suggestion.stretches if suggestion else [],
+            "planned_seconds": (
+                stretching_services.cooldown_seconds(suggestion) if suggestion else None
+            ),
+            "done": stretching_services.cooldown_done_after(session),
+        }
+        return Response(CooldownSuggestionSerializer(data, context={"request": request}).data)
 
 
 @extend_schema_view(create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]))
@@ -1451,6 +1482,14 @@ class RoutineItemViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "after_workout", int,
+                description="Only the cool-downs done after this workout session.",
+            )
+        ]
+    ),
     create=extend_schema(
         parameters=[idempotency.SCHEMA_PARAMETER],
         request=StretchSessionQuickLogSerializer,
@@ -1467,9 +1506,16 @@ class StretchSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     api_context = ApiContext.STRETCHING
 
     def get_queryset(self):
-        return stretching_services.sessions_for(self.request.user).prefetch_related(
+        queryset = stretching_services.sessions_for(self.request.user).prefetch_related(
             "performed_stretches"
         )
+        if self.action == "list":
+            raw = self.request.query_params.get("after_workout")
+            if raw is not None:
+                if not raw.isdigit():
+                    raise serializers.ValidationError({"after_workout": "Must be a session id."})
+                queryset = queryset.filter(after_workout_id=int(raw))
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "create":

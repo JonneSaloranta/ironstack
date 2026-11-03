@@ -1336,6 +1336,23 @@ class StretchSessionQuickLogSerializer(StretchSessionSerializer):
         return value
 
 
+class CooldownSuggestionSerializer(serializers.Serializer):
+    """`GET sessions/<id>/cooldown/` - what to stretch after a finished
+    workout (stretching.services.suggest_cooldown, the web's cool-down
+    card): the trained primary muscle groups, then either a `routine`
+    that covers them or up to six library `stretches` (one of the two,
+    both empty when nothing matches), and `planned_seconds` for it.
+    `done` is the cool-down already started or done after this workout,
+    if any; `POST stretch-sessions/start/` with `after_workout` starts
+    one."""
+
+    muscle_groups = MuscleGroupSerializer(many=True)
+    routine = StretchRoutineSerializer(allow_null=True)
+    stretches = StretchSerializer(many=True)
+    planned_seconds = serializers.IntegerField(allow_null=True)
+    done = StretchSessionSerializer(allow_null=True)
+
+
 class StretchSessionStartSerializer(serializers.Serializer):
     """`POST stretch-sessions/start/` - a guided session from a routine,
     or from a plain list of stretches at their default holds (e.g. a

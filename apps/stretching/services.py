@@ -387,6 +387,33 @@ def suggest_cooldown(workout_session):
     return CooldownSuggestion(muscle_groups=muscles, stretches=stretches)
 
 
+def cooldown_seconds(suggestion):
+    """The planned length of `suggestion`: its routine's, or the library
+    stretches' held once each with the ad-hoc rest between them (what
+    session_start_cooldown would start)."""
+    if suggestion.routine is not None:
+        return routine_seconds(suggestion.routine)
+    return sum(
+        item_seconds(
+            hold_seconds=stretch.default_hold_seconds,
+            sets=1,
+            per_side=stretch.per_side,
+            rest_seconds=AD_HOC_REST_SECONDS,
+        )
+        for stretch in suggestion.stretches
+    )
+
+
+def cooldown_done_after(workout_session):
+    """The cool-down already started or done after `workout_session`
+    (an abandoned one doesn't count), or None."""
+    return (
+        workout_session.cooldown_stretch_sessions.filter(user=workout_session.user)
+        .exclude(status=StretchSessionStatus.ABANDONED)
+        .first()
+    )
+
+
 # --- Stats ----------------------------------------------------------------
 
 

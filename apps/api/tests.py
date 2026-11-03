@@ -2390,6 +2390,95 @@ class StretchingEndpointTests(APITestCase):
         workout_services.complete_session(session)
         return session
 
+    def _workout_with(self, *exercise_names):
+        session = workout_services.start_session(self.alice, workout=None)
+        for name in exercise_names:
+            workout_services.add_performed_exercise(session, Exercise.objects.get(name=name))
+        return workout_services.complete_session(session)
+
+    def test_cooldown_suggests_a_routine_for_a_finished_workout(self):
+        # Issue #43 - the same suggestion as the web's cool-down card.
+        workout = self._workout_with("Barbell Back Squat", "Leg Curl")
+        url = reverse("api:session-cooldown", args=[workout.pk])
+        response = self.client.get(url, **self._auth())
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["routine"]["id"], self.system_routine.pk)
+        self.assertEqual(response.data["stretches"], [])
+        self.assertTrue(response.data["muscle_groups"])
+        self.assertGreater(response.data["planned_seconds"], 0)
+        self.assertIsNone(response.data["done"])
+
+        from apps.stretching import services as stretching_services
+
+        done = stretching_services.start_session(
+            self.alice, routine=self.system_routine, after_workout=workout
+        )
+        response = self.client.get(url, **self._auth())
+        self.assertEqual(response.data["done"]["id"], done.pk)
+
+    def test_cooldown_without_a_match_is_empty(self):
+        response = self.client.get(
+            reverse("api:session-cooldown", args=[self._finished_workout().pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data,
+            {
+                "muscle_groups": [], "routine": None, "stretches": [],
+                "planned_seconds": None, "done": None,
+            },
+        )
+
+    def test_cooldown_refuses_unfinished_others_and_keys_without_stretching(self):
+        in_progress = workout_services.start_session(self.alice, workout=None)
+        self.assertEqual(
+            self.client.get(
+                reverse("api:session-cooldown", args=[in_progress.pk]), **self._auth()
+            ).status_code,
+            409,
+        )
+        bobs = self._finished_workout(self.bob)
+        self.assertEqual(
+            self.client.get(
+                reverse("api:session-cooldown", args=[bobs.pk]), **self._auth()
+            ).status_code,
+            404,
+        )
+        _key, secret = _create_key(
+            self.alice,
+            stretching={
+                "can_create": False, "can_read": False, "can_update": False, "can_delete": False,
+            },
+        )
+        workout = self._finished_workout()
+        self.assertEqual(
+            self.client.get(
+                reverse("api:session-cooldown", args=[workout.pk]),
+                HTTP_AUTHORIZATION=f"Bearer {secret}",
+            ).status_code,
+            403,
+        )
+
+    def test_stretch_sessions_filter_by_after_workout(self):
+        from apps.stretching import services as stretching_services
+
+        workout = self._finished_workout()
+        cooldown = stretching_services.quick_log(
+            self.alice, date=timezone.localdate(), duration=timedelta(minutes=5),
+            after_workout=workout,
+        )
+        stretching_services.quick_log(
+            self.alice, date=timezone.localdate(), duration=timedelta(minutes=5)
+        )
+        url = reverse("api:stretch-session-list")
+        response = self.client.get(url, {"after_workout": workout.pk}, **self._auth())
+        self.assertEqual(
+            [row["id"] for row in response.data["results"]], [cooldown.pk]
+        )
+        self.assertEqual(
+            self.client.get(url, {"after_workout": "x"}, **self._auth()).status_code, 400
+        )
+
     def test_guided_session_start_mark_complete(self):
         # Issue #34: a client's own player records each stretch.
         start = self.client.post(

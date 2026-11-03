@@ -34,3 +34,13 @@ class HasContextPermission(BasePermission):
             return False
 
         return api_key.permissions.filter(context=context, **{crud_field: True}).exists()
+
+
+def has_context_permission(request, context, crud_field="can_read"):
+    """The same check as HasContextPermission, for one more context - an
+    endpoint whose data spans two contexts (e.g. `sessions/<id>/cooldown/`,
+    a workout's stretches) needs the key to be allowed both."""
+    api_key = getattr(request, "api_key", None)
+    return api_key is not None and api_key.permissions.filter(
+        context=context, **{crud_field: True}
+    ).exists()

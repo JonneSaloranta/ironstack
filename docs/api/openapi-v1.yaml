@@ -4627,6 +4627,31 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/sessions/{id}/cooldown/:
+    get:
+      operationId: sessions_cooldown_retrieve
+      description: |-
+        The cool-down suggestion for one finished workout, and the
+        cool-down already done after it (issue #43). Needs the key's
+        stretching read permission too; 409 while the workout isn't
+        completed.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - sessions
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CooldownSuggestion'
+          description: ''
   /api/v1/sets/:
     get:
       operationId: sets_list
@@ -6093,6 +6118,11 @@ paths:
         services as the web player (issue #34). Only one guided session can
         be in progress at a time.
       parameters:
+      - in: query
+        name: after_workout
+        schema:
+          type: integer
+        description: Only the cool-downs done after this workout session.
       - name: page
         required: false
         in: query
@@ -7494,6 +7524,43 @@ components:
       - groups
       - pending_friend_requests
       - pending_group_invites
+    CooldownSuggestion:
+      type: object
+      description: |-
+        `GET sessions/<id>/cooldown/` - what to stretch after a finished
+        workout (stretching.services.suggest_cooldown, the web's cool-down
+        card): the trained primary muscle groups, then either a `routine`
+        that covers them or up to six library `stretches` (one of the two,
+        both empty when nothing matches), and `planned_seconds` for it.
+        `done` is the cool-down already started or done after this workout,
+        if any; `POST stretch-sessions/start/` with `after_workout` starts
+        one.
+      properties:
+        muscle_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/MuscleGroup'
+        routine:
+          allOf:
+          - $ref: '#/components/schemas/StretchRoutine'
+          nullable: true
+        stretches:
+          type: array
+          items:
+            $ref: '#/components/schemas/Stretch'
+        planned_seconds:
+          type: integer
+          nullable: true
+        done:
+          allOf:
+          - $ref: '#/components/schemas/StretchSession'
+          nullable: true
+      required:
+      - done
+      - muscle_groups
+      - planned_seconds
+      - routine
+      - stretches
     DailyTotals:
       type: object
       properties:
