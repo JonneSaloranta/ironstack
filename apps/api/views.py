@@ -102,6 +102,7 @@ from .serializers import (
     ShoppingSettingsSerializer,
     StretchRoutineSerializer,
     StretchSerializer,
+    StretchSessionQuickLogSerializer,
     StretchSessionSerializer,
     StretchSessionStartSerializer,
     SuggestionSerializer,
@@ -1404,7 +1405,13 @@ class RoutineItemViewSet(viewsets.ModelViewSet):
         return RoutineItem.objects.filter(routine__owner=self.request.user)
 
 
-@extend_schema_view(create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]))
+@extend_schema_view(
+    create=extend_schema(
+        parameters=[idempotency.SCHEMA_PARAMETER],
+        request=StretchSessionQuickLogSerializer,
+        responses={201: StretchSessionSerializer},
+    )
+)
 class StretchSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     """`POST` is a quick log; a guided session goes `start/` ->
     `mark/` per stretch -> `complete/` (or `abandon/`), the same
@@ -1418,6 +1425,11 @@ class StretchSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
         return stretching_services.sessions_for(self.request.user).prefetch_related(
             "performed_stretches"
         )
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return StretchSessionQuickLogSerializer
+        return StretchSessionSerializer
 
     def perform_create(self, serializer):
         data = serializer.validated_data

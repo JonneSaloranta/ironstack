@@ -1304,16 +1304,22 @@ class StretchSessionSerializer(serializers.ModelSerializer):
             "notes",
             "performed_stretches",
         ]
-        read_only_fields = ["name", "status", "started_at", "completed_at"]
+        read_only_fields = ["name", "after_workout", "status", "started_at", "completed_at"]
         extra_kwargs = {"duration": {"required": True, "allow_null": False}}
 
+
+class StretchSessionQuickLogSerializer(StretchSessionSerializer):
+    """The quick-log create's input: StretchSessionSerializer plus a
+    writable `after_workout`. A separate class so `after_workout` stays a
+    required, read-only property of every StretchSession response in the
+    schema - making it writable there would make it optional, a breaking
+    change for v1 clients."""
+
+    after_workout = serializers.PrimaryKeyRelatedField(
+        queryset=WorkoutSession.objects.all(), required=False, allow_null=True
+    )
+
     def validate_after_workout(self, value):
-        if self.instance is not None:
-            if value != self.instance.after_workout:
-                raise serializers.ValidationError(
-                    "A logged session's workout can't be changed."
-                )
-            return value
         return _validate_after_workout(self, value)
 
     def validate_routine(self, value):

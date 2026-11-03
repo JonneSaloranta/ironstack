@@ -6137,13 +6137,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StretchSessionRequest'
+              $ref: '#/components/schemas/StretchSessionQuickLogRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/StretchSessionRequest'
+              $ref: '#/components/schemas/StretchSessionQuickLogRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/StretchSessionRequest'
+              $ref: '#/components/schemas/StretchSessionQuickLogRequest'
         required: true
       security:
       - ApiKeyAuth: []
@@ -8730,6 +8730,14 @@ components:
       description: |-
         * `shared` - This instance's provider
         * `own` - Your own API key
+    KindEnum:
+      enum:
+      - static
+      - dynamic
+      type: string
+      description: |-
+        * `static` - Static
+        * `dynamic` - Dynamic
     LanguageEnum:
       enum:
       - en
@@ -10666,7 +10674,7 @@ components:
           maxLength: 100
         kind:
           allOf:
-          - $ref: '#/components/schemas/StretchKindEnum'
+          - $ref: '#/components/schemas/KindEnum'
           title: Type
         per_side:
           type: boolean
@@ -10704,9 +10712,6 @@ components:
         date, duration and notes stay editable.
       properties:
         routine:
-          type: integer
-          nullable: true
-        after_workout:
           type: integer
           nullable: true
         date:
@@ -11653,7 +11658,7 @@ components:
           readOnly: true
         kind:
           allOf:
-          - $ref: '#/components/schemas/StretchKindEnum'
+          - $ref: '#/components/schemas/KindEnum'
           title: Type
         per_side:
           type: boolean
@@ -11688,14 +11693,6 @@ components:
       - is_custom
       - name
       - owner
-    StretchKindEnum:
-      enum:
-      - static
-      - dynamic
-      type: string
-      description: |-
-        * `static` - Static
-        * `dynamic` - Dynamic
     StretchRequest:
       type: object
       properties:
@@ -11705,7 +11702,7 @@ components:
           maxLength: 100
         kind:
           allOf:
-          - $ref: '#/components/schemas/StretchKindEnum'
+          - $ref: '#/components/schemas/KindEnum'
           title: Type
         per_side:
           type: boolean
@@ -11795,6 +11792,7 @@ components:
           nullable: true
         after_workout:
           type: integer
+          readOnly: true
           nullable: true
         status:
           allOf:
@@ -11822,6 +11820,7 @@ components:
             $ref: '#/components/schemas/PerformedStretch'
           readOnly: true
       required:
+      - after_workout
       - completed_at
       - duration
       - id
@@ -11829,6 +11828,30 @@ components:
       - performed_stretches
       - started_at
       - status
+    StretchSessionQuickLogRequest:
+      type: object
+      description: |-
+        The quick-log create's input: StretchSessionSerializer plus a
+        writable `after_workout`. A separate class so `after_workout` stays a
+        required, read-only property of every StretchSession response in the
+        schema - making it writable there would make it optional, a breaking
+        change for v1 clients.
+      properties:
+        routine:
+          type: integer
+          nullable: true
+        after_workout:
+          type: integer
+          nullable: true
+        date:
+          type: string
+          format: date
+        duration:
+          type: string
+        notes:
+          type: string
+      required:
+      - duration
     StretchSessionRequest:
       type: object
       description: |-
@@ -11841,9 +11864,6 @@ components:
         date, duration and notes stay editable.
       properties:
         routine:
-          type: integer
-          nullable: true
-        after_workout:
           type: integer
           nullable: true
         date:
