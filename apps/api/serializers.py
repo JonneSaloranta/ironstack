@@ -23,6 +23,7 @@ from apps.nutrition.models import (
     DietPlanItem,
     DietPlanMeal,
     Food,
+    GoalType,
     MealSlot,
     NutritionGoal,
     NutritionProfile,
@@ -858,9 +859,9 @@ class DailyTotalsSerializer(serializers.Serializer):
 # close the old one) - exposed read-only here for exactly the same
 # reason PersonalRecordSerializer is read-only above: a raw PATCH
 # through a generic serializer could silently rewrite history a
-# derived/historized resource must never allow. Setting a goal or
-# target through the API isn't in scope for this pass - see "What's
-# deliberately not here" in docs/API.md.
+# derived/historized resource must never allow. A new goal is created
+# through services.change_goal instead (NutritionGoalCreateSerializer),
+# and a target only ever follows from a goal or an accepted adjustment.
 class NutritionGoalSerializer(serializers.ModelSerializer):
     class Meta:
         model = NutritionGoal
@@ -873,6 +874,48 @@ class NutritionGoalSerializer(serializers.ModelSerializer):
             "ended_at",
             "notes",
         ]
+
+
+class NutritionGoalCreateSerializer(serializers.Serializer):
+    """`POST nutrition-goals/` - a new goal, through services.change_goal
+    exactly like the web's goal page: the open goal and target are
+    ended (kept in history) and a target is calculated for the new one.
+    `target_weight` is canonical kg, like every weight in this API."""
+
+    goal_type = serializers.ChoiceField(choices=GoalType.choices)
+    target_rate_kg_per_week = serializers.DecimalField(max_digits=5, decimal_places=3)
+    target_weight = serializers.DecimalField(
+        max_digits=8, decimal_places=2, min_value=20, required=False, allow_null=True
+    )
+    notes = serializers.CharField(required=False, allow_blank=True, default="")
+
+    def validate(self, attrs):
+        from apps.nutrition import services as nutrition_services
+
+        error = nutrition_services.goal_rate_error(
+            attrs["goal_type"], attrs["target_rate_kg_per_week"]
+        )
+        if error:
+            raise serializers.ValidationError({"target_rate_kg_per_week": error})
+        return attrs
+
+
+class AdjustmentSuggestionSerializer(serializers.Serializer):
+    """apps.nutrition.suggestions.AdjustmentSuggestion - the nutrition
+    dashboard's calorie adjustment card. Rates in kg/week; `action` is
+    `adjust` only when there's something to accept."""
+
+    action = serializers.CharField()
+    target_rate_kg_per_week = serializers.DecimalField(
+        max_digits=6, decimal_places=3, allow_null=True
+    )
+    actual_rate_kg_per_week = serializers.DecimalField(
+        max_digits=6, decimal_places=3, allow_null=True
+    )
+    suggested_daily_calories = serializers.IntegerField(allow_null=True)
+    delta_kcal = serializers.IntegerField(allow_null=True)
+    confidence = serializers.CharField(allow_null=True)
+    reason = serializers.CharField()
 
 
 class NutritionTargetSerializer(serializers.ModelSerializer):
@@ -898,6 +941,16 @@ class NutritionTargetSerializer(serializers.ModelSerializer):
             "started_at",
             "ended_at",
         ]
+
+
+class NutritionGoalCreatedSerializer(NutritionGoalSerializer):
+    """The `POST nutrition-goals/` response: the goal and the target
+    calculated for it."""
+
+    target = NutritionTargetSerializer(read_only=True)
+
+    class Meta(NutritionGoalSerializer.Meta):
+        fields = [*NutritionGoalSerializer.Meta.fields, "target"]
 
 
 class NutritionProfileSerializer(serializers.ModelSerializer):

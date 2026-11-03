@@ -60,6 +60,7 @@ from .serializers import (
     AchievementSerializer,
     ActivitySerializer,
     ActivityTypeSerializer,
+    AdjustmentSuggestionSerializer,
     BodyMeasurementSerializer,
     DailyTotalsSerializer,
     DiaryCopyDayResultSerializer,
@@ -79,6 +80,8 @@ from .serializers import (
     MealSlotSerializer,
     MeasurementTypeSerializer,
     MuscleGroupSerializer,
+    NutritionGoalCreatedSerializer,
+    NutritionGoalCreateSerializer,
     NutritionGoalSerializer,
     NutritionProfileSerializer,
     NutritionTargetSerializer,
@@ -232,6 +235,13 @@ class ExercisePrescriptionViewSet(viewsets.ModelViewSet):
 # --------------------------------------------------------------------
 # Workouts (session logging)
 # --------------------------------------------------------------------
+
+
+def _user_language(user):
+    """The user's language, active for text built in this request: an
+    API key's request never passes through UserLanguageMiddleware with
+    its user (DRF authenticates later)."""
+    return translation.override(user.language) if user.language else nullcontext()
 
 
 def _query_datetime(request, name):
@@ -904,18 +914,45 @@ class DiaryEntryViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
+@extend_schema_view(
+    create=extend_schema(
+        request=NutritionGoalCreateSerializer, responses={201: NutritionGoalCreatedSerializer}
+    )
+)
 class NutritionGoalViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
-    """Read-only - see NutritionGoalSerializer's own docstring for why:
-    a goal is only ever created/superseded through
-    apps.nutrition.services.set_goal, never a raw PATCH."""
+    """Goals are historized: never edited or deleted, only superseded.
+    `POST` starts a new one through apps.nutrition.services.change_goal,
+    the same as the web's goal page (issue #33): the open goal and
+    target are ended and a target is calculated for the new goal from
+    the nutrition profile, height and latest body weight - a 400 says
+    which is missing."""
 
     serializer_class = NutritionGoalSerializer
     api_context = ApiContext.NUTRITION
 
     def get_queryset(self):
         return NutritionGoal.objects.filter(user=self.request.user)
+
+    def create(self, request):
+        serializer = NutritionGoalCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        with _user_language(request.user):
+            try:
+                goal, target = nutrition_services.change_goal(
+                    request.user,
+                    goal_type=data["goal_type"],
+                    target_rate_kg_per_week=data["target_rate_kg_per_week"],
+                    target_weight=data.get("target_weight"),
+                    notes=data.get("notes", ""),
+                )
+            except nutrition_services.GoalChangeError as error:
+                return Response({"detail": str(error)}, status=status.HTTP_400_BAD_REQUEST)
+            goal.target = target
+            body = NutritionGoalCreatedSerializer(goal).data
+        return Response(body, status=status.HTTP_201_CREATED)
 
 
 class NutritionTargetViewSet(
@@ -928,6 +965,52 @@ class NutritionTargetViewSet(
 
     def get_queryset(self):
         return NutritionTarget.objects.filter(user=self.request.user)
+
+
+class AdjustmentSuggestionView(APIView):
+    """`GET nutrition/adjustment-suggestion/` - the nutrition dashboard's
+    calorie adjustment card (apps.nutrition.suggestions.
+    suggest_calorie_adjustment, issue #33). Only ever a suggestion."""
+
+    api_context = ApiContext.NUTRITION
+
+    # See TrainingSummaryView's own comment for why this is here.
+    @extend_schema(responses=AdjustmentSuggestionSerializer)
+    def get(self, request):
+        from apps.nutrition.suggestions import suggest_calorie_adjustment
+
+        with _user_language(request.user):
+            suggestion = suggest_calorie_adjustment(request.user)
+            return Response(AdjustmentSuggestionSerializer(suggestion).data)
+
+
+class AdjustmentSuggestionAcceptView(APIView):
+    """`POST nutrition/adjustment-suggestion/accept/` - accepting the
+    suggestion, the web's accept_adjustment_suggestion: the suggestion
+    is worked out again here and, when it's `adjust`, a new target
+    (source `adjusted`) replaces the current one - 201 with it. A 409
+    with the current suggestion when there's nothing to accept."""
+
+    api_context = ApiContext.NUTRITION
+
+    @extend_schema(request=None, responses={201: NutritionTargetSerializer})
+    def post(self, request):
+        from apps.nutrition.suggestions import AdjustmentAction, suggest_calorie_adjustment
+
+        with _user_language(request.user):
+            suggestion = suggest_calorie_adjustment(request.user)
+            if suggestion.action != AdjustmentAction.ADJUST:
+                return Response(
+                    {
+                        "detail": "There's no adjustment to accept.",
+                        "suggestion": AdjustmentSuggestionSerializer(suggestion).data,
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+            target = nutrition_services.apply_adjustment_suggestion(request.user, suggestion)
+            return Response(
+                NutritionTargetSerializer(target).data, status=status.HTTP_201_CREATED
+            )
 
 
 class NutritionProfileView(generics.RetrieveUpdateAPIView):
@@ -943,6 +1026,17 @@ class NutritionProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return get_object_or_404(NutritionProfile, user=self.request.user)
+
+    def put(self, request, *args, **kwargs):
+        """A `PUT` before onboarding creates the profile (201) - the
+        first step of setting up nutrition through the API (issue #33),
+        before `POST nutrition-goals/`."""
+        if NutritionProfile.objects.filter(user=request.user).exists():
+            return super().put(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class DailyTotalsView(APIView):

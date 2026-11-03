@@ -1790,7 +1790,7 @@ class NutritionEndpointTests(APITestCase):
 
     # -- Goals/targets: read-only ---------------------------------------
 
-    def test_nutrition_goals_are_read_only(self):
+    def test_nutrition_goals_are_never_edited(self):
         from decimal import Decimal
 
         from apps.nutrition import services as nutrition_services
@@ -1800,12 +1800,6 @@ class NutritionEndpointTests(APITestCase):
         )
         list_response = self.client.get(reverse("api:nutrition-goal-list"), **self._auth())
         self.assertEqual(list_response.status_code, 200)
-        post_response = self.client.post(
-            reverse("api:nutrition-goal-list"),
-            {"goal_type": "maintenance", "target_rate_kg_per_week": "0"},
-            format="json", **self._auth(),
-        )
-        self.assertEqual(post_response.status_code, 405)
         patch_response = self.client.patch(
             reverse("api:nutrition-goal-detail", args=[goal.pk]),
             {"notes": "hijacked"}, format="json", **self._auth(),
@@ -2646,3 +2640,110 @@ class OpenFoodFactsEndpointTests(APITestCase):
         self.assertEqual(response.data["status"], "ok")
         self.assertEqual(response.data["results"][0]["off_id"], "1234567890123")
         self.assertEqual(response.data["results"][0]["name"], "Test Muesli")
+
+
+class NutritionGoalEndpointTests(APITestCase):
+    """Issue #33 - nutrition onboarding and goal changes through the
+    API go through the same services as the web."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.auth = {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def _post_goal(self, **overrides):
+        payload = {"goal_type": "fat_loss_moderate", "target_rate_kg_per_week": "-0.5"}
+        payload.update(overrides)
+        return self.client.post(
+            reverse("api:nutrition-goal-list"), payload, format="json", **self.auth
+        )
+
+    def _onboard(self):
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        profile = self.client.put(
+            reverse("api:nutrition-profile"),
+            {
+                "biological_sex": "male", "birth_date": "1990-01-01",
+                "activity_job": "sedentary", "activity_level": "moderate",
+            },
+            format="json", **self.auth,
+        )
+        self.assertEqual(profile.status_code, 201, profile.data)
+        self.client.patch(reverse("api:profile"), {"height": "1.80"}, format="json", **self.auth)
+        BodyMeasurement.objects.create(
+            user=self.alice,
+            measurement_type=MeasurementType.objects.get(name="Body weight", owner=None),
+            value=Decimal("90"),
+        )
+
+    def test_onboarding_then_a_goal_with_a_calculated_target(self):
+        from apps.nutrition.models import NutritionGoal, NutritionTarget
+
+        self.assertEqual(self._post_goal().status_code, 400)  # no profile yet
+        self._onboard()
+        response = self._post_goal()
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["goal_type"], "fat_loss_moderate")
+        self.assertEqual(response.data["target"]["source"], "calculated")
+        self.assertGreater(response.data["target"]["daily_calories"], 1000)
+
+        second = self._post_goal(goal_type="maintenance", target_rate_kg_per_week="0")
+        self.assertEqual(second.status_code, 201)
+        # The first goal and target stay in history, ended.
+        self.assertEqual(NutritionGoal.objects.filter(user=self.alice).count(), 2)
+        self.assertEqual(
+            NutritionTarget.objects.filter(user=self.alice, ended_at__isnull=True).count(), 1
+        )
+        self.assertIsNotNone(NutritionGoal.objects.get(pk=response.data["id"]).ended_at)
+
+    def test_rate_must_match_the_goal(self):
+        self._onboard()
+        response = self._post_goal(target_rate_kg_per_week="0.5")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("target_rate_kg_per_week", response.data)
+
+    def test_profile_put_updates_once_it_exists(self):
+        self._onboard()
+        response = self.client.put(
+            reverse("api:nutrition-profile"),
+            {
+                "biological_sex": "male", "birth_date": "1990-01-01",
+                "activity_job": "sedentary", "activity_level": "active",
+            },
+            format="json", **self.auth,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["activity_level"], "active")
+
+    def test_adjustment_suggestion_and_accept(self):
+        from unittest import mock
+
+        from apps.nutrition import suggestions
+
+        no_goal = self.client.get(reverse("api:nutrition-adjustment-suggestion"), **self.auth)
+        self.assertEqual(no_goal.status_code, 200)
+        self.assertEqual(no_goal.data["action"], "no_active_goal")
+        refused = self.client.post(
+            reverse("api:nutrition-adjustment-suggestion-accept"), **self.auth
+        )
+        self.assertEqual(refused.status_code, 409)
+
+        self._onboard()
+        self._post_goal()
+        adjust = suggestions.AdjustmentSuggestion(
+            action=suggestions.AdjustmentAction.ADJUST,
+            target_rate_kg_per_week=Decimal("-0.5"),
+            actual_rate_kg_per_week=Decimal("-0.1"),
+            suggested_daily_calories=1900,
+            delta_kcal=-150,
+            confidence=suggestions.Confidence.HIGH,
+            reason="Losing slower than planned.",
+        )
+        with mock.patch.object(suggestions, "suggest_calorie_adjustment", return_value=adjust):
+            accepted = self.client.post(
+                reverse("api:nutrition-adjustment-suggestion-accept"), **self.auth
+            )
+        self.assertEqual(accepted.status_code, 201, accepted.data)
+        self.assertEqual(accepted.data["daily_calories"], 1900)
+        self.assertEqual(accepted.data["source"], "adjusted")

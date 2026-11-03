@@ -59,6 +59,16 @@ urlpatterns = [
     path(
         "nutrition/daily-totals/", views.DailyTotalsView.as_view(), name="nutrition-daily-totals"
     ),
+    path(
+        "nutrition/adjustment-suggestion/",
+        views.AdjustmentSuggestionView.as_view(),
+        name="nutrition-adjustment-suggestion",
+    ),
+    path(
+        "nutrition/adjustment-suggestion/accept/",
+        views.AdjustmentSuggestionAcceptView.as_view(),
+        name="nutrition-adjustment-suggestion-accept",
+    ),
     path("up-next/", views.UpNextView.as_view(), name="up-next"),
     path(
         "exercises/<int:pk>/last-performance/",

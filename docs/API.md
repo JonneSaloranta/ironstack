@@ -53,7 +53,7 @@ Every endpoint belongs to exactly one **context**
 | `activities` | Activity types, logged activities |
 | `records` | Personal records (read-only - see below) |
 | `analytics` | Training summaries, achievements (read-only) |
-| `nutrition` | Foods, meal slots, recipes, diary entries, nutrition goals/targets (goals/targets read-only), a nutrition profile, diet plans (generation/activation/apply are service-backed, not raw writes; a plan's meals/items are read-only - see below) |
+| `nutrition` | Foods, meal slots, recipes, diary entries, nutrition goals/targets (never edited - a new goal goes through the same service as the web), a nutrition profile, diet plans (generation/activation/apply are service-backed, not raw writes; a plan's meals/items are read-only - see below) |
 | `stretching` | Stretches, stretch routines and their items, stretching sessions (creating one is a quick log) |
 
 Each API key carries, per context, four independent flags - **Create**,
@@ -269,7 +269,7 @@ not refused).
 | activities | `activity-types/`, `activity-types/<id>/`, `activities/` (`?activity_type=<id>`, `?date_after=` (inclusive) and `?date_before=` (exclusive), `YYYY-MM-DD`), `activities/<id>/` |
 | records | `records/`, `records/<id>/` (read-only, with `exercise_name`) |
 | analytics | `analytics/summary/?range=7d\|30d\|all` (default 30d), `analytics/achievements/` (both read-only) |
-| nutrition | `foods/` (`?search=<text>` matches the name or brand, a barcode matches `off_id`; `?ids=1,2,3`), `foods/<id>/`, `foods/import-off/` (`POST`), `foods/search-off/?q=` (`GET`), `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/` (`?date=YYYY-MM-DD` for one day, `?date_after=` (inclusive) / `?date_before=` (exclusive) for a range; each entry has a read-only `nutrition` object for its quantity, from the values snapshotted when it was logged, and `food_name`/`recipe_name`, so entries of a since-deleted recipe still show and count), `diary-entries/<id>/`, `diary-entries/copy-day/` (`POST` `{source_date, target_date}` - the web's "Copy day", answers `{copied}`), `nutrition/daily-totals/?date=` (`GET` - the day's diary added up, default today), `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton - no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plans/<id>/shopping-list/` (`GET`), `diet-plans/<id>/shopping-settings/` (`GET`/`PUT`/`PATCH`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
+| nutrition | `foods/` (`?search=<text>` matches the name or brand, a barcode matches `off_id`; `?ids=1,2,3`), `foods/<id>/`, `foods/import-off/` (`POST`), `foods/search-off/?q=` (`GET`), `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/` (`?date=YYYY-MM-DD` for one day, `?date_after=` (inclusive) / `?date_before=` (exclusive) for a range; each entry has a read-only `nutrition` object for its quantity, from the values snapshotted when it was logged, and `food_name`/`recipe_name`, so entries of a since-deleted recipe still show and count), `diary-entries/<id>/`, `diary-entries/copy-day/` (`POST` `{source_date, target_date}` - the web's "Copy day", answers `{copied}`), `nutrition/daily-totals/?date=` (`GET` - the day's diary added up, default today), `nutrition-goals/` (`POST` starts a new goal with a calculated target), `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/adjustment-suggestion/` (`GET`), `nutrition/adjustment-suggestion/accept/` (`POST`), `nutrition/profile/` (singleton - no id; `PUT` creates it), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plans/<id>/shopping-list/` (`GET`), `diet-plans/<id>/shopping-settings/` (`GET`/`PUT`/`PATCH`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
 | stretching | `stretches/`, `stretches/<id>/`, `stretch-routines/`, `stretch-routines/<id>/` (items nested read-only), `stretch-routine-items/`, `stretch-routine-items/<id>/` (own routines only), `stretch-sessions/`, `stretch-sessions/<id>/` (create = quick log with `duration`; name/routine/status and the per-stretch snapshot are read-only) |
 
 Every endpoint goes through the exact same domain service functions the
@@ -336,7 +336,24 @@ while typing.
 field of `apps.nutrition.models.NutritionProfile` is plainly
 readable/writable, since (unlike a goal or target) these are inputs a
 user corrects in place, not decisions worth preserving as history. A
-user with no profile yet gets a plain `404`, not a `500`.
+user with no profile yet gets a plain `404`, not a `500`, and a `PUT`
+creates it (`201`).
+
+Goals and targets are history: never edited or deleted. Setting up
+nutrition through the API takes the web onboarding's steps: `PUT
+nutrition/profile/`, `height` on `profile/`, a body weight on
+`measurements/`, then `POST nutrition-goals/` `{goal_type,
+target_rate_kg_per_week, target_weight?, notes?}` - the same
+`apps.nutrition.services.change_goal` the web's goal page uses, so the
+open goal and target are ended and a target is calculated from the
+profile, height and latest weight. The response is the goal with its
+`target`; a `400` says what's missing, or that the rate's sign doesn't
+fit the goal. `nutrition/adjustment-suggestion/` is the dashboard's
+calorie adjustment card (rates in kg/week, `reason` in the user's
+language); `POST .../accept/` works it out again and, when its
+`action` is `adjust`, replaces the target with an `adjusted` one
+(`201`), otherwise `409` with the current suggestion. Nothing is ever
+adjusted without that explicit call.
 
 `diet-plans/` generates through
 `apps.nutrition.diet_builder.build_diet_plan` on `POST` rather than

@@ -32,6 +32,8 @@ narrated summary of the same version.
   after a food is edited or a recipe deleted.
 - API: foods can be imported from Open Food Facts by barcode and searched
   there through the server, keeping Nutri-Score, NOVA group and the OFF link.
+- API: nutrition can be set up and a new goal started, with a calculated
+  target, and a calorie adjustment suggestion can be read and accepted.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

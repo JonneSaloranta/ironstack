@@ -2360,9 +2360,12 @@ paths:
     get:
       operationId: nutrition_goals_list
       description: |-
-        Read-only - see NutritionGoalSerializer's own docstring for why:
-        a goal is only ever created/superseded through
-        apps.nutrition.services.set_goal, never a raw PATCH.
+        Goals are historized: never edited or deleted, only superseded.
+        `POST` starts a new one through apps.nutrition.services.change_goal,
+        the same as the web's goal page (issue #33): the open goal and
+        target are ended and a target is calculated for the new goal from
+        the nutrition profile, height and latest body weight - a 400 says
+        which is missing.
       parameters:
       - name: page
         required: false
@@ -2387,13 +2390,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedNutritionGoalList'
           description: ''
+    post:
+      operationId: nutrition_goals_create
+      description: |-
+        Goals are historized: never edited or deleted, only superseded.
+        `POST` starts a new one through apps.nutrition.services.change_goal,
+        the same as the web's goal page (issue #33): the open goal and
+        target are ended and a target is calculated for the new goal from
+        the nutrition profile, height and latest body weight - a 400 says
+        which is missing.
+      tags:
+      - nutrition-goals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NutritionGoalCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NutritionGoalCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NutritionGoalCreateRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NutritionGoalCreated'
+          description: ''
   /api/v1/nutrition-goals/{id}/:
     get:
       operationId: nutrition_goals_retrieve
       description: |-
-        Read-only - see NutritionGoalSerializer's own docstring for why:
-        a goal is only ever created/superseded through
-        apps.nutrition.services.set_goal, never a raw PATCH.
+        Goals are historized: never edited or deleted, only superseded.
+        `POST` starts a new one through apps.nutrition.services.change_goal,
+        the same as the web's goal page (issue #33): the open goal and
+        target are ended and a target is calculated for the new goal from
+        the nutrition profile, height and latest body weight - a 400 says
+        which is missing.
       parameters:
       - in: path
         name: id
@@ -2460,6 +2498,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/NutritionTarget'
           description: ''
+  /api/v1/nutrition/adjustment-suggestion/:
+    get:
+      operationId: nutrition_adjustment_suggestion_retrieve
+      description: |-
+        `GET nutrition/adjustment-suggestion/` - the nutrition dashboard's
+        calorie adjustment card (apps.nutrition.suggestions.
+        suggest_calorie_adjustment, issue #33). Only ever a suggestion.
+      tags:
+      - nutrition
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdjustmentSuggestion'
+          description: ''
+  /api/v1/nutrition/adjustment-suggestion/accept/:
+    post:
+      operationId: nutrition_adjustment_suggestion_accept_create
+      description: |-
+        `POST nutrition/adjustment-suggestion/accept/` - accepting the
+        suggestion, the web's accept_adjustment_suggestion: the suggestion
+        is worked out again here and, when it's `adjust`, a new target
+        (source `adjusted`) replaces the current one - 201 with it. A 409
+        with the current suggestion when there's nothing to accept.
+      tags:
+      - nutrition
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NutritionTarget'
+          description: ''
   /api/v1/nutrition/daily-totals/:
     get:
       operationId: nutrition_daily_totals_retrieve
@@ -2509,12 +2585,9 @@ paths:
     put:
       operationId: nutrition_profile_update
       description: |-
-        A singleton resource, the same shape as ProfileView above -
-        GET/PATCH always act on the authenticated key's own
-        NutritionProfile. get_object_or_404 rather than a bare attribute
-        lookup: a user who hasn't gone through nutrition onboarding yet
-        has no NutritionProfile row at all, and that's a plain 404, not a
-        500.
+        A `PUT` before onboarding creates the profile (201) - the
+        first step of setting up nutrition through the API (issue #33),
+        before `POST nutrition-goals/`.
       tags:
       - nutrition
       requestBody:
@@ -4931,6 +5004,44 @@ components:
           maxLength: 50
       required:
       - name
+    AdjustmentSuggestion:
+      type: object
+      description: |-
+        apps.nutrition.suggestions.AdjustmentSuggestion - the nutrition
+        dashboard's calorie adjustment card. Rates in kg/week; `action` is
+        `adjust` only when there's something to accept.
+      properties:
+        action:
+          type: string
+        target_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,3})?$
+          nullable: true
+        actual_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,3})?$
+          nullable: true
+        suggested_daily_calories:
+          type: integer
+          nullable: true
+        delta_kcal:
+          type: integer
+          nullable: true
+        confidence:
+          type: string
+          nullable: true
+        reason:
+          type: string
+      required:
+      - action
+      - actual_rate_kg_per_week
+      - confidence
+      - delta_kcal
+      - reason
+      - suggested_daily_calories
+      - target_rate_kg_per_week
     AppearanceEnum:
       enum:
       - dark
@@ -6274,6 +6385,71 @@ components:
       - goal_type
       - id
       - started_at
+      - target_rate_kg_per_week
+    NutritionGoalCreateRequest:
+      type: object
+      description: |-
+        `POST nutrition-goals/` - a new goal, through services.change_goal
+        exactly like the web's goal page: the open goal and target are
+        ended (kept in history) and a target is calculated for the new one.
+        `target_weight` is canonical kg, like every weight in this API.
+      properties:
+        goal_type:
+          $ref: '#/components/schemas/GoalTypeEnum'
+        target_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,3})?$
+        target_weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+        notes:
+          type: string
+          default: ''
+      required:
+      - goal_type
+      - target_rate_kg_per_week
+    NutritionGoalCreated:
+      type: object
+      description: |-
+        The `POST nutrition-goals/` response: the goal and the target
+        calculated for it.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        goal_type:
+          $ref: '#/components/schemas/GoalTypeEnum'
+        target_weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,4})?$
+          nullable: true
+        target_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,3})?$
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ended_at:
+          type: string
+          format: date-time
+          nullable: true
+        notes:
+          type: string
+        target:
+          allOf:
+          - $ref: '#/components/schemas/NutritionTarget'
+          readOnly: true
+      required:
+      - goal_type
+      - id
+      - started_at
+      - target
       - target_rate_kg_per_week
     NutritionProfile:
       type: object
