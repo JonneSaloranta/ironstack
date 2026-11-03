@@ -11,6 +11,7 @@ as much a "view" as a Django one in that sense.
 
 from contextlib import nullcontext
 from datetime import datetime, time
+from decimal import Decimal
 
 from django.shortcuts import get_object_or_404
 from django.utils import timezone, translation
@@ -79,6 +80,7 @@ from .serializers import (
     FoodImportOffSerializer,
     FoodSerializer,
     LastPerformanceSerializer,
+    MaintenanceEstimateSerializer,
     MealSlotSerializer,
     MeasurementTypeSerializer,
     MuscleGroupAnalyticsSerializer,
@@ -87,6 +89,7 @@ from .serializers import (
     NutritionGoalCreateSerializer,
     NutritionGoalSerializer,
     NutritionProfileSerializer,
+    NutritionStatsSerializer,
     NutritionTargetSerializer,
     OffSearchSerializer,
     PerformedExerciseSerializer,
@@ -1159,6 +1162,82 @@ class AdjustmentSuggestionView(APIView):
         with _user_language(request.user):
             suggestion = suggest_calorie_adjustment(request.user)
             return Response(AdjustmentSuggestionSerializer(suggestion).data)
+
+
+class MaintenanceEstimateView(APIView):
+    """`GET nutrition/maintenance/` - the nutrition dashboard's "Observed
+    maintenance" card (apps.nutrition.maintenance, issue #44)."""
+
+    api_context = ApiContext.NUTRITION
+
+    # See TrainingSummaryView's own comment for why this is here.
+    @extend_schema(responses=MaintenanceEstimateSerializer)
+    def get(self, request):
+        from dataclasses import asdict
+
+        from apps.nutrition import maintenance
+
+        with _user_language(request.user):
+            estimate = maintenance.estimate_maintenance(request.user)
+            data = {**asdict(estimate), "window_days": maintenance.WINDOW_DAYS}
+            return Response(MaintenanceEstimateSerializer(data).data)
+
+
+class NutritionStatsView(APIView):
+    """`GET nutrition/stats/?range=` - the nutrition statistics page
+    (apps.nutrition.services.nutrition_stats_by_period and
+    calorie_history, issue #44). `range` is one of the page's fixed
+    periods, default `30d`."""
+
+    api_context = ApiContext.NUTRITION
+
+    @extend_schema(
+        responses=NutritionStatsSerializer,
+        parameters=[
+            OpenApiParameter(
+                "range", enum=nutrition_services.NUTRITION_STATS_PERIOD_KEYS,
+                description="One of the fixed periods; default 30d.",
+            )
+        ],
+    )
+    def get(self, request):
+        from apps.nutrition.models import NutritionTarget
+
+        key = request.query_params.get("range", "30d")
+        if key not in nutrition_services.NUTRITION_STATS_PERIOD_KEYS:
+            return Response(
+                {
+                    "range": "Must be one of: "
+                    f"{', '.join(nutrition_services.NUTRITION_STATS_PERIOD_KEYS)}."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        with _user_language(request.user):
+            periods = [
+                {**vars(period), "label": str(period.label)}
+                for period in nutrition_services.nutrition_stats_by_period(request.user)
+            ]
+        for period in periods:
+            summary = period["summary"]
+            period["summary"] = {
+                **vars(summary), "possible_logging_gaps": summary.possible_logging_gaps
+            }
+        period = next(period for period in periods if period["key"] == key)
+        today = timezone.localdate()
+        history = nutrition_services.calorie_history(
+            request.user, days=max((today - period["start"]).days + 1, 1)
+        )
+        target = NutritionTarget.objects.filter(user=request.user, ended_at__isnull=True).first()
+        data = {
+            "period": period,
+            "daily": [
+                {"date": day, "calories": totals and int(totals.calories.quantize(Decimal("1")))}
+                for day, totals in history
+            ],
+            "target_calories": target.daily_calories if target else None,
+            "periods": periods,
+        }
+        return Response(NutritionStatsSerializer(data).data)
 
 
 class AdjustmentSuggestionAcceptView(APIView):

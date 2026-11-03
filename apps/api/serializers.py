@@ -1046,6 +1046,74 @@ class AdjustmentSuggestionSerializer(serializers.Serializer):
     reason = serializers.CharField()
 
 
+class MaintenanceEstimateSerializer(serializers.Serializer):
+    """apps.nutrition.maintenance.MaintenanceEstimate - the nutrition
+    dashboard's "Observed maintenance" card: what the user's intake and
+    weight trend over the last 28 finished days say their real
+    maintenance is. `calories`/`confidence` are null when there isn't
+    enough data, and `reason` says what's missing. The figures behind
+    it are null until the estimate got that far: the food diary's
+    (`days_logged`, `mean_calories`, `possible_logging_gaps`), then the
+    weight trend's (`weight_rate_kg_per_week`, `weight_days`,
+    `span_days`). Information only - it never changes a target."""
+
+    calories = serializers.IntegerField(allow_null=True)
+    confidence = serializers.CharField(allow_null=True)
+    reason = serializers.CharField()
+    window_days = serializers.IntegerField()
+    days_logged = serializers.IntegerField(allow_null=True)
+    mean_calories = serializers.DecimalField(max_digits=8, decimal_places=0, allow_null=True)
+    possible_logging_gaps = serializers.BooleanField(allow_null=True)
+    weight_rate_kg_per_week = serializers.DecimalField(
+        max_digits=6, decimal_places=3, allow_null=True
+    )
+    weight_days = serializers.IntegerField(allow_null=True)
+    span_days = serializers.IntegerField(allow_null=True)
+
+
+class NutritionStatsSummarySerializer(serializers.Serializer):
+    """apps.nutrition.services.NutritionStatsSummary - only days with
+    something logged count; `possible_logging_gaps` is true when the mean
+    is low enough against the median to suggest partly logged days."""
+
+    days_logged = serializers.IntegerField()
+    days_in_range = serializers.IntegerField()
+    mean_calories = serializers.DecimalField(max_digits=8, decimal_places=0)
+    median_calories = serializers.DecimalField(max_digits=8, decimal_places=0)
+    median_protein_grams = serializers.DecimalField(max_digits=8, decimal_places=1)
+    median_carbohydrate_grams = serializers.DecimalField(max_digits=8, decimal_places=1)
+    median_fat_grams = serializers.DecimalField(max_digits=8, decimal_places=1)
+    possible_logging_gaps = serializers.BooleanField()
+
+
+class NutritionStatsPeriodSerializer(serializers.Serializer):
+    key = serializers.CharField()
+    label = serializers.CharField()
+    start = serializers.DateField()
+    end = serializers.DateField()
+    summary = NutritionStatsSummarySerializer()
+
+
+class CalorieDaySerializer(serializers.Serializer):
+    date = serializers.DateField()
+    calories = serializers.IntegerField(allow_null=True)
+
+
+class NutritionStatsSerializer(serializers.Serializer):
+    """`GET nutrition/stats/?range=` - the nutrition statistics page.
+    `period` is the chosen range's figures (every period ends yesterday,
+    the last finished day); `daily` has one row per day from its start
+    through today for the chart, `calories` null on a day with nothing
+    logged; `target_calories` is the active target, the chart's
+    reference line (null without one); `periods` is every fixed period,
+    the page's table."""
+
+    period = NutritionStatsPeriodSerializer()
+    daily = CalorieDaySerializer(many=True)
+    target_calories = serializers.IntegerField(allow_null=True)
+    periods = NutritionStatsPeriodSerializer(many=True)
+
+
 class NutritionTargetSerializer(serializers.ModelSerializer):
     # NutritionTarget.display_reason under the API's existing "reason"
     # key - re-rendered in the request's active language when the

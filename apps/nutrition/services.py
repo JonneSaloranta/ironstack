@@ -1647,6 +1647,14 @@ class NutritionStatsPeriod:
     key: str
     label: str
     summary: NutritionStatsSummary
+    # The period's first and last day (the last is always yesterday);
+    # `start` > `end` for a period with no finished day yet.
+    start: object = None
+    end: object = None
+
+
+# The keys nutrition_stats_by_period answers, in its order.
+NUTRITION_STATS_PERIOD_KEYS = ["7d", "14d", "30d", "3m", "ytd", "1y", "all"]
 
 
 def nutrition_stats_by_period(user, today=None) -> list[NutritionStatsPeriod]:
@@ -1685,6 +1693,8 @@ def nutrition_stats_by_period(user, today=None) -> list[NutritionStatsPeriod]:
             summary=_summarize(
                 _logged_days(totals_by_date, start, end), max((end - start).days + 1, 0)
             ),
+            start=start,
+            end=end,
         )
         for key, label, start in starts
     ]

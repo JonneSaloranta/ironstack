@@ -30,11 +30,19 @@ PLAUSIBLE_KCAL = (1000, 6000)
 @dataclass(frozen=True)
 class MaintenanceEstimate:
     """`calories` and `confidence` are None when there isn't enough
-    trustworthy data yet; `reason` then says what's missing."""
+    trustworthy data yet; `reason` then says what's missing. The rest are
+    the figures behind it, each None until the estimate got that far:
+    the food diary's over the window, then the weight trend's."""
 
     calories: int | None
     confidence: Confidence | None
     reason: str
+    days_logged: int | None = None
+    mean_calories: Decimal | None = None
+    possible_logging_gaps: bool | None = None
+    weight_rate_kg_per_week: Decimal | None = None
+    weight_days: int | None = None
+    span_days: int | None = None
 
 
 def _confidence_for(food_days, weight_days, logging_gaps) -> Confidence:
@@ -51,6 +59,11 @@ def estimate_maintenance(user) -> MaintenanceEstimate:
     end = timezone.localdate() - timedelta(days=1)
     start = end - timedelta(days=WINDOW_DAYS - 1)
     stats = services.nutrition_stats(user, days=WINDOW_DAYS)
+    food = {
+        "days_logged": stats.days_logged,
+        "mean_calories": stats.mean_calories if stats.days_logged else None,
+        "possible_logging_gaps": stats.possible_logging_gaps,
+    }
     if stats.days_logged < MIN_FOOD_DAYS:
         return MaintenanceEstimate(
             None,
@@ -60,6 +73,7 @@ def estimate_maintenance(user) -> MaintenanceEstimate:
                 "last %(window)s days."
             )
             % {"logged": stats.days_logged, "needed": MIN_FOOD_DAYS, "window": WINDOW_DAYS},
+            **food,
         )
 
     since = timezone.make_aware(datetime.combine(start, time.min))
@@ -76,9 +90,16 @@ def estimate_maintenance(user) -> MaintenanceEstimate:
                 "%(span)s days."
             )
             % {"days": trends.MIN_DISTINCT_DAYS, "span": trends.MIN_SPAN_DAYS},
+            **food,
         )
 
     rate = trend.actual_rate_kg_per_week
+    figures = {
+        **food,
+        "weight_rate_kg_per_week": rate,
+        "weight_days": trend.distinct_days,
+        "span_days": trend.span_days,
+    }
     raw = stats.mean_calories - rate / 7 * KCAL_PER_KG_BODY_FAT
     calories = int(
         (raw / ROUNDING_KCAL).quantize(Decimal("1"), rounding=ROUND_HALF_UP) * ROUNDING_KCAL
@@ -91,6 +112,7 @@ def estimate_maintenance(user) -> MaintenanceEstimate:
                 "The logged food and weight don't add up to a believable figure yet. Some days "
                 "may be only partly logged."
             ),
+            **figures,
         )
 
     reason = _(
@@ -113,4 +135,5 @@ def estimate_maintenance(user) -> MaintenanceEstimate:
         calories,
         _confidence_for(stats.days_logged, trend.distinct_days, stats.possible_logging_gaps),
         reason,
+        **figures,
     )

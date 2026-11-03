@@ -2038,6 +2038,95 @@ class NutritionProfileEndpointTests(APITestCase):
         self.assertEqual(response.status_code, 404)
 
 
+class NutritionStatsEndpointTests(APITestCase):
+    """Issue #44 - the "Observed maintenance" card and the nutrition
+    statistics page."""
+
+    def setUp(self):
+        from apps.nutrition.models import MealSlot
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.slot = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.today = timezone.localdate()
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def _log_food(self, days_ago, calories):
+        from apps.nutrition.models import DiaryEntry
+
+        DiaryEntry.objects.create(
+            user=self.alice, date=self.today - timedelta(days=days_ago),
+            meal_slot=self.slot, quantity=Decimal("1"), quick_calories=calories,
+        )
+
+    def test_maintenance_without_enough_data_says_why(self):
+        for days_ago in range(1, 6):
+            self._log_food(days_ago, 2500)
+        response = self.client.get(reverse("api:nutrition-maintenance"), **self._auth())
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.data["calories"])
+        self.assertIsNone(response.data["confidence"])
+        self.assertIn("5", response.data["reason"])
+        self.assertEqual(response.data["days_logged"], 5)
+        self.assertEqual(response.data["mean_calories"], "2500")
+        self.assertEqual(response.data["window_days"], 28)
+        self.assertIsNone(response.data["weight_rate_kg_per_week"])
+
+    def test_maintenance_with_food_and_weight(self):
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        for days_ago in range(1, 21):
+            self._log_food(days_ago, 2500)
+        body_weight = MeasurementType.objects.get(name="Body weight", owner=None)
+        for days_ago in (22, 15, 8, 1):
+            BodyMeasurement.objects.create(
+                user=self.alice, measurement_type=body_weight, value=Decimal("80"),
+                recorded_at=timezone.now() - timedelta(days=days_ago),
+            )
+        response = self.client.get(reverse("api:nutrition-maintenance"), **self._auth())
+        self.assertEqual(response.data["calories"], 2500)
+        self.assertIsNotNone(response.data["confidence"])
+        self.assertEqual(response.data["weight_days"], 4)
+        self.assertEqual(Decimal(response.data["weight_rate_kg_per_week"]), Decimal("0"))
+
+    def test_stats_for_a_range(self):
+        self._log_food(1, 2000)
+        self._log_food(2, 3000)
+        self._log_food(10, 1000)
+        self._log_food(0, 500)  # today: charted, not counted
+        url = reverse("api:nutrition-stats")
+        response = self.client.get(url, {"range": "7d"}, **self._auth())
+        self.assertEqual(response.status_code, 200)
+        period = response.data["period"]
+        self.assertEqual(period["key"], "7d")
+        self.assertEqual(period["end"], str(self.today - timedelta(days=1)))
+        self.assertEqual(period["summary"]["days_logged"], 2)
+        self.assertEqual(period["summary"]["days_in_range"], 7)
+        self.assertEqual(period["summary"]["mean_calories"], "2500")
+        self.assertFalse(period["summary"]["possible_logging_gaps"])
+        daily = response.data["daily"]
+        self.assertEqual(len(daily), 8)
+        self.assertEqual(daily[-1], {"date": str(self.today), "calories": 500})
+        self.assertEqual(daily[-2]["calories"], 2000)
+        self.assertIsNone(daily[0]["calories"])
+        self.assertIsNone(response.data["target_calories"])
+        self.assertEqual(
+            [row["key"] for row in response.data["periods"]],
+            ["7d", "14d", "30d", "3m", "ytd", "1y", "all"],
+        )
+        default = self.client.get(url, **self._auth())
+        self.assertEqual(default.data["period"]["key"], "30d")
+        self.assertEqual(default.data["period"]["summary"]["days_logged"], 3)
+
+    def test_stats_rejects_an_unknown_range(self):
+        response = self.client.get(
+            reverse("api:nutrition-stats"), {"range": "5y"}, **self._auth()
+        )
+        self.assertEqual(response.status_code, 400)
+
+
 class DietPlanEndpointTests(APITestCase):
     """DietPlan's mutating actions all route through
     apps.nutrition.diet_builder/services rather than a raw

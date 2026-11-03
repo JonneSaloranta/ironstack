@@ -22,6 +22,9 @@ narrated summary of the same version.
 - API: `sessions/<id>/cooldown/` - the cool-down suggestion for a finished
   workout, and the one already done after it; `stretch-sessions/` filters by
   `?after_workout=` (#43).
+- API: `nutrition/maintenance/` (the observed maintenance estimate and the
+  figures behind it) and `nutrition/stats/?range=` (the nutrition statistics
+  page) (#44).
 
 ### Fixed
 - API: editing a program, its workouts or prescriptions (or renaming a diet

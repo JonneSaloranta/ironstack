@@ -303,6 +303,12 @@ urlpatterns = [
         views.AdjustmentSuggestionAcceptView.as_view(),
         name="nutrition-adjustment-suggestion-accept",
     ),
+    path(
+        "nutrition/maintenance/",
+        views.MaintenanceEstimateView.as_view(),
+        name="nutrition-maintenance",
+    ),
+    path("nutrition/stats/", views.NutritionStatsView.as_view(), name="nutrition-stats"),
     path("up-next/", views.UpNextView.as_view(), name="up-next"),
     path(
         "exercises/<int:pk>/last-performance/",

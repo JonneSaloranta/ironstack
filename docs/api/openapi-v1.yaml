@@ -3434,6 +3434,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/DailyTotals'
           description: ''
+  /api/v1/nutrition/maintenance/:
+    get:
+      operationId: nutrition_maintenance_retrieve
+      description: |-
+        `GET nutrition/maintenance/` - the nutrition dashboard's "Observed
+        maintenance" card (apps.nutrition.maintenance, issue #44).
+      tags:
+      - nutrition
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintenanceEstimate'
+          description: ''
   /api/v1/nutrition/profile/:
     get:
       operationId: nutrition_profile_retrieve
@@ -3514,6 +3531,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NutritionProfile'
+          description: ''
+  /api/v1/nutrition/stats/:
+    get:
+      operationId: nutrition_stats_retrieve
+      description: |-
+        `GET nutrition/stats/?range=` - the nutrition statistics page
+        (apps.nutrition.services.nutrition_stats_by_period and
+        calorie_history, issue #44). `range` is one of the page's fixed
+        periods, default `30d`.
+      parameters:
+      - in: query
+        name: range
+        schema:
+          type: string
+          enum:
+          - 14d
+          - 1y
+          - 30d
+          - 3m
+          - 7d
+          - all
+          - ytd
+        description: One of the fixed periods; default 30d.
+      tags:
+      - nutrition
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NutritionStats'
           description: ''
   /api/v1/performed-exercises/:
     get:
@@ -7273,6 +7323,18 @@ components:
       required:
       - measurement_type
       - value
+    CalorieDay:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        calories:
+          type: integer
+          nullable: true
+      required:
+      - calories
+      - date
     ClientDetail:
       type: object
       properties:
@@ -8842,6 +8904,62 @@ components:
       - session
       - sets
       - started_at
+    MaintenanceEstimate:
+      type: object
+      description: |-
+        apps.nutrition.maintenance.MaintenanceEstimate - the nutrition
+        dashboard's "Observed maintenance" card: what the user's intake and
+        weight trend over the last 28 finished days say their real
+        maintenance is. `calories`/`confidence` are null when there isn't
+        enough data, and `reason` says what's missing. The figures behind
+        it are null until the estimate got that far: the food diary's
+        (`days_logged`, `mean_calories`, `possible_logging_gaps`), then the
+        weight trend's (`weight_rate_kg_per_week`, `weight_days`,
+        `span_days`). Information only - it never changes a target.
+      properties:
+        calories:
+          type: integer
+          nullable: true
+        confidence:
+          type: string
+          nullable: true
+        reason:
+          type: string
+        window_days:
+          type: integer
+        days_logged:
+          type: integer
+          nullable: true
+        mean_calories:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,0})?$
+          nullable: true
+        possible_logging_gaps:
+          type: boolean
+          nullable: true
+        weight_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,3})?$
+          nullable: true
+        weight_days:
+          type: integer
+          nullable: true
+        span_days:
+          type: integer
+          nullable: true
+      required:
+      - calories
+      - confidence
+      - days_logged
+      - mean_calories
+      - possible_logging_gaps
+      - reason
+      - span_days
+      - weight_days
+      - weight_rate_kg_per_week
+      - window_days
     MealSlot:
       type: object
       properties:
@@ -9298,6 +9416,98 @@ components:
       - activity_level
       - biological_sex
       - birth_date
+    NutritionStats:
+      type: object
+      description: |-
+        `GET nutrition/stats/?range=` - the nutrition statistics page.
+        `period` is the chosen range's figures (every period ends yesterday,
+        the last finished day); `daily` has one row per day from its start
+        through today for the chart, `calories` null on a day with nothing
+        logged; `target_calories` is the active target, the chart's
+        reference line (null without one); `periods` is every fixed period,
+        the page's table.
+      properties:
+        period:
+          $ref: '#/components/schemas/NutritionStatsPeriod'
+        daily:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalorieDay'
+        target_calories:
+          type: integer
+          nullable: true
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/NutritionStatsPeriod'
+      required:
+      - daily
+      - period
+      - periods
+      - target_calories
+    NutritionStatsPeriod:
+      type: object
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        start:
+          type: string
+          format: date
+        end:
+          type: string
+          format: date
+        summary:
+          $ref: '#/components/schemas/NutritionStatsSummary'
+      required:
+      - end
+      - key
+      - label
+      - start
+      - summary
+    NutritionStatsSummary:
+      type: object
+      description: |-
+        apps.nutrition.services.NutritionStatsSummary - only days with
+        something logged count; `possible_logging_gaps` is true when the mean
+        is low enough against the median to suggest partly logged days.
+      properties:
+        days_logged:
+          type: integer
+        days_in_range:
+          type: integer
+        mean_calories:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,0})?$
+        median_calories:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,0})?$
+        median_protein_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,7}(?:\.\d{0,1})?$
+        median_carbohydrate_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,7}(?:\.\d{0,1})?$
+        median_fat_grams:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,7}(?:\.\d{0,1})?$
+        possible_logging_gaps:
+          type: boolean
+      required:
+      - days_in_range
+      - days_logged
+      - mean_calories
+      - median_calories
+      - median_carbohydrate_grams
+      - median_fat_grams
+      - median_protein_grams
+      - possible_logging_gaps
     NutritionTarget:
       type: object
       properties:
