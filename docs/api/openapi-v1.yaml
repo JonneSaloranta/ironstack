@@ -3586,7 +3586,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExerciseSet'
+                $ref: '#/components/schemas/ExerciseSetCreated'
           description: ''
   /api/v1/sets/{id}/:
     get:
@@ -5458,6 +5458,66 @@ components:
       - reps
       - set_number
       - weight
+    ExerciseSetCreated:
+      type: object
+      description: |-
+        Schema only - the `sets/` create response, documenting the
+        `new_records` ExerciseSetSerializer.to_representation adds.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        performed_exercise:
+          type: integer
+        set_number:
+          type: integer
+          readOnly: true
+        weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+        reps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        target_reps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        rpe:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,1})?$
+          nullable: true
+        rir:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        is_failure:
+          type: boolean
+        is_warmup:
+          type: boolean
+          description: Excluded from PR, progression, and analytics calculations by
+            default.
+        notes:
+          type: string
+        performed_at:
+          type: string
+          format: date-time
+        new_records:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewRecord'
+          readOnly: true
+      required:
+      - id
+      - new_records
+      - performed_exercise
+      - reps
+      - set_number
+      - weight
     ExerciseSetRequest:
       type: object
       properties:
@@ -5862,6 +5922,64 @@ components:
       required:
       - id
       - name
+    NewRecord:
+      type: object
+      description: |-
+        A record a just-logged set broke, plus the value it beat
+        (`previous_value`, null for a first-ever record) - what the web's
+        PR toast shows. Only ever in a `sets/` create response.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        exercise:
+          type: integer
+        exercise_name:
+          type: string
+          readOnly: true
+        record_type:
+          $ref: '#/components/schemas/RecordTypeEnum'
+        record_type_display:
+          type: string
+          readOnly: true
+        rep_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: The N in 'NRM' - only set for rep_specific_pr.
+        value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+        reps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        achieved_at:
+          type: string
+          format: date-time
+        previous_value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+      required:
+      - achieved_at
+      - exercise
+      - exercise_name
+      - id
+      - previous_value
+      - record_type
+      - record_type_display
+      - reps
+      - value
+      - weight
     NovaGroupEnum:
       enum:
       - 1

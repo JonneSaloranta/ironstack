@@ -284,6 +284,17 @@ class ExerciseSetSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["set_number"]  # auto-numbered - see apps.workouts.services.log_set
 
+    def to_representation(self, instance):
+        # ExerciseSetViewSet.perform_create puts the records the set
+        # broke here (issue #30), so only a create response carries
+        # `new_records`; reading a set later doesn't.
+        data = super().to_representation(instance)
+        if "new_records" in self.context:
+            data["new_records"] = NewRecordSerializer(
+                self.context["new_records"], many=True
+            ).data
+        return data
+
     def validate_rpe(self, value):
         from django.core.exceptions import ValidationError as DjangoValidationError
 
@@ -517,6 +528,29 @@ class PersonalRecordSerializer(serializers.ModelSerializer):
             "reps",
             "achieved_at",
         ]
+
+
+class NewRecordSerializer(PersonalRecordSerializer):
+    """A record a just-logged set broke, plus the value it beat
+    (`previous_value`, null for a first-ever record) - what the web's
+    PR toast shows. Only ever in a `sets/` create response."""
+
+    previous_value = serializers.DecimalField(
+        max_digits=8, decimal_places=2, read_only=True, allow_null=True, default=None
+    )
+
+    class Meta(PersonalRecordSerializer.Meta):
+        fields = [*PersonalRecordSerializer.Meta.fields, "previous_value"]
+
+
+class ExerciseSetCreatedSerializer(ExerciseSetSerializer):
+    """Schema only - the `sets/` create response, documenting the
+    `new_records` ExerciseSetSerializer.to_representation adds."""
+
+    new_records = NewRecordSerializer(many=True, read_only=True)
+
+    class Meta(ExerciseSetSerializer.Meta):
+        fields = [*ExerciseSetSerializer.Meta.fields, "new_records"]
 
 
 # --------------------------------------------------------------------

@@ -24,6 +24,7 @@ narrated summary of the same version.
   brand or barcode.
 - API: the profile has the body tracking reminder setting, the join date and
   whether the reminder is due.
+- API: logging a set answers with the personal records it broke.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

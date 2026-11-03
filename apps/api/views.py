@@ -68,6 +68,7 @@ from .serializers import (
     EquipmentSerializer,
     ExercisePrescriptionSerializer,
     ExerciseSerializer,
+    ExerciseSetCreatedSerializer,
     ExerciseSetSerializer,
     FoodSerializer,
     LastPerformanceSerializer,
@@ -426,7 +427,13 @@ class PerformedExerciseViewSet(
         return Response(data)
 
 
-@extend_schema_view(create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]))
+@extend_schema_view(
+    create=extend_schema(
+        parameters=[idempotency.SCHEMA_PARAMETER],
+        request=ExerciseSetSerializer,
+        responses={201: ExerciseSetCreatedSerializer},
+    )
+)
 class ExerciseSetViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     """The actual "log a set" endpoint - perform_create goes through
     apps.workouts.services.log_set (auto-numbers set_number, ignoring
@@ -452,7 +459,9 @@ class ExerciseSetViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
             if key != "performed_exercise"
         }
         logged_set = workout_services.log_set(performed_exercise, **fields)
-        records_services.check_and_record_prs(logged_set)
+        # The response lists the records this set broke (issue #30) -
+        # the web's PR toast - so a client needn't diff records/.
+        serializer.context["new_records"] = records_services.check_and_record_prs(logged_set)
         serializer.instance = logged_set
 
     def perform_update(self, serializer):

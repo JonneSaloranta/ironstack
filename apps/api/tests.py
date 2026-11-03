@@ -426,6 +426,33 @@ class WorkoutLoggingEndpointTests(APITestCase):
         self.assertGreater(records_response.data["count"], 0)
         self.assertEqual(records_response.data["results"][0]["exercise_name"], "API Test Squat")
 
+    def test_set_create_response_lists_the_new_records(self):
+        # Issue #30: the web's PR toast, without diffing records/.
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+
+        def post(weight):
+            return self.client.post(
+                reverse("api:set-list"),
+                {"performed_exercise": performed.pk, "weight": weight, "reps": 5},
+                format="json", **self._auth(),
+            )
+
+        first = post("100.00")
+        self.assertEqual(first.status_code, 201)
+        max_weight = [r for r in first.data["new_records"] if r["record_type"] == PRType.MAX_WEIGHT]
+        self.assertEqual(len(max_weight), 1)
+        self.assertEqual(Decimal(max_weight[0]["value"]), Decimal("100"))
+        self.assertEqual(max_weight[0]["exercise_name"], "API Test Squat")
+
+        lighter = post("50.00").data["new_records"]
+        self.assertFalse([r for r in lighter if r["record_type"] == PRType.MAX_WEIGHT])
+
+        detail = self.client.get(
+            reverse("api:set-detail", args=[first.data["id"]]), **self._auth()
+        )
+        self.assertNotIn("new_records", detail.data)
+
     def _logged_set(self, weight="600"):
         session = workout_services.start_session(self.alice, workout=None)
         performed = workout_services.add_performed_exercise(session, self.exercise)
