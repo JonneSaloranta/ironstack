@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from . import views, views_coaching, views_social, views_tutorials
+from . import views, views_assistant, views_coaching, views_social, views_tutorials
 
 app_name = "api"
 
@@ -221,6 +221,56 @@ coaching_urlpatterns = [
     ),
 ]
 
+_assistant = views_assistant
+assistant_urlpatterns = [
+    path("assistant/", _assistant.AssistantStatusView.as_view(), name="assistant-status"),
+    path(
+        "assistant/enable/",
+        _assistant.AssistantToggleView.as_view(enable=True),
+        name="assistant-enable",
+    ),
+    path(
+        "assistant/disable/",
+        _assistant.AssistantToggleView.as_view(enable=False),
+        name="assistant-disable",
+    ),
+    path(
+        "assistant/settings/",
+        _assistant.AssistantSettingsView.as_view(),
+        name="assistant-settings",
+    ),
+    path(
+        "assistant/conversations/",
+        _assistant.ConversationListView.as_view(),
+        name="assistant-conversations",
+    ),
+    path(
+        "assistant/conversations/<int:pk>/",
+        _assistant.ConversationDetailView.as_view(),
+        name="assistant-conversation",
+    ),
+    path(
+        "assistant/conversations/<int:pk>/messages/",
+        _assistant.ConversationMessageView.as_view(),
+        name="assistant-conversation-messages",
+    ),
+    path(
+        "assistant/messages/<int:pk>/",
+        _assistant.AssistantMessageView.as_view(),
+        name="assistant-message",
+    ),
+    path(
+        "assistant/proposals/<int:pk>/accept/",
+        _assistant.ProposalAcceptView.as_view(),
+        name="assistant-proposal-accept",
+    ),
+    path(
+        "assistant/proposals/<int:pk>/dismiss/",
+        _assistant.ProposalDismissView.as_view(),
+        name="assistant-proposal-dismiss",
+    ),
+]
+
 urlpatterns = [
     path("profile/", views.ProfileView.as_view(), name="profile"),
     path("tutorials/", views_tutorials.TutorialListView.as_view(), name="tutorial-list"),
@@ -281,4 +331,6 @@ urlpatterns = [
         views.AchievementsView.as_view(),
         name="analytics-achievements",
     ),
-] + social_urlpatterns + coaching_urlpatterns + router.urls
+]
+urlpatterns += social_urlpatterns + coaching_urlpatterns + assistant_urlpatterns
+urlpatterns += router.urls

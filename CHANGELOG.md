@@ -48,6 +48,9 @@ narrated summary of the same version.
 - API: coaching - asking a trainer, answering requests, a trainer's view of a
   client, and sharing, importing and updating programs and diet plans. Needs
   a key with the new "Coaching" area allowed.
+- API: the AI assistant - turning it on, its settings, conversations and
+  replies, and accepting or dismissing its suggestions. Needs a key with the
+  new "AI assistant" area allowed.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

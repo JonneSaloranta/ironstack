@@ -3,7 +3,7 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework.test import APITestCase
@@ -36,6 +36,7 @@ def _all_permissions(**overrides):
         "stretching",
         "social",
         "coaching",
+        "assistant",
     ]
     base = {
         context: {"can_create": True, "can_read": True, "can_update": True, "can_delete": True}
@@ -3400,3 +3401,104 @@ class CoachingEndpointTests(APITestCase):
             reverse("api:coaching-shared-program-import", args=[program.pk]), **self.as_client
         )
         self.assertEqual(response.status_code, 400)
+
+
+@override_settings(ASSISTANT_PROVIDER="anthropic", ASSISTANT_API_KEY="sk-ant-shared-key-123456")
+class AssistantEndpointTests(APITestCase):
+    """Issue #37 - the assistant through apps.assistant.services. Replies
+    are only queued here (ASSISTANT_RUN_INLINE is off), no model runs."""
+
+    def setUp(self):
+        from apps.assistant.models import AssistantSettings, SharedKeyAccess
+
+        site = AssistantSettings.load()
+        site.shared_key_access = SharedKeyAccess.EVERYONE
+        site.save()
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _key, secret = _create_key(self.alice)
+        self.auth = {"HTTP_AUTHORIZATION": f"Bearer {secret}"}
+
+    def test_off_until_enabled(self):
+        status_data = self.client.get(reverse("api:assistant-status"), **self.auth).data
+        self.assertFalse(status_data["enabled"])
+        self.assertTrue(status_data["available"])
+        self.assertEqual(status_data["key_source"], "shared")
+        refused = self.client.post(
+            reverse("api:assistant-conversations"), {"text": "Hi"}, format="json", **self.auth
+        )
+        self.assertEqual(refused.status_code, 400)
+        enabled = self.client.post(reverse("api:assistant-enable"), **self.auth)
+        self.assertTrue(enabled.data["enabled"])
+        disabled = self.client.post(reverse("api:assistant-disable"), **self.auth)
+        self.assertFalse(disabled.data["enabled"])
+
+    def test_conversation_flow(self):
+        self.client.post(reverse("api:assistant-enable"), **self.auth)
+        started = self.client.post(
+            reverse("api:assistant-conversations"), {"text": "Plan my week"},
+            format="json", **self.auth,
+        )
+        self.assertEqual(started.status_code, 201, started.data)
+        self.assertEqual(started.data["title"], "Plan my week")
+        user_message, reply = started.data["messages"]
+        self.assertEqual(user_message["role"], "user")
+        self.assertEqual(reply["status"], "pending")
+        busy = self.client.post(
+            reverse("api:assistant-conversation-messages", args=[started.data["id"]]),
+            {"text": "And?"}, format="json", **self.auth,
+        )
+        self.assertEqual(busy.status_code, 400)  # the reply is still being written
+        polled = self.client.get(reverse("api:assistant-message", args=[reply["id"]]), **self.auth)
+        self.assertEqual(polled.data["status"], "pending")
+        listed = self.client.get(reverse("api:assistant-conversations"), **self.auth)
+        self.assertEqual(listed.data[0]["id"], started.data["id"])
+        deleted = self.client.delete(
+            reverse("api:assistant-conversation", args=[started.data["id"]]), **self.auth
+        )
+        self.assertEqual(deleted.status_code, 204)
+
+    def test_another_users_conversation_is_404(self):
+        from apps.assistant.models import Conversation
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        theirs = Conversation.objects.create(
+            user=bob, title="x", provider="anthropic", model="m", key_source="shared"
+        )
+        url = reverse("api:assistant-conversation", args=[theirs.pk])
+        self.assertEqual(self.client.get(url, **self.auth).status_code, 404)
+
+    def test_settings(self):
+        response = self.client.patch(
+            reverse("api:assistant-settings"),
+            {"about_me": "Knee injury", "reads_food": False, "own_key_effort": "low"},
+            format="json", **self.auth,
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["about_me"], "Knee injury")
+        self.assertFalse(response.data["reads_food"])
+        self.assertTrue(response.data["reads_body"])
+        self.assertEqual(response.data["own_key_effort"], "low")
+        bad = self.client.patch(
+            reverse("api:assistant-settings"), {"own_key_model": "gpt"},
+            format="json", **self.auth,
+        )
+        self.assertEqual(bad.status_code, 400)
+
+    def test_proposals(self):
+        from apps.assistant.models import AssistantMessage, AssistantProposal, Conversation
+
+        conversation = Conversation.objects.create(
+            user=self.alice, title="x", provider="anthropic", model="m", key_source="shared"
+        )
+        message = AssistantMessage.objects.create(conversation=conversation, role="assistant")
+        broken = AssistantProposal.objects.create(
+            message=message, kind="program", title="Plan", payload={}
+        )
+        accepted = self.client.post(
+            reverse("api:assistant-proposal-accept", args=[broken.pk]), **self.auth
+        )
+        self.assertEqual(accepted.status_code, 409)
+        dismissed = self.client.post(
+            reverse("api:assistant-proposal-dismiss", args=[broken.pk]), **self.auth
+        )
+        self.assertEqual(dismissed.data["status"], "dismissed")

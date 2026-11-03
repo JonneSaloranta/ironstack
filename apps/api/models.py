@@ -34,6 +34,7 @@ class ApiContext(models.TextChoices):
     STRETCHING = "stretching", _("Stretching")
     SOCIAL = "social", _("Friends and groups")
     COACHING = "coaching", _("Coaching")
+    ASSISTANT = "assistant", _("AI assistant")
 
 
 class RateLimitTier(models.Model):

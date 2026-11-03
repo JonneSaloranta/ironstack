@@ -565,6 +565,304 @@ paths:
               schema:
                 $ref: '#/components/schemas/VolumeAnalytics'
           description: ''
+  /api/v1/assistant/:
+    get:
+      operationId: assistant_retrieve
+      description: |-
+        `GET assistant/` - whether the assistant is on and usable, with
+        which provider and model, and today's allowance on the instance's
+        own provider (null with the user's own key).
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantStatus'
+          description: ''
+  /api/v1/assistant/conversations/:
+    get:
+      operationId: assistant_conversations_list
+      description: |-
+        `GET assistant/conversations/` - the latest 50, newest first.
+        `POST {text}` starts one; 201 with it, its first reply `pending`
+        until the assistant worker writes it - poll `assistant/messages/
+        <id>/`.
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
+          description: ''
+    post:
+      operationId: assistant_conversations_create
+      description: |-
+        `GET assistant/conversations/` - the latest 50, newest first.
+        `POST {text}` starts one; 201 with it, its first reply `pending`
+        until the assistant worker writes it - poll `assistant/messages/
+        <id>/`.
+      tags:
+      - assistant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationDetail'
+          description: ''
+  /api/v1/assistant/conversations/{id}/:
+    get:
+      operationId: assistant_conversations_retrieve
+      description: |-
+        `GET assistant/conversations/<id>/` - with every message and its
+        proposals. `DELETE` removes it.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationDetail'
+          description: ''
+    delete:
+      operationId: assistant_conversations_destroy
+      description: |-
+        `GET assistant/conversations/<id>/` - with every message and its
+        proposals. `DELETE` removes it.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/assistant/conversations/{id}/messages/:
+    post:
+      operationId: assistant_conversations_messages_create
+      description: |-
+        `POST assistant/conversations/<id>/messages/ {text}` - sends the
+        next message; 201 with the assistant's reply bubble, `pending` until
+        it's written. A 400 while the previous reply is still being written,
+        or once today's allowance is used.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MessageTextRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantMessage'
+          description: ''
+  /api/v1/assistant/disable/:
+    post:
+      operationId: assistant_disable_create
+      description: |-
+        `POST assistant/enable/` - the user's consent to send their data
+        to the model (show them what the web's settings page explains
+        first); `POST assistant/disable/` turns it off.
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantStatus'
+          description: ''
+  /api/v1/assistant/enable/:
+    post:
+      operationId: assistant_enable_create
+      description: |-
+        `POST assistant/enable/` - the user's consent to send their data
+        to the model (show them what the web's settings page explains
+        first); `POST assistant/disable/` turns it off.
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantStatus'
+          description: ''
+  /api/v1/assistant/messages/{id}/:
+    get:
+      operationId: assistant_messages_retrieve
+      description: |-
+        `GET assistant/messages/<id>/` - one message, to poll a reply while
+        it's written (the web polls every couple of seconds).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantMessage'
+          description: ''
+  /api/v1/assistant/proposals/{id}/accept/:
+    post:
+      operationId: assistant_proposals_accept_create
+      description: |-
+        `POST assistant/proposals/<id>/accept/` - creates the proposed diet
+        plan or program, inactive, for the user to review (201). 409 with
+        the reason when it can't be created as proposed anymore (a food
+        deleted since, say).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProposalAccepted'
+          description: ''
+  /api/v1/assistant/proposals/{id}/dismiss/:
+    post:
+      operationId: assistant_proposals_dismiss_create
+      description: '`POST assistant/proposals/<id>/dismiss/` - kept as a record.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proposal'
+          description: ''
+  /api/v1/assistant/settings/:
+    get:
+      operationId: assistant_settings_retrieve
+      description: |-
+        `GET`/`PATCH assistant/settings/` - `reads_*` (what the assistant
+        may read), `about_me`, and the model and effort used with the user's
+        own key ("" for the instance default).
+      tags:
+      - assistant
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantSettings'
+          description: ''
+    patch:
+      operationId: assistant_settings_partial_update
+      description: |-
+        `GET`/`PATCH assistant/settings/` - `reads_*` (what the assistant
+        may read), `about_me`, and the model and effort used with the user's
+        own key ("" for the instance default).
+      tags:
+      - assistant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAssistantSettingsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAssistantSettingsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAssistantSettingsRequest'
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantSettings'
+          description: ''
   /api/v1/coaching/clients/:
     get:
       operationId: coaching_clients_list
@@ -6765,6 +7063,137 @@ components:
       - last_session_at
       - name
       - program
+    AssistantMessage:
+      type: object
+      description: |-
+        A chat bubble. An assistant reply starts `pending`, is `running`
+        while it's written (`text` grows, `activity` says what it's doing)
+        and ends `done` or `error`.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        role:
+          $ref: '#/components/schemas/AssistantMessageRoleEnum'
+        status:
+          $ref: '#/components/schemas/AssistantMessageStatusEnum'
+        text:
+          type: string
+        activity:
+          type: string
+          maxLength: 200
+        error:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        proposals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Proposal'
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - proposals
+      - role
+    AssistantMessageRoleEnum:
+      enum:
+      - user
+      - assistant
+      type: string
+      description: |-
+        * `user` - You
+        * `assistant` - Assistant
+    AssistantMessageStatusEnum:
+      enum:
+      - pending
+      - running
+      - done
+      - error
+      type: string
+      description: |-
+        * `pending` - Waiting
+        * `running` - Writing
+        * `done` - Done
+        * `error` - Failed
+    AssistantSettings:
+      type: object
+      description: |-
+        What the assistant may read about the user, what it should know
+        about them, and - with their own key - which model and effort.
+      properties:
+        about_me:
+          type: string
+          maxLength: 2000
+        own_key_model:
+          oneOf:
+          - $ref: '#/components/schemas/OwnKeyModelEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        own_key_effort:
+          oneOf:
+          - $ref: '#/components/schemas/OwnKeyEffortEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        reads_workouts:
+          type: boolean
+        reads_body:
+          type: boolean
+        reads_food:
+          type: boolean
+        reads_activities:
+          type: boolean
+        reads_stretching:
+          type: boolean
+        reads_profile:
+          type: boolean
+    AssistantStatus:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: The user has turned the assistant on.
+        available:
+          type: boolean
+          description: A model can be used for this user.
+        reason:
+          type: string
+          description: Why it isn't available, when it isn't.
+        key_source:
+          type: string
+          nullable: true
+        provider:
+          type: string
+          nullable: true
+        model:
+          type: string
+          nullable: true
+        has_own_key:
+          type: boolean
+        own_key_hint:
+          type: string
+          description: The key's last characters, e.g. ...abcd.
+        tokens_used_today:
+          type: integer
+          nullable: true
+        tokens_remaining:
+          type: integer
+          nullable: true
+        daily_limit:
+          type: integer
+          nullable: true
+      required:
+      - available
+      - daily_limit
+      - enabled
+      - has_own_key
+      - key_source
+      - model
+      - own_key_hint
+      - provider
+      - reason
+      - tokens_remaining
+      - tokens_used_today
     BiologicalSexEnum:
       enum:
       - male
@@ -6773,6 +7202,9 @@ components:
       description: |-
         * `male` - Male
         * `female` - Female
+    BlankEnum:
+      enum:
+      - ''
     BodyMeasurement:
       type: object
       properties:
@@ -6968,6 +7400,78 @@ components:
       - display_name
       - id
       - username
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 120
+        provider:
+          type: string
+          maxLength: 20
+        model:
+          type: string
+          maxLength: 100
+        key_source:
+          $ref: '#/components/schemas/KeySourceEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - key_source
+      - model
+      - provider
+      - title
+      - updated_at
+    ConversationDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 120
+        provider:
+          type: string
+          maxLength: 20
+        model:
+          type: string
+          maxLength: 100
+        key_source:
+          $ref: '#/components/schemas/KeySourceEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssistantMessage'
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - key_source
+      - messages
+      - model
+      - provider
+      - title
+      - updated_at
     Conversations:
       type: object
       properties:
@@ -8218,14 +8722,14 @@ components:
           type: string
       required:
       - name
-    KindEnum:
+    KeySourceEnum:
       enum:
-      - static
-      - dynamic
+      - shared
+      - own
       type: string
       description: |-
-        * `static` - Static
-        * `dynamic` - Dynamic
+        * `shared` - This instance's provider
+        * `own` - Your own API key
     LanguageEnum:
       enum:
       - en
@@ -8381,6 +8885,15 @@ components:
           maxLength: 4000
       required:
       - body
+    MessageTextRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 4000
+      required:
+      - text
     MovementTypeEnum:
       enum:
       - compound
@@ -8890,6 +9403,34 @@ components:
         * `disabled` - disabled
         * `busy` - busy
         * `error` - error
+    OwnKeyEffortEnum:
+      enum:
+      - low
+      - medium
+      - high
+      - xhigh
+      - max
+      type: string
+      description: |-
+        * `` - Default
+        * `low` - Low - quickest and cheapest; fine for everyday questions
+        * `medium` - Medium - balanced
+        * `high` - High - more thorough plans, more tokens
+        * `xhigh` - Extra high - for demanding planning
+        * `max` - Maximum - the most thorough and the most expensive
+    OwnKeyModelEnum:
+      enum:
+      - claude-opus-5-5
+      - claude-sonnet-5-5
+      - claude-haiku-4-5
+      - claude-fable-5-1
+      type: string
+      description: |-
+        * `` - Default
+        * `claude-opus-5-5` - Claude Opus 5.5 - best plans ($4 / $20)
+        * `claude-sonnet-5-5` - Claude Sonnet 5.5 - good and half the price ($2 / $10)
+        * `claude-haiku-4-5` - Claude Haiku 4.5 - fastest and cheapest, weaker plans ($1 / $5)
+        * `claude-fable-5-1` - Claude Fable 5.1 - most capable, most expensive ($10 / $50)
     PaginatedActivityList:
       type: object
       required:
@@ -9567,6 +10108,35 @@ components:
           type: string
           minLength: 1
           maxLength: 50
+    PatchedAssistantSettingsRequest:
+      type: object
+      description: |-
+        What the assistant may read about the user, what it should know
+        about them, and - with their own key - which model and effort.
+      properties:
+        about_me:
+          type: string
+          maxLength: 2000
+        own_key_model:
+          oneOf:
+          - $ref: '#/components/schemas/OwnKeyModelEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        own_key_effort:
+          oneOf:
+          - $ref: '#/components/schemas/OwnKeyEffortEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        reads_workouts:
+          type: boolean
+        reads_body:
+          type: boolean
+        reads_food:
+          type: boolean
+        reads_activities:
+          type: boolean
+        reads_stretching:
+          type: boolean
+        reads_profile:
+          type: boolean
     PatchedBodyMeasurementRequest:
       type: object
       properties:
@@ -10096,7 +10666,7 @@ components:
           maxLength: 100
         kind:
           allOf:
-          - $ref: '#/components/schemas/KindEnum'
+          - $ref: '#/components/schemas/StretchKindEnum'
           title: Type
         per_side:
           type: boolean
@@ -10623,6 +11193,65 @@ components:
         * `rep_range` - Rep range
         * `maintenance` - Maintenance
         * `manual` - Manual
+    Proposal:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        kind:
+          $ref: '#/components/schemas/ProposalKindEnum'
+        title:
+          type: string
+          maxLength: 200
+        payload: {}
+        status:
+          $ref: '#/components/schemas/ProposalStatusEnum'
+        created_object_id:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+      required:
+      - id
+      - kind
+      - payload
+      - title
+    ProposalAccepted:
+      type: object
+      properties:
+        proposal:
+          $ref: '#/components/schemas/Proposal'
+        kind:
+          type: string
+          description: diet_plan or program.
+        created_id:
+          type: integer
+          description: The new, inactive diet plan or program - review it like any
+            other.
+      required:
+      - created_id
+      - kind
+      - proposal
+    ProposalKindEnum:
+      enum:
+      - diet_plan
+      - program
+      type: string
+      description: |-
+        * `diet_plan` - Diet plan
+        * `program` - Workout program
+    ProposalStatusEnum:
+      enum:
+      - pending
+      - accepted
+      - dismissed
+      type: string
+      description: |-
+        * `pending` - Waiting for you
+        * `accepted` - Created
+        * `dismissed` - Dismissed
     RecentActivity:
       type: object
       description: |-
@@ -11024,7 +11653,7 @@ components:
           readOnly: true
         kind:
           allOf:
-          - $ref: '#/components/schemas/KindEnum'
+          - $ref: '#/components/schemas/StretchKindEnum'
           title: Type
         per_side:
           type: boolean
@@ -11059,6 +11688,14 @@ components:
       - is_custom
       - name
       - owner
+    StretchKindEnum:
+      enum:
+      - static
+      - dynamic
+      type: string
+      description: |-
+        * `static` - Static
+        * `dynamic` - Dynamic
     StretchRequest:
       type: object
       properties:
@@ -11068,7 +11705,7 @@ components:
           maxLength: 100
         kind:
           allOf:
-          - $ref: '#/components/schemas/KindEnum'
+          - $ref: '#/components/schemas/StretchKindEnum'
           title: Type
         per_side:
           type: boolean
