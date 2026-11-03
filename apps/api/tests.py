@@ -1263,6 +1263,30 @@ class ProgramHardDeleteTests(APITestCase):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
         _api_key, self.raw_secret = _create_key(self.alice)
 
+    def test_copying_a_program_copies_workouts_and_prescriptions(self):
+        # Issue #32.
+        from apps.programs.models import ExercisePrescription, Program, Workout
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        template = Program.objects.create(owner=None, name="Template", is_template=True)
+        workout = Workout.objects.create(program=template, name="Day A")
+        squat = Exercise.objects.create(name="API Copy Squat", owner=None)
+        ExercisePrescription.objects.create(workout=workout, exercise=squat)
+        response = self.client.post(
+            reverse("api:program-copy", args=[template.pk]),
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        copy = Program.objects.get(pk=response.data["id"])
+        self.assertEqual(copy.owner, self.alice)
+        self.assertEqual(copy.workouts.get().prescriptions.get().exercise, squat)
+        bobs = Program.objects.create(owner=bob, name="Bob's")
+        hidden = self.client.post(
+            reverse("api:program-copy", args=[bobs.pk]),
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+        self.assertEqual(hidden.status_code, 404)
+
     def test_deleting_a_program_actually_removes_it(self):
         from apps.programs.models import Program
 
@@ -2179,6 +2203,20 @@ class StretchingEndpointTests(APITestCase):
             reverse("api:stretch-routine-detail", args=[self.system_routine.pk]), **self._auth()
         )
         self.assertEqual(len(routine.data["items"]), self.system_routine.items.count())
+
+    def test_copying_a_routine(self):
+        # Issue #32: one atomic request instead of rebuilding item by item.
+        response = self.client.post(
+            reverse("api:stretch-routine-copy", args=[self.system_routine.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["owner"], self.alice.pk)
+        self.assertNotEqual(response.data["id"], self.system_routine.pk)
+        self.assertEqual(len(response.data["items"]), self.system_routine.items.count())
+        hidden = self.client.post(
+            reverse("api:stretch-routine-copy", args=[self.bobs_routine.pk]), **self._auth()
+        )
+        self.assertEqual(hidden.status_code, 404)
 
     def test_system_routine_is_read_only(self):
         response = self.client.patch(

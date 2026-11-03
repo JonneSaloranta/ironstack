@@ -34,6 +34,7 @@ narrated summary of the same version.
   there through the server, keeping Nutri-Score, NOVA group and the OFF link.
 - API: nutrition can be set up and a new goal started, with a calculated
   target, and a calorie adjustment suggestion can be read and accepted.
+- API: a program or stretch routine can be copied in one request.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

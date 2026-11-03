@@ -3195,6 +3195,30 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/programs/{id}/copy/:
+    post:
+      operationId: programs_copy_create
+      description: |-
+        The user's own editable copy of any visible program - workouts
+        and prescriptions included, in one step (programs.services.
+        copy_program, the web's "Copy", issue #32).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - programs
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+          description: ''
   /api/v1/recipe-ingredients/:
     get:
       operationId: recipe_ingredients_list
@@ -4302,6 +4326,31 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/stretch-routines/{id}/copy/:
+    post:
+      operationId: stretch_routines_copy_create
+      description: |-
+        The user's own editable copy of any visible routine, items
+        included (stretching.services.copy_routine, issue #32). A
+        built-in routine's name is translated into the user's language
+        on the way, as on the web.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - stretch-routines
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StretchRoutine'
+          description: ''
   /api/v1/stretch-sessions/:
     get:
       operationId: stretch_sessions_list

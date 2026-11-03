@@ -203,6 +203,18 @@ class ProgramViewSet(OwnedResourceViewSet):
     def editable_queryset(self):
         return program_services.editable_by(self.request.user)
 
+    @extend_schema(request=None, responses={201: ProgramSerializer})
+    @action(detail=True, methods=["post"])
+    def copy(self, request, pk=None):
+        """The user's own editable copy of any visible program - workouts
+        and prescriptions included, in one step (programs.services.
+        copy_program, the web's "Copy", issue #32)."""
+        new_program = program_services.copy_program(self.get_object(), owner=request.user)
+        new_program = self.visible_queryset().get(pk=new_program.pk)
+        return Response(
+            self.get_serializer(new_program).data, status=status.HTTP_201_CREATED
+        )
+
 
 class WorkoutViewSet(viewsets.ModelViewSet):
     serializer_class = WorkoutSerializer
@@ -1275,6 +1287,17 @@ class StretchRoutineViewSet(OwnedResourceViewSet):
 
     def visible_queryset(self):
         return stretching_services.visible_routines(self.request.user).prefetch_related("items")
+
+    @extend_schema(request=None, responses={201: StretchRoutineSerializer})
+    @action(detail=True, methods=["post"])
+    def copy(self, request, pk=None):
+        """The user's own editable copy of any visible routine, items
+        included (stretching.services.copy_routine, issue #32). A
+        built-in routine's name is translated into the user's language
+        on the way, as on the web."""
+        with _user_language(request.user):
+            routine = stretching_services.copy_routine(self.get_object(), request.user)
+        return Response(self.get_serializer(routine).data, status=status.HTTP_201_CREATED)
 
 
 class RoutineItemViewSet(viewsets.ModelViewSet):
