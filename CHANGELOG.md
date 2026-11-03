@@ -18,6 +18,10 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Fixed
+- API: a diary entry sent with `"food": null` or `"recipe": null` no longer
+  fails with a server error.
+
 ## [1.29.0] - 2026-10-31
 
 ### Changed

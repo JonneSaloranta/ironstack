@@ -697,9 +697,14 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Not a meal slot you can log against.")
         return value
 
+    # food and recipe are both nullable: an explicit null (issue #39)
+    # is how a client says "not this kind of entry", and validate()
+    # above already checks that exactly one kind is given.
     def validate_food(self, value):
         from django.db.models import Q
 
+        if value is None:
+            return value
         request = self.context["request"]
         visible = Food.objects.filter(
             Q(owner=request.user) | Q(owner__isnull=True), active=True
@@ -709,6 +714,8 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
         return value
 
     def validate_recipe(self, value):
+        if value is None:
+            return value
         request = self.context["request"]
         if value.owner_id != request.user.id or not value.active:
             raise serializers.ValidationError("Not a recipe you own.")

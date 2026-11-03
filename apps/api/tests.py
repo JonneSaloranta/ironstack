@@ -1495,6 +1495,52 @@ class NutritionEndpointTests(APITestCase):
         )
         self.assertEqual(response.status_code, 400)
 
+    def test_explicit_null_recipe_or_food_is_accepted(self):
+        # Issue #39: an explicit null used to crash validate_<fk> with a 500.
+        food_response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "food": self.food.pk, "recipe": None, "quantity": "100",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(food_response.status_code, 201)
+        recipe_response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "food": None, "recipe": self.recipe.pk, "quantity": "1",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(recipe_response.status_code, 201)
+        quick_response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk, "food": None,
+                "recipe": None, "quantity": "1", "quick_calories": 300,
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(quick_response.status_code, 201)
+        patch_response = self.client.patch(
+            reverse("api:diary-entry-detail", args=[food_response.data["id"]]),
+            {"recipe": None, "quantity": "120"}, format="json", **self._auth(),
+        )
+        self.assertEqual(patch_response.status_code, 200)
+
+    def test_null_food_and_recipe_without_quick_macros_is_rejected(self):
+        response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "food": None, "recipe": None, "quantity": "1",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
     def test_cannot_log_another_users_recipe(self):
         response = self.client.post(
             reverse("api:diary-entry-list"),
