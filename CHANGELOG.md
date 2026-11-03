@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.31.0] - 2026-11-04
+
 ### Added
 - API: `sessions/<id>/cooldown/` - the cool-down suggestion for a finished
   workout, and the one already done after it; `stretch-sessions/` filters by
