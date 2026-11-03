@@ -378,7 +378,8 @@ read for `GET`, update for `PUT`/`PATCH`.
 A client on a bad connection retries a write until it gets an answer -
 but if the first attempt reached the server and only the response was
 lost, the retry would log the same set twice. `POST sets/`,
-`POST sessions/` and `POST performed-exercises/` therefore accept an
+`sessions/`, `performed-exercises/`, `diary-entries/`, `measurements/`,
+`activities/` and `stretch-sessions/` therefore accept an
 optional `Idempotency-Key` header (1-255 characters; one random value,
 e.g. a UUID, per queued write, sent unchanged with every retry of it).
 

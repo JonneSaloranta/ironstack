@@ -934,6 +934,53 @@ class IdempotencyKeyTests(APITestCase):
         self.assertEqual(retry.data["id"], first.data["id"])
 
 
+class IdempotentQuickLogTests(APITestCase):
+    """Issue #31 - the other quick logs a mobile client queues offline
+    honour Idempotency-Key the same way sets/ does."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _post_twice(self, url_name, payload):
+        headers = {
+            "HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}",
+            "HTTP_IDEMPOTENCY_KEY": f"key-{url_name}",
+        }
+        first = self.client.post(reverse(url_name), payload, format="json", **headers)
+        retry = self.client.post(reverse(url_name), payload, format="json", **headers)
+        self.assertEqual(first.status_code, 201, first.data)
+        self.assertEqual(retry.status_code, 201)
+        self.assertEqual(retry["Idempotent-Replayed"], "true")
+        self.assertEqual(retry.data, first.data)
+
+    def test_quick_log_creates_are_idempotent(self):
+        from apps.activities.models import Activity, ActivityType
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+        from apps.nutrition.models import DiaryEntry, MealSlot
+        from apps.stretching.models import StretchSession
+
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self._post_twice(
+            "api:diary-entry-list",
+            {"date": "2026-10-01", "meal_slot": breakfast.pk, "quantity": "1",
+             "quick_calories": 300},
+        )
+        weight = MeasurementType.objects.get(name="Body weight", owner=None)
+        self._post_twice("api:measurement-list", {"measurement_type": weight.pk, "value": "80"})
+        cycling = ActivityType.objects.get(name="Cycling", owner=None)
+        self._post_twice(
+            "api:activity-list",
+            {"activity_type": cycling.pk, "date": "2026-10-01", "duration": "00:30:00"},
+        )
+        self._post_twice("api:stretch-session-list", {"duration": "00:10:00"})
+
+        self.assertEqual(DiaryEntry.objects.filter(user=self.alice).count(), 1)
+        self.assertEqual(BodyMeasurement.objects.filter(user=self.alice).count(), 1)
+        self.assertEqual(Activity.objects.filter(user=self.alice).count(), 1)
+        self.assertEqual(StretchSession.objects.filter(user=self.alice).count(), 1)
+
+
 class SuggestionEndpointTests(APITestCase):
     """Issue #15 - the web's smart weight suggestion, for a client."""
 

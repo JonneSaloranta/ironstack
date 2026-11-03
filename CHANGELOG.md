@@ -25,6 +25,8 @@ narrated summary of the same version.
 - API: the profile has the body tracking reminder setting, the join date and
   whether the reminder is due.
 - API: logging a set answers with the personal records it broke.
+- API: diary entries, body measurements, activities and stretching sessions
+  accept an `Idempotency-Key`, so a retried quick log isn't saved twice.
 
 ### Fixed
 - API: built-in recipes are listed and readable alongside your own, so diet

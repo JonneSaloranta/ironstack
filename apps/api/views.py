@@ -494,6 +494,7 @@ class MeasurementTypeViewSet(OwnedResourceViewSet):
 
 
 @extend_schema_view(
+    create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]),
     list=extend_schema(
         parameters=[
             OpenApiParameter("measurement_type", int, description="Only this type's readings."),
@@ -506,7 +507,7 @@ class MeasurementTypeViewSet(OwnedResourceViewSet):
         ]
     )
 )
-class BodyMeasurementViewSet(viewsets.ModelViewSet):
+class BodyMeasurementViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     """`?measurement_type=` and `?recorded_after=`/`?recorded_before=`
     narrow the list (issue #29) - one type's history page without
     fetching every reading of every type."""
@@ -547,6 +548,7 @@ class ActivityTypeViewSet(OwnedResourceViewSet):
 
 
 @extend_schema_view(
+    create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]),
     list=extend_schema(
         parameters=[
             OpenApiParameter("activity_type", int, description="Only this type's activities."),
@@ -554,7 +556,7 @@ class ActivityTypeViewSet(OwnedResourceViewSet):
         ]
     )
 )
-class ActivityViewSet(viewsets.ModelViewSet):
+class ActivityViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     """`?activity_type=` and `?date_after=`/`?date_before=` narrow the
     list (issue #29)."""
 
@@ -776,6 +778,7 @@ class RecipeIngredientViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
+    create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]),
     list=extend_schema(
         parameters=[
             OpenApiParameter("date", description="Only this day's entries, YYYY-MM-DD."),
@@ -783,7 +786,7 @@ class RecipeIngredientViewSet(viewsets.ModelViewSet):
         ]
     )
 )
-class DiaryEntryViewSet(viewsets.ModelViewSet):
+class DiaryEntryViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     """`?date=` (one day, like the web diary) and `?date_after=`/
     `?date_before=` narrow the list (issue #26)."""
 
@@ -1071,7 +1074,8 @@ class RoutineItemViewSet(viewsets.ModelViewSet):
         return RoutineItem.objects.filter(routine__owner=self.request.user)
 
 
-class StretchSessionViewSet(viewsets.ModelViewSet):
+@extend_schema_view(create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]))
+class StretchSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     serializer_class = StretchSessionSerializer
     api_context = ApiContext.STRETCHING
 

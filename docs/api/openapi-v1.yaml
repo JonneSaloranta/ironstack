@@ -57,6 +57,14 @@ paths:
       description: |-
         `?activity_type=` and `?date_after=`/`?date_before=` narrow the
         list (issue #29).
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Optional, e.g. a UUID per queued write. A retry with the same
+          key gets the first response back instead of creating another row. Remembered
+          for 24 hours.
       tags:
       - activities
       requestBody:
@@ -486,6 +494,14 @@ paths:
       description: |-
         `?date=` (one day, like the web diary) and `?date_after=`/
         `?date_before=` narrow the list (issue #26).
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Optional, e.g. a UUID per queued write. A retry with the same
+          key gets the first response back instead of creating another row. Remembered
+          for 24 hours.
       tags:
       - diary-entries
       requestBody:
@@ -2042,6 +2058,14 @@ paths:
         `?measurement_type=` and `?recorded_after=`/`?recorded_before=`
         narrow the list (issue #29) - one type's history page without
         fetching every reading of every type.
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Optional, e.g. a UUID per queued write. A retry with the same
+          key gets the first response back instead of creating another row. Remembered
+          for 24 hours.
       tags:
       - measurements
       requestBody:
@@ -4083,6 +4107,10 @@ paths:
   /api/v1/stretch-sessions/:
     get:
       operationId: stretch_sessions_list
+      description: |-
+        For a DRF viewset whose `create` should honour `Idempotency-Key`.
+        Only a successful (2xx) response is stored: a failed attempt changed
+        nothing, so retrying it with the same key simply runs it again.
       parameters:
       - name: page
         required: false
@@ -4109,6 +4137,18 @@ paths:
           description: ''
     post:
       operationId: stretch_sessions_create
+      description: |-
+        For a DRF viewset whose `create` should honour `Idempotency-Key`.
+        Only a successful (2xx) response is stored: a failed attempt changed
+        nothing, so retrying it with the same key simply runs it again.
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Optional, e.g. a UUID per queued write. A retry with the same
+          key gets the first response back instead of creating another row. Remembered
+          for 24 hours.
       tags:
       - stretch-sessions
       requestBody:
@@ -4135,6 +4175,10 @@ paths:
   /api/v1/stretch-sessions/{id}/:
     get:
       operationId: stretch_sessions_retrieve
+      description: |-
+        For a DRF viewset whose `create` should honour `Idempotency-Key`.
+        Only a successful (2xx) response is stored: a failed attempt changed
+        nothing, so retrying it with the same key simply runs it again.
       parameters:
       - in: path
         name: id
@@ -4154,6 +4198,10 @@ paths:
           description: ''
     put:
       operationId: stretch_sessions_update
+      description: |-
+        For a DRF viewset whose `create` should honour `Idempotency-Key`.
+        Only a successful (2xx) response is stored: a failed attempt changed
+        nothing, so retrying it with the same key simply runs it again.
       parameters:
       - in: path
         name: id
@@ -4185,6 +4233,10 @@ paths:
           description: ''
     patch:
       operationId: stretch_sessions_partial_update
+      description: |-
+        For a DRF viewset whose `create` should honour `Idempotency-Key`.
+        Only a successful (2xx) response is stored: a failed attempt changed
+        nothing, so retrying it with the same key simply runs it again.
       parameters:
       - in: path
         name: id
@@ -4215,6 +4267,10 @@ paths:
           description: ''
     delete:
       operationId: stretch_sessions_destroy
+      description: |-
+        For a DRF viewset whose `create` should honour `Idempotency-Key`.
+        Only a successful (2xx) response is stored: a failed attempt changed
+        nothing, so retrying it with the same key simply runs it again.
       parameters:
       - in: path
         name: id
