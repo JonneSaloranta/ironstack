@@ -776,7 +776,7 @@ paths:
       operationId: assistant_proposals_accept_create
       description: |-
         `POST assistant/proposals/<id>/accept/` - creates the proposed diet
-        plan or program, inactive, for the user to review (201). 409 with
+        plan or program (inactive) or recipe, for the user to review (201). 409 with
         the reason when it can't be created as proposed anymore (a food
         deleted since, say).
       parameters:
@@ -11543,11 +11543,11 @@ components:
           $ref: '#/components/schemas/Proposal'
         kind:
           type: string
-          description: diet_plan or program.
+          description: diet_plan, program or recipe.
         created_id:
           type: integer
-          description: The new, inactive diet plan or program - review it like any
-            other.
+          description: The new, inactive diet plan or program, or the new recipe -
+            review it like any other.
       required:
       - created_id
       - kind
@@ -11556,10 +11556,12 @@ components:
       enum:
       - diet_plan
       - program
+      - recipe
       type: string
       description: |-
         * `diet_plan` - Diet plan
         * `program` - Workout program
+        * `recipe` - Recipe
     ProposalStatusEnum:
       enum:
       - pending

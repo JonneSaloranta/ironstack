@@ -5084,8 +5084,10 @@ class RecipeViewTests(TestCase):
         # context_processors.seo's own settings lookup + four more
         # from apps.social.context_processors.social_badge (one cheap
         # EXISTS each: pending friend requests, pending group invites,
-        # unread direct messages, unread group messages) - every
-        # context processor here runs on every page regardless of
+        # unread direct messages, unread group messages) + the "Ask the
+        # assistant" button's availability check (apps.assistant.
+        # templatetags.assistant_tags.assistant_ask_link) - every
+        # one of these runs once per page regardless of
         # recipe count, not one query per recipe. This test's own
         # setUp clears every template recipe, so the template
         # Paginator's own SELECT never actually reaches the database
@@ -5095,7 +5097,7 @@ class RecipeViewTests(TestCase):
         # to this view is fine to bump this number a little; a query
         # count that scales with the number of recipes is the actual
         # regression to catch.
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             self.client.get(reverse("nutrition:recipe-list"))
 
     def test_the_back_link_returns_to_the_nutrition_dashboard(self):

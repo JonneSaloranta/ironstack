@@ -2,8 +2,8 @@
 
 `apps.assistant` is an optional chat assistant that helps a user with diet
 plans, workout programs and questions about their own progress. It reads the
-user's data through tools, and it can *propose* a diet plan or a program as a
-card the user accepts or dismisses. It never changes anything by itself.
+user's data through tools, and it can *propose* a diet plan, a program or a
+recipe as a card the user accepts or dismisses. It never changes anything by itself.
 
 Everything here is off until an operator configures a provider or a user adds
 their own API key, and until each user explicitly turns the assistant on.
@@ -11,12 +11,13 @@ their own API key, and until each user explicitly turns the assistant on.
 ## Product rules it follows
 
 - **The user stays in control** (CLAUDE.md "Product principle"). The only tools
-  that lead to a write are `propose_diet_plan` and `propose_program`. They
-  store an `AssistantProposal`, and only the user's "Create" button turns one
-  into a real plan. The plan is created **inactive** through the same domain
-  services an import uses (`apps.nutrition.services.create_diet_plan`,
-  `apps.programs.services.import_program`), so the user reviews and edits it
-  like any other plan.
+  that lead to a write are `propose_diet_plan`, `propose_program` and
+  `propose_recipe`. They store an `AssistantProposal`, and only the user's
+  "Create" (or "Add recipe") button turns one into a real object. A plan is
+  created **inactive** through the same domain services an import uses
+  (`apps.nutrition.services.create_diet_plan`,
+  `apps.programs.services.import_program`), and a recipe lands in the user's
+  own recipe library, so the user reviews and edits either like any other.
 - **History stays trustworthy.** No tool touches workout sessions or sets at
   all. Accepting a program creates a new `Program`, and completed sessions
   snapshot their own data anyway (docs/ARCHITECTURE.md "Historical data rule").
@@ -131,7 +132,7 @@ queries the views use:
 | `get_progression_suggestions` | `apps.progression.suggestions.suggest_weight` for every exercise in a program (default: the one last trained from), with its reason |
 | `list_diet_plans`, `get_diet_plan` | own diet plans |
 | `search_exercises`, `search_foods`, `search_recipes`, `list_meal_slots` | the libraries a proposal draws from; foods with allergens, labels, categories, ingredients, Nutri-Score and package price when known, recipes with their ingredients and the ingredients' allergens |
-| `propose_diet_plan`, `propose_program` | - (records a proposal) |
+| `propose_diet_plan`, `propose_program`, `propose_recipe` | - (records a proposal) |
 
 **What it may read.** The settings page has one checkbox per
 `models.DataScope` (`AssistantPreference.reads_*`, all on by default):
@@ -182,6 +183,15 @@ output.
   ±35 %), which is a cheap guard against invented numbers. Meal slots must be
   ones the user has. The card shows the targets next to what the meals
   actually add up to.
+- **Recipe:** a name, the number of servings (1-50), preparation steps and
+  optionally the meal slots it suits, and 1-30 ingredients. Each ingredient
+  is an existing food (`food_id`) or a `new_food`, checked exactly like a
+  diet plan item (another recipe can't be an ingredient: a
+  `RecipeIngredient` always points at a food). Quantities cover the whole
+  batch in the food's own unit. The card shows the calories and macros per
+  serving. On accept the recipe is created for the user with its meal slots
+  and ingredients, new foods added to their library first; once it exists,
+  a later diet plan proposal can use it like any other recipe.
 - **Program:** exercises must come from the user's visible library. Rep
   ranges, set counts, RPE and progression method are range-checked, and the
   progression method defaults to double progression.
@@ -218,8 +228,8 @@ rendered.
 | `ASSISTANT_RUN_INLINE` | `false` | write replies in the request (development only) |
 
 Entry points in the UI: Profile → AI assistant; an "Ask the assistant" button
-on the diet plan list and the program list (shown only to users who can use
-it); Profile → Administration → AI assistant for staff.
+on the diet plan list, the recipe list and the program list (shown only to
+users who can use it); Profile → Administration → AI assistant for staff.
 
 ## Not built (yet)
 
@@ -227,6 +237,6 @@ it); Profile → Administration → AI assistant for staff.
 - No Server-Sent Events. Polling one bubble a second is simple and works
   through the existing nginx config, and the text still appears while it's
   written.
-- Proposals cover diet plans and programs only. Nutrition targets, logging
+- Proposals cover diet plans, programs and new recipes only. Nutrition targets, logging
   food or sets, and editing an existing plan in place are deliberately left
   out: they would act on the user's records rather than offer something new.

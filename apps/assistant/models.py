@@ -260,6 +260,7 @@ class AssistantMessage(TimeStampedModel):
 class ProposalKind(models.TextChoices):
     DIET_PLAN = "diet_plan", _("Diet plan")
     PROGRAM = "program", _("Workout program")
+    RECIPE = "recipe", _("Recipe")
 
 
 class ProposalStatus(models.TextChoices):

@@ -22,6 +22,26 @@
     {% if proposal.payload|has_new_foods %}
       <p class="text-muted text-xs">{% trans "Foods marked “new food” are added to your food library with nutrition values the assistant estimated - check them." %}</p>
     {% endif %}
+  {% elif proposal.kind == "recipe" %}
+    <p class="text-muted">
+      {% blocktrans count servings=proposal.payload.servings %}Makes {{ servings }} serving{% plural %}Makes {{ servings }} servings{% endblocktrans %}{% if proposal.payload.meal_slots %} · {% for slot in proposal.payload.meal_slots %}{{ slot|translate_content }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endif %}<br>
+      {% with per=proposal.payload.per_serving %}{% blocktrans with calories=per.calories protein=per.protein_grams|floatformat:"0" carbs=per.carbohydrate_grams|floatformat:"0" fat=per.fat_grams|floatformat:"0" %}Per serving about {{ calories }} kcal · protein {{ protein }} g · carbs {{ carbs }} g · fat {{ fat }} g{% endblocktrans %}{% endwith %}
+    </p>
+    <details>
+      <summary>{% trans "Show ingredients" %}</summary>
+      <ul class="mt-2">
+        {% for item in proposal.payload.ingredients %}
+          <li>{{ item.label|translate_content }} - {{ item.quantity|floatformat:"-1" }} {{ item.unit }} <span class="text-muted">· {{ item.calories }} kcal</span>{% if item.new_food %} <span class="tag tag-outline">{% trans "new food" %}</span>{% endif %}</li>
+        {% endfor %}
+      </ul>
+      {% if proposal.payload.instructions %}
+        <p class="mt-2"><strong>{% trans "Instructions" %}</strong></p>
+        <p>{{ proposal.payload.instructions|linebreaksbr }}</p>
+      {% endif %}
+    </details>
+    {% if proposal.payload|has_new_foods %}
+      <p class="text-muted text-xs">{% trans "Foods marked “new food” are added to your food library with nutrition values the assistant estimated - check them." %}</p>
+    {% endif %}
   {% else %}
     {% if proposal.payload.description %}<p class="text-muted">{{ proposal.payload.description }}</p>{% endif %}
     <details>
@@ -41,19 +61,21 @@
     <div class="row mt-2">
       <form method="post" action="{% url 'assistant:proposal-accept' proposal.pk %}">
         {% csrf_token %}
-        <button type="submit">{% if proposal.kind == "diet_plan" %}{% trans "Create diet plan" %}{% else %}{% trans "Create program" %}{% endif %}</button>
+        <button type="submit">{% if proposal.kind == "diet_plan" %}{% trans "Create diet plan" %}{% elif proposal.kind == "recipe" %}{% trans "Add recipe" %}{% else %}{% trans "Create program" %}{% endif %}</button>
       </form>
       <form method="post" action="{% url 'assistant:proposal-dismiss' proposal.pk %}">
         {% csrf_token %}
         <button type="submit" class="button-secondary">{% trans "Dismiss" context "proposal" %}</button>
       </form>
     </div>
-    <p class="text-muted text-xs">{% trans "Nothing is saved until you create it. It's created as a new, inactive plan you can still edit." %}</p>
+    <p class="text-muted text-xs">{% if proposal.kind == "recipe" %}{% trans "Nothing is saved until you add it. It's added to your recipes, where you can still edit it." %}{% else %}{% trans "Nothing is saved until you create it. It's created as a new, inactive plan you can still edit." %}{% endif %}</p>
   {% elif proposal.status == "accepted" %}
     <p class="row mt-2">
       <span class="tag tag-success">{% trans "Created" %}</span>
       {% if proposal.kind == "diet_plan" %}
         <a href="{% url 'nutrition:diet-plan-detail' proposal.created_object_id %}">{% trans "Open diet plan" %}</a>
+      {% elif proposal.kind == "recipe" %}
+        <a href="{% url 'nutrition:recipe-detail' proposal.created_object_id %}">{% trans "Open recipe" %}</a>
       {% else %}
         <a href="{% url 'programs:program-detail' proposal.created_object_id %}">{% trans "Open program" %}</a>
       {% endif %}

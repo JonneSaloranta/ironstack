@@ -37,9 +37,8 @@ def proposal_weight(value, user):
 
 @register.filter
 def has_new_foods(payload):
-    return any(
-        item.get("new_food") for meal in payload.get("meals", []) for item in meal.get("items", [])
-    )
+    items = [item for meal in payload.get("meals", []) for item in meal.get("items", [])]
+    return any(item.get("new_food") for item in [*items, *payload.get("ingredients", [])])
 
 
 @register.inclusion_tag("assistant/_ask_link.html", takes_context=True)

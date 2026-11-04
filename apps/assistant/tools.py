@@ -5,7 +5,7 @@ Every tool runs as one specific user (`ToolContext.user`) and only ever
 reads that user's own rows plus the shared/system rows they can already
 see in the app (system exercises, shared foods, built-in recipes) -
 through the same `visible_to`-style queries the views use. There's no
-tool that writes anything except the two `propose_*` tools, which only
+tool that writes anything except the `propose_*` tools, which only
 record an AssistantProposal for the user to accept or dismiss
 (apps.assistant.proposals).
 
@@ -930,6 +930,19 @@ def propose_program(ctx, args):
     }
 
 
+def propose_recipe(ctx, args):
+    try:
+        payload = proposals.validate_recipe(ctx.user, args)
+    except proposals.ProposalError as exc:
+        raise ToolInputError(str(exc)) from exc
+    proposal = proposals.record(ctx.message, proposals.RECIPE, payload)
+    return {
+        "proposal_id": proposal.pk,
+        "status": "Shown to the user as a card. Nothing is created unless they accept it.",
+        "per_serving": payload["per_serving"],
+    }
+
+
 # --- Registry -------------------------------------------------------------
 
 _DAYS = {"type": "integer", "description": "How many days back to look."}
@@ -1281,6 +1294,49 @@ TOOLS = [
         },
         "handler": propose_program,
         "activity": _("Putting a program together…"),
+    },
+    {
+        "name": "propose_recipe",
+        "description": (
+            "Show the user a recipe they can add to their recipe library with one click. "
+            "Nothing is saved unless they accept. Ingredients are foods: prefer existing "
+            "ones (search_foods) and use new_food only when nothing fits. Quantities are in "
+            "the food's own serving unit (g/ml/piece) and cover the whole recipe, which "
+            "makes `servings` portions. meal_slots (from list_meal_slots) are optional: "
+            "which meals it suits; none means any meal. Once created, the recipe can be "
+            "used in a later propose_diet_plan."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "summary": {
+                    "type": "string",
+                    "description": "One or two sentences for the user: why this recipe.",
+                },
+                "servings": {"type": "integer", "description": "Portions the recipe makes."},
+                "instructions": {
+                    "type": "string",
+                    "description": "Preparation steps in the user's language, one per line.",
+                },
+                "meal_slots": {"type": "array", "items": {"type": "string"}},
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "food_id": {"type": "integer"},
+                            "new_food": _NEW_FOOD_SCHEMA,
+                            "quantity": {"type": "number"},
+                        },
+                        "required": ["quantity"],
+                    },
+                },
+            },
+            "required": ["name", "summary", "servings", "ingredients"],
+        },
+        "handler": propose_recipe,
+        "activity": _("Putting a recipe together…"),
     },
 ]
 

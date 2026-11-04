@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-31 20:45+0000\n"
+"POT-Creation-Date: 2026-11-04 13:43+0000\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -245,12 +245,12 @@ msgstr ""
 "juhendamissuhted ja juba saadud taotlused ei muutu."
 
 #: apps/accounts/forms.py:441 apps/accounts/forms.py:792
-#: apps/nutrition/forms.py:41 apps/nutrition/forms.py:548
+#: apps/nutrition/forms.py:41 apps/nutrition/forms.py:541
 msgid "Height (cm)"
 msgstr "Pikkus (cm)"
 
 #: apps/accounts/forms.py:441 apps/accounts/forms.py:792
-#: apps/nutrition/forms.py:41 apps/nutrition/forms.py:548
+#: apps/nutrition/forms.py:41 apps/nutrition/forms.py:541
 msgid "Height (in)"
 msgstr "Pikkus (in)"
 
@@ -386,7 +386,7 @@ msgstr ""
 "välja lülitada."
 
 #: apps/accounts/forms.py:787 apps/nutrition/forms.py:42
-#: apps/nutrition/forms.py:557 apps/nutrition/forms.py:761
+#: apps/nutrition/forms.py:550 apps/nutrition/forms.py:754
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Praegune kaal (%(unit)s)"
@@ -626,15 +626,15 @@ msgstr[1] "%(counter)s rekordit"
 msgid "Total weight lifted"
 msgstr "Tõstetud kaal kokku"
 
-#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1592
+#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1679
 msgid "7 days"
 msgstr "7 päeva"
 
-#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1594
+#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1681
 msgid "30 days"
 msgstr "30 päeva"
 
-#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1595
+#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1682
 msgid "3 months"
 msgstr "3 kuud"
 
@@ -642,11 +642,11 @@ msgstr "3 kuud"
 msgid "6 months"
 msgstr "6 kuud"
 
-#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1597
+#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1684
 msgid "1 year"
 msgstr "1 aasta"
 
-#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1598
+#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1685
 #: templates/stretching/home.html:24
 msgid "All time"
 msgstr "Kogu aeg"
@@ -674,7 +674,7 @@ msgstr "Muutmine"
 msgid "Delete"
 msgstr "Kustuta"
 
-#: apps/api/forms.py:30 apps/nutrition/forms.py:272 apps/social/forms.py:13
+#: apps/api/forms.py:30 apps/nutrition/forms.py:265 apps/social/forms.py:13
 #: templates/admin/nutrition/food/merge.html:14
 #: templates/nutrition/_food_list_results.html:17
 #: templates/nutrition/food_list.html:75
@@ -761,6 +761,30 @@ msgstr "Toitumine"
 #: templates/stretching/session_play.html:6
 msgid "Stretching"
 msgstr "Venitamine"
+
+#: apps/api/models.py:35 apps/tutorials/tours.py:31
+#: apps/tutorials/tours.py:1137
+msgid "Friends and groups"
+msgstr "Sõbrad ja grupid"
+
+#: apps/api/models.py:36 templates/accounts/profile.html:39
+#: templates/accounts/profile.html:108
+msgid "Coaching"
+msgstr "Juhendamine"
+
+#: apps/api/models.py:37 apps/tutorials/tours.py:1155
+#: templates/accounts/profile.html:153 templates/accounts/profile.html:157
+#: templates/accounts/profile.html:234
+#: templates/assistant/admin_settings.html:3
+#: templates/assistant/admin_settings.html:6 templates/assistant/home.html:3
+#: templates/assistant/home.html:6 templates/assistant/settings.html:6
+msgid "AI assistant"
+msgstr "Tehisintellekti assistent"
+
+#: apps/api/views_assistant.py:358 apps/assistant/views.py:170
+#, python-format
+msgid "This suggestion can't be created anymore: %(error)s"
+msgstr "Seda ettepanekut ei saa enam luua: %(error)s"
 
 #: apps/api/views_web.py:39
 msgid "You've reached your maximum number of API keys."
@@ -1015,16 +1039,20 @@ msgstr "Toitumiskava"
 msgid "Workout program"
 msgstr "Treeningkava"
 
-#: apps/assistant/models.py:266
+#: apps/assistant/models.py:263 templates/nutrition/recipe_form.html:3
+msgid "Recipe"
+msgstr "Retsept"
+
+#: apps/assistant/models.py:267
 msgid "Waiting for you"
 msgstr "Ootab sind"
 
-#: apps/assistant/models.py:267 templates/assistant/_proposal.html:54
+#: apps/assistant/models.py:268 templates/assistant/_proposal.html:74
 #: templates/core/backup_restore_confirm.html:28
 msgid "Created"
 msgstr "Loodud"
 
-#: apps/assistant/models.py:268 templates/assistant/_proposal.html:62
+#: apps/assistant/models.py:269 templates/assistant/_proposal.html:84
 msgid "Dismissed"
 msgstr "Tagasi lükatud"
 
@@ -1148,121 +1176,125 @@ msgstr "Vastus katkestati. Proovi uuesti."
 msgid "Quick entry"
 msgstr "Kiirsisestus"
 
-#: apps/assistant/tools.py:974
+#: apps/assistant/tools.py:987
 msgid "Looking at your profile…"
 msgstr "Vaatan sinu profiili…"
 
-#: apps/assistant/tools.py:985
+#: apps/assistant/tools.py:998
 msgid "Looking at your workouts…"
 msgstr "Vaatan sinu treeninguid…"
 
-#: apps/assistant/tools.py:1001
+#: apps/assistant/tools.py:1014
 msgid "Looking at your records…"
 msgstr "Vaatan sinu rekordeid…"
 
-#: apps/assistant/tools.py:1014
+#: apps/assistant/tools.py:1027
 msgid "Looking at your measurements…"
 msgstr "Vaatan sinu mõõtmisi…"
 
-#: apps/assistant/tools.py:1022
+#: apps/assistant/tools.py:1035
 msgid "Looking at your activities…"
 msgstr "Vaatan sinu tegevusi…"
 
-#: apps/assistant/tools.py:1032 apps/assistant/tools.py:1045
+#: apps/assistant/tools.py:1045 apps/assistant/tools.py:1058
 msgid "Looking at your food diary…"
 msgstr "Vaatan sinu toidupäevikut…"
 
-#: apps/assistant/tools.py:1058
+#: apps/assistant/tools.py:1071
 msgid "Looking at your weight trend…"
 msgstr "Vaatan sinu kaalu trendi…"
 
-#: apps/assistant/tools.py:1066
+#: apps/assistant/tools.py:1079
 msgid "Looking at your stretching…"
 msgstr "Vaatan sinu venitusi…"
 
-#: apps/assistant/tools.py:1073 apps/assistant/tools.py:1084
+#: apps/assistant/tools.py:1086 apps/assistant/tools.py:1097
 msgid "Looking at your programs…"
 msgstr "Vaatan sinu kavasid…"
 
-#: apps/assistant/tools.py:1099
+#: apps/assistant/tools.py:1112
 msgid "Looking at your progression…"
 msgstr "Vaatan sinu progressiooni…"
 
-#: apps/assistant/tools.py:1106 apps/assistant/tools.py:1117
+#: apps/assistant/tools.py:1119 apps/assistant/tools.py:1130
 msgid "Looking at your diet plans…"
 msgstr "Vaatan sinu toitumiskavasid…"
 
-#: apps/assistant/tools.py:1131
+#: apps/assistant/tools.py:1144
 msgid "Searching exercises…"
 msgstr "Otsin harjutusi…"
 
-#: apps/assistant/tools.py:1146
+#: apps/assistant/tools.py:1159
 msgid "Searching foods…"
 msgstr "Otsin toite…"
 
-#: apps/assistant/tools.py:1156
+#: apps/assistant/tools.py:1169
 msgid "Searching recipes…"
 msgstr "Otsin retsepte…"
 
-#: apps/assistant/tools.py:1163
+#: apps/assistant/tools.py:1176
 msgid "Looking at your meals…"
 msgstr "Vaatan sinu toidukordi…"
 
-#: apps/assistant/tools.py:1223
+#: apps/assistant/tools.py:1236
 msgid "Putting a diet plan together…"
 msgstr "Panen toitumiskava kokku…"
 
-#: apps/assistant/tools.py:1283
+#: apps/assistant/tools.py:1296
 msgid "Putting a program together…"
 msgstr "Panen treeningkava kokku…"
+
+#: apps/assistant/tools.py:1339
+msgid "Putting a recipe together…"
+msgstr "Panen retsepti kokku…"
 
 #: apps/assistant/views.py:148
 msgid "Conversation deleted."
 msgstr "Vestlus kustutatud."
-
-#: apps/assistant/views.py:170
-#, python-format
-msgid "This suggestion can't be created anymore: %(error)s"
-msgstr "Seda ettepanekut ei saa enam luua: %(error)s"
 
 #: apps/assistant/views.py:175
 msgid "Diet plan created. It isn't active until you choose to use it."
 msgstr ""
 "Toitumiskava loodud. See pole aktiivne enne, kui otsustad seda kasutada."
 
-#: apps/assistant/views.py:178
+#: apps/assistant/views.py:179
+msgid "Recipe added to your recipes. Review it and make it yours."
+msgstr ""
+"Retsept lisati sinu retseptide hulka. Vaata see üle ja tee endale sobivaks."
+
+#: apps/assistant/views.py:181
 msgid "Program created. Review it and make it yours."
 msgstr "Kava loodud. Vaata see üle ja kohanda endale."
 
-#: apps/assistant/views.py:229
+#: apps/assistant/views.py:232
 msgid "AI assistant turned on."
 msgstr "Tehisintellekti assistent sisse lülitatud."
 
-#: apps/assistant/views.py:238
+#: apps/assistant/views.py:241
 msgid "AI assistant turned off."
 msgstr "Tehisintellekti assistent välja lülitatud."
 
-#: apps/assistant/views.py:249
+#: apps/assistant/views.py:252
 msgid "API key saved."
 msgstr "API-võti salvestatud."
 
-#: apps/assistant/views.py:264
+#: apps/assistant/views.py:267
 msgid "Model settings saved."
 msgstr "Mudeli seaded salvestatud."
 
-#: apps/assistant/views.py:276
+#: apps/assistant/views.py:279
 msgid "Details for the assistant saved."
 msgstr "Andmed assistendile salvestatud."
 
-#: apps/assistant/views.py:288
+#: apps/assistant/views.py:291
 msgid "What the assistant may read was saved."
 msgstr "Assistendi lugemisõigused salvestatud."
 
-#: apps/assistant/views.py:297
+#: apps/assistant/views.py:300
 msgid "API key removed."
 msgstr "API-võti eemaldatud."
 
-#: apps/assistant/views.py:326
+#: apps/assistant/views.py:329
 msgid "Assistant settings saved."
 msgstr "Assistendi seaded salvestatud."
 
@@ -1370,7 +1402,7 @@ msgid "You can't update this diet plan."
 msgstr "Sa ei saa seda toitumiskava värskendada."
 
 #: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
-#: apps/nutrition/views.py:1160 apps/nutrition/views.py:1453
+#: apps/nutrition/views.py:1127 apps/nutrition/views.py:1420
 #: apps/programs/views.py:207
 #, python-format
 msgid "Imported “%(name)s”."
@@ -1728,7 +1760,7 @@ msgstr "%(actual)s kcal logitud."
 msgid "Stretched %(minutes)s min."
 msgstr "Venitamist %(minutes)s min."
 
-#: apps/core/views.py:312 apps/tutorials/tours.py:909
+#: apps/core/views.py:311 apps/tutorials/tours.py:909
 #: templates/nutrition/_subnav.html:47 templates/nutrition/dashboard.html:73
 #: templates/nutrition/diet_plan_detail.html:21
 #: templates/nutrition/diet_plan_shopping.html:3
@@ -2811,8 +2843,8 @@ msgstr ""
 msgid "Target: %(rate)s kg/week → %(calories)s kcal/day."
 msgstr "Eesmärk: %(rate)s kg/nädal → %(calories)s kcal/päevas."
 
-#: apps/nutrition/forms.py:24 apps/nutrition/forms.py:576
-#: apps/nutrition/forms.py:620 apps/nutrition/forms.py:704
+#: apps/nutrition/forms.py:24 apps/nutrition/forms.py:569
+#: apps/nutrition/forms.py:613 apps/nutrition/forms.py:697
 msgid "Biological sex"
 msgstr "Bioloogiline sugu"
 
@@ -2859,16 +2891,16 @@ msgstr ""
 "Kasutatakse ainult rakenduse enda hinnanguga võrdlemiseks, mitte kunagi "
 "sisendina."
 
-#: apps/nutrition/forms.py:85 apps/nutrition/forms.py:580
-#: apps/nutrition/forms.py:678
+#: apps/nutrition/forms.py:85 apps/nutrition/forms.py:573
+#: apps/nutrition/forms.py:671
 msgid "Activity level"
 msgstr "Aktiivsustase"
 
-#: apps/nutrition/forms.py:97 apps/nutrition/forms.py:597
+#: apps/nutrition/forms.py:97 apps/nutrition/forms.py:590
 msgid "Goal"
 msgstr "Eesmärk"
 
-#: apps/nutrition/forms.py:111 apps/nutrition/forms.py:764
+#: apps/nutrition/forms.py:111 apps/nutrition/forms.py:757
 #: apps/programs/forms.py:157
 #, python-format
 msgid "Target weight (%(unit)s)"
@@ -2886,54 +2918,37 @@ msgstr ""
 "Negatiivne kaalu langetamiseks, positiivne kaalu tõstmiseks. Eeltäidetud "
 "allpool oleva eesmärgi järgi - piiratud sinu kehakaalule ohutu tempoga."
 
-#: apps/nutrition/forms.py:139
-msgid "A fat-loss goal needs a negative rate - you're asking to lose weight."
-msgstr ""
-"Rasvapõletuse eesmärk vajab negatiivset tempot - sinu eesmärk on kaalu "
-"langetada."
-
-#: apps/nutrition/forms.py:144
-msgid ""
-"A muscle-gain goal needs a positive rate - you're asking to gain weight."
-msgstr ""
-"Lihasmassa kasvatamise eesmärk vajab positiivset tempot - sinu eesmärk on "
-"kaalus juurde võtta."
-
-#: apps/nutrition/forms.py:147
-msgid "A maintenance goal's rate should be 0 kg/week."
-msgstr "Säilitamise eesmärgi tempo peaks olema 0 kg/nädalas."
-
-#: apps/nutrition/forms.py:191 apps/nutrition/nutrition_label.py:153
+#: apps/nutrition/forms.py:184 apps/nutrition/nutrition_label.py:153
 msgctxt "nutrient"
 msgid "of which saturates"
 msgstr "millest küllastunud rasvhapped"
 
-#: apps/nutrition/forms.py:192 apps/nutrition/nutrition_label.py:158
+#: apps/nutrition/forms.py:185 apps/nutrition/nutrition_label.py:158
 msgctxt "nutrient"
 msgid "of which sugars"
 msgstr "millest suhkrud"
 
-#: apps/nutrition/forms.py:193 apps/nutrition/nutrition_label.py:161
+#: apps/nutrition/forms.py:186 apps/nutrition/nutrition_label.py:161
 msgctxt "nutrient"
 msgid "of which starch"
 msgstr "millest tärklis"
 
-#: apps/nutrition/forms.py:194 apps/nutrition/nutrition_label.py:163
+#: apps/nutrition/forms.py:187 apps/nutrition/nutrition_label.py:163
 msgctxt "nutrient"
 msgid "of which polyols"
 msgstr "millest polüoolid"
 
-#: apps/nutrition/forms.py:195 apps/nutrition/nutrition_label.py:165
+#: apps/nutrition/forms.py:188 apps/nutrition/nutrition_label.py:165
 msgctxt "nutrient"
 msgid "Fibre"
 msgstr "Kiudained"
 
-#: apps/nutrition/forms.py:196 apps/nutrition/nutrition_label.py:167
+#: apps/nutrition/forms.py:189 apps/nutrition/nutrition_label.py:167
 msgctxt "nutrient"
 msgid "Salt"
 msgstr "Sool"
 
-#: apps/nutrition/forms.py:200
+#: apps/nutrition/forms.py:193
 msgid ""
 "All the nutrition values below are for this amount, in the unit chosen next "
 "to it - e.g. \"100 g\" if the values are per 100 grams."
@@ -2941,7 +2956,7 @@ msgstr ""
 "Kõik allolevad toitainete väärtused kehtivad selle koguse kohta, selle "
 "kõrval valitud ühikus - nt \"100 g\", kui väärtused on 100 grammi kohta."
 
-#: apps/nutrition/forms.py:220 templates/nutrition/diary_add_entry.html:55
+#: apps/nutrition/forms.py:213 templates/nutrition/diary_add_entry.html:55
 #: templates/nutrition/diet_plan_meal_item_form.html:16
 #: templates/nutrition/food_browse.html:25
 #: templates/nutrition/food_list.html:25
@@ -2949,12 +2964,12 @@ msgstr ""
 msgid "Search foods"
 msgstr "Otsi toite"
 
-#: apps/nutrition/forms.py:249 apps/nutrition/forms.py:380
-#: apps/nutrition/forms.py:524
+#: apps/nutrition/forms.py:242 apps/nutrition/forms.py:373
+#: apps/nutrition/forms.py:517
 msgid "Pick a food to add."
 msgstr "Vali lisatav toit."
 
-#: apps/nutrition/forms.py:273 templates/admin/nutrition/food/merge.html:17
+#: apps/nutrition/forms.py:266 templates/admin/nutrition/food/merge.html:17
 #: templates/nutrition/_diet_plan_totals_widget.html:40
 #: templates/nutrition/_food_list_results.html:17
 #: templates/nutrition/dashboard.html:30 templates/nutrition/dashboard.html:59
@@ -2963,40 +2978,40 @@ msgstr "Vali lisatav toit."
 msgid "Calories"
 msgstr "Kalorid"
 
-#: apps/nutrition/forms.py:274 apps/nutrition/forms.py:426
+#: apps/nutrition/forms.py:267 apps/nutrition/forms.py:419
 msgid "Protein (g)"
 msgstr "Valk (g)"
 
-#: apps/nutrition/forms.py:275 apps/nutrition/forms.py:429
+#: apps/nutrition/forms.py:268 apps/nutrition/forms.py:422
 msgid "Carbohydrates (g)"
 msgstr "Süsivesikud (g)"
 
-#: apps/nutrition/forms.py:276 apps/nutrition/forms.py:432
+#: apps/nutrition/forms.py:269 apps/nutrition/forms.py:425
 msgid "Fat (g)"
 msgstr "Rasv (g)"
 
-#: apps/nutrition/forms.py:277 apps/nutrition/forms.py:319
+#: apps/nutrition/forms.py:270 apps/nutrition/forms.py:312
 #: apps/workouts/forms.py:47
 msgid "Notes"
 msgstr "Märkmed"
 
-#: apps/nutrition/forms.py:280
+#: apps/nutrition/forms.py:273
 msgid "Optional - e.g. the restaurant dish."
 msgstr "Valikuline - nt restoranitoidu nimi."
 
-#: apps/nutrition/forms.py:281
+#: apps/nutrition/forms.py:274
 msgid "kcal. Leave blank to estimate it from the macros."
 msgstr "kcal. Jäta tühjaks, et seda makrode põhjal hinnata."
 
-#: apps/nutrition/forms.py:308
+#: apps/nutrition/forms.py:301
 msgid "Enter the calories or at least one macro."
 msgstr "Sisesta kalorid või vähemalt üks makro."
 
-#: apps/nutrition/forms.py:334
+#: apps/nutrition/forms.py:327
 msgid "Meals (optional)"
 msgstr "Toidukorrad (valikuline)"
 
-#: apps/nutrition/forms.py:337
+#: apps/nutrition/forms.py:330
 msgid ""
 "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan "
 "builder only suggests it for those meals - leave all unticked for a recipe "
@@ -3006,36 +3021,36 @@ msgstr ""
 "Toitumiskava koostaja soovitab seda ainult nendele toidukordadele - jäta "
 "kõik märkimata, kui retsept sobib igale toidukorrale."
 
-#: apps/nutrition/forms.py:393 templates/nutrition/diary_add_entry.html:38
+#: apps/nutrition/forms.py:386 templates/nutrition/diary_add_entry.html:38
 msgid "Meal"
 msgstr "Toidukord"
 
-#: apps/nutrition/forms.py:398
+#: apps/nutrition/forms.py:391
 msgid "Servings"
 msgstr "Portsjonid"
 
-#: apps/nutrition/forms.py:403 apps/nutrition/forms.py:531
+#: apps/nutrition/forms.py:396 apps/nutrition/forms.py:524
 msgid "Log for date"
 msgstr "Logi kuupäevale"
 
-#: apps/nutrition/forms.py:423
+#: apps/nutrition/forms.py:416
 msgid "Plan name"
 msgstr "Plaani nimi"
 
-#: apps/nutrition/forms.py:424 apps/nutrition/forms.py:596
+#: apps/nutrition/forms.py:417 apps/nutrition/forms.py:589
 #: apps/tutorials/tours.py:976 templates/nutrition/stats.html:82
 msgid "Daily calories"
 msgstr "Päevased kalorid"
 
-#: apps/nutrition/forms.py:435
+#: apps/nutrition/forms.py:428
 msgid "Which meals?"
 msgstr "Millised toidukorrad?"
 
-#: apps/nutrition/forms.py:439
+#: apps/nutrition/forms.py:432
 msgid "Vary meals across a whole week instead of repeating one day"
 msgstr "Varieeri toidukordi kogu nädala lõikes ühe korduva päeva asemel"
 
-#: apps/nutrition/forms.py:441
+#: apps/nutrition/forms.py:434
 msgid ""
 "Each day still hits the same daily calories/macros above - only which meal "
 "fills each slot changes from day to day, so a week's worth of breakfasts "
@@ -3046,11 +3061,11 @@ msgstr ""
 "päevast päeva, nii et näiteks terve nädala hommikusöögid ei ole kõik "
 "identsed."
 
-#: apps/nutrition/forms.py:448
+#: apps/nutrition/forms.py:441
 msgid "Start from scratch - leave every meal empty"
 msgstr "Alusta tühjalt - jäta iga toidukord tühjaks"
 
-#: apps/nutrition/forms.py:450
+#: apps/nutrition/forms.py:443
 msgid ""
 "Skips the automatic suggestions above and just creates each meal ready for "
 "you to fill in yourself, on the plan's own page afterward."
@@ -3058,56 +3073,56 @@ msgstr ""
 "Jätab ülalpool olevad automaatsed soovitused vahele ja loob iga toidukorra "
 "valmis, et saaksid selle hiljem plaani omal lehel ise täita."
 
-#: apps/nutrition/forms.py:491
+#: apps/nutrition/forms.py:484
 msgid "Pick either a food or a recipe, not both or neither."
 msgstr "Vali kas toit või retsept, mitte mõlemad ega mitte kumbki."
 
-#: apps/nutrition/forms.py:577
+#: apps/nutrition/forms.py:570
 msgid "Age (years)"
 msgstr "Vanus (aastates)"
 
-#: apps/nutrition/forms.py:623
+#: apps/nutrition/forms.py:616
 msgid "Neck circumference"
 msgstr "Kaela ümbermõõt"
 
-#: apps/nutrition/forms.py:626 apps/nutrition/forms.py:706
+#: apps/nutrition/forms.py:619 apps/nutrition/forms.py:699
 msgid "Waist circumference"
 msgstr "Vöökoha ümbermõõt"
 
-#: apps/nutrition/forms.py:633 apps/nutrition/forms.py:709
+#: apps/nutrition/forms.py:626 apps/nutrition/forms.py:702
 msgid "Hip circumference"
 msgstr "Puusaümbermõõt"
 
-#: apps/nutrition/forms.py:652
+#: apps/nutrition/forms.py:645
 msgid "Hip circumference is required for the women's formula."
 msgstr "Naiste valemis on vajalik puusaümbermõõt."
 
-#: apps/nutrition/forms.py:745
+#: apps/nutrition/forms.py:738
 msgid "Current weight (kg)"
 msgstr "Praegune kaal (kg)"
 
-#: apps/nutrition/forms.py:748
+#: apps/nutrition/forms.py:741
 msgid "Target weight (kg)"
 msgstr "Sihtkaal (kg)"
 
-#: apps/nutrition/forms.py:753
+#: apps/nutrition/forms.py:746
 msgid "Rate (kg/week - negative to lose, positive to gain)"
 msgstr ""
 "Tempo (kg/nädal - negatiivne kaalu langetamiseks, positiivne kaalu "
 "tõstmiseks)"
 
-#: apps/nutrition/forms.py:768
+#: apps/nutrition/forms.py:761
 #, python-format
 msgid "Rate (%(unit)s/week - negative to lose, positive to gain)"
 msgstr ""
 "Tempo (%(unit)s/nädal - negatiivne kaalu langetamiseks, positiivne kaalu "
 "tõstmiseks)"
 
-#: apps/nutrition/forms.py:796 apps/programs/forms.py:40
+#: apps/nutrition/forms.py:789 apps/programs/forms.py:40
 msgid "Share with these clients"
 msgstr "Jaga nende klientidega"
 
-#: apps/nutrition/forms.py:798
+#: apps/nutrition/forms.py:791
 msgid ""
 "Search for a client and add them to the list: everyone on it can see and "
 "import their own copy of this diet plan. Leave the list empty to keep it "
@@ -3117,12 +3132,12 @@ msgstr ""
 "toitumiskava ja saavad sellest oma koopia importida. Jäta nimekiri tühjaks, "
 "et hoida see privaatsena."
 
-#: apps/nutrition/forms.py:816 apps/tutorials/tours.py:931
+#: apps/nutrition/forms.py:809 apps/tutorials/tours.py:931
 #: templates/nutrition/diet_plan_shopping.html:65
 msgid "Shopping days"
 msgstr "Poepäevad"
 
-#: apps/nutrition/forms.py:818
+#: apps/nutrition/forms.py:811
 msgid ""
 "Each shopping day's list covers the days up to the next one. Pick none for "
 "one list for the whole week."
@@ -3130,11 +3145,11 @@ msgstr ""
 "Iga poepäeva nimekiri katab päevad järgmise poepäevani. Ära vali ühtegi, et "
 "saada üks nimekiri kogu nädalaks."
 
-#: apps/nutrition/forms.py:824
+#: apps/nutrition/forms.py:817
 msgid "A shopping day's own meals go on that day's list"
 msgstr "Poepäeva enda toidukorrad lähevad selle päeva nimekirja"
 
-#: apps/nutrition/forms.py:826
+#: apps/nutrition/forms.py:819
 msgid ""
 "On: you shop before that day's meals. Off: they're on the previous list - "
 "you shop after that day is covered."
@@ -3335,36 +3350,46 @@ msgid ""
 "Roast the chicken with the broccoli and sweet potato, finish with olive oil."
 msgstr "Küpseta kana koos brokoli ja bataadiga ahjus, lõpeta oliiviõliga."
 
-#: apps/nutrition/maintenance.py:59
+#: apps/nutrition/maintenance.py:72
 #, python-format
 msgid ""
 "Not enough logged food yet: %(logged)s of the %(needed)s days needed in the "
 "last %(window)s days."
-msgstr "Logitud toitu pole veel piisavalt: %(logged)s vajalikust %(needed)s päevast viimase %(window)s päeva jooksul."
+msgstr ""
+"Logitud toitu pole veel piisavalt: %(logged)s vajalikust %(needed)s päevast "
+"viimase %(window)s päeva jooksul."
 
-#: apps/nutrition/maintenance.py:75
+#: apps/nutrition/maintenance.py:89
 #, python-format
 msgid ""
 "Not enough logged weight yet: it takes at least %(days)s weigh-in days over "
 "%(span)s days."
-msgstr "Logitud kaalu pole veel piisavalt: vaja on vähemalt %(days)s kaalumispäeva %(span)s päeva jooksul."
+msgstr ""
+"Logitud kaalu pole veel piisavalt: vaja on vähemalt %(days)s kaalumispäeva "
+"%(span)s päeva jooksul."
 
-#: apps/nutrition/maintenance.py:91
+#: apps/nutrition/maintenance.py:112
 msgid ""
 "The logged food and weight don't add up to a believable figure yet. Some "
 "days may be only partly logged."
-msgstr "Logitud toit ja kaal ei anna veel usutavat tulemust. Mõned päevad võivad olla logitud vaid osaliselt."
+msgstr ""
+"Logitud toit ja kaal ei anna veel usutavat tulemust. Mõned päevad võivad "
+"olla logitud vaid osaliselt."
 
-#: apps/nutrition/maintenance.py:97
+#: apps/nutrition/maintenance.py:119
 #, python-format
 msgid ""
 "You ate %(intake)s kcal/day on average while your weight changed %(rate)s "
 "%(unit)s/week over the last %(days)s days."
-msgstr "Sõid keskmiselt %(intake)s kcal/päevas, samal ajal kui su kaal muutus %(rate)s %(unit)s/nädalas viimase %(days)s päeva jooksul."
+msgstr ""
+"Sõid keskmiselt %(intake)s kcal/päevas, samal ajal kui su kaal muutus "
+"%(rate)s %(unit)s/nädalas viimase %(days)s päeva jooksul."
 
-#: apps/nutrition/maintenance.py:110
+#: apps/nutrition/maintenance.py:132
 msgid "Some days may be only partly logged, which makes this estimate too low."
-msgstr "Mõned päevad võivad olla logitud vaid osaliselt, mistõttu see hinnang on liiga madal."
+msgstr ""
+"Mõned päevad võivad olla logitud vaid osaliselt, mistõttu see hinnang on "
+"liiga madal."
 
 #: apps/nutrition/models.py:33
 msgid "Male"
@@ -3811,58 +3836,91 @@ msgstr "Joogid"
 msgid "Protein bars"
 msgstr "Proteiinibatoonid"
 
-#: apps/nutrition/services.py:514
+#: apps/nutrition/services.py:135
+msgid "A fat-loss goal needs a negative rate - you're asking to lose weight."
+msgstr ""
+"Rasvapõletuse eesmärk vajab negatiivset tempot - sinu eesmärk on kaalu "
+"langetada."
+
+#: apps/nutrition/services.py:138
+msgid ""
+"A muscle-gain goal needs a positive rate - you're asking to gain weight."
+msgstr ""
+"Lihasmassa kasvatamise eesmärk vajab positiivset tempot - sinu eesmärk on "
+"kaalus juurde võtta."
+
+#: apps/nutrition/services.py:141
+msgid "A maintenance goal's rate should be 0 kg/week."
+msgstr "Säilitamise eesmärgi tempo peaks olema 0 kg/nädalas."
+
+#: apps/nutrition/services.py:166
+msgid "Set up your nutrition profile first."
+msgstr "Seadista kõigepealt oma toitumisprofiil."
+
+#: apps/nutrition/services.py:168
+msgid "Add your height to your profile first."
+msgstr "Lisa kõigepealt oma pikkus profiili."
+
+#: apps/nutrition/services.py:176
+msgid ""
+"Log a body weight measurement before changing your goal - the calorie target "
+"needs your current weight."
+msgstr ""
+"Enne eesmärgi muutmist logi kehakaalu mõõtmine - kalorieesmärk vajab sinu "
+"praegust kaalu."
+
+#: apps/nutrition/services.py:593
 msgid "An ingredient is missing its food name."
 msgstr "Ühel koostisosal puudub toidu nimi."
 
-#: apps/nutrition/services.py:520
+#: apps/nutrition/services.py:599
 #, python-format
 msgid "Ingredient “%(name)s” is missing required nutrition data."
 msgstr "Koostisosal „%(name)s” puuduvad nõutud toitumisandmed."
 
-#: apps/nutrition/services.py:570
+#: apps/nutrition/services.py:649
 msgid "Missing recipe name."
 msgstr "Retsepti nimi puudub."
 
-#: apps/nutrition/services.py:594
+#: apps/nutrition/services.py:673
 #, python-format
 msgid "Ingredient “%(name)s” has an invalid quantity."
 msgstr "Koostisosa „%(name)s” kogus on vigane."
 
-#: apps/nutrition/services.py:686
+#: apps/nutrition/services.py:765
 msgid "A diet plan item is missing its recipe name."
 msgstr "Ühel toitumiskava kirjel puudub retsepti nimi."
 
-#: apps/nutrition/services.py:706
+#: apps/nutrition/services.py:785
 msgid "A diet plan meal is missing its meal slot."
 msgstr "Ühel toitumiskava toidukorral puudub toidukorra liik."
 
-#: apps/nutrition/services.py:710
+#: apps/nutrition/services.py:789
 msgid "A diet plan meal is missing its target calories."
 msgstr "Ühel toitumiskava toidukorral puudub kalorieesmärk."
 
-#: apps/nutrition/services.py:725
+#: apps/nutrition/services.py:804
 msgid "A diet plan item must reference exactly one of a food or a recipe."
 msgstr ""
 "Toitumiskava kirje peab viitama kas toidule või retseptile, mitte mõlemale."
 
-#: apps/nutrition/services.py:731
+#: apps/nutrition/services.py:810
 msgid "A diet plan item has an invalid quantity."
 msgstr "Toitumiskava kirje kogus on vigane."
 
-#: apps/nutrition/services.py:760
+#: apps/nutrition/services.py:839
 msgid "Missing diet plan name."
 msgstr "Toitumiskava nimi puudub."
 
-#: apps/nutrition/services.py:771
+#: apps/nutrition/services.py:850
 msgid "Missing or invalid diet plan targets."
 msgstr "Toitumiskava eesmärgid puuduvad või on vigased."
 
-#: apps/nutrition/services.py:1593
+#: apps/nutrition/services.py:1680
 msgid "14 days"
 msgstr "14 päeva"
 
-#: apps/nutrition/services.py:1596
+#: apps/nutrition/services.py:1683
 msgid "Year to date"
 msgstr "Aasta algusest"
 
@@ -3883,72 +3941,68 @@ msgstr ""
 msgid ""
 "Target: %(target)s %(unit)s/week. Actual trend: %(actual)s %(unit)s/week - "
 "on track."
-msgstr "Eesmärk: %(target)s %(unit)s/nädal. Tegelik trend: %(actual)s %(unit)s/nädal - plaanipärane."
+msgstr ""
+"Eesmärk: %(target)s %(unit)s/nädal. Tegelik trend: %(actual)s %(unit)s/nädal "
+"- plaanipärane."
 
 #: apps/nutrition/suggestions.py:184
 #, python-format
 msgid ""
 "Target: %(target)s %(unit)s/week. Actual trend: %(actual)s %(unit)s/week "
 "over the last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
-msgstr "Eesmärk: %(target)s %(unit)s/nädal. Tegelik trend: %(actual)s %(unit)s/nädal viimase %(days)s päeva jooksul. Soovitatud kohandus: %(delta)+d kcal/päevas."
-
-#: apps/nutrition/views.py:436
-msgid ""
-"Log a body weight measurement before changing your goal - the calorie target "
-"needs your current weight."
 msgstr ""
-"Enne eesmärgi muutmist logi kehakaalu mõõtmine - kalorieesmärk vajab sinu "
-"praegust kaalu."
+"Eesmärk: %(target)s %(unit)s/nädal. Tegelik trend: %(actual)s %(unit)s/nädal "
+"viimase %(days)s päeva jooksul. Soovitatud kohandus: %(delta)+d kcal/päevas."
 
-#: apps/nutrition/views.py:473
+#: apps/nutrition/views.py:440
 #, python-format
 msgid "Goal updated - new target is %(calories)d kcal/day."
 msgstr "Eesmärk uuendatud - uus eesmärk on %(calories)d kcal/päevas."
 
-#: apps/nutrition/views.py:781
+#: apps/nutrition/views.py:748
 msgid "Pick a date to copy this day to."
 msgstr "Vali kuupäev, kuhu see päev kopeerida."
 
-#: apps/nutrition/views.py:786
+#: apps/nutrition/views.py:753
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Kopeeriti %(count)d kirje kuupäevale %(date)s."
 msgstr[1] "Kopeeriti %(count)d kirjet kuupäevale %(date)s."
 
-#: apps/nutrition/views.py:792
+#: apps/nutrition/views.py:759
 msgid "Nothing to copy - that day has no entries."
 msgstr "Pole midagi kopeerida - sellel päeval pole kirjeid."
 
-#: apps/nutrition/views.py:853 apps/nutrition/views.py:1223
-#: apps/nutrition/views.py:1757
+#: apps/nutrition/views.py:820 apps/nutrition/views.py:1190
+#: apps/nutrition/views.py:1724
 msgid "That food couldn't be imported - try again."
 msgstr "Seda toitu ei õnnestunud importida - proovi uuesti."
 
-#: apps/nutrition/views.py:898
+#: apps/nutrition/views.py:865
 msgid "Pick a meal."
 msgstr "Vali söögikord."
 
-#: apps/nutrition/views.py:922
+#: apps/nutrition/views.py:889
 msgid "Added to your diary."
 msgstr "Lisatud päevikusse."
 
-#: apps/nutrition/views.py:964
+#: apps/nutrition/views.py:931
 msgid "Nothing logged for this meal yet to save as a recipe."
 msgstr ""
 "Sellele toidukorrale pole veel midagi märgitud retseptina salvestamiseks."
 
-#: apps/nutrition/views.py:966
+#: apps/nutrition/views.py:933
 #, python-format
 msgid "Saved “%(name)s” as a new recipe."
 msgstr "Salvestati „%(name)s” uue retseptina."
 
-#: apps/nutrition/views.py:1115
+#: apps/nutrition/views.py:1082
 #, python-format
 msgid "\"%(name)s\" created - now add its ingredients below."
 msgstr "\"%(name)s\" loodud - lisa selle koostisosad allpool."
 
-#: apps/nutrition/views.py:1165 apps/nutrition/views.py:1458
+#: apps/nutrition/views.py:1132 apps/nutrition/views.py:1425
 #: apps/programs/views.py:212
 #, python-format
 msgid ""
@@ -3958,22 +4012,22 @@ msgstr ""
 "See fail eksporditi IronStack %(version)s versioonist - tasub importi üle "
 "kontrollida, kui midagi tundub valesti."
 
-#: apps/nutrition/views.py:1598
+#: apps/nutrition/views.py:1565
 msgid "Shopping days saved."
 msgstr "Poepäevad salvestatud."
 
-#: apps/nutrition/views.py:1680
+#: apps/nutrition/views.py:1647
 msgid "Only a personal trainer can share a diet plan."
 msgstr "Toitumiskava saab jagada ainult personaaltreener."
 
-#: apps/nutrition/views.py:1796
+#: apps/nutrition/views.py:1763
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Logiti %(count)d kirje kuupäevale %(date)s."
 msgstr[1] "Logiti %(count)d kirjet kuupäevale %(date)s."
 
-#: apps/nutrition/views.py:1807
+#: apps/nutrition/views.py:1774
 msgid "Nothing to log - this plan has no items for that date."
 msgstr "Pole midagi logida - sellel plaanil pole selle kuupäeva jaoks kirjeid."
 
@@ -5497,10 +5551,6 @@ msgstr "Kavad ja harjutused"
 msgid "Body and activities"
 msgstr "Keha ja tegevused"
 
-#: apps/tutorials/tours.py:31 apps/tutorials/tours.py:1137
-msgid "Friends and groups"
-msgstr "Sõbrad ja grupid"
-
 #: apps/tutorials/tours.py:118 templates/base.html:179 templates/base.html:181
 msgid "Home"
 msgstr "Avaleht"
@@ -6151,7 +6201,9 @@ msgstr "Tegelik säilitustase"
 msgid ""
 "An estimate of what you really burn, from your food diary and weight. It's "
 "only information and never changes your target."
-msgstr "Hinnang sellele, kui palju sa tegelikult kulutad, toidupäeviku ja kaalu põhjal. See on ainult teave ega muuda kunagi sinu eesmärki."
+msgstr ""
+"Hinnang sellele, kui palju sa tegelikult kulutad, toidupäeviku ja kaalu "
+"põhjal. See on ainult teave ega muuda kunagi sinu eesmärki."
 
 #: apps/tutorials/tours.py:701 templates/nutrition/dashboard.html:133
 msgid "Daily target"
@@ -6317,7 +6369,7 @@ msgstr ""
 msgid "Recipes"
 msgstr "Retseptid"
 
-#: apps/tutorials/tours.py:833 templates/nutrition/recipe_list.html:22
+#: apps/tutorials/tours.py:833 templates/nutrition/recipe_list.html:24
 msgid "Your recipes"
 msgstr "Sinu retseptid"
 
@@ -6326,7 +6378,7 @@ msgid "Combine foods into a recipe once, then log a serving in one tap."
 msgstr ""
 "Ühenda toiduained üks kord retseptiks ja logi siis portsjon ühe puudutusega."
 
-#: apps/tutorials/tours.py:838 templates/nutrition/recipe_list.html:46
+#: apps/tutorials/tours.py:838 templates/nutrition/recipe_list.html:48
 msgid "Template recipes"
 msgstr "Malliretseptid"
 
@@ -6473,7 +6525,9 @@ msgstr "Samad näitajad nädalast kuni kõige selleni, mida oled kunagi loginud.
 msgid ""
 "Each of the last 30 days, today included, with the exact figures in a table "
 "below. A dashed line marks your current target."
-msgstr "Iga viimane 30 päeva, kaasa arvatud täna, täpsed näitajad on allolevas tabelis. Katkendjoon näitab sinu praegust eesmärki."
+msgstr ""
+"Iga viimane 30 päeva, kaasa arvatud täna, täpsed näitajad on allolevas "
+"tabelis. Katkendjoon näitab sinu praegust eesmärki."
 
 #: apps/tutorials/tours.py:994 templates/stretching/_subnav.html:9
 msgid "Stretching sections"
@@ -6656,14 +6710,6 @@ msgstr "Tutvustused"
 msgid "Replay any tour, or turn tutorials on or off."
 msgstr ""
 "Vaata mis tahes tutvustust uuesti või lülita tutvustused sisse või välja."
-
-#: apps/tutorials/tours.py:1155 templates/accounts/profile.html:153
-#: templates/accounts/profile.html:157 templates/accounts/profile.html:234
-#: templates/assistant/admin_settings.html:3
-#: templates/assistant/admin_settings.html:6 templates/assistant/home.html:3
-#: templates/assistant/home.html:6 templates/assistant/settings.html:6
-msgid "AI assistant"
-msgstr "Tehisintellekti assistent"
 
 #: apps/tutorials/tours.py:1160 templates/assistant/home.html:9
 #: templates/assistant/settings.html:6 templates/core/backup_list.html:60
@@ -7091,10 +7137,6 @@ msgstr "Privaatsus"
 #: templates/accounts/profile.html:38 templates/accounts/profile.html:98
 msgid "Social"
 msgstr "Sotsiaalne"
-
-#: templates/accounts/profile.html:39 templates/accounts/profile.html:108
-msgid "Coaching"
-msgstr "Juhendamine"
 
 #: templates/accounts/profile.html:44
 msgid "Save preferences"
@@ -8004,11 +8046,11 @@ msgstr "Näita toidukordi"
 msgid "%(servings)s servings"
 msgstr "%(servings)s portsjonit"
 
-#: templates/assistant/_proposal.html:17
+#: templates/assistant/_proposal.html:17 templates/assistant/_proposal.html:34
 msgid "new food"
 msgstr "uus toit"
 
-#: templates/assistant/_proposal.html:23
+#: templates/assistant/_proposal.html:23 templates/assistant/_proposal.html:43
 msgid ""
 "Foods marked “new food” are added to your food library with nutrition values "
 "the assistant estimated - check them."
@@ -8016,28 +8058,66 @@ msgstr ""
 "„Uus toit“ märgisega toidud lisatakse sinu toiduteeki assistendi hinnatud "
 "toitainetega - kontrolli neid."
 
+#: templates/assistant/_proposal.html:27
+#, python-format
+msgid "Makes %(servings)s serving"
+msgid_plural "Makes %(servings)s servings"
+msgstr[0] "Annab %(servings)s portsjoni"
+msgstr[1] "Annab %(servings)s portsjonit"
+
 #: templates/assistant/_proposal.html:28
+#, python-format
+msgid ""
+"Per serving about %(calories)s kcal · protein %(protein)s g · carbs "
+"%(carbs)s g · fat %(fat)s g"
+msgstr ""
+"Portsjonis umbes %(calories)s kcal · valk %(protein)s g · süsivesikud "
+"%(carbs)s g · rasv %(fat)s g"
+
+#: templates/assistant/_proposal.html:31
+msgid "Show ingredients"
+msgstr "Näita koostisosi"
+
+#: templates/assistant/_proposal.html:38
+#: templates/exercises/_exercise_guide.html:10
+#: templates/exercises/exercise_detail.html:48
+msgid "Instructions"
+msgstr "Juhised"
+
+#: templates/assistant/_proposal.html:48
 msgid "Show workouts"
 msgstr "Näita treeninguid"
 
-#: templates/assistant/_proposal.html:33
+#: templates/assistant/_proposal.html:53
 msgid "Rate of perceived exertion"
 msgstr "Tajutud pingutus"
 
-#: templates/assistant/_proposal.html:44
+#: templates/assistant/_proposal.html:64
 msgid "Create diet plan"
 msgstr "Loo toitumiskava"
 
-#: templates/assistant/_proposal.html:44
+#: templates/assistant/_proposal.html:64
+msgid "Add recipe"
+msgstr "Lisa retsept"
+
+#: templates/assistant/_proposal.html:64
 msgid "Create program"
 msgstr "Loo kava"
 
-#: templates/assistant/_proposal.html:48
+#: templates/assistant/_proposal.html:68
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr "Lükka tagasi"
 
-#: templates/assistant/_proposal.html:51
+#: templates/assistant/_proposal.html:71
+msgid ""
+"Nothing is saved until you add it. It's added to your recipes, where you can "
+"still edit it."
+msgstr ""
+"Midagi ei salvestata enne, kui selle lisad. See lisatakse sinu retseptide "
+"hulka, kus saad seda veel muuta."
+
+#: templates/assistant/_proposal.html:71
 msgid ""
 "Nothing is saved until you create it. It's created as a new, inactive plan "
 "you can still edit."
@@ -8045,11 +8125,15 @@ msgstr ""
 "Midagi ei salvestata enne, kui selle lood. See luuakse uue, mitteaktiivse "
 "kavana, mida saad veel muuta."
 
-#: templates/assistant/_proposal.html:56
+#: templates/assistant/_proposal.html:76
 msgid "Open diet plan"
 msgstr "Ava toitumiskava"
 
-#: templates/assistant/_proposal.html:58
+#: templates/assistant/_proposal.html:78
+msgid "Open recipe"
+msgstr "Ava retsept"
+
+#: templates/assistant/_proposal.html:80
 msgid "Open program"
 msgstr "Ava kava"
 
@@ -9001,11 +9085,6 @@ msgstr "Lehekülg %(number)s / %(total)s"
 msgid "No feedback yet."
 msgstr "Tagasisidet pole veel."
 
-#: templates/exercises/_exercise_guide.html:10
-#: templates/exercises/exercise_detail.html:48
-msgid "Instructions"
-msgstr "Juhised"
-
 #: templates/exercises/_exercise_guide.html:28
 msgid "No instructions for this exercise yet."
 msgstr "Selle harjutuse kohta pole veel juhiseid."
@@ -9264,8 +9343,8 @@ msgstr "Aktiveeri"
 #: templates/nutrition/calculators_home.html:48
 #: templates/nutrition/calculators_home.html:56
 #: templates/nutrition/calculators_home.html:64
-#: templates/nutrition/recipe_list.html:34
-#: templates/nutrition/recipe_list.html:59
+#: templates/nutrition/recipe_list.html:36
+#: templates/nutrition/recipe_list.html:61
 msgid "Open"
 msgstr "Ava"
 
@@ -9278,8 +9357,8 @@ msgid "so far"
 msgstr "seni"
 
 #: templates/nutrition/_diet_plan_meal_card.html:18
-#: templates/nutrition/recipe_list.html:30
-#: templates/nutrition/recipe_list.html:55
+#: templates/nutrition/recipe_list.html:32
+#: templates/nutrition/recipe_list.html:57
 msgid "servings"
 msgstr "portsjonit"
 
@@ -9730,7 +9809,7 @@ msgstr "Valitud nädalase tempoga umbes kui kaua kulub sihtkaaluni jõudmiseks."
 #: templates/nutrition/diary_day.html:111
 #: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/food_list.html:90 templates/nutrition/goal_edit.html:31
-#: templates/nutrition/recipe_list.html:70
+#: templates/nutrition/recipe_list.html:72
 #: templates/nutrition/shopping_no_plan.html:13
 #: templates/nutrition/stats.html:91
 msgid "Back to nutrition"
@@ -9815,7 +9894,9 @@ msgstr "Arvutatud sinu profiilist: %(calories)s kcal/päevas."
 msgid ""
 "An estimate of what you really burn, based on your food diary and weight. It "
 "doesn't change your target."
-msgstr "Hinnang sellele, kui palju sa tegelikult kulutad, toidupäeviku ja kaalu põhjal. See ei muuda sinu eesmärki."
+msgstr ""
+"Hinnang sellele, kui palju sa tegelikult kulutad, toidupäeviku ja kaalu "
+"põhjal. See ei muuda sinu eesmärki."
 
 #: templates/nutrition/dashboard.html:125
 msgid "Weight trend"
@@ -10046,6 +10127,7 @@ msgid "Back to plan"
 msgstr "Tagasi plaani juurde"
 
 #: templates/nutrition/diet_plan_list.html:11
+#: templates/nutrition/recipe_list.html:11
 #: templates/programs/program_list.html:11
 msgid "Ask the assistant"
 msgstr "Küsi assistendilt"
@@ -10411,10 +10493,6 @@ msgstr "Kas kustutada see retsept?"
 msgid "Delete recipe"
 msgstr "Kustuta retsept"
 
-#: templates/nutrition/recipe_form.html:3
-msgid "Recipe"
-msgstr "Retsept"
-
 #: templates/nutrition/recipe_form.html:6
 msgid "Edit recipe"
 msgstr "Muuda retsepti"
@@ -10455,34 +10533,38 @@ msgstr "Tagasi retsepti juurde"
 msgid "Add ingredient to %(name)s"
 msgstr "Lisa koostisosa retseptile %(name)s"
 
-#: templates/nutrition/recipe_list.html:16
-#: templates/nutrition/recipe_list.html:19
+#: templates/nutrition/recipe_list.html:11
+msgid "Help me come up with a recipe from foods I like."
+msgstr "Aita mul mõelda välja retsept toitudest, mis mulle meeldivad."
+
+#: templates/nutrition/recipe_list.html:18
+#: templates/nutrition/recipe_list.html:21
 msgid "Search"
 msgstr "Otsi"
 
-#: templates/nutrition/recipe_list.html:31
-#: templates/nutrition/recipe_list.html:56
+#: templates/nutrition/recipe_list.html:33
+#: templates/nutrition/recipe_list.html:58
 #, python-format
 msgid "%(calories)s kcal/serving"
 msgstr "%(calories)s kcal/portsjon"
 
-#: templates/nutrition/recipe_list.html:38
+#: templates/nutrition/recipe_list.html:40
 msgid "Your recipes pages"
 msgstr "Sinu retseptide leheküljed"
 
-#: templates/nutrition/recipe_list.html:41
+#: templates/nutrition/recipe_list.html:43
 msgid "No recipes match your search."
 msgstr "Otsingule ei vastanud ühtegi retsepti."
 
-#: templates/nutrition/recipe_list.html:43
+#: templates/nutrition/recipe_list.html:45
 msgid "No recipes yet."
 msgstr "Veel pole retsepte."
 
-#: templates/nutrition/recipe_list.html:63
+#: templates/nutrition/recipe_list.html:65
 msgid "Template recipe pages"
 msgstr "Malliretseptide leheküljed"
 
-#: templates/nutrition/recipe_list.html:66
+#: templates/nutrition/recipe_list.html:68
 msgid "No template recipes match your search."
 msgstr "Ükski malliretsept ei vasta sinu otsingule."
 
@@ -10585,7 +10667,9 @@ msgstr "Päevased kalorid (viimased 30 päeva)"
 msgid ""
 "Dashed line: your current target, %(calories)s kcal. It's the same on every "
 "day, even if your target was different back then."
-msgstr "Katkendjoon: sinu praegune eesmärk, %(calories)s kcal. See on igal päeval sama, isegi kui su eesmärk oli tol ajal teine."
+msgstr ""
+"Katkendjoon: sinu praegune eesmärk, %(calories)s kcal. See on igal päeval "
+"sama, isegi kui su eesmärk oli tol ajal teine."
 
 #: templates/nutrition/stats.html:88
 msgid "Log a few days in your food diary to see your trend here."

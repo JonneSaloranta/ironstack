@@ -18,6 +18,17 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- AI assistant: it can propose a recipe - ingredients from the user's own food
+  library (or new foods with estimated nutrition), servings, meal slots and
+  preparation steps - shown as a card with the calories and macros per
+  serving; "Add recipe" puts it in the user's recipes. The recipe list has an
+  "Ask the assistant" button.
+
+### Fixed
+- Two nutrition error messages ("Set up your nutrition profile first.", "Add
+  your height to your profile first.") were missing from the translations.
+
 ## [1.31.0] - 2026-11-04
 
 ### Added

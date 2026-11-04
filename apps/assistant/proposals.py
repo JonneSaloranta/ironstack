@@ -1,5 +1,5 @@
 """Assistant proposals: validating what the model suggests, and turning an
-accepted suggestion into a real DietPlan/Program - see docs/ASSISTANT.md
+accepted suggestion into a real DietPlan/Program/Recipe - see docs/ASSISTANT.md
 "Proposals".
 
 Validation happens twice: when the model proposes (so it can fix its own
@@ -10,6 +10,11 @@ in it (meal slots, exercises, recipes) are the stored, canonical ones -
 the card translates them when it's rendered (`translate_content`), so it
 follows the user's language rather than whatever was active when the
 model proposed.
+
+A recipe has no import-style service taking resolved rows, so
+`_apply_recipe` creates it here the same way the web's "new recipe" form
+plus its ingredient form do: one Recipe owned by the user and one
+RecipeIngredient per line, new foods added to their library first.
 
 Accepting reuses the domain services that already create these objects
 - `apps.programs.services.import_program` and
@@ -28,6 +33,7 @@ from .models import AssistantProposal, ProposalKind, ProposalStatus
 
 DIET_PLAN = ProposalKind.DIET_PLAN
 PROGRAM = ProposalKind.PROGRAM
+RECIPE = ProposalKind.RECIPE
 
 PROGRESSION_METHODS = [
     "double_progression",
@@ -43,6 +49,8 @@ MAX_MEALS = 70
 MAX_ITEMS_PER_MEAL = 12
 MAX_WORKOUTS = 14
 MAX_PRESCRIPTIONS = 20
+MAX_INGREDIENTS = 30
+MAX_RECIPE_SERVINGS = 50
 
 
 class ProposalError(Exception):
@@ -333,6 +341,120 @@ def _apply_diet_plan(user, payload):
     )
 
 
+# --- Recipes --------------------------------------------------------------
+
+
+def _new_food_nutrition(new_food, quantity):
+    """`ScaledNutrition`-like macros of `quantity` of a validated (not yet
+    saved) new food - the same ratio `scale_nutrition` uses for a Food."""
+    ratio = quantity / new_food["serving_size"]
+    return {
+        "calories": Decimal(new_food["calories"]) * ratio,
+        "protein_grams": new_food["protein_grams"] * ratio,
+        "carbohydrate_grams": new_food["carbohydrate_grams"] * ratio,
+        "fat_grams": new_food["fat_grams"] * ratio,
+    }
+
+
+def _recipe(user, data):
+    """Validates and resolves; returns (normalized payload, resolved
+    ingredients, resolved meal slots)."""
+    from apps.nutrition import services as nutrition_services
+
+    data = _dict(data, "proposal")
+    servings = _integer(
+        data.get("servings"), "servings", minimum=1, maximum=MAX_RECIPE_SERVINGS
+    )
+    payload = {
+        "name": _text(data.get("name"), "name", max_length=200, required=True),
+        "summary": _text(data.get("summary"), "summary", max_length=1500),
+        "servings": servings,
+        "instructions": _text(data.get("instructions"), "instructions", max_length=5000),
+        "meal_slots": [],
+        "ingredients": [],
+    }
+    slots = []
+    meal_slots = data.get("meal_slots")
+    for index, name in enumerate(
+        _list(meal_slots, "meal_slots", minimum=0, maximum=10) if meal_slots is not None else []
+    ):
+        slot = _resolve_meal_slot(
+            user, _text(name, f"meal_slots[{index}]", max_length=50, required=True)
+        )
+        if slot not in slots:
+            slots.append(slot)
+            payload["meal_slots"].append(slot.name)
+
+    totals = dict.fromkeys(
+        ("calories", "protein_grams", "carbohydrate_grams", "fat_grams"), Decimal("0")
+    )
+    ingredients = []
+    for index, ingredient_data in enumerate(
+        _list(data.get("ingredients"), "ingredients", minimum=1, maximum=MAX_INGREDIENTS)
+    ):
+        where = f"ingredients[{index}]"
+        if isinstance(ingredient_data, dict) and ingredient_data.get("recipe_id") is not None:
+            raise ProposalError(
+                f"`{where}`: a recipe's ingredient must be a food (food_id or new_food), "
+                "not another recipe."
+            )
+        item, food, _recipe_unused, calories = _resolve_item(user, ingredient_data, where)
+        quantity = Decimal(item["quantity"])
+        if food is not None:
+            scaled = nutrition_services.scale_nutrition(food, quantity)
+            nutrition = {key: getattr(scaled, key) for key in totals}
+        else:
+            nutrition = _new_food_nutrition(
+                _validate_new_food(ingredient_data["new_food"], where), quantity
+            )
+        for key in totals:
+            totals[key] += nutrition[key]
+        item["calories"] = int(round(calories))
+        payload["ingredients"].append(item)
+        ingredients.append(
+            {"food": food, "new_food": item.get("new_food"), "quantity": quantity}
+        )
+    payload["per_serving"] = {
+        "calories": int(round(totals["calories"] / servings)),
+        **{
+            key: str(round(totals[key] / servings, 1))
+            for key in ("protein_grams", "carbohydrate_grams", "fat_grams")
+        },
+    }
+    return payload, ingredients, slots
+
+
+def validate_recipe(user, data):
+    return _recipe(user, data)[0]
+
+
+def _apply_recipe(user, payload):
+    from apps.nutrition.models import Recipe, RecipeIngredient
+
+    payload, ingredients, slots = _recipe(user, payload)
+    recipe = Recipe.objects.create(
+        owner=user,
+        name=payload["name"],
+        servings=payload["servings"],
+        instructions=payload["instructions"],
+    )
+    recipe.meal_slots.set(slots)
+    RecipeIngredient.objects.bulk_create(
+        RecipeIngredient(
+            recipe=recipe,
+            food=(
+                _create_food(user, ingredient["new_food"])
+                if ingredient["new_food"]
+                else ingredient["food"]
+            ),
+            quantity=ingredient["quantity"],
+            order=order,
+        )
+        for order, ingredient in enumerate(ingredients)
+    )
+    return recipe
+
+
 # --- Programs -------------------------------------------------------------
 
 
@@ -497,6 +619,8 @@ def accept(proposal):
     user = proposal.message.conversation.user
     if proposal.kind == DIET_PLAN:
         created = _apply_diet_plan(user, proposal.payload)
+    elif proposal.kind == RECIPE:
+        created = _apply_recipe(user, proposal.payload)
     else:
         created = _apply_program(user, proposal.payload)
     proposal.status = ProposalStatus.ACCEPTED
