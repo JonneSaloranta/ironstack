@@ -31,6 +31,9 @@ narrated summary of the same version.
 - API: `POST exercises/<id>/images/` and
   `DELETE exercises/<id>/images/<image id>/` for images of your own exercises
   (#48).
+- API: a workout's duration `estimate` (also nested in programs and
+  `up-next/`) and `sessions/<id>/remaining-estimate/` for a workout in
+  progress (#50).
 
 ### Fixed
 - Two nutrition error messages ("Set up your nutrition profile first.", "Add

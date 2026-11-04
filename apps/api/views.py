@@ -107,6 +107,7 @@ from .serializers import (
     RecentActivitySerializer,
     RecipeIngredientSerializer,
     RecipeSerializer,
+    RemainingEstimateSerializer,
     RoutineItemSerializer,
     ShoppingListSerializer,
     ShoppingSettingsSerializer,
@@ -121,6 +122,7 @@ from .serializers import (
     VolumeAnalyticsSerializer,
     WorkoutSerializer,
     WorkoutSessionSerializer,
+    duration_estimate_data,
 )
 from .viewsets import OwnedResourceViewSet
 
@@ -503,6 +505,24 @@ class WorkoutSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
         exercise_ids = list(instance.performed_exercises.values_list("exercise_id", flat=True))
         instance.delete()
         records_services.rebuild_records_for_exercises(self.request.user, exercise_ids)
+
+    @extend_schema(responses={200: RemainingEstimateSerializer})
+    @action(detail=True, methods=["get"], url_path="remaining-estimate")
+    def remaining_estimate(self, request, pk=None):
+        """What's left of a workout in progress (set_timing.
+        estimate_remaining, training mode's own figure - issue #50)."""
+        from apps.workouts import set_timing
+
+        session = self.get_object()
+        estimate = None
+        if session.is_in_progress:
+            performed = session.performed_exercises.select_related("exercise").prefetch_related(
+                "sets"
+            )
+            estimate = set_timing.estimate_remaining(list(performed))
+        return Response(
+            RemainingEstimateSerializer({"estimate": duration_estimate_data(estimate)}).data
+        )
 
     @extend_schema(responses={200: CooldownSuggestionSerializer})
     @action(detail=True, methods=["get"])

@@ -304,16 +304,42 @@ class ExercisePrescriptionSerializer(serializers.ModelSerializer):
         return value
 
 
+class DurationEstimateSerializer(serializers.Serializer):
+    """apps.workouts.set_timing.DurationEstimate - a range in seconds from
+    this instance's own logged set timings; `rough` when part of it falls
+    back to the default formula for lack of data (issue #50)."""
+
+    low = serializers.IntegerField()
+    high = serializers.IntegerField()
+    rough = serializers.BooleanField()
+
+
+def duration_estimate_data(estimate):
+    if estimate is None:
+        return None
+    return {"low": round(estimate.low), "high": round(estimate.high), "rough": estimate.rough}
+
+
 class WorkoutSerializer(serializers.ModelSerializer):
     display_name = DisplayNameField()
     prescriptions = ExercisePrescriptionSerializer(many=True, read_only=True)
+    # How long it takes, as on the program pages (issue #50). Cheap: the
+    # instance's timing statistics are cached and the prescriptions are
+    # already prefetched for the nested list above.
+    estimate = serializers.SerializerMethodField()
 
     class Meta:
         model = Workout
         fields = [
             "id", "program", "name", "display_name", "order", "scheduled_weekday", "notes",
-            "prescriptions",
+            "prescriptions", "estimate",
         ]
+
+    @extend_schema_field(DurationEstimateSerializer(allow_null=True))
+    def get_estimate(self, workout):
+        from apps.workouts import set_timing
+
+        return duration_estimate_data(set_timing.estimate_workout(workout))
 
     def validate_program(self, value):
         # Same reasoning as ExercisePrescriptionSerializer.validate_workout
@@ -696,6 +722,14 @@ class UpNextSerializer(serializers.Serializer):
     program = UpNextProgramSerializer(allow_null=True)
     workout = WorkoutSerializer(allow_null=True)
     day = serializers.DateField(allow_null=True)
+
+
+class RemainingEstimateSerializer(serializers.Serializer):
+    """`sessions/<id>/remaining-estimate/` - what's left of a workout in
+    progress, like training mode on the web. Null when nothing is left
+    (or the workout isn't in progress)."""
+
+    estimate = DurationEstimateSerializer(allow_null=True)
 
 
 class TrainingSummarySerializer(serializers.Serializer):

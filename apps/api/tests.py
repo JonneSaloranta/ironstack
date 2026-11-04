@@ -9,7 +9,7 @@ from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from apps.exercises.models import Exercise
-from apps.programs.models import Program, Workout
+from apps.programs.models import ExercisePrescription, Program, Workout
 from apps.records import services as records_services
 from apps.records.models import PersonalRecord, PRType
 from apps.workouts import services as workout_services
@@ -924,6 +924,7 @@ class UpNextEndpointTests(APITestCase):
         self.assertEqual(response.data["program"]["id"], self.program.pk)
         self.assertEqual(response.data["program"]["name"], "Rotation")
         self.assertEqual(response.data["workout"]["id"], self.day_b.pk)
+        self.assertIn("estimate", response.data["workout"])
         self.assertEqual(response.data["workout"]["name"], "B")
         self.assertIsNone(response.data["day"])
 
@@ -937,6 +938,64 @@ class UpNextEndpointTests(APITestCase):
             }
         )
         self.assertEqual(response.status_code, 403)
+
+
+class DurationEstimateTests(APITestCase):
+    """Issue #50 - how long a workout takes and what's left of one."""
+
+    def setUp(self):
+        from apps.workouts import set_timing
+
+        set_timing.clear_cache()
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, raw_secret = _create_key(self.alice)
+        self.auth = {"HTTP_AUTHORIZATION": f"Bearer {raw_secret}"}
+        self.program = Program.objects.create(owner=self.alice, name="Plan")
+        self.workout = Workout.objects.create(program=self.program, name="A", order=0)
+        self.exercise = Exercise.objects.create(name="API Estimate Squat", owner=None)
+        ExercisePrescription.objects.create(
+            workout=self.workout, exercise=self.exercise, set_count=3, min_reps=8, max_reps=10
+        )
+
+    def test_workout_estimate_matches_the_web(self):
+        from apps.workouts import set_timing
+
+        expected = set_timing.estimate_workout(self.workout)
+        response = self.client.get(
+            reverse("api:workout-detail", args=[self.workout.pk]), **self.auth
+        )
+        estimate = response.data["estimate"]
+        self.assertEqual(estimate["low"], round(expected.low))
+        self.assertEqual(estimate["high"], round(expected.high))
+        self.assertIs(estimate["rough"], expected.rough)
+        nested = self.client.get(
+            reverse("api:program-detail", args=[self.program.pk]), **self.auth
+        ).data["workouts"][0]["estimate"]
+        self.assertEqual(nested, estimate)
+
+    def test_empty_workout_has_no_estimate(self):
+        empty = Workout.objects.create(program=self.program, name="B", order=1)
+        response = self.client.get(reverse("api:workout-detail", args=[empty.pk]), **self.auth)
+        self.assertIsNone(response.data["estimate"])
+
+    def test_remaining_estimate(self):
+        session = workout_services.start_session(self.alice, workout=self.workout)
+        url = reverse("api:session-remaining-estimate", args=[session.pk])
+        before = self.client.get(url, **self.auth).data["estimate"]
+        self.assertGreater(before["high"], 0)
+        performed = session.performed_exercises.get()
+        for _ in range(3):
+            workout_services.log_set(performed, weight=Decimal("100"), reps=8)
+        self.assertIsNone(self.client.get(url, **self.auth).data["estimate"])
+
+        workout_services.complete_session(session)
+        self.assertIsNone(self.client.get(url, **self.auth).data["estimate"])
+
+    def test_remaining_estimate_of_another_users_session_is_404(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        session = workout_services.start_session(bob, workout=None)
+        url = reverse("api:session-remaining-estimate", args=[session.pk])
+        self.assertEqual(self.client.get(url, **self.auth).status_code, 404)
 
 
 class IdempotencyKeyTests(APITestCase):
