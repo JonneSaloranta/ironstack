@@ -23,7 +23,9 @@ narrated summary of the same version.
   library (or new foods with estimated nutrition), servings, meal slots and
   preparation steps - shown as a card with the calories and macros per
   serving; "Add recipe" puts it in the user's recipes. The recipe list has an
-  "Ask the assistant" button.
+  "Ask the assistant" button. API v1 clients: an assistant proposal's `kind`
+  can now also be `recipe` - a deliberate break of v1's contract, so handle
+  (or skip) kinds you don't know.
 - API: `is_personal_trainer` and `accepting_new_clients` on `profile/` (#51).
 - API: `?range=week` (Monday through today) on `analytics/summary/` and the
   other analytics endpoints, days counted in the user's own time zone;

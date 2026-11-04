@@ -256,9 +256,14 @@ new value in an enum the API returns.
 - CI's `api-compatibility` job compares each committed schema with
   master's copy using [oasdiff](https://github.com/oasdiff/oasdiff) and
   fails on every change it classifies as an error; publishing the image
-  waits for it. Its warnings (e.g. a new enum value in a response) are
-  printed but don't fail the run - read them in review against the
-  rules above.
+  waits for it (a new value in a returned enum is an error too). Its
+  warnings are printed but don't fail the run - read them in review
+  against the rules above.
+- A breaking change made on purpose within a version, without a new
+  version, is listed in `docs/api/oasdiff-ignore-<version>.txt` (the
+  job's `--err-ignore`; the file's header says how a line matches),
+  noted in CHANGELOG.md, and pruned once released. So far: v1's
+  assistant proposal `kind` gained `recipe`.
 
 **Adding a version (v2):** only when a breaking change is genuinely
 needed, and only for what it changes. The version is DRF's
