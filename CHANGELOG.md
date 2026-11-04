@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.32.0] - 2026-11-04
+
 ### Added
 - AI assistant: it can propose a recipe - ingredients from the user's own food
   library (or new foods with estimated nutrition), servings, meal slots and
