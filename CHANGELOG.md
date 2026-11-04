@@ -24,6 +24,7 @@ narrated summary of the same version.
   preparation steps - shown as a card with the calories and macros per
   serving; "Add recipe" puts it in the user's recipes. The recipe list has an
   "Ask the assistant" button.
+- API: `is_personal_trainer` and `accepting_new_clients` on `profile/` (#51).
 
 ### Fixed
 - Two nutrition error messages ("Set up your nutrition profile first.", "Add

@@ -134,6 +134,11 @@ class ProfileSerializer(serializers.ModelSerializer):
             "body_tracking_reminders_enabled",
             "needs_body_tracking_reminder",
             "tutorials_enabled",
+            # Same meaning as the web profile (issue #51): turning
+            # is_personal_trainer off doesn't end existing coaching
+            # relationships, accepting_new_clients only stops new requests.
+            "is_personal_trainer",
+            "accepting_new_clients",
         ]
         # email too: an API key is a narrower credential than the
         # password, and changing the email would let whoever holds the

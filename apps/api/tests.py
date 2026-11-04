@@ -349,6 +349,34 @@ class ProfileEndpointTests(APITestCase):
         self.assertEqual(self.alice.email, "alice@example.com")
         self.assertEqual(response.data["email"], "alice@example.com")
 
+    def test_patch_updates_personal_trainer_settings(self):
+        """Issue #51 - becoming a trainer from a client; turning it off
+        keeps existing coaching relationships, like on the web."""
+        from apps.coaching.models import CoachingRelationship
+
+        response = self.client.get(reverse("api:profile"), **self._auth())
+        self.assertIs(response.data["is_personal_trainer"], False)
+        self.assertIn("accepting_new_clients", response.data)
+        response = self.client.patch(
+            reverse("api:profile"),
+            {"is_personal_trainer": True, "accepting_new_clients": False},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.alice.refresh_from_db()
+        self.assertTrue(self.alice.is_personal_trainer)
+        self.assertFalse(self.alice.accepting_new_clients)
+
+        client = User.objects.create_user(username="carl", password="s3cret-pass")
+        relationship = CoachingRelationship.objects.create(coach=self.alice, coachee=client)
+        response = self.client.patch(
+            reverse("api:profile"), {"is_personal_trainer": False}, format="json", **self._auth()
+        )
+        self.assertEqual(response.status_code, 200)
+        relationship.refresh_from_db()
+        self.assertTrue(relationship.is_active)
+
     def test_patch_updates_social_privacy_settings(self):
         response = self.client.patch(
             reverse("api:profile"),

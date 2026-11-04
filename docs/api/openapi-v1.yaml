@@ -10879,6 +10879,15 @@ components:
             when you haven't logged one in a while. Turn off to never see that reminder.
         tutorials_enabled:
           type: boolean
+        is_personal_trainer:
+          type: boolean
+          description: Lets you build gym programs and diet plans other users can
+            request you coach them on. Turning this off doesn't end any coaching relationship
+            you already have.
+        accepting_new_clients:
+          type: boolean
+          description: Off stops new coaching requests from reaching you. Existing
+            coaching relationships, and any request you already received, are unaffected.
     PatchedProgramRequest:
       type: object
       properties:
@@ -11372,6 +11381,15 @@ components:
           readOnly: true
         tutorials_enabled:
           type: boolean
+        is_personal_trainer:
+          type: boolean
+          description: Lets you build gym programs and diet plans other users can
+            request you coach them on. Turning this off doesn't end any coaching relationship
+            you already have.
+        accepting_new_clients:
+          type: boolean
+          description: Off stops new coaching requests from reaching you. Existing
+            coaching relationships, and any request you already received, are unaffected.
       required:
       - date_joined
       - email
@@ -11428,6 +11446,15 @@ components:
             when you haven't logged one in a while. Turn off to never see that reminder.
         tutorials_enabled:
           type: boolean
+        is_personal_trainer:
+          type: boolean
+          description: Lets you build gym programs and diet plans other users can
+            request you coach them on. Turning this off doesn't end any coaching relationship
+            you already have.
+        accepting_new_clients:
+          type: boolean
+          description: Off stops new coaching requests from reaching you. Existing
+            coaching relationships, and any request you already received, are unaffected.
     Program:
       type: object
       properties:
