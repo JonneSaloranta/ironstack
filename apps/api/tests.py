@@ -923,6 +923,7 @@ class UpNextEndpointTests(APITestCase):
 
         self.assertEqual(response.data["program"]["id"], self.program.pk)
         self.assertEqual(response.data["program"]["name"], "Rotation")
+        self.assertEqual(response.data["program"]["display_name"], "Rotation")
         self.assertEqual(response.data["workout"]["id"], self.day_b.pk)
         self.assertIn("estimate", response.data["workout"])
         self.assertEqual(response.data["workout"]["name"], "B")
@@ -2596,6 +2597,21 @@ class StretchingEndpointTests(APITestCase):
         )
         self.assertEqual(len(routine.data["items"]), self.system_routine.items.count())
 
+    def test_session_name_has_a_display_twin(self):
+        """Issue #47 - a session snapshots a built-in routine's name."""
+        from apps.stretching.models import StretchSession
+
+        session = StretchSession.objects.create(
+            user=self.alice, routine=self.system_routine, name="Full Body Stretch"
+        )
+        response = self.client.get(
+            reverse("api:stretch-session-detail", args=[session.pk]),
+            HTTP_ACCEPT_LANGUAGE="fi",
+            **self._auth(),
+        )
+        self.assertEqual(response.data["name"], "Full Body Stretch")
+        self.assertEqual(response.data["display_name"], "Koko kehon venyttely")
+
     def test_copying_a_routine(self):
         # Issue #32: one atomic request instead of rebuilding item by item.
         response = self.client.post(
@@ -3972,6 +3988,51 @@ class CoachingEndpointTests(APITestCase):
         self.assertEqual(applied.status_code, 200)
         self.assertEqual(
             sorted(w["name"] for w in applied.data["workouts"]), ["Day A", "Day B"]
+        )
+
+    def test_display_names_follow_the_request_language(self):
+        """Issue #47 - client detail and shared plans translate built-in
+        names in the request's language, not the coach's profile one."""
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+        from apps.programs import services as program_services
+
+        self._start_coaching()
+        template = Program.objects.get(owner=None, name="5x5 Strength (A/B)")
+        program = program_services.copy_program(template, owner=self.coach)
+        self.client.put(
+            reverse("api:coaching-program-clients", args=[program.pk]),
+            {"clients": [self.client_user.pk]}, format="json", **self.as_coach,
+        )
+        shared = self.client.get(
+            reverse("api:coaching-shared"), HTTP_ACCEPT_LANGUAGE="fi", **self.as_client
+        ).data["programs"][0]
+        self.assertEqual(shared["name"], "5x5 Strength (A/B)")
+        self.assertEqual(shared["display_name"], "5x5-voima (A/B)")
+        self.client.post(
+            reverse("api:coaching-shared-program-import", args=[program.pk]), **self.as_client
+        )
+        BodyMeasurement.objects.create(
+            user=self.client_user,
+            measurement_type=MeasurementType.objects.get(owner=None, name="Body weight"),
+            value=Decimal("80"),
+        )
+        bench = Exercise.objects.get(owner=None, name="Barbell Bench Press")
+        session = workout_services.start_session(self.client_user, workout=None)
+        performed = workout_services.add_performed_exercise(session, bench)
+        exercise_set = workout_services.log_set(performed, weight=Decimal("80"), reps=5)
+        workout_services.complete_session(session)
+        records_services.check_and_record_prs(exercise_set)
+
+        detail = self.client.get(
+            reverse("api:coaching-client", args=["client"]),
+            HTTP_ACCEPT_LANGUAGE="fi",
+            **self.as_coach,
+        ).data
+        weight = next(m for m in detail["measurements"] if m["name"] == "Body weight")
+        self.assertEqual(weight["display_name"], "Kehon paino")
+        self.assertEqual(detail["assigned_programs"][0]["display_name"], "5x5-voima (A/B)")
+        self.assertEqual(
+            detail["recent_records"][0]["exercise_display_name"], "Penkkipunnerrus tangolla"
         )
 
     def test_import_needs_sharing(self):

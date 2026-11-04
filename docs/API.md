@@ -160,7 +160,10 @@ each as a `display_*` twin next to the stored value: `exercise_display_name`
 on prescriptions, performed exercises, records and a set's `new_records`;
 `stretch_display_name` on performed stretches; `muscle_group_display_name`
 in `analytics/muscle-groups/`; `display_name` on recipes and
-`recipe_display_name` on diary entries; `display_instructions` on
+`recipe_display_name` on diary entries; `display_name` on stretch sessions
+(the name snapshotted from a built-in routine), on `up-next/`'s `program`,
+and in coaching (a client's `measurements` and `assigned_programs`, the
+`programs` and `diet_plans` in `coaching/shared/`); `display_instructions` on
 exercises, stretches and recipes; and `display_description` on programs
 and stretch routines. An empty text stays empty.
 

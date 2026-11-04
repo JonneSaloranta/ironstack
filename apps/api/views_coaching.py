@@ -34,6 +34,7 @@ from .models import ApiContext
 from .serializers import (
     AchievementSerializer,
     DietPlanSerializer,
+    DisplayNameField,
     PersonalRecordSerializer,
     ProgramSerializer,
     TrainingSummarySerializer,
@@ -76,9 +77,20 @@ class CoachingRequestCreateSerializer(serializers.Serializer):
     username = serializers.CharField(help_text="The trainer's username.")
 
 
+class SharedPlanSerializer(serializers.Serializer):
+    """One shared program or diet plan. `display_name` translates a
+    coach's copy of a built-in template, like the web (issue #47)."""
+
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    display_name = DisplayNameField()
+    coach = serializers.IntegerField()
+    imported = serializers.BooleanField()
+
+
 class SharedPlansSerializer(serializers.Serializer):
-    programs = serializers.ListField(child=serializers.DictField())
-    diet_plans = serializers.ListField(child=serializers.DictField())
+    programs = SharedPlanSerializer(many=True)
+    diet_plans = SharedPlanSerializer(many=True)
 
 
 class CoachUpdateSerializer(serializers.Serializer):
@@ -95,6 +107,7 @@ class ClientIdsSerializer(serializers.Serializer):
 class ClientMeasurementSerializer(serializers.Serializer):
     measurement_type = serializers.IntegerField(source="type.pk")
     name = serializers.CharField(source="type.name")
+    display_name = DisplayNameField(source="type.name")
     unit_kind = serializers.CharField(source="type.unit_kind")
     latest_value = serializers.DecimalField(max_digits=10, decimal_places=4, allow_null=True)
     latest_recorded_at = serializers.DateTimeField(allow_null=True)
@@ -103,6 +116,7 @@ class ClientMeasurementSerializer(serializers.Serializer):
 class AssignedProgramSerializer(serializers.Serializer):
     program = serializers.IntegerField()
     name = serializers.CharField()
+    display_name = DisplayNameField()
     client_copy = serializers.IntegerField()
     last_session_at = serializers.DateTimeField(allow_null=True)
 
@@ -293,7 +307,10 @@ class ClientDetailView(CoachingView):
                     ),
                     "measurements": measurements,
                     "assigned_programs": assigned,
-                }
+                },
+                # The request picks the display_* language (Accept-Language,
+                # else the profile's) - issue #47.
+                context={"request": request},
             ).data
         return Response(data)
 
@@ -330,7 +347,7 @@ class SharedPlanListView(CoachingView):
                 "imported_from_id", flat=True
             )
         )
-        return Response(
+        data = SharedPlansSerializer(
             {
                 "programs": [
                     {
@@ -346,8 +363,10 @@ class SharedPlanListView(CoachingView):
                     }
                     for d in diet_plans
                 ],
-            }
-        )
+            },
+            context={"request": request},
+        ).data
+        return Response(data)
 
 
 class SharedProgramImportView(CoachingView):

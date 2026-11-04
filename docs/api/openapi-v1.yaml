@@ -7231,6 +7231,9 @@ components:
           type: integer
         name:
           type: string
+        display_name:
+          type: string
+          readOnly: true
         client_copy:
           type: integer
         last_session_at:
@@ -7239,6 +7242,7 @@ components:
           nullable: true
       required:
       - client_copy
+      - display_name
       - last_session_at
       - name
       - program
@@ -7492,6 +7496,9 @@ components:
           type: integer
         name:
           type: string
+        display_name:
+          type: string
+          readOnly: true
         unit_kind:
           type: string
         latest_value:
@@ -7504,6 +7511,7 @@ components:
           format: date-time
           nullable: true
       required:
+      - display_name
       - latest_recorded_at
       - latest_value
       - measurement_type
@@ -11989,19 +11997,40 @@ components:
       - estimated_one_rep_max
       - reps
       - weight
+    SharedPlan:
+      type: object
+      description: |-
+        One shared program or diet plan. `display_name` translates a
+        coach's copy of a built-in template, like the web (issue #47).
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        display_name:
+          type: string
+          readOnly: true
+        coach:
+          type: integer
+        imported:
+          type: boolean
+      required:
+      - coach
+      - display_name
+      - id
+      - imported
+      - name
     SharedPlans:
       type: object
       properties:
         programs:
           type: array
           items:
-            type: object
-            additionalProperties: {}
+            $ref: '#/components/schemas/SharedPlan'
         diet_plans:
           type: array
           items:
-            type: object
-            additionalProperties: {}
+            $ref: '#/components/schemas/SharedPlan'
       required:
       - diet_plans
       - programs
@@ -12293,6 +12322,9 @@ components:
         name:
           type: string
           readOnly: true
+        display_name:
+          type: string
+          readOnly: true
         routine:
           type: integer
           nullable: true
@@ -12328,6 +12360,7 @@ components:
       required:
       - after_workout
       - completed_at
+      - display_name
       - duration
       - id
       - name
@@ -12598,10 +12631,14 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         is_continuous:
           type: boolean
           title: Continuous
       required:
+      - display_name
       - id
       - name
     UserIdRequest:

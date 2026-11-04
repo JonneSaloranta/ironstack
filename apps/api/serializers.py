@@ -709,9 +709,11 @@ class LastPerformanceSerializer(serializers.Serializer):
 
 
 class UpNextProgramSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
+
     class Meta:
         model = Program
-        fields = ["id", "name", "is_continuous"]
+        fields = ["id", "name", "display_name", "is_continuous"]
 
 
 class UpNextSerializer(serializers.Serializer):
@@ -1440,12 +1442,16 @@ class StretchSessionSerializer(serializers.ModelSerializer):
     date, duration and notes stay editable."""
 
     performed_stretches = PerformedStretchSerializer(many=True, read_only=True)
+    # The name is snapshotted from the routine, often a built-in one
+    # ("Full Body Stretch") - translated like the web's history (#47).
+    display_name = DisplayNameField()
 
     class Meta:
         model = StretchSession
         fields = [
             "id",
             "name",
+            "display_name",
             "routine",
             "after_workout",
             "status",

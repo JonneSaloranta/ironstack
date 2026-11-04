@@ -34,8 +34,13 @@ narrated summary of the same version.
 - API: a workout's duration `estimate` (also nested in programs and
   `up-next/`) and `sessions/<id>/remaining-estimate/` for a workout in
   progress (#50).
+- API: `display_name` on `up-next/`'s program, stretch sessions, a coaching
+  client's measurements and assigned programs, and `coaching/shared/` plans
+  (#47).
 
 ### Fixed
+- API: a coaching client's `recent_records[].exercise_display_name` follows
+  `Accept-Language` instead of the trainer's profile language (#47).
 - Two nutrition error messages ("Set up your nutrition profile first.", "Add
   your height to your profile first.") were missing from the translations.
 

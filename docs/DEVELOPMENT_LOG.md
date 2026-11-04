@@ -6211,3 +6211,26 @@ repeatedly on the same data; it now reads 28 days and nothing from before an
 accepted adjustment. New: observed maintenance from intake and weight
 (docs/NUTRITION.md "Observed maintenance"), a target line on the calorie chart,
 and a body measurements card on the Progress page.
+
+## Recipes from the assistant, and API gaps for the Sailfish client (#47-#51)
+
+`propose_recipe` is the assistant's third proposal kind
+(`ProposalKind.RECIPE`). It reuses the diet plan item resolver for its
+ingredients (an existing food or a `new_food`, never another recipe) and
+`_create_food` on accept; there is no import-style service taking resolved
+rows, so `proposals._apply_recipe` creates the Recipe and its ingredients
+directly, the way the web's recipe and ingredient forms do. An accepted
+recipe is a normal library recipe, so a later diet plan proposal can use it.
+
+API: an API key's request runs `UserTimezoneMiddleware` before DRF has
+authenticated the user, so `timezone.localdate()` was the server's date in
+the API. The analytics views now activate the user's zone after
+authentication (`UserTimezoneMixin`), which `?range=week` (#49) needs to
+start on the same Monday as the web dashboard; the dashboard itself now uses
+the same `dateranges.WEEK` preset. Only views whose responses carry dates use
+the mixin - datetimes elsewhere stay in UTC. Image upload (#48) goes through
+the web's `ExerciseImageForm`; the delete route is a plain `<int:>` path
+because a regex `url_path` on the router isn't resolvable by drf-spectacular
+under namespace versioning. Workout `estimate`s (#50) come from the cached
+instance timing statistics, so nesting them in every program is cheap.
+
