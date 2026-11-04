@@ -311,6 +311,11 @@ urlpatterns = [
     path("nutrition/stats/", views.NutritionStatsView.as_view(), name="nutrition-stats"),
     path("up-next/", views.UpNextView.as_view(), name="up-next"),
     path(
+        "exercises/<int:pk>/images/<int:image_pk>/",
+        views.ExerciseImageDeleteView.as_view(),
+        name="exercise-delete-image",
+    ),
+    path(
         "exercises/<int:pk>/last-performance/",
         views.LastPerformanceView.as_view(),
         name="exercise-last-performance",

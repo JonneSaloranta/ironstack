@@ -177,6 +177,15 @@ class ExerciseImageSerializer(serializers.ModelSerializer):
         fields = ["id", "image", "caption", "attribution", "order"]
 
 
+class ExerciseImageUploadSerializer(serializers.Serializer):
+    """`POST exercises/<id>/images/` (multipart) - the file itself is
+    checked by apps.exercises.forms.ExerciseImageForm, like on the web."""
+
+    image = serializers.ImageField(write_only=True)
+    caption = serializers.CharField(max_length=200, required=False, allow_blank=True)
+    order = serializers.IntegerField(min_value=0, max_value=32767, required=False)
+
+
 class ExerciseSerializer(serializers.ModelSerializer):
     display_name = DisplayNameField()
     display_instructions = DisplayNameField(source="instructions")

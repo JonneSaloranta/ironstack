@@ -2288,6 +2288,61 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/exercises/{id}/images/:
+    post:
+      operationId: exercises_images_create
+      description: |-
+        `POST exercises/<id>/images/` (multipart: `image`, optional
+        `caption`, `order`) - issue #48. Through the web's own
+        ExerciseImageForm, so the size limit, the image checks and
+        `max_images_per_exercise` apply; 400 with its messages otherwise.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - exercises
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ExerciseImageUploadRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExerciseImage'
+          description: ''
+  /api/v1/exercises/{id}/images/{image_pk}/:
+    delete:
+      operationId: exercises_images_destroy
+      description: |-
+        `DELETE exercises/<id>/images/<image id>/` - removes the file too,
+        like the web's exercise_image_delete (issue #48).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: image_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - exercises
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/exercises/{id}/last-performance/:
     get:
       operationId: exercises_last_performance_retrieve
@@ -8162,6 +8217,25 @@ components:
           type: string
           maxLength: 200
         attribution:
+          type: string
+          maxLength: 200
+        order:
+          type: integer
+          maximum: 32767
+          minimum: 0
+      required:
+      - image
+    ExerciseImageUploadRequest:
+      type: object
+      description: |-
+        `POST exercises/<id>/images/` (multipart) - the file itself is
+        checked by apps.exercises.forms.ExerciseImageForm, like on the web.
+      properties:
+        image:
+          type: string
+          format: binary
+          writeOnly: true
+        caption:
           type: string
           maxLength: 200
         order:

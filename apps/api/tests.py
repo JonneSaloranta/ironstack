@@ -1337,6 +1337,99 @@ class OwnedResourceViewSetTests(APITestCase):
         self.assertTrue(Exercise.objects.filter(pk=mine.pk).exists())  # never hard-deleted
 
 
+class ExerciseImageManagementTests(APITestCase):
+    """Issue #48 - adding and removing images of your own exercises,
+    through the web's ExerciseImageForm rules."""
+
+    def setUp(self):
+        from apps.exercises.models import ExerciseImageSettings
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.mine = Exercise.objects.create(name="My Move", owner=self.alice)
+        self.settings = ExerciseImageSettings.load()
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def _png(self):
+        import io
+
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from PIL import Image
+
+        buffer = io.BytesIO()
+        Image.new("RGB", (10, 10), color="red").save(buffer, format="PNG")
+        return SimpleUploadedFile("photo.png", buffer.getvalue(), content_type="image/png")
+
+    def _upload(self, exercise, **data):
+        return self.client.post(
+            reverse("api:exercise-add-image", args=[exercise.pk]),
+            {"image": self._png(), **data},
+            format="multipart",
+            **self._auth(),
+        )
+
+    def test_add_and_delete_an_image(self):
+        from apps.exercises.models import ExerciseImage
+
+        response = self._upload(self.mine, caption="Start", order=2)
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["caption"], "Start")
+        self.assertEqual(response.data["order"], 2)
+        image = ExerciseImage.objects.get(exercise=self.mine)
+        storage, name = image.image.storage, image.image.name
+        self.assertTrue(storage.exists(name))
+        detail = self.client.get(
+            reverse("api:exercise-detail", args=[self.mine.pk]), **self._auth()
+        )
+        self.assertEqual(len(detail.data["images"]), 1)
+
+        response = self.client.delete(
+            reverse("api:exercise-delete-image", args=[self.mine.pk, image.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(ExerciseImage.objects.filter(exercise=self.mine).exists())
+        self.assertFalse(storage.exists(name))
+
+    def test_limit_and_bad_file_are_400(self):
+        self.settings.max_images_per_exercise = 1
+        self.settings.save()
+        self.assertEqual(self._upload(self.mine).status_code, 201)
+        response = self._upload(self.mine)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("non_field_errors", response.data)
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        response = self.client.post(
+            reverse("api:exercise-add-image", args=[self.mine.pk]),
+            {"image": SimpleUploadedFile("x.png", b"not an image", content_type="image/png")},
+            format="multipart",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_built_in_and_other_users_exercises(self):
+        from apps.exercises.models import ExerciseImage
+
+        built_in = Exercise.objects.filter(owner__isnull=True).first()
+        self.assertEqual(self._upload(built_in).status_code, 403)
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        bobs = Exercise.objects.create(name="Bob's lift", owner=bob)
+        self.assertEqual(self._upload(bobs).status_code, 404)
+        image = ExerciseImage.objects.create(exercise=bobs, image=self._png())
+        response = self.client.delete(
+            reverse("api:exercise-delete-image", args=[bobs.pk, image.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 404)
+        # Another exercise's image through your own exercise's URL.
+        response = self.client.delete(
+            reverse("api:exercise-delete-image", args=[self.mine.pk, image.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(ExerciseImage.objects.filter(pk=image.pk).exists())
+
+
 class ExerciseInstructionsAndImagesFieldsTests(APITestCase):
     """apps.api.serializers.ExerciseSerializer's own `instructions`/
     `instructions_attribution`/`images` fields - added alongside the

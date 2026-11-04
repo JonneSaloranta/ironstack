@@ -20,6 +20,8 @@ from django.utils.dateparse import parse_date, parse_datetime
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import generics, mixins, serializers, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -29,7 +31,8 @@ from apps.analytics import achievements as achievement_services
 from apps.analytics import dateranges
 from apps.analytics import services as analytics_services
 from apps.exercises import services as exercise_services
-from apps.exercises.models import Equipment, MuscleGroup
+from apps.exercises.forms import ExerciseImageForm
+from apps.exercises.models import Equipment, ExerciseImage, MuscleGroup
 from apps.measurements import services as measurement_services
 from apps.measurements.models import BodyMeasurement
 from apps.nutrition import diet_builder
@@ -74,6 +77,8 @@ from .serializers import (
     DietPlanSerializer,
     EquipmentSerializer,
     ExerciseAnalyticsSerializer,
+    ExerciseImageSerializer,
+    ExerciseImageUploadSerializer,
     ExercisePrescriptionSerializer,
     ExerciseSerializer,
     ExerciseSetCreatedSerializer,
@@ -159,6 +164,15 @@ class EquipmentViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
     api_context = ApiContext.EXERCISES
 
 
+def _own_exercise_or_403(exercise, user):
+    """A visible exercise whose images the user may manage - their own
+    custom one. A built-in's images are admin-only (403), like every
+    other edit to it; an invisible one is already a 404."""
+    if exercise.owner_id != user.pk:
+        raise PermissionDenied("Images of built-in exercises are managed by an administrator.")
+    return exercise
+
+
 @extend_schema_view(
     list=extend_schema(
         parameters=[
@@ -196,6 +210,48 @@ class ExerciseViewSet(OwnedResourceViewSet):
             with translation.override(language) if language else nullcontext():
                 queryset = exercise_services.search(queryset, query)
         return queryset
+
+    def _own_exercise(self):
+        return _own_exercise_or_403(self.get_object(), self.request.user)
+
+    @extend_schema(
+        request={"multipart/form-data": ExerciseImageUploadSerializer},
+        responses={201: ExerciseImageSerializer},
+    )
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="images",
+        parser_classes=[MultiPartParser, FormParser],
+    )
+    def add_image(self, request, pk=None):
+        """`POST exercises/<id>/images/` (multipart: `image`, optional
+        `caption`, `order`) - issue #48. Through the web's own
+        ExerciseImageForm, so the size limit, the image checks and
+        `max_images_per_exercise` apply; 400 with its messages otherwise."""
+        exercise = self._own_exercise()
+        upload = ExerciseImageUploadSerializer(data=request.data)
+        upload.is_valid(raise_exception=True)
+        with _user_language(request.user):
+            form = ExerciseImageForm(
+                {"caption": upload.validated_data.get("caption", "")},
+                request.FILES,
+                instance=ExerciseImage(
+                    exercise=exercise, order=upload.validated_data.get("order", 0)
+                ),
+            )
+            if not form.is_valid():
+                raise serializers.ValidationError(
+                    {
+                        ("non_field_errors" if field == "__all__" else field): errors
+                        for field, errors in form.errors.items()
+                    }
+                )
+        image = form.save()
+        return Response(
+            ExerciseImageSerializer(image, context=self.get_serializer_context()).data,
+            status=status.HTTP_201_CREATED,
+        )
 
 
 # --------------------------------------------------------------------
@@ -784,6 +840,23 @@ def _analytics_range(request):
     time zone under UserTimezoneMixin, so `week` (issue #49) starts on the
     same Monday as the web dashboard's "this week"."""
     return dateranges.resolve(request.query_params.get("range", "30d"))
+
+
+class ExerciseImageDeleteView(APIView):
+    """`DELETE exercises/<id>/images/<image id>/` - removes the file too,
+    like the web's exercise_image_delete (issue #48)."""
+
+    api_context = ApiContext.EXERCISES
+
+    @extend_schema(request=None, responses={204: None})
+    def delete(self, request, pk, image_pk):
+        exercise = _own_exercise_or_403(
+            get_object_or_404(exercise_services.visible_to(request.user), pk=pk), request.user
+        )
+        image = get_object_or_404(ExerciseImage, pk=image_pk, exercise=exercise)
+        image.image.delete(save=False)
+        image.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TrainingSummaryView(UserTimezoneMixin, APIView):
