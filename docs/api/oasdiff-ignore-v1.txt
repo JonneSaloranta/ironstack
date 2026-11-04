@@ -5,11 +5,3 @@ change's path and it contains the method, path and oasdiff's exact text
 (copy them from oasdiff's output). Lines that match nothing are ignored, so
 an entry can stay until it is pruned. The job compares with master, so
 entries are only needed until the change is released - prune them then.
-
-After 1.31.0 - assistant recipe proposals: proposal kind gains `recipe` (056332c)
-POST /api/v1/assistant/conversations/ added the new `recipe` enum value to the `messages/items/proposals/items/kind` response property for the response status `201`
-GET /api/v1/assistant/conversations/{id}/ added the new `recipe` enum value to the `messages/items/proposals/items/kind` response property for the response status `200`
-POST /api/v1/assistant/conversations/{id}/messages/ added the new `recipe` enum value to the `proposals/items/kind` response property for the response status `201`
-GET /api/v1/assistant/messages/{id}/ added the new `recipe` enum value to the `proposals/items/kind` response property for the response status `200`
-POST /api/v1/assistant/proposals/{id}/accept/ added the new `recipe` enum value to the `proposal/kind` response property for the response status `201`
-POST /api/v1/assistant/proposals/{id}/dismiss/ added the new `recipe` enum value to the `kind` response property for the response status `200`

@@ -262,8 +262,8 @@ new value in an enum the API returns.
 - A breaking change made on purpose within a version, without a new
   version, is listed in `docs/api/oasdiff-ignore-<version>.txt` (the
   job's `--err-ignore`; the file's header says how a line matches),
-  noted in CHANGELOG.md, and pruned once released. So far: v1's
-  assistant proposal `kind` gained `recipe`.
+  noted in CHANGELOG.md, and pruned once released. So far: in 1.32.0,
+  v1's assistant proposal `kind` gained `recipe`.
 
 **Adding a version (v2):** only when a breaking change is genuinely
 needed, and only for what it changes. The version is DRF's
