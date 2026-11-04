@@ -9,6 +9,7 @@ CLAUDE.md, business logic belongs in services, and a DRF view is exactly
 as much a "view" as a Django one in that sense.
 """
 
+import zoneinfo
 from contextlib import nullcontext
 from datetime import datetime, time
 from decimal import Decimal
@@ -19,6 +20,8 @@ from django.utils.dateparse import parse_date, parse_datetime
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import generics, mixins, serializers, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -28,7 +31,8 @@ from apps.analytics import achievements as achievement_services
 from apps.analytics import dateranges
 from apps.analytics import services as analytics_services
 from apps.exercises import services as exercise_services
-from apps.exercises.models import Equipment, MuscleGroup
+from apps.exercises.forms import ExerciseImageForm
+from apps.exercises.models import Equipment, ExerciseImage, MuscleGroup
 from apps.measurements import services as measurement_services
 from apps.measurements.models import BodyMeasurement
 from apps.nutrition import diet_builder
@@ -73,6 +77,8 @@ from .serializers import (
     DietPlanSerializer,
     EquipmentSerializer,
     ExerciseAnalyticsSerializer,
+    ExerciseImageSerializer,
+    ExerciseImageUploadSerializer,
     ExercisePrescriptionSerializer,
     ExerciseSerializer,
     ExerciseSetCreatedSerializer,
@@ -101,6 +107,7 @@ from .serializers import (
     RecentActivitySerializer,
     RecipeIngredientSerializer,
     RecipeSerializer,
+    RemainingEstimateSerializer,
     RoutineItemSerializer,
     ShoppingListSerializer,
     ShoppingSettingsSerializer,
@@ -110,11 +117,12 @@ from .serializers import (
     StretchSessionSerializer,
     StretchSessionStartSerializer,
     SuggestionSerializer,
-    TrainingSummarySerializer,
+    TrainingSummaryResponseSerializer,
     UpNextSerializer,
     VolumeAnalyticsSerializer,
     WorkoutSerializer,
     WorkoutSessionSerializer,
+    duration_estimate_data,
 )
 from .viewsets import OwnedResourceViewSet
 
@@ -158,6 +166,15 @@ class EquipmentViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
     api_context = ApiContext.EXERCISES
 
 
+def _own_exercise_or_403(exercise, user):
+    """A visible exercise whose images the user may manage - their own
+    custom one. A built-in's images are admin-only (403), like every
+    other edit to it; an invisible one is already a 404."""
+    if exercise.owner_id != user.pk:
+        raise PermissionDenied("Images of built-in exercises are managed by an administrator.")
+    return exercise
+
+
 @extend_schema_view(
     list=extend_schema(
         parameters=[
@@ -195,6 +212,48 @@ class ExerciseViewSet(OwnedResourceViewSet):
             with translation.override(language) if language else nullcontext():
                 queryset = exercise_services.search(queryset, query)
         return queryset
+
+    def _own_exercise(self):
+        return _own_exercise_or_403(self.get_object(), self.request.user)
+
+    @extend_schema(
+        request={"multipart/form-data": ExerciseImageUploadSerializer},
+        responses={201: ExerciseImageSerializer},
+    )
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="images",
+        parser_classes=[MultiPartParser, FormParser],
+    )
+    def add_image(self, request, pk=None):
+        """`POST exercises/<id>/images/` (multipart: `image`, optional
+        `caption`, `order`) - issue #48. Through the web's own
+        ExerciseImageForm, so the size limit, the image checks and
+        `max_images_per_exercise` apply; 400 with its messages otherwise."""
+        exercise = self._own_exercise()
+        upload = ExerciseImageUploadSerializer(data=request.data)
+        upload.is_valid(raise_exception=True)
+        with _user_language(request.user):
+            form = ExerciseImageForm(
+                {"caption": upload.validated_data.get("caption", "")},
+                request.FILES,
+                instance=ExerciseImage(
+                    exercise=exercise, order=upload.validated_data.get("order", 0)
+                ),
+            )
+            if not form.is_valid():
+                raise serializers.ValidationError(
+                    {
+                        ("non_field_errors" if field == "__all__" else field): errors
+                        for field, errors in form.errors.items()
+                    }
+                )
+        image = form.save()
+        return Response(
+            ExerciseImageSerializer(image, context=self.get_serializer_context()).data,
+            status=status.HTTP_201_CREATED,
+        )
 
 
 # --------------------------------------------------------------------
@@ -446,6 +505,24 @@ class WorkoutSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
         exercise_ids = list(instance.performed_exercises.values_list("exercise_id", flat=True))
         instance.delete()
         records_services.rebuild_records_for_exercises(self.request.user, exercise_ids)
+
+    @extend_schema(responses={200: RemainingEstimateSerializer})
+    @action(detail=True, methods=["get"], url_path="remaining-estimate")
+    def remaining_estimate(self, request, pk=None):
+        """What's left of a workout in progress (set_timing.
+        estimate_remaining, training mode's own figure - issue #50)."""
+        from apps.workouts import set_timing
+
+        session = self.get_object()
+        estimate = None
+        if session.is_in_progress:
+            performed = session.performed_exercises.select_related("exercise").prefetch_related(
+                "sets"
+            )
+            estimate = set_timing.estimate_remaining(list(performed))
+        return Response(
+            RemainingEstimateSerializer({"estimate": duration_estimate_data(estimate)}).data
+        )
 
     @extend_schema(responses={200: CooldownSuggestionSerializer})
     @action(detail=True, methods=["get"])
@@ -751,8 +828,59 @@ class UpNextView(APIView):
         return Response(UpNextSerializer(data, context={"request": request}).data)
 
 
-class TrainingSummaryView(APIView):
-    """`?range=7d|30d|all` (default 30d, matching
+_RANGE_PARAMETER = OpenApiParameter(
+    "range",
+    enum=["week", "7d", "30d", "3m", "6m", "1y", "all"],
+    description=(
+        "Default 30d. `week` is Monday of the current ISO week through today, in the "
+        "user's time zone."
+    ),
+)
+
+
+class UserTimezoneMixin:
+    """Runs the view in the user's own time zone, as the web does: an API
+    key's request never passes through UserTimezoneMiddleware with its
+    user (DRF authenticates later), so `timezone.localdate()` and date
+    lookups would otherwise use the server's zone. That middleware's
+    `timezone.deactivate()` still resets it after the response. Only for
+    views whose response has dates, not datetimes (those stay UTC)."""
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        try:
+            timezone.activate(zoneinfo.ZoneInfo(request.user.timezone))
+        except (ValueError, zoneinfo.ZoneInfoNotFoundError):
+            # Empty, or a stale/hand-edited zone name: the server's, like the web.
+            pass
+
+
+def _analytics_range(request):
+    """`?range=` (default 30d) as a DateRange ending today - in the user's
+    time zone under UserTimezoneMixin, so `week` (issue #49) starts on the
+    same Monday as the web dashboard's "this week"."""
+    return dateranges.resolve(request.query_params.get("range", "30d"))
+
+
+class ExerciseImageDeleteView(APIView):
+    """`DELETE exercises/<id>/images/<image id>/` - removes the file too,
+    like the web's exercise_image_delete (issue #48)."""
+
+    api_context = ApiContext.EXERCISES
+
+    @extend_schema(request=None, responses={204: None})
+    def delete(self, request, pk, image_pk):
+        exercise = _own_exercise_or_403(
+            get_object_or_404(exercise_services.visible_to(request.user), pk=pk), request.user
+        )
+        image = get_object_or_404(ExerciseImage, pk=image_pk, exercise=exercise)
+        image.image.delete(save=False)
+        image.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TrainingSummaryView(UserTimezoneMixin, APIView):
+    """`?range=week|7d|30d|3m|6m|1y|all` (default 30d, matching
     apps.analytics.views.AnalyticsDashboardView) - total sessions/
     duration/volume in canonical kg (see apps.api.serializers' own
     docstring for why this API never converts to a display unit)."""
@@ -764,19 +892,16 @@ class TrainingSummaryView(APIView):
     # its own (docs/API.md "Interactive docs") - without this it drops
     # the operation from the generated schema/Swagger UI entirely
     # rather than guessing wrong.
-    @extend_schema(responses=TrainingSummarySerializer)
+    @extend_schema(responses=TrainingSummaryResponseSerializer, parameters=[_RANGE_PARAMETER])
     def get(self, request):
-        date_range = dateranges.resolve(request.query_params.get("range", "30d"))
+        date_range = _analytics_range(request)
         summary = analytics_services.training_summary_canonical(request.user, date_range)
-        return Response(TrainingSummarySerializer(summary).data)
+        return Response(
+            TrainingSummaryResponseSerializer({**vars(summary), "range": date_range}).data
+        )
 
 
-_RANGE_PARAMETER = OpenApiParameter(
-    "range", enum=["7d", "30d", "3m", "6m", "1y", "all"], description="Default 30d."
-)
-
-
-class VolumeAnalyticsView(APIView):
+class VolumeAnalyticsView(UserTimezoneMixin, APIView):
     """`analytics/volume/?range=` - training volume per ISO week (and
     `analytics/muscle-groups/` per primary muscle group), the web
     Analytics page's bar charts as data (issue #35). Canonical kg."""
@@ -786,7 +911,7 @@ class VolumeAnalyticsView(APIView):
     # See TrainingSummaryView's own comment for why this is here.
     @extend_schema(responses=VolumeAnalyticsSerializer, parameters=[_RANGE_PARAMETER])
     def get(self, request):
-        date_range = dateranges.resolve(request.query_params.get("range", "30d"))
+        date_range = _analytics_range(request)
         weeks = [
             {"week_start": week, "volume": volume}
             for week, volume in analytics_services.weekly_volume(request.user, date_range)
@@ -794,7 +919,7 @@ class VolumeAnalyticsView(APIView):
         return Response(VolumeAnalyticsSerializer({"range": date_range, "weeks": weeks}).data)
 
 
-class MuscleGroupAnalyticsView(APIView):
+class MuscleGroupAnalyticsView(UserTimezoneMixin, APIView):
     """`analytics/muscle-groups/?range=` - see VolumeAnalyticsView. A
     set counts in full toward each of its exercise's primary muscle
     groups, as on the web."""
@@ -803,7 +928,7 @@ class MuscleGroupAnalyticsView(APIView):
 
     @extend_schema(responses=MuscleGroupAnalyticsSerializer, parameters=[_RANGE_PARAMETER])
     def get(self, request):
-        date_range = dateranges.resolve(request.query_params.get("range", "30d"))
+        date_range = _analytics_range(request)
         rows = [
             {"muscle_group": muscle_group, "volume": volume}
             for muscle_group, volume in analytics_services.muscle_group_volume(
@@ -817,7 +942,7 @@ class MuscleGroupAnalyticsView(APIView):
         )
 
 
-class ExerciseAnalyticsView(APIView):
+class ExerciseAnalyticsView(UserTimezoneMixin, APIView):
     """`analytics/exercises/<id>/?range=` - one exercise's progress:
     sessions and volume in range, and its best set per training day by
     estimated 1RM, the web's strength trend (issue #35). Canonical kg;
@@ -830,7 +955,7 @@ class ExerciseAnalyticsView(APIView):
         exercise = get_object_or_404(
             exercise_services.visible_to(request.user, include_inactive=True), pk=pk
         )
-        date_range = dateranges.resolve(request.query_params.get("range", "30d"))
+        date_range = _analytics_range(request)
         summary = analytics_services.exercise_summary_canonical(request.user, exercise, date_range)
         bests = analytics_services.exercise_session_bests(request.user, exercise, date_range)
         return Response(

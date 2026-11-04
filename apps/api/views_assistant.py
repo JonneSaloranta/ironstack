@@ -125,9 +125,12 @@ class MessageTextSerializer(serializers.Serializer):
 
 class ProposalAcceptedSerializer(serializers.Serializer):
     proposal = ProposalSerializer()
-    kind = serializers.CharField(help_text="diet_plan or program.")
+    kind = serializers.CharField(help_text="diet_plan, program or recipe.")
     created_id = serializers.IntegerField(
-        help_text="The new, inactive diet plan or program - review it like any other."
+        help_text=(
+            "The new, inactive diet plan or program, or the new recipe - review it like any "
+            "other."
+        )
     )
 
 
@@ -339,7 +342,7 @@ def _proposal_or_404(request, pk):
 
 class ProposalAcceptView(AssistantView):
     """`POST assistant/proposals/<id>/accept/` - creates the proposed diet
-    plan or program, inactive, for the user to review (201). 409 with
+    plan or program (inactive) or recipe, for the user to review (201). 409 with
     the reason when it can't be created as proposed anymore (a food
     deleted since, say)."""
 

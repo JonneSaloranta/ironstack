@@ -175,6 +175,9 @@ def proposal_accept(request, pk):
             request, _("Diet plan created. It isn't active until you choose to use it.")
         )
         return redirect("nutrition:diet-plan-detail", pk=created.pk)
+    if proposal.kind == ProposalKind.RECIPE:
+        messages.success(request, _("Recipe added to your recipes. Review it and make it yours."))
+        return redirect("nutrition:recipe-detail", pk=created.pk)
     messages.success(request, _("Program created. Review it and make it yours."))
     return redirect("programs:program-detail", pk=created.pk)
 

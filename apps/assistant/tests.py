@@ -893,6 +893,101 @@ class ProgramProposalTests(TestCase):
             proposals.validate_program(self.user, self.proposal(min_reps=12, max_reps=8))
 
 
+class RecipeProposalTests(TestCase):
+    def setUp(self):
+        self.user = make_user()
+        self.other = make_user("bob")
+        self.oats = make_food(self.user)
+        self.slot = MealSlot.objects.filter(owner__isnull=True).first()
+        self.skyr = {
+            "name": "Skyr",
+            "serving_size": 100,
+            "serving_unit": "g",
+            "calories": 62,
+            "protein_grams": 11,
+            "carbohydrate_grams": 4,
+            "fat_grams": 0.2,
+        }
+
+    def proposal(self, ingredients=None, **overrides):
+        data = {
+            "name": "Overnight oats",
+            "summary": "High protein breakfast.",
+            "servings": 2,
+            "instructions": "Mix.\nLeave overnight.",
+            "meal_slots": [self.slot.name],
+            "ingredients": ingredients
+            or [
+                {"food_id": self.oats.pk, "quantity": 100},
+                {"new_food": self.skyr, "quantity": 200},
+            ],
+        }
+        data.update(overrides)
+        return data
+
+    def make_proposal(self, payload):
+        conversation = Conversation.objects.create(
+            user=self.user, title="t", provider="anthropic", model="m", key_source="shared"
+        )
+        message = AssistantMessage.objects.create(
+            conversation=conversation, role=MessageRole.ASSISTANT
+        )
+        return proposals.record(message, proposals.RECIPE, payload)
+
+    def test_validates_and_computes_per_serving(self):
+        payload = proposals.validate_recipe(self.user, self.proposal())
+        # 100 g oats = 380 kcal, 200 g skyr = 124 kcal; two servings.
+        self.assertEqual(payload["per_serving"]["calories"], 252)
+        self.assertEqual(payload["per_serving"]["protein_grams"], "17.5")
+        self.assertEqual(payload["meal_slots"], [self.slot.name])
+        self.assertEqual(payload["ingredients"][0]["label"], "Oats")
+        # The stored payload is accepted again unchanged.
+        self.assertEqual(proposals.validate_recipe(self.user, payload), payload)
+
+    def test_rejects_other_users_food(self):
+        bobs = make_food(self.other, "Bob food")
+        with self.assertRaises(proposals.ProposalError):
+            proposals.validate_recipe(
+                self.user, self.proposal([{"food_id": bobs.pk, "quantity": 50}])
+            )
+
+    def test_rejects_recipe_as_ingredient(self):
+        recipe = Recipe.objects.create(owner=self.user, name="Porridge", servings=1)
+        with self.assertRaises(proposals.ProposalError):
+            proposals.validate_recipe(
+                self.user, self.proposal([{"recipe_id": recipe.pk, "quantity": 1}])
+            )
+
+    def test_rejects_bad_servings_and_unknown_meal_slot(self):
+        with self.assertRaises(proposals.ProposalError):
+            proposals.validate_recipe(self.user, self.proposal(servings=0))
+        with self.assertRaises(proposals.ProposalError):
+            proposals.validate_recipe(self.user, self.proposal(meal_slots=["Midnight feast"]))
+
+    def test_accept_creates_recipe_and_new_food(self):
+        proposal = self.make_proposal(proposals.validate_recipe(self.user, self.proposal()))
+        recipe = proposals.accept(proposal)
+        self.assertEqual(recipe.owner, self.user)
+        self.assertEqual(recipe.servings, 2)
+        self.assertEqual(recipe.instructions, "Mix.\nLeave overnight.")
+        self.assertEqual(list(recipe.meal_slots.all()), [self.slot])
+        ingredients = list(recipe.ingredients.select_related("food"))
+        self.assertEqual([i.food.name for i in ingredients], ["Oats", "Skyr"])
+        self.assertEqual(ingredients[1].food.owner, self.user)
+        self.assertEqual(ingredients[1].quantity, Decimal("200"))
+        proposal.refresh_from_db()
+        self.assertEqual(proposal.status, ProposalStatus.ACCEPTED)
+        self.assertEqual(proposal.created_object_id, recipe.pk)
+
+    def test_accept_revalidates(self):
+        proposal = self.make_proposal(proposals.validate_recipe(self.user, self.proposal()))
+        self.oats.delete()
+        with self.assertRaises(proposals.ProposalError):
+            proposals.accept(proposal)
+        self.assertFalse(Recipe.objects.filter(owner=self.user).exists())
+        self.assertFalse(Food.objects.filter(name="Skyr").exists())
+
+
 @override_settings(**SHARED, ASSISTANT_RUN_INLINE=True)
 class ViewTests(TestCase):
     def setUp(self):
@@ -1031,6 +1126,31 @@ class ViewTests(TestCase):
             fetch_redirect_response=False,
         )
 
+    def test_recipe_proposal_card_and_accept(self):
+        oats = make_food(self.user)
+        args = {
+            "name": "Porridge",
+            "summary": "Warm breakfast.",
+            "servings": 1,
+            "instructions": "Cook.",
+            "ingredients": [{"food_id": oats.pk, "quantity": 60}],
+        }
+        _response, conversation = self.start(
+            turns=[tool_turn("propose_recipe", args), text_turn("See the card below.")]
+        )
+        proposal = AssistantProposal.objects.get()
+        self.assertEqual(proposal.kind, "recipe")
+        detail = self.client.get(reverse("assistant:conversation-detail", args=[conversation.pk]))
+        self.assertContains(detail, "Add recipe")
+        self.assertContains(detail, "228 kcal")
+        response = self.client.post(reverse("assistant:proposal-accept", args=[proposal.pk]))
+        recipe = Recipe.objects.get(owner=self.user, name="Porridge")
+        self.assertRedirects(
+            response,
+            reverse("nutrition:recipe-detail", args=[recipe.pk]),
+            fetch_redirect_response=False,
+        )
+
     def test_proposal_dismiss(self):
         payload = {"name": "P", "summary": "", "workouts": []}
         conversation = Conversation.objects.create(
@@ -1116,8 +1236,9 @@ class ViewTests(TestCase):
         response = self.client.get(reverse("nutrition:diet-plan-list"))
         self.assertNotContains(response, reverse("assistant:home") + "?prompt=")
         services.enable(self.user)
-        response = self.client.get(reverse("nutrition:diet-plan-list"))
-        self.assertContains(response, reverse("assistant:home") + "?prompt=")
+        for page in ("nutrition:diet-plan-list", "nutrition:recipe-list"):
+            response = self.client.get(reverse(page))
+            self.assertContains(response, reverse("assistant:home") + "?prompt=")
 
 
 class ToonTests(TestCase):

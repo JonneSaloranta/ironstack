@@ -78,7 +78,6 @@ def _month_calendar_context(request, today):
     comment) via `|json_script`."""
     import calendar as calendar_module
     from datetime import date as date_cls
-    from datetime import timedelta
 
     requested = request.GET.get("month", "")
     try:
@@ -171,7 +170,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         if context["in_progress_session"] is None:
             context["up_next"] = up_next(user, today)
         context["today"] = today
-        this_week = dateranges.resolve(None, start=today - timedelta(days=today.weekday()))
+        this_week = dateranges.resolve(dateranges.WEEK)
         context["week_summary"] = analytics_services.training_summary(user, this_week)
         context["recent_prs"] = analytics_services.pr_history_grouped_by_exercise(
             user, dateranges.resolve("30d"), limit=3

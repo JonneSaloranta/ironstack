@@ -134,6 +134,11 @@ class ProfileSerializer(serializers.ModelSerializer):
             "body_tracking_reminders_enabled",
             "needs_body_tracking_reminder",
             "tutorials_enabled",
+            # Same meaning as the web profile (issue #51): turning
+            # is_personal_trainer off doesn't end existing coaching
+            # relationships, accepting_new_clients only stops new requests.
+            "is_personal_trainer",
+            "accepting_new_clients",
         ]
         # email too: an API key is a narrower credential than the
         # password, and changing the email would let whoever holds the
@@ -170,6 +175,15 @@ class ExerciseImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseImage
         fields = ["id", "image", "caption", "attribution", "order"]
+
+
+class ExerciseImageUploadSerializer(serializers.Serializer):
+    """`POST exercises/<id>/images/` (multipart) - the file itself is
+    checked by apps.exercises.forms.ExerciseImageForm, like on the web."""
+
+    image = serializers.ImageField(write_only=True)
+    caption = serializers.CharField(max_length=200, required=False, allow_blank=True)
+    order = serializers.IntegerField(min_value=0, max_value=32767, required=False)
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
@@ -290,16 +304,42 @@ class ExercisePrescriptionSerializer(serializers.ModelSerializer):
         return value
 
 
+class DurationEstimateSerializer(serializers.Serializer):
+    """apps.workouts.set_timing.DurationEstimate - a range in seconds from
+    this instance's own logged set timings; `rough` when part of it falls
+    back to the default formula for lack of data (issue #50)."""
+
+    low = serializers.IntegerField()
+    high = serializers.IntegerField()
+    rough = serializers.BooleanField()
+
+
+def duration_estimate_data(estimate):
+    if estimate is None:
+        return None
+    return {"low": round(estimate.low), "high": round(estimate.high), "rough": estimate.rough}
+
+
 class WorkoutSerializer(serializers.ModelSerializer):
     display_name = DisplayNameField()
     prescriptions = ExercisePrescriptionSerializer(many=True, read_only=True)
+    # How long it takes, as on the program pages (issue #50). Cheap: the
+    # instance's timing statistics are cached and the prescriptions are
+    # already prefetched for the nested list above.
+    estimate = serializers.SerializerMethodField()
 
     class Meta:
         model = Workout
         fields = [
             "id", "program", "name", "display_name", "order", "scheduled_weekday", "notes",
-            "prescriptions",
+            "prescriptions", "estimate",
         ]
+
+    @extend_schema_field(DurationEstimateSerializer(allow_null=True))
+    def get_estimate(self, workout):
+        from apps.workouts import set_timing
+
+        return duration_estimate_data(set_timing.estimate_workout(workout))
 
     def validate_program(self, value):
         # Same reasoning as ExercisePrescriptionSerializer.validate_workout
@@ -669,9 +709,11 @@ class LastPerformanceSerializer(serializers.Serializer):
 
 
 class UpNextProgramSerializer(serializers.ModelSerializer):
+    display_name = DisplayNameField()
+
     class Meta:
         model = Program
-        fields = ["id", "name", "is_continuous"]
+        fields = ["id", "name", "display_name", "is_continuous"]
 
 
 class UpNextSerializer(serializers.Serializer):
@@ -684,13 +726,22 @@ class UpNextSerializer(serializers.Serializer):
     day = serializers.DateField(allow_null=True)
 
 
+class RemainingEstimateSerializer(serializers.Serializer):
+    """`sessions/<id>/remaining-estimate/` - what's left of a workout in
+    progress, like training mode on the web. Null when nothing is left
+    (or the workout isn't in progress)."""
+
+    estimate = DurationEstimateSerializer(allow_null=True)
+
+
 class TrainingSummarySerializer(serializers.Serializer):
     session_count = serializers.IntegerField()
     total_duration_seconds = serializers.SerializerMethodField()
     total_volume = serializers.DecimalField(max_digits=12, decimal_places=2)
 
     def get_total_duration_seconds(self, obj) -> float:
-        return obj.total_duration.total_seconds()
+        duration = obj["total_duration"] if isinstance(obj, dict) else obj.total_duration
+        return duration.total_seconds()
 
 
 class AnalyticsRangeSerializer(serializers.Serializer):
@@ -699,6 +750,13 @@ class AnalyticsRangeSerializer(serializers.Serializer):
     range = serializers.CharField(source="key")
     start = serializers.DateField(allow_null=True)
     end = serializers.DateField()
+
+
+class TrainingSummaryResponseSerializer(TrainingSummarySerializer):
+    """`analytics/summary/` - the summary plus the range it covers (with
+    `?range=week`, `range.start` is the Monday used - issue #49)."""
+
+    range = AnalyticsRangeSerializer()
 
 
 class WeeklyVolumeSerializer(serializers.Serializer):
@@ -1384,12 +1442,16 @@ class StretchSessionSerializer(serializers.ModelSerializer):
     date, duration and notes stay editable."""
 
     performed_stretches = PerformedStretchSerializer(many=True, read_only=True)
+    # The name is snapshotted from the routine, often a built-in one
+    # ("Full Body Stretch") - translated like the web's history (#47).
+    display_name = DisplayNameField()
 
     class Meta:
         model = StretchSession
         fields = [
             "id",
             "name",
+            "display_name",
             "routine",
             "after_workout",
             "status",

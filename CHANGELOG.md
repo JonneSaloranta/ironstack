@@ -18,6 +18,36 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.32.0] - 2026-11-04
+
+### Added
+- AI assistant: it can propose a recipe - ingredients from the user's own food
+  library (or new foods with estimated nutrition), servings, meal slots and
+  preparation steps - shown as a card with the calories and macros per
+  serving; "Add recipe" puts it in the user's recipes. The recipe list has an
+  "Ask the assistant" button. API v1 clients: an assistant proposal's `kind`
+  can now also be `recipe` - a deliberate break of v1's contract, so handle
+  (or skip) kinds you don't know.
+- API: `is_personal_trainer` and `accepting_new_clients` on `profile/` (#51).
+- API: `?range=week` (Monday through today) on `analytics/summary/` and the
+  other analytics endpoints, days counted in the user's own time zone;
+  `analytics/summary/` also returns the `range` it covers (#49).
+- API: `POST exercises/<id>/images/` and
+  `DELETE exercises/<id>/images/<image id>/` for images of your own exercises
+  (#48).
+- API: a workout's duration `estimate` (also nested in programs and
+  `up-next/`) and `sessions/<id>/remaining-estimate/` for a workout in
+  progress (#50).
+- API: `display_name` on `up-next/`'s program, stretch sessions, a coaching
+  client's measurements and assigned programs, and `coaching/shared/` plans
+  (#47).
+
+### Fixed
+- API: a coaching client's `recent_records[].exercise_display_name` follows
+  `Accept-Language` instead of the trainer's profile language (#47).
+- Two nutrition error messages ("Set up your nutrition profile first.", "Add
+  your height to your profile first.") were missing from the translations.
+
 ## [1.31.0] - 2026-11-04
 
 ### Added

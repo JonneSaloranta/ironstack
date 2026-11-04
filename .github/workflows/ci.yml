@@ -155,8 +155,17 @@ jobs:
               continue
             fi
             echo "Comparing $schema with $base"
+            # Breaking changes accepted on purpose (docs/API.md
+            # "Versioning"): docs/api/oasdiff-ignore-<version>.txt.
+            version="${name#openapi-}"
+            ignore="docs/api/oasdiff-ignore-${version%.yaml}.txt"
+            ignore_args=()
+            if [ -f "$ignore" ]; then
+              ignore_args=(--err-ignore "/work/$ignore")
+            fi
             docker run --rm -v "$RUNNER_TEMP/base:/base:ro" -v "$PWD:/work:ro" \
-              "$OASDIFF_IMAGE" breaking "/base/$name" "/work/$schema" --fail-on ERR
+              "$OASDIFF_IMAGE" breaking "/base/$name" "/work/$schema" --fail-on ERR \
+              "${ignore_args[@]}"
           done
 
   # Real-browser accessibility checks (apps/core/test_accessibility.py,

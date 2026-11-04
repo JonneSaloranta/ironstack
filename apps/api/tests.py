@@ -1,5 +1,5 @@
 import io
-from datetime import timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -9,7 +9,7 @@ from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from apps.exercises.models import Exercise
-from apps.programs.models import Program, Workout
+from apps.programs.models import ExercisePrescription, Program, Workout
 from apps.records import services as records_services
 from apps.records.models import PersonalRecord, PRType
 from apps.workouts import services as workout_services
@@ -348,6 +348,34 @@ class ProfileEndpointTests(APITestCase):
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.email, "alice@example.com")
         self.assertEqual(response.data["email"], "alice@example.com")
+
+    def test_patch_updates_personal_trainer_settings(self):
+        """Issue #51 - becoming a trainer from a client; turning it off
+        keeps existing coaching relationships, like on the web."""
+        from apps.coaching.models import CoachingRelationship
+
+        response = self.client.get(reverse("api:profile"), **self._auth())
+        self.assertIs(response.data["is_personal_trainer"], False)
+        self.assertIn("accepting_new_clients", response.data)
+        response = self.client.patch(
+            reverse("api:profile"),
+            {"is_personal_trainer": True, "accepting_new_clients": False},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.alice.refresh_from_db()
+        self.assertTrue(self.alice.is_personal_trainer)
+        self.assertFalse(self.alice.accepting_new_clients)
+
+        client = User.objects.create_user(username="carl", password="s3cret-pass")
+        relationship = CoachingRelationship.objects.create(coach=self.alice, coachee=client)
+        response = self.client.patch(
+            reverse("api:profile"), {"is_personal_trainer": False}, format="json", **self._auth()
+        )
+        self.assertEqual(response.status_code, 200)
+        relationship.refresh_from_db()
+        self.assertTrue(relationship.is_active)
 
     def test_patch_updates_social_privacy_settings(self):
         response = self.client.patch(
@@ -895,7 +923,9 @@ class UpNextEndpointTests(APITestCase):
 
         self.assertEqual(response.data["program"]["id"], self.program.pk)
         self.assertEqual(response.data["program"]["name"], "Rotation")
+        self.assertEqual(response.data["program"]["display_name"], "Rotation")
         self.assertEqual(response.data["workout"]["id"], self.day_b.pk)
+        self.assertIn("estimate", response.data["workout"])
         self.assertEqual(response.data["workout"]["name"], "B")
         self.assertIsNone(response.data["day"])
 
@@ -909,6 +939,64 @@ class UpNextEndpointTests(APITestCase):
             }
         )
         self.assertEqual(response.status_code, 403)
+
+
+class DurationEstimateTests(APITestCase):
+    """Issue #50 - how long a workout takes and what's left of one."""
+
+    def setUp(self):
+        from apps.workouts import set_timing
+
+        set_timing.clear_cache()
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, raw_secret = _create_key(self.alice)
+        self.auth = {"HTTP_AUTHORIZATION": f"Bearer {raw_secret}"}
+        self.program = Program.objects.create(owner=self.alice, name="Plan")
+        self.workout = Workout.objects.create(program=self.program, name="A", order=0)
+        self.exercise = Exercise.objects.create(name="API Estimate Squat", owner=None)
+        ExercisePrescription.objects.create(
+            workout=self.workout, exercise=self.exercise, set_count=3, min_reps=8, max_reps=10
+        )
+
+    def test_workout_estimate_matches_the_web(self):
+        from apps.workouts import set_timing
+
+        expected = set_timing.estimate_workout(self.workout)
+        response = self.client.get(
+            reverse("api:workout-detail", args=[self.workout.pk]), **self.auth
+        )
+        estimate = response.data["estimate"]
+        self.assertEqual(estimate["low"], round(expected.low))
+        self.assertEqual(estimate["high"], round(expected.high))
+        self.assertIs(estimate["rough"], expected.rough)
+        nested = self.client.get(
+            reverse("api:program-detail", args=[self.program.pk]), **self.auth
+        ).data["workouts"][0]["estimate"]
+        self.assertEqual(nested, estimate)
+
+    def test_empty_workout_has_no_estimate(self):
+        empty = Workout.objects.create(program=self.program, name="B", order=1)
+        response = self.client.get(reverse("api:workout-detail", args=[empty.pk]), **self.auth)
+        self.assertIsNone(response.data["estimate"])
+
+    def test_remaining_estimate(self):
+        session = workout_services.start_session(self.alice, workout=self.workout)
+        url = reverse("api:session-remaining-estimate", args=[session.pk])
+        before = self.client.get(url, **self.auth).data["estimate"]
+        self.assertGreater(before["high"], 0)
+        performed = session.performed_exercises.get()
+        for _ in range(3):
+            workout_services.log_set(performed, weight=Decimal("100"), reps=8)
+        self.assertIsNone(self.client.get(url, **self.auth).data["estimate"])
+
+        workout_services.complete_session(session)
+        self.assertIsNone(self.client.get(url, **self.auth).data["estimate"])
+
+    def test_remaining_estimate_of_another_users_session_is_404(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        session = workout_services.start_session(bob, workout=None)
+        url = reverse("api:session-remaining-estimate", args=[session.pk])
+        self.assertEqual(self.client.get(url, **self.auth).status_code, 404)
 
 
 class IdempotencyKeyTests(APITestCase):
@@ -1307,6 +1395,99 @@ class OwnedResourceViewSetTests(APITestCase):
         mine.refresh_from_db()
         self.assertFalse(mine.active)
         self.assertTrue(Exercise.objects.filter(pk=mine.pk).exists())  # never hard-deleted
+
+
+class ExerciseImageManagementTests(APITestCase):
+    """Issue #48 - adding and removing images of your own exercises,
+    through the web's ExerciseImageForm rules."""
+
+    def setUp(self):
+        from apps.exercises.models import ExerciseImageSettings
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.mine = Exercise.objects.create(name="My Move", owner=self.alice)
+        self.settings = ExerciseImageSettings.load()
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def _png(self):
+        import io
+
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from PIL import Image
+
+        buffer = io.BytesIO()
+        Image.new("RGB", (10, 10), color="red").save(buffer, format="PNG")
+        return SimpleUploadedFile("photo.png", buffer.getvalue(), content_type="image/png")
+
+    def _upload(self, exercise, **data):
+        return self.client.post(
+            reverse("api:exercise-add-image", args=[exercise.pk]),
+            {"image": self._png(), **data},
+            format="multipart",
+            **self._auth(),
+        )
+
+    def test_add_and_delete_an_image(self):
+        from apps.exercises.models import ExerciseImage
+
+        response = self._upload(self.mine, caption="Start", order=2)
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["caption"], "Start")
+        self.assertEqual(response.data["order"], 2)
+        image = ExerciseImage.objects.get(exercise=self.mine)
+        storage, name = image.image.storage, image.image.name
+        self.assertTrue(storage.exists(name))
+        detail = self.client.get(
+            reverse("api:exercise-detail", args=[self.mine.pk]), **self._auth()
+        )
+        self.assertEqual(len(detail.data["images"]), 1)
+
+        response = self.client.delete(
+            reverse("api:exercise-delete-image", args=[self.mine.pk, image.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(ExerciseImage.objects.filter(exercise=self.mine).exists())
+        self.assertFalse(storage.exists(name))
+
+    def test_limit_and_bad_file_are_400(self):
+        self.settings.max_images_per_exercise = 1
+        self.settings.save()
+        self.assertEqual(self._upload(self.mine).status_code, 201)
+        response = self._upload(self.mine)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("non_field_errors", response.data)
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        response = self.client.post(
+            reverse("api:exercise-add-image", args=[self.mine.pk]),
+            {"image": SimpleUploadedFile("x.png", b"not an image", content_type="image/png")},
+            format="multipart",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_built_in_and_other_users_exercises(self):
+        from apps.exercises.models import ExerciseImage
+
+        built_in = Exercise.objects.filter(owner__isnull=True).first()
+        self.assertEqual(self._upload(built_in).status_code, 403)
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        bobs = Exercise.objects.create(name="Bob's lift", owner=bob)
+        self.assertEqual(self._upload(bobs).status_code, 404)
+        image = ExerciseImage.objects.create(exercise=bobs, image=self._png())
+        response = self.client.delete(
+            reverse("api:exercise-delete-image", args=[bobs.pk, image.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 404)
+        # Another exercise's image through your own exercise's URL.
+        response = self.client.delete(
+            reverse("api:exercise-delete-image", args=[self.mine.pk, image.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(ExerciseImage.objects.filter(pk=image.pk).exists())
 
 
 class ExerciseInstructionsAndImagesFieldsTests(APITestCase):
@@ -2416,6 +2597,21 @@ class StretchingEndpointTests(APITestCase):
         )
         self.assertEqual(len(routine.data["items"]), self.system_routine.items.count())
 
+    def test_session_name_has_a_display_twin(self):
+        """Issue #47 - a session snapshots a built-in routine's name."""
+        from apps.stretching.models import StretchSession
+
+        session = StretchSession.objects.create(
+            user=self.alice, routine=self.system_routine, name="Full Body Stretch"
+        )
+        response = self.client.get(
+            reverse("api:stretch-session-detail", args=[session.pk]),
+            HTTP_ACCEPT_LANGUAGE="fi",
+            **self._auth(),
+        )
+        self.assertEqual(response.data["name"], "Full Body Stretch")
+        self.assertEqual(response.data["display_name"], "Koko kehon venyttely")
+
     def test_copying_a_routine(self):
         # Issue #32: one atomic request instead of rebuilding item by item.
         response = self.client.post(
@@ -3245,6 +3441,28 @@ class TrainingAnalyticsEndpointTests(APITestCase):
         self.assertEqual(best["reps"], 3)
         self.assertGreater(Decimal(best["estimated_one_rep_max"]), Decimal("110"))
 
+    def test_summary_this_week(self):
+        """Issue #49 - Monday through today, in the user's time zone."""
+        response = self._get("api:analytics-summary", range="week")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["range"]["range"], "week")
+        self.assertEqual(response.data["session_count"], 1)
+        start = date.fromisoformat(response.data["range"]["start"])
+        self.assertEqual(start.weekday(), 0)
+
+    def test_week_starts_on_the_users_own_monday(self):
+        from datetime import UTC, datetime
+        from unittest import mock
+
+        self.alice.timezone = "Europe/Helsinki"
+        self.alice.save(update_fields=["timezone"])
+        # Sunday 23:30 in UTC is already Monday 01:30 in Helsinki.
+        sunday_night = datetime(2026, 11, 1, 23, 30, tzinfo=UTC)
+        with mock.patch("django.utils.timezone.now", return_value=sunday_night):
+            response = self._get("api:analytics-volume", range="week")
+        self.assertEqual(response.data["range"]["start"], "2026-11-02")
+        self.assertEqual(response.data["range"]["end"], "2026-11-02")
+
     def test_hidden_exercise_is_404(self):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
         private = Exercise.objects.create(name="Bob's lift", owner=bob)
@@ -3770,6 +3988,51 @@ class CoachingEndpointTests(APITestCase):
         self.assertEqual(applied.status_code, 200)
         self.assertEqual(
             sorted(w["name"] for w in applied.data["workouts"]), ["Day A", "Day B"]
+        )
+
+    def test_display_names_follow_the_request_language(self):
+        """Issue #47 - client detail and shared plans translate built-in
+        names in the request's language, not the coach's profile one."""
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+        from apps.programs import services as program_services
+
+        self._start_coaching()
+        template = Program.objects.get(owner=None, name="5x5 Strength (A/B)")
+        program = program_services.copy_program(template, owner=self.coach)
+        self.client.put(
+            reverse("api:coaching-program-clients", args=[program.pk]),
+            {"clients": [self.client_user.pk]}, format="json", **self.as_coach,
+        )
+        shared = self.client.get(
+            reverse("api:coaching-shared"), HTTP_ACCEPT_LANGUAGE="fi", **self.as_client
+        ).data["programs"][0]
+        self.assertEqual(shared["name"], "5x5 Strength (A/B)")
+        self.assertEqual(shared["display_name"], "5x5-voima (A/B)")
+        self.client.post(
+            reverse("api:coaching-shared-program-import", args=[program.pk]), **self.as_client
+        )
+        BodyMeasurement.objects.create(
+            user=self.client_user,
+            measurement_type=MeasurementType.objects.get(owner=None, name="Body weight"),
+            value=Decimal("80"),
+        )
+        bench = Exercise.objects.get(owner=None, name="Barbell Bench Press")
+        session = workout_services.start_session(self.client_user, workout=None)
+        performed = workout_services.add_performed_exercise(session, bench)
+        exercise_set = workout_services.log_set(performed, weight=Decimal("80"), reps=5)
+        workout_services.complete_session(session)
+        records_services.check_and_record_prs(exercise_set)
+
+        detail = self.client.get(
+            reverse("api:coaching-client", args=["client"]),
+            HTTP_ACCEPT_LANGUAGE="fi",
+            **self.as_coach,
+        ).data
+        weight = next(m for m in detail["measurements"] if m["name"] == "Body weight")
+        self.assertEqual(weight["display_name"], "Kehon paino")
+        self.assertEqual(detail["assigned_programs"][0]["display_name"], "5x5-voima (A/B)")
+        self.assertEqual(
+            detail["recent_records"][0]["exercise_display_name"], "Penkkipunnerrus tangolla"
         )
 
     def test_import_needs_sharing(self):

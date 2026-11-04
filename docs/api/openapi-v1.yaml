@@ -450,7 +450,9 @@ paths:
           - 6m
           - 7d
           - all
-        description: Default 30d.
+          - week
+        description: Default 30d. `week` is Monday of the current ISO week through
+          today, in the user's time zone.
       tags:
       - analytics
       security:
@@ -481,7 +483,9 @@ paths:
           - 6m
           - 7d
           - all
-        description: Default 30d.
+          - week
+        description: Default 30d. `week` is Monday of the current ISO week through
+          today, in the user's time zone.
       tags:
       - analytics
       security:
@@ -519,10 +523,25 @@ paths:
     get:
       operationId: analytics_summary_retrieve
       description: |-
-        `?range=7d|30d|all` (default 30d, matching
+        `?range=week|7d|30d|3m|6m|1y|all` (default 30d, matching
         apps.analytics.views.AnalyticsDashboardView) - total sessions/
         duration/volume in canonical kg (see apps.api.serializers' own
         docstring for why this API never converts to a display unit).
+      parameters:
+      - in: query
+        name: range
+        schema:
+          type: string
+          enum:
+          - 1y
+          - 30d
+          - 3m
+          - 6m
+          - 7d
+          - all
+          - week
+        description: Default 30d. `week` is Monday of the current ISO week through
+          today, in the user's time zone.
       tags:
       - analytics
       security:
@@ -532,7 +551,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TrainingSummary'
+                $ref: '#/components/schemas/TrainingSummaryResponse'
           description: ''
   /api/v1/analytics/volume/:
     get:
@@ -553,7 +572,9 @@ paths:
           - 6m
           - 7d
           - all
-        description: Default 30d.
+          - week
+        description: Default 30d. `week` is Monday of the current ISO week through
+          today, in the user's time zone.
       tags:
       - analytics
       security:
@@ -776,7 +797,7 @@ paths:
       operationId: assistant_proposals_accept_create
       description: |-
         `POST assistant/proposals/<id>/accept/` - creates the proposed diet
-        plan or program, inactive, for the user to review (201). 409 with
+        plan or program (inactive) or recipe, for the user to review (201). 409 with
         the reason when it can't be created as proposed anymore (a food
         deleted since, say).
       parameters:
@@ -2257,6 +2278,61 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - exercises
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/exercises/{id}/images/:
+    post:
+      operationId: exercises_images_create
+      description: |-
+        `POST exercises/<id>/images/` (multipart: `image`, optional
+        `caption`, `order`) - issue #48. Through the web's own
+        ExerciseImageForm, so the size limit, the image checks and
+        `max_images_per_exercise` apply; 400 with its messages otherwise.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - exercises
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ExerciseImageUploadRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExerciseImage'
+          description: ''
+  /api/v1/exercises/{id}/images/{image_pk}/:
+    delete:
+      operationId: exercises_images_destroy
+      description: |-
+        `DELETE exercises/<id>/images/<image id>/` - removes the file too,
+        like the web's exercise_image_delete (issue #48).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: image_pk
         schema:
           type: integer
         required: true
@@ -4702,6 +4778,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/CooldownSuggestion'
           description: ''
+  /api/v1/sessions/{id}/remaining-estimate/:
+    get:
+      operationId: sessions_remaining_estimate_retrieve
+      description: |-
+        What's left of a workout in progress (set_timing.
+        estimate_remaining, training mode's own figure - issue #50).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - sessions
+      security:
+      - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemainingEstimate'
+          description: ''
   /api/v1/sets/:
     get:
       operationId: sets_list
@@ -7132,6 +7231,9 @@ components:
           type: integer
         name:
           type: string
+        display_name:
+          type: string
+          readOnly: true
         client_copy:
           type: integer
         last_session_at:
@@ -7140,6 +7242,7 @@ components:
           nullable: true
       required:
       - client_copy
+      - display_name
       - last_session_at
       - name
       - program
@@ -7393,6 +7496,9 @@ components:
           type: integer
         name:
           type: string
+        display_name:
+          type: string
+          readOnly: true
         unit_kind:
           type: string
         latest_value:
@@ -7405,6 +7511,7 @@ components:
           format: date-time
           nullable: true
       required:
+      - display_name
       - latest_recorded_at
       - latest_value
       - measurement_type
@@ -8004,6 +8111,23 @@ components:
       - target_carbohydrate_grams
       - target_fat_grams
       - target_protein_grams
+    DurationEstimate:
+      type: object
+      description: |-
+        apps.workouts.set_timing.DurationEstimate - a range in seconds from
+        this instance's own logged set timings; `rough` when part of it falls
+        back to the default formula for lack of data (issue #50).
+      properties:
+        low:
+          type: integer
+        high:
+          type: integer
+        rough:
+          type: boolean
+      required:
+      - high
+      - low
+      - rough
     Equipment:
       type: object
       properties:
@@ -8141,6 +8265,25 @@ components:
           type: string
           maxLength: 200
         attribution:
+          type: string
+          maxLength: 200
+        order:
+          type: integer
+          maximum: 32767
+          minimum: 0
+      required:
+      - image
+    ExerciseImageUploadRequest:
+      type: object
+      description: |-
+        `POST exercises/<id>/images/` (multipart) - the file itself is
+        checked by apps.exercises.forms.ExerciseImageForm, like on the web.
+      properties:
+        image:
+          type: string
+          format: binary
+          writeOnly: true
+        caption:
           type: string
           maxLength: 200
         order:
@@ -10879,6 +11022,15 @@ components:
             when you haven't logged one in a while. Turn off to never see that reminder.
         tutorials_enabled:
           type: boolean
+        is_personal_trainer:
+          type: boolean
+          description: Lets you build gym programs and diet plans other users can
+            request you coach them on. Turning this off doesn't end any coaching relationship
+            you already have.
+        accepting_new_clients:
+          type: boolean
+          description: Off stops new coaching requests from reaching you. Existing
+            coaching relationships, and any request you already received, are unaffected.
     PatchedProgramRequest:
       type: object
       properties:
@@ -11372,6 +11524,15 @@ components:
           readOnly: true
         tutorials_enabled:
           type: boolean
+        is_personal_trainer:
+          type: boolean
+          description: Lets you build gym programs and diet plans other users can
+            request you coach them on. Turning this off doesn't end any coaching relationship
+            you already have.
+        accepting_new_clients:
+          type: boolean
+          description: Off stops new coaching requests from reaching you. Existing
+            coaching relationships, and any request you already received, are unaffected.
       required:
       - date_joined
       - email
@@ -11428,6 +11589,15 @@ components:
             when you haven't logged one in a while. Turn off to never see that reminder.
         tutorials_enabled:
           type: boolean
+        is_personal_trainer:
+          type: boolean
+          description: Lets you build gym programs and diet plans other users can
+            request you coach them on. Turning this off doesn't end any coaching relationship
+            you already have.
+        accepting_new_clients:
+          type: boolean
+          description: Off stops new coaching requests from reaching you. Existing
+            coaching relationships, and any request you already received, are unaffected.
     Program:
       type: object
       properties:
@@ -11543,11 +11713,11 @@ components:
           $ref: '#/components/schemas/Proposal'
         kind:
           type: string
-          description: diet_plan or program.
+          description: diet_plan, program or recipe.
         created_id:
           type: integer
-          description: The new, inactive diet plan or program - review it like any
-            other.
+          description: The new, inactive diet plan or program, or the new recipe -
+            review it like any other.
       required:
       - created_id
       - kind
@@ -11556,10 +11726,12 @@ components:
       enum:
       - diet_plan
       - program
+      - recipe
       type: string
       description: |-
         * `diet_plan` - Diet plan
         * `program` - Workout program
+        * `recipe` - Recipe
     ProposalStatusEnum:
       enum:
       - pending
@@ -11703,6 +11875,19 @@ components:
         * `estimated_1rm` - Estimated 1RM
         * `set_volume` - Set volume
         * `session_volume` - Session volume
+    RemainingEstimate:
+      type: object
+      description: |-
+        `sessions/<id>/remaining-estimate/` - what's left of a workout in
+        progress, like training mode on the web. Null when nothing is left
+        (or the workout isn't in progress).
+      properties:
+        estimate:
+          allOf:
+          - $ref: '#/components/schemas/DurationEstimate'
+          nullable: true
+      required:
+      - estimate
     RoutineItem:
       type: object
       properties:
@@ -11812,19 +11997,40 @@ components:
       - estimated_one_rep_max
       - reps
       - weight
+    SharedPlan:
+      type: object
+      description: |-
+        One shared program or diet plan. `display_name` translates a
+        coach's copy of a built-in template, like the web (issue #47).
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        display_name:
+          type: string
+          readOnly: true
+        coach:
+          type: integer
+        imported:
+          type: boolean
+      required:
+      - coach
+      - display_name
+      - id
+      - imported
+      - name
     SharedPlans:
       type: object
       properties:
         programs:
           type: array
           items:
-            type: object
-            additionalProperties: {}
+            $ref: '#/components/schemas/SharedPlan'
         diet_plans:
           type: array
           items:
-            type: object
-            additionalProperties: {}
+            $ref: '#/components/schemas/SharedPlan'
       required:
       - diet_plans
       - programs
@@ -12116,6 +12322,9 @@ components:
         name:
           type: string
           readOnly: true
+        display_name:
+          type: string
+          readOnly: true
         routine:
           type: integer
           nullable: true
@@ -12151,6 +12360,7 @@ components:
       required:
       - after_workout
       - completed_at
+      - display_name
       - duration
       - id
       - name
@@ -12305,6 +12515,29 @@ components:
       - session_count
       - total_duration_seconds
       - total_volume
+    TrainingSummaryResponse:
+      type: object
+      description: |-
+        `analytics/summary/` - the summary plus the range it covers (with
+        `?range=week`, `range.start` is the Monday used - issue #49).
+      properties:
+        session_count:
+          type: integer
+        total_duration_seconds:
+          type: number
+          format: double
+          readOnly: true
+        total_volume:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        range:
+          $ref: '#/components/schemas/AnalyticsRange'
+      required:
+      - range
+      - session_count
+      - total_duration_seconds
+      - total_volume
     Tutorial:
       type: object
       properties:
@@ -12398,10 +12631,14 @@ components:
         name:
           type: string
           maxLength: 100
+        display_name:
+          type: string
+          readOnly: true
         is_continuous:
           type: boolean
           title: Continuous
       required:
+      - display_name
       - id
       - name
     UserIdRequest:
@@ -12477,8 +12714,14 @@ components:
           items:
             $ref: '#/components/schemas/ExercisePrescription'
           readOnly: true
+        estimate:
+          allOf:
+          - $ref: '#/components/schemas/DurationEstimate'
+          nullable: true
+          readOnly: true
       required:
       - display_name
+      - estimate
       - id
       - name
       - prescriptions
