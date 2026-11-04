@@ -450,7 +450,9 @@ paths:
           - 6m
           - 7d
           - all
-        description: Default 30d.
+          - week
+        description: Default 30d. `week` is Monday of the current ISO week through
+          today, in the user's time zone.
       tags:
       - analytics
       security:
@@ -481,7 +483,9 @@ paths:
           - 6m
           - 7d
           - all
-        description: Default 30d.
+          - week
+        description: Default 30d. `week` is Monday of the current ISO week through
+          today, in the user's time zone.
       tags:
       - analytics
       security:
@@ -519,10 +523,25 @@ paths:
     get:
       operationId: analytics_summary_retrieve
       description: |-
-        `?range=7d|30d|all` (default 30d, matching
+        `?range=week|7d|30d|3m|6m|1y|all` (default 30d, matching
         apps.analytics.views.AnalyticsDashboardView) - total sessions/
         duration/volume in canonical kg (see apps.api.serializers' own
         docstring for why this API never converts to a display unit).
+      parameters:
+      - in: query
+        name: range
+        schema:
+          type: string
+          enum:
+          - 1y
+          - 30d
+          - 3m
+          - 6m
+          - 7d
+          - all
+          - week
+        description: Default 30d. `week` is Monday of the current ISO week through
+          today, in the user's time zone.
       tags:
       - analytics
       security:
@@ -532,7 +551,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TrainingSummary'
+                $ref: '#/components/schemas/TrainingSummaryResponse'
           description: ''
   /api/v1/analytics/volume/:
     get:
@@ -553,7 +572,9 @@ paths:
           - 6m
           - 7d
           - all
-        description: Default 30d.
+          - week
+        description: Default 30d. `week` is Monday of the current ISO week through
+          today, in the user's time zone.
       tags:
       - analytics
       security:
@@ -12331,6 +12352,29 @@ components:
           format: decimal
           pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
       required:
+      - session_count
+      - total_duration_seconds
+      - total_volume
+    TrainingSummaryResponse:
+      type: object
+      description: |-
+        `analytics/summary/` - the summary plus the range it covers (with
+        `?range=week`, `range.start` is the Monday used - issue #49).
+      properties:
+        session_count:
+          type: integer
+        total_duration_seconds:
+          type: number
+          format: double
+          readOnly: true
+        total_volume:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        range:
+          $ref: '#/components/schemas/AnalyticsRange'
+      required:
+      - range
       - session_count
       - total_duration_seconds
       - total_volume

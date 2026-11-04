@@ -1,5 +1,5 @@
 import io
-from datetime import timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -3272,6 +3272,28 @@ class TrainingAnalyticsEndpointTests(APITestCase):
         self.assertEqual(Decimal(best["weight"]), Decimal("110"))
         self.assertEqual(best["reps"], 3)
         self.assertGreater(Decimal(best["estimated_one_rep_max"]), Decimal("110"))
+
+    def test_summary_this_week(self):
+        """Issue #49 - Monday through today, in the user's time zone."""
+        response = self._get("api:analytics-summary", range="week")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["range"]["range"], "week")
+        self.assertEqual(response.data["session_count"], 1)
+        start = date.fromisoformat(response.data["range"]["start"])
+        self.assertEqual(start.weekday(), 0)
+
+    def test_week_starts_on_the_users_own_monday(self):
+        from datetime import UTC, datetime
+        from unittest import mock
+
+        self.alice.timezone = "Europe/Helsinki"
+        self.alice.save(update_fields=["timezone"])
+        # Sunday 23:30 in UTC is already Monday 01:30 in Helsinki.
+        sunday_night = datetime(2026, 11, 1, 23, 30, tzinfo=UTC)
+        with mock.patch("django.utils.timezone.now", return_value=sunday_night):
+            response = self._get("api:analytics-volume", range="week")
+        self.assertEqual(response.data["range"]["start"], "2026-11-02")
+        self.assertEqual(response.data["range"]["end"], "2026-11-02")
 
     def test_hidden_exercise_is_404(self):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")

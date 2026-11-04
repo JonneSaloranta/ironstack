@@ -25,6 +25,9 @@ narrated summary of the same version.
   serving; "Add recipe" puts it in the user's recipes. The recipe list has an
   "Ask the assistant" button.
 - API: `is_personal_trainer` and `accepting_new_clients` on `profile/` (#51).
+- API: `?range=week` (Monday through today) on `analytics/summary/` and the
+  other analytics endpoints, days counted in the user's own time zone;
+  `analytics/summary/` also returns the `range` it covers (#49).
 
 ### Fixed
 - Two nutrition error messages ("Set up your nutrition profile first.", "Add

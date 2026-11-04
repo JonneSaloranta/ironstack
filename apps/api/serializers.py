@@ -695,7 +695,8 @@ class TrainingSummarySerializer(serializers.Serializer):
     total_volume = serializers.DecimalField(max_digits=12, decimal_places=2)
 
     def get_total_duration_seconds(self, obj) -> float:
-        return obj.total_duration.total_seconds()
+        duration = obj["total_duration"] if isinstance(obj, dict) else obj.total_duration
+        return duration.total_seconds()
 
 
 class AnalyticsRangeSerializer(serializers.Serializer):
@@ -704,6 +705,13 @@ class AnalyticsRangeSerializer(serializers.Serializer):
     range = serializers.CharField(source="key")
     start = serializers.DateField(allow_null=True)
     end = serializers.DateField()
+
+
+class TrainingSummaryResponseSerializer(TrainingSummarySerializer):
+    """`analytics/summary/` - the summary plus the range it covers (with
+    `?range=week`, `range.start` is the Monday used - issue #49)."""
+
+    range = AnalyticsRangeSerializer()
 
 
 class WeeklyVolumeSerializer(serializers.Serializer):

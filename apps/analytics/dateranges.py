@@ -23,6 +23,11 @@ _PRESET_DAYS = {"7d": 7, "30d": 30, "3m": 90, "6m": 182, "1y": 365}
 
 DEFAULT_RANGE = "30d"
 
+#: Monday of the current ISO week through today - the dashboard's "this
+#: week" summary. Not in RANGE_CHOICES (the Analytics page's picker), but
+#: accepted wherever a key is (the API's `?range=week`, issue #49).
+WEEK = "week"
+
 
 @dataclass(frozen=True)
 class DateRange:
@@ -40,6 +45,11 @@ def resolve(key: str | None, *, start: date | None = None, end: date | None = No
 
     if start is not None:
         return DateRange(key="custom", start=start, end=resolved_end)
+
+    if key == WEEK:
+        return DateRange(
+            key=WEEK, start=resolved_end - timedelta(days=resolved_end.weekday()), end=resolved_end
+        )
 
     if key in _PRESET_DAYS:
         return DateRange(

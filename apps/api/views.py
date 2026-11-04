@@ -9,6 +9,7 @@ CLAUDE.md, business logic belongs in services, and a DRF view is exactly
 as much a "view" as a Django one in that sense.
 """
 
+import zoneinfo
 from contextlib import nullcontext
 from datetime import datetime, time
 from decimal import Decimal
@@ -110,7 +111,7 @@ from .serializers import (
     StretchSessionSerializer,
     StretchSessionStartSerializer,
     SuggestionSerializer,
-    TrainingSummarySerializer,
+    TrainingSummaryResponseSerializer,
     UpNextSerializer,
     VolumeAnalyticsSerializer,
     WorkoutSerializer,
@@ -751,8 +752,42 @@ class UpNextView(APIView):
         return Response(UpNextSerializer(data, context={"request": request}).data)
 
 
-class TrainingSummaryView(APIView):
-    """`?range=7d|30d|all` (default 30d, matching
+_RANGE_PARAMETER = OpenApiParameter(
+    "range",
+    enum=["week", "7d", "30d", "3m", "6m", "1y", "all"],
+    description=(
+        "Default 30d. `week` is Monday of the current ISO week through today, in the "
+        "user's time zone."
+    ),
+)
+
+
+class UserTimezoneMixin:
+    """Runs the view in the user's own time zone, as the web does: an API
+    key's request never passes through UserTimezoneMiddleware with its
+    user (DRF authenticates later), so `timezone.localdate()` and date
+    lookups would otherwise use the server's zone. That middleware's
+    `timezone.deactivate()` still resets it after the response. Only for
+    views whose response has dates, not datetimes (those stay UTC)."""
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        try:
+            timezone.activate(zoneinfo.ZoneInfo(request.user.timezone))
+        except (ValueError, zoneinfo.ZoneInfoNotFoundError):
+            # Empty, or a stale/hand-edited zone name: the server's, like the web.
+            pass
+
+
+def _analytics_range(request):
+    """`?range=` (default 30d) as a DateRange ending today - in the user's
+    time zone under UserTimezoneMixin, so `week` (issue #49) starts on the
+    same Monday as the web dashboard's "this week"."""
+    return dateranges.resolve(request.query_params.get("range", "30d"))
+
+
+class TrainingSummaryView(UserTimezoneMixin, APIView):
+    """`?range=week|7d|30d|3m|6m|1y|all` (default 30d, matching
     apps.analytics.views.AnalyticsDashboardView) - total sessions/
     duration/volume in canonical kg (see apps.api.serializers' own
     docstring for why this API never converts to a display unit)."""
@@ -764,19 +799,16 @@ class TrainingSummaryView(APIView):
     # its own (docs/API.md "Interactive docs") - without this it drops
     # the operation from the generated schema/Swagger UI entirely
     # rather than guessing wrong.
-    @extend_schema(responses=TrainingSummarySerializer)
+    @extend_schema(responses=TrainingSummaryResponseSerializer, parameters=[_RANGE_PARAMETER])
     def get(self, request):
-        date_range = dateranges.resolve(request.query_params.get("range", "30d"))
+        date_range = _analytics_range(request)
         summary = analytics_services.training_summary_canonical(request.user, date_range)
-        return Response(TrainingSummarySerializer(summary).data)
+        return Response(
+            TrainingSummaryResponseSerializer({**vars(summary), "range": date_range}).data
+        )
 
 
-_RANGE_PARAMETER = OpenApiParameter(
-    "range", enum=["7d", "30d", "3m", "6m", "1y", "all"], description="Default 30d."
-)
-
-
-class VolumeAnalyticsView(APIView):
+class VolumeAnalyticsView(UserTimezoneMixin, APIView):
     """`analytics/volume/?range=` - training volume per ISO week (and
     `analytics/muscle-groups/` per primary muscle group), the web
     Analytics page's bar charts as data (issue #35). Canonical kg."""
@@ -786,7 +818,7 @@ class VolumeAnalyticsView(APIView):
     # See TrainingSummaryView's own comment for why this is here.
     @extend_schema(responses=VolumeAnalyticsSerializer, parameters=[_RANGE_PARAMETER])
     def get(self, request):
-        date_range = dateranges.resolve(request.query_params.get("range", "30d"))
+        date_range = _analytics_range(request)
         weeks = [
             {"week_start": week, "volume": volume}
             for week, volume in analytics_services.weekly_volume(request.user, date_range)
@@ -794,7 +826,7 @@ class VolumeAnalyticsView(APIView):
         return Response(VolumeAnalyticsSerializer({"range": date_range, "weeks": weeks}).data)
 
 
-class MuscleGroupAnalyticsView(APIView):
+class MuscleGroupAnalyticsView(UserTimezoneMixin, APIView):
     """`analytics/muscle-groups/?range=` - see VolumeAnalyticsView. A
     set counts in full toward each of its exercise's primary muscle
     groups, as on the web."""
@@ -803,7 +835,7 @@ class MuscleGroupAnalyticsView(APIView):
 
     @extend_schema(responses=MuscleGroupAnalyticsSerializer, parameters=[_RANGE_PARAMETER])
     def get(self, request):
-        date_range = dateranges.resolve(request.query_params.get("range", "30d"))
+        date_range = _analytics_range(request)
         rows = [
             {"muscle_group": muscle_group, "volume": volume}
             for muscle_group, volume in analytics_services.muscle_group_volume(
@@ -817,7 +849,7 @@ class MuscleGroupAnalyticsView(APIView):
         )
 
 
-class ExerciseAnalyticsView(APIView):
+class ExerciseAnalyticsView(UserTimezoneMixin, APIView):
     """`analytics/exercises/<id>/?range=` - one exercise's progress:
     sessions and volume in range, and its best set per training day by
     estimated 1RM, the web's strength trend (issue #35). Canonical kg;
@@ -830,7 +862,7 @@ class ExerciseAnalyticsView(APIView):
         exercise = get_object_or_404(
             exercise_services.visible_to(request.user, include_inactive=True), pk=pk
         )
-        date_range = dateranges.resolve(request.query_params.get("range", "30d"))
+        date_range = _analytics_range(request)
         summary = analytics_services.exercise_summary_canonical(request.user, exercise, date_range)
         bests = analytics_services.exercise_session_bests(request.user, exercise, date_range)
         return Response(
