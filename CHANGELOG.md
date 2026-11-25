@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.33.0] - 2026-11-25
+
 ### Added
 - Nutrition: a "Food language" setting on the profile shows Open Food Facts
   food names and ingredient lists in a chosen language, independent of the
