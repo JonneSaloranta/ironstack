@@ -43,7 +43,7 @@ only #most-used-foods, so the diary page's Alpine mealSlot survives paging.
         <input type="hidden" name="date" value="{{ date }}">
       {% endif %}
       <div>
-        <strong><a class="inline-item-link" href="{% url 'nutrition:food-detail' usage.food.pk %}">{{ usage.food.name }}</a></strong>
+        <strong><a class="inline-item-link" href="{% url 'nutrition:food-detail' usage.food.pk %}">{{ usage.food.display_name }}</a></strong>
         <p class="text-muted">{{ usage.quantity }} {{ usage.food.serving_unit }}</p>
       </div>
       <div class="row">

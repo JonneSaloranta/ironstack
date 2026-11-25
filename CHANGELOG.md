@@ -18,6 +18,32 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.33.0] - 2026-11-25
+
+### Added
+- API: history from an offline client keeps its real times (#52). Workout
+  sessions take `started_at`, `ended_at` (on create or when ending one) and
+  `snapshot: false` to skip copying the plan; performed exercises take the
+  plan's targets of the time; stretch sessions take their name, times, status
+  and the stretches done; nutrition goals take `started_at`. A set dated
+  before others of the same exercise rebuilds that exercise's records in time
+  order, so the record history is the one that happened.
+- Nutrition: a "Food language" setting on the profile shows Open Food Facts
+  food names and ingredient lists in a chosen language, independent of the
+  app's language. Each imported food stores its names and ingredients in every
+  supported language Open Food Facts has, so users with different languages
+  share the same food; search finds a food by any of its names. The API adds
+  `display_name`/`name_translations` on foods, `food_display_name` on diary
+  entries and shopping-list items, and `food_language` on the profile.
+
+### Fixed
+- Nutrition: an Open Food Facts product whose main-language name is blank
+  (but which has a name in another language) is no longer silently missing
+  from barcode lookup, search and category browsing.
+- Nutrition: scanning a barcode already in the food library no longer spends
+  an Open Food Facts request on a result that was then hidden; a stale food is
+  refreshed instead.
+
 ## [1.32.0] - 2026-11-04
 
 ### Added

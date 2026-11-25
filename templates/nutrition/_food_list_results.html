@@ -35,7 +35,7 @@ already does.
                 <div class="food-thumb food-thumb-placeholder" aria-hidden="true"></div>
               {% endif %}
             </td>
-            <td class="cell-text"><a class="inline-item-link" href="{% url 'nutrition:food-detail' food.pk %}">{{ food.name }}</a>{% if food.brand %} <span class="text-muted">({{ food.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" %}</td>
+            <td class="cell-text"><a class="inline-item-link" href="{% url 'nutrition:food-detail' food.pk %}">{{ food.display_name }}</a>{% if food.brand %} <span class="text-muted">({{ food.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" %}</td>
             <td class="cell-number stat-figure">{{ food.calories }} kcal<br><span class="text-muted">/ {{ food.serving_size|nutrient_amount }} {{ food.serving_unit }}</span></td>
           </tr>
         {% endfor %}

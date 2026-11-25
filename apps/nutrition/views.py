@@ -13,7 +13,9 @@ from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Max, Prefetch
+from django.db.models import CharField, Max, Prefetch
+from django.db.models.fields.json import KeyTextTransform
+from django.db.models.functions import Coalesce
 from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -29,7 +31,7 @@ from apps.core.forms import ExportImportUploadForm
 from apps.measurements.models import BodyMeasurement, MeasurementType
 from apps.programs.models import Weekday as ProgramsWeekday
 
-from . import diet_builder, energy, nutrition_label, services
+from . import diet_builder, energy, food_language, nutrition_label, services
 from .forms import (
     DEFAULT_RATES_JSON_SAFE,
     ActivityInputsForm,
@@ -462,7 +464,7 @@ class FoodListView(LoginRequiredMixin, ListView):
     # calorie count - still land in a stable, predictable order
     # instead of whatever order Postgres happens to return them in.
     SORT_FIELDS = {
-        "name": "name",
+        "name": "display_name_sort",
         "created": "created_at",
         "category": "categories",
         "calories": "calories",
@@ -475,19 +477,31 @@ class FoodListView(LoginRequiredMixin, ListView):
 
         from .models import Food
 
-        qs = Food.objects.filter(Q(owner=self.request.user) | Q(owner__isnull=True), active=True)
+        qs = Food.objects.filter(
+            Q(owner=self.request.user) | Q(owner__isnull=True), active=True
+        ).annotate(
+            # The name as shown (Food.display_name), so "Name" sorts
+            # by what the user actually reads.
+            display_name_sort=Coalesce(
+                KeyTextTransform(food_language.get_food_language(), "name_translations"),
+                "name",
+                output_field=CharField(),
+            )
+        )
         query = self.request.GET.get("q", "").strip()
         if query:
-            qs = qs.filter(name__icontains=query)
+            qs = qs.filter(services.food_name_filter(query))
         category = self.request.GET.get("category", "").strip()
         if category:
             qs = qs.filter(categories__icontains=category)
 
         sort = self.request.GET.get("sort", self.DEFAULT_SORT)
-        field = self.SORT_FIELDS.get(sort, "name")
+        field = self.SORT_FIELDS.get(sort, "display_name_sort")
         if self.request.GET.get("dir", self.DEFAULT_DIR) == "desc":
             field = f"-{field}"
-        return qs.order_by(field) if sort == "name" else qs.order_by(field, "name")
+        if sort == "name":
+            return qs.order_by(field)
+        return qs.order_by(field, "display_name_sort")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -15,7 +15,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
-from . import nutrition_label, off_http
+from . import food_language, nutrition_label, off_http
 from .off_http import OffRateLimited, OffRequestError  # noqa: F401 (re-exported)
 
 # Overridable (settings.OFF_API_BASE / OFF_SEARCH_BASE) so dev and tests
@@ -34,7 +34,18 @@ PRODUCT_FIELDS = (
     "code,product_name,generic_name,brands,nutriments,nutriscore_grade,"
     "nova_group,image_front_url,image_front_thumb_url,image_url,"
     "image_thumb_url,categories,quantity,ingredients_text,labels,"
-    "allergens,product_quantity_unit"
+    "allergens,product_quantity_unit,"
+    # The plain fields above are only the product's *main* language,
+    # which OFF often leaves blank while other languages are filled in
+    # (e.g. a Swedish product whose main language is set to French).
+    # Every language the app supports is fetched in this one request and
+    # stored on the Food (`name_translations`/`ingredients_translations`),
+    # so a user with another food language needs no second lookup.
+    + ",".join(
+        f"{field}_{code}"
+        for field in ("product_name", "generic_name", "ingredients_text")
+        for code in food_language.LANGUAGE_CODES
+    )
 )
 SEARCH_PAGE_SIZE = 20
 # A repeated search costs nothing: OFF asks that one API call map to
@@ -178,6 +189,33 @@ def _first_brand(brands):
     return (brands or "").split(",")[0].strip()
 
 
+def _translations(raw, *fields):
+    """`{lang: text}` for every supported language where one of
+    `fields` (tried in order, e.g. product_name then generic_name) has
+    a non-blank `<field>_<lang>`."""
+    result = {}
+    for code in food_language.LANGUAGE_CODES:
+        for field in fields:
+            value = _text(raw.get(f"{field}_{code}")).strip()
+            if value:
+                result[code] = value
+                break
+    return result
+
+
+def _canonical(main, translations):
+    """The language-independent fallback: the main language's text,
+    else English, else the first supported language that has one.
+    Deliberately never the viewer's language, so a refresh triggered by
+    a user with another language can't rename a shared food."""
+    main = main.strip()
+    if main:
+        return main
+    if translations.get("en"):
+        return translations["en"]
+    return next(iter(translations.values()), "")
+
+
 def parse_product(raw):
     """Maps a raw OFF product dict onto this app's `Food` field names,
     always as "per 100g/100ml" (OFF's own universal unit) regardless
@@ -198,9 +236,14 @@ def parse_product(raw):
     if not barcode or None in (calories, protein, carbohydrate, fat):
         return None
 
-    name = raw.get("product_name") or raw.get("generic_name")
+    name_translations = _translations(raw, "product_name", "generic_name")
+    name = _canonical(
+        _text(raw.get("product_name")) or _text(raw.get("generic_name")),
+        name_translations,
+    )
     if not name:
         return None
+    ingredients_translations = _translations(raw, "ingredients_text")
 
     def _optional(key):
         value = nutriments.get(key)
@@ -209,6 +252,7 @@ def parse_product(raw):
     return {
         "off_id": barcode,
         "name": name,
+        "name_translations": name_translations,
         "brand": _first_brand(raw.get("brands")),
         "serving_size": PER_100_SERVING_SIZE,
         "serving_unit": "ml" if raw.get("product_quantity_unit") == "ml" else "g",
@@ -254,7 +298,10 @@ def parse_product(raw):
         "image_thumb_url": raw.get("image_front_thumb_url") or raw.get("image_thumb_url") or "",
         "categories": _text(raw.get("categories")),
         "quantity": _text(raw.get("quantity")),
-        "ingredients_text": _text(raw.get("ingredients_text")),
+        "ingredients_text": _canonical(
+            _text(raw.get("ingredients_text")), ingredients_translations
+        ),
+        "ingredients_translations": ingredients_translations,
         "labels": _text(raw.get("labels")),
         "allergens": _text(raw.get("allergens")),
     }

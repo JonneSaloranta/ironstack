@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{{ food.name }} - IronStack{% endblock %}
+{% block title %}{{ food.display_name }} - IronStack{% endblock %}
 {% block content %}
 {% url 'nutrition:dashboard' as c1u %}{% trans "Nutrition" as c1l %}
 {% url 'nutrition:food-list' as c2u %}{% trans "Foods" as c2l %}
-{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l c2_url=c2u c2_label=c2l current=food.name %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l c2_url=c2u c2_label=c2l current=food.display_name %}
 <div class="top-bar">
-  <h1 class="no-margin">{{ food.name }}</h1>
+  <h1 class="no-margin">{{ food.display_name }}</h1>
 </div>
 {% if food.brand %}<p class="text-muted">{{ food.brand }}</p>{% endif %}
 {% include "nutrition/_subnav.html" %}
@@ -41,7 +41,7 @@
   </table></div>
 </div>
 
-{% if food.quantity or food.ingredients_text or food.labels or food.allergens or food.categories or food.price_amount %}
+{% if food.quantity or food.display_ingredients_text or food.labels or food.allergens or food.categories or food.price_amount %}
   <div class="card">
     <h2 class="card-title">{% trans "Product information" %}</h2>
     <div class="table-wrap"><table class="set-table">
@@ -69,8 +69,8 @@
         {% endif %}
       </tbody>
     </table></div>
-    {% if food.ingredients_text %}
-      <p class="text-muted"><strong>{% trans "Ingredients" %}:</strong> {{ food.ingredients_text }}</p>
+    {% if food.display_ingredients_text %}
+      <p class="text-muted"><strong>{% trans "Ingredients" %}:</strong> {{ food.display_ingredients_text }}</p>
     {% endif %}
   </div>
 {% endif %}

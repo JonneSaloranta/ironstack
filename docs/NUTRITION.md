@@ -185,6 +185,7 @@ calories, protein_grams, carbohydrate_grams, fat_grams,
 fiber_grams / sugar_grams / saturated_fat_grams / sodium_mg (all
 optional/nullable), energy_kj / starch_grams / polyols_grams /
 salt_grams (optional/nullable), other_nutrients (JSON list), off_id (nullable, unique), off_synced_at (nullable),
+name_translations / ingredients_translations (JSON {lang: text}, OFF only),
 nutri_score (nullable, A-E), nova_group (nullable, 1-4),
 image_url (blank), image_thumb_url (blank), categories (blank), active
 ```
@@ -357,6 +358,28 @@ rejected for exactly that reason when discussed directly. Instead:
   worse `requests`). Parses a raw OFF product into this app's `Food`
   field shape; a product missing core macros entirely is skipped
   rather than creating a useless empty row.
+- **Food names in several languages.** OFF's plain `product_name`/
+  `ingredients_text` are only the product's *main* language, often
+  blank while other languages are filled in. Every lookup requests
+  `product_name_<lang>`/`generic_name_<lang>`/`ingredients_text_<lang>`
+  for all of the app's languages in the same single request, and the
+  `Food` stores each non-blank one (`name_translations`,
+  `ingredients_translations`) - one shared row carries every language,
+  so a user with another language never triggers a second lookup.
+  `name`/`ingredients_text` stay the canonical, language-independent
+  fallback (main language, else English, else the first supported
+  language), so a refresh triggered by someone with another language
+  never renames a shared food. What's *shown* is `Food.display_name`/
+  `display_ingredients_text`: the user's **food language**
+  (`User.food_language`, Profile → Preferences; blank follows the UI
+  language, `apps.nutrition.food_language`, activated per request by
+  `FoodLanguageMiddleware`) when OFF has it, else the canonical text.
+  Searching matches every stored language; the food list sorts by the
+  shown name. Foods imported before this existed had `off_synced_at`
+  cleared (migration 0029), so they pick up their translations the next
+  time they're scanned or imported - or at once via the admin's
+  "Refresh selected foods". A hand-entered food has no translations and
+  always shows its own name.
 - **A dedicated "Import from OpenFoodFacts" page**
   (`/nutrition/foods/browse/`, `FoodBrowseView`), asked for directly -
   search or browse by category to add a food straight to the shared

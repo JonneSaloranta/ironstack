@@ -6234,3 +6234,56 @@ because a regex `url_path` on the router isn't resolvable by drf-spectacular
 under namespace versioning. Workout `estimate`s (#50) come from the cached
 instance timing statistics, so nesting them in every program is cheap.
 
+
+## Food names in several languages
+
+Product 7392672004459 was "not found" although Open Food Facts had it: its
+main language is French and its French name blank, the name only existing in
+`product_name_fi`/`_en`/`_sv`, so `parse_product` dropped it silently. Lookups
+now request `product_name_<lang>`, `generic_name_<lang>` and
+`ingredients_text_<lang>` for every app language in the same single request,
+and `Food` stores the non-blank ones (`name_translations`,
+`ingredients_translations`), so one shared row serves every language. `name`
+stays a language-independent fallback (main language, else English, else the
+first one OFF has) so a refresh by someone with another language can't rename
+a shared food.
+
+What's shown is `Food.display_name`: the user's new `food_language` (profile;
+blank follows the UI language), activated per request by
+`apps.nutrition.middleware.FoodLanguageMiddleware` the way Django activates
+the UI language, so templates and services need no request passed around. The
+assistant activates it alongside the user's language; the API resolves it per
+request (`api_food_language`), since token auth runs after middleware. Search
+matches every stored language and the food list sorts by the shown name.
+Migration 0029 clears `off_synced_at` on existing OFF foods so they pick up
+translations on their next scan or import. A barcode already in the library no
+longer spends an OFF request on a result that would be hidden; a stale row is
+refreshed instead.
+
+## History transfer from the offline client (#52)
+
+The Sailfish client's offline mode transfers its history once through the
+API, so past workouts must keep their real times. `start_session` takes
+`started_at` and `snapshot=False` (link the workout, don't copy today's
+prescriptions), `complete_session`/`abandon_session` take `ended_at`,
+`add_performed_exercise` takes the targets of the time (progression's
+`_summarize` reads min/max reps and RIR from history), the stretching quick
+log takes its times, status and steps, and `change_goal` takes `started_at`
+(auto_now_add ignores a value on create, so it's written with an update; the
+target uses the body weight logged by then). The API exposes them through
+separate input serializers (`WorkoutSessionCreateSerializer`,
+`WorkoutSessionUpdateSerializer`, `PerformedExerciseCreateSerializer`, the
+extended `StretchSessionQuickLogSerializer`) so responses keep their fields
+read-only and required - oasdiff sees only additions.
+
+Sets and performed exercises still need a session in progress (a finished
+session is history), so a transfer creates the session in progress, adds to
+it and ends it with its real `ended_at`. The issue asked to skip
+`start_session_once`'s 10-second merge; the API never used it.
+
+Records: `check_and_record_prs` compares a set with every other set,
+whenever done, which is right for a set logged now but wrong for one dated
+before existing sets - a later record would survive next to an older,
+heavier set. `record_prs_for_logged_set` takes the `rebuild_records` replay
+for such a set instead. `NotInFutureDateTimeField` allows a minute of phone
+clock drift and stores it as now.

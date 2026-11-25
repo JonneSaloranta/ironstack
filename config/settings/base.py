@@ -121,6 +121,9 @@ MIDDLEWARE = [
     # just above - see apps.accounts.middleware.UserTimezoneMiddleware's
     # own docstring for what this fixes.
     "apps.accounts.middleware.UserTimezoneMiddleware",
+    # User.food_language - which language food names are shown in,
+    # independent of the UI language (apps.nutrition.food_language).
+    "apps.nutrition.middleware.FoodLanguageMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # Rewrites login redirects on HTMX requests into HX-Redirect - see

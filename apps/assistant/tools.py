@@ -504,7 +504,7 @@ def get_food_diary(ctx, args):
     for entry in entries:
         if entry.food_id:
             key = ("food", entry.food_id)
-            name = entry.food.name
+            name = entry.food.display_name
         elif entry.recipe_id:
             key = ("recipe", entry.recipe_id)
             name = gettext(entry.recipe.name)
@@ -770,7 +770,7 @@ def get_diet_plan(ctx, args):
         for item in meal.items.all():
             if item.food_id:
                 nutrition = nutrition_services.scale_nutrition(item.food, item.quantity)
-                label = f"{item.food.name} {_num(item.quantity)}{item.food.serving_unit}"
+                label = f"{item.food.display_name} {_num(item.quantity)}{item.food.serving_unit}"
             else:
                 nutrition = nutrition_services.recipe_per_serving_nutrition(item.recipe).scaled_by(
                     item.quantity
@@ -824,19 +824,20 @@ def search_exercises(ctx, args):
 
 
 def search_foods(ctx, args):
+    from apps.nutrition import services as nutrition_services
     from apps.nutrition.models import Food
 
     query = _str_arg(args, "query", required=True, max_length=100)
     foods = (
         Food.objects.filter(Q(owner=ctx.user) | Q(owner__isnull=True), active=True)
-        .filter(Q(name__icontains=query) | Q(brand__icontains=query))
+        .filter(nutrition_services.food_name_filter(query) | Q(brand__icontains=query))
         .order_by("owner_id", "name")[:20]
     )
     return {
         "foods": [
             {
                 "id": food.pk,
-                "name": food.name,
+                "name": food.display_name,
                 "brand": food.brand or None,
                 "per": f"{_num(food.serving_size)}{food.serving_unit}",
                 "calories": food.calories,
@@ -879,7 +880,7 @@ def search_recipes(ctx, args):
                 "fat_g_per_serving": _num(per_serving.fat_grams),
                 "meal_slots": _joined(gettext(slot.name) for slot in recipe.meal_slots.all()),
                 "ingredients": _joined(
-                    f"{ingredient.food.name} {_num(ingredient.quantity)}"
+                    f"{ingredient.food.display_name} {_num(ingredient.quantity)}"
                     f"{ingredient.food.serving_unit}"
                     for ingredient in recipe.ingredients.all()[:20]
                 ),

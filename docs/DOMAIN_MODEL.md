@@ -60,6 +60,12 @@ locales, see `ARCHITECTURE.md` "Internationalization"), applied by
 `unit_system`/`timezone`: it changes what language the interface reads
 in, not what units or "today" mean.
 
+`food_language` (blank by default) is which language Open Food Facts
+food names and ingredient lists are shown in, independent of
+`language` - blank follows `language`. Applied by
+`apps.nutrition.middleware.FoodLanguageMiddleware`; see `NUTRITION.md`
+"OpenFoodFacts integration".
+
 Also carries `theme` and `appearance` - two independent display
 preferences (`UI.md` "Theming") resolved into `templates/base.html`'s
 `<html>` tag rather than applied via middleware, since nothing else in

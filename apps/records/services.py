@@ -212,6 +212,34 @@ def check_and_record_prs(exercise_set):
     return new_records
 
 
+def record_prs_for_logged_set(exercise_set):
+    """`check_and_record_prs` for a set as it's logged - unless the set is
+    dated before other sets of the same exercise, as history transferred
+    from an offline client is (issue #52). Comparing such a set with the
+    later ones would write a record history that never happened (a later
+    record staying while the older set it no longer beats is skipped), so
+    the exercise's records are rebuilt in `performed_at` order instead -
+    the same replay that corrects an edited set. Returns the records this
+    set holds afterwards; a rebuilt one carries no `previous_value`."""
+    if exercise_set.is_warmup or exercise_set.is_failure:
+        return []
+    performed_exercise = exercise_set.performed_exercise
+    user = performed_exercise.session.user
+    exercise = performed_exercise.exercise
+    has_later_sets = (
+        eligible_sets(user, exercise)
+        .exclude(pk=exercise_set.pk)
+        .filter(performed_at__gt=exercise_set.performed_at)
+        .exists()
+    )
+    if not has_later_sets:
+        return check_and_record_prs(exercise_set)
+    rebuild_records(user, exercise)
+    return list(
+        PersonalRecord.objects.filter(user=user, exercise=exercise, source_set=exercise_set)
+    )
+
+
 def _upsert_session_volume_record(qs, user, exercise, exercise_set, session):
     """Session volume is a running total, not a single set's raw number -
     later sets in the *same* session update this row instead of each

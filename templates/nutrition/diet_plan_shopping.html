@@ -45,7 +45,7 @@
           <label class="shopping-item" :class="ticked.includes({{ row.food.pk }}) && 'is-ticked'">
             <input type="checkbox" :checked="ticked.includes({{ row.food.pk }})" @change="toggle({{ row.food.pk }})">
             <span class="shopping-item-name">
-              {{ row.food.name }}
+              {{ row.food.display_name }}
               {% if row.breakdown|length > 1 %}
                 <span class="text-muted shopping-item-days">{% for day, quantity in row.breakdown %}{{ day }} {% if row.unit == "piece" %}{{ quantity|nutrient_amount:1 }}{% else %}{{ quantity|nutrient_amount:0 }}{% endif %}{% if not forloop.last %} · {% endif %}{% endfor %}</span>
               {% endif %}

@@ -16,6 +16,8 @@ from django.db.models import F, Sum
 from django.utils import timezone, translation
 from django.utils.translation import gettext as _
 
+from apps.nutrition import food_language
+
 from . import prompts, tools
 from .models import (
     AssistantMessage,
@@ -420,7 +422,11 @@ def process_message(message_id):
         return
     conversation = message.conversation
     user = conversation.user
-    with translation.override(user.language), timezone.override(user.timezone):
+    with (
+        translation.override(user.language),
+        timezone.override(user.timezone),
+        food_language.override(user.food_language),
+    ):
         _write_reply(message, conversation, user)
 
 

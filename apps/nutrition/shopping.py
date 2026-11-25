@@ -114,7 +114,7 @@ def shopping_list(plan, trip):
         # Keep the trip's own day order (e.g. Thu, Fri, ..., Mon), not
         # plain weekday order, so the breakdown reads like the week ahead.
         row.ordered_days = [(day, row.by_day[day]) for day in trip.days if day in row.by_day]
-    return sorted(rows.values(), key=lambda row: row.food.name.casefold())
+    return sorted(rows.values(), key=lambda row: row.food.display_name.casefold())
 
 
 def plan_trips(plan):
