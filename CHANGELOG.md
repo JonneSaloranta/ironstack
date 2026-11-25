@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.33.0] - 2026-11-25
+
 ### Added
 - API: history from an offline client keeps its real times (#52). Workout
   sessions take `started_at`, `ended_at` (on create or when ending one) and
@@ -26,10 +28,6 @@ narrated summary of the same version.
   and the stretches done; nutrition goals take `started_at`. A set dated
   before others of the same exercise rebuilds that exercise's records in time
   order, so the record history is the one that happened.
-
-## [1.33.0] - 2026-11-25
-
-### Added
 - Nutrition: a "Food language" setting on the profile shows Open Food Facts
   food names and ingredient lists in a chosen language, independent of the
   app's language. Each imported food stores its names and ingredients in every
