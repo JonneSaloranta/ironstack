@@ -311,6 +311,7 @@ class ProfileForm(forms.ModelForm):
             "unit_system",
             "timezone",
             "language",
+            "food_language",
             "theme",
             "appearance",
             "height",
@@ -345,10 +346,16 @@ class ProfileForm(forms.ModelForm):
             "is_personal_trainer": _("I'm a personal trainer / coach"),
             "accepting_new_clients": _("Accepting new coaching requests"),
             "language": _("Language"),
+            "food_language": _("Food language"),
             "theme": _("Theme"),
             "appearance": _("Appearance"),
         }
         help_texts = {
+            "food_language": _(
+                "Which language food names and ingredient lists from Open "
+                "Food Facts are shown in, when the product has one in that "
+                "language. Foods you added yourself keep the name you gave them."
+            ),
             "theme": _(
                 "Which color palette the app uses. Each theme has its own "
                 "dark and light look - pick which one below."
@@ -436,6 +443,11 @@ class ProfileForm(forms.ModelForm):
         # as cm even if the same submission also switches the unit
         # system - matches what the user actually saw on the label.
         self._unit_system = self.instance.unit_system
+        # Blank means "follow the app's language", not "unset".
+        self.fields["food_language"].choices = [
+            ("", _("Same as the app language")),
+            *settings.LANGUAGES,
+        ]
         is_metric = self._unit_system == UnitSystem.METRIC
         self.fields["height"].label = (
             _("Height (cm)") if is_metric else _("Height (in)")

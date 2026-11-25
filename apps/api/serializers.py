@@ -103,6 +103,35 @@ class DisplayNameField(serializers.ReadOnlyField):
             return translation.gettext(value)
 
 
+def api_food_language(request):
+    """The food language for an API request: the user's own
+    `food_language` setting, else the display language above - the same
+    rule apps.nutrition.food_language applies on the web, worked out
+    here because token auth runs after the middleware does."""
+    user = getattr(request, "user", None)
+    chosen = getattr(user, "food_language", "") if user is not None else ""
+    return chosen or (display_language(request) or "").split("-")[0] or None
+
+
+@extend_schema_field(OpenApiTypes.STR)
+class FoodDisplayNameField(serializers.ReadOnlyField):
+    """A food's name in the user's food language (`Food.display_name`
+    on the web) - from `name_translations` when Open Food Facts has
+    that language, else the stored `name`. `source` is the Food."""
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault("source", "*")
+        super().__init__(**kwargs)
+
+    def to_representation(self, food):
+        from apps.nutrition import food_language
+
+        if food is None:
+            return None
+        with food_language.override(api_food_language(self.context.get("request"))):
+            return food.display_name
+
+
 # --------------------------------------------------------------------
 # Profile
 # --------------------------------------------------------------------
@@ -129,6 +158,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "allow_friend_requests",
             "allow_group_invites",
             "language",
+            "food_language",
             "theme",
             "appearance",
             "body_tracking_reminders_enabled",
@@ -829,11 +859,15 @@ class AchievementSerializer(serializers.Serializer):
 
 
 class FoodSerializer(serializers.ModelSerializer):
+    display_name = FoodDisplayNameField()
+
     class Meta:
         model = Food
         fields = [
             "id",
             "name",
+            "display_name",
+            "name_translations",
             "brand",
             "serving_size",
             "serving_unit",
@@ -863,6 +897,8 @@ class FoodSerializer(serializers.ModelSerializer):
         # "Food" section.
         read_only_fields = [
             "other_nutrients", "nutri_score", "nova_group", "off_id", "active", "owner",
+            # Only ever filled in from Open Food Facts.
+            "name_translations",
         ]
 
 
@@ -876,6 +912,8 @@ class OffSearchResultSerializer(serializers.Serializer):
 
     off_id = serializers.CharField()
     name = serializers.CharField()
+    display_name = serializers.SerializerMethodField()
+    name_translations = serializers.DictField(child=serializers.CharField())
     brand = serializers.CharField(allow_blank=True)
     serving_size = serializers.DecimalField(max_digits=10, decimal_places=2)
     serving_unit = serializers.CharField()
@@ -886,6 +924,16 @@ class OffSearchResultSerializer(serializers.Serializer):
     nutri_score = serializers.CharField(allow_blank=True, allow_null=True)
     nova_group = serializers.IntegerField(allow_null=True)
     image_thumb_url = serializers.CharField(allow_blank=True)
+
+
+    def get_display_name(self, product) -> str:
+        from apps.nutrition import food_language
+
+        return food_language.localized(
+            product.get("name_translations"),
+            product["name"],
+            api_food_language(self.context.get("request")),
+        )
 
 
 class OffSearchSerializer(serializers.Serializer):
@@ -968,13 +1016,15 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
     # reason: a deleted recipe can't be fetched from recipes/.
     nutrition = serializers.SerializerMethodField()
     food_name = serializers.CharField(source="food.name", read_only=True, default=None)
+    food_display_name = FoodDisplayNameField(source="food", default=None)
     recipe_name = serializers.CharField(source="recipe.name", read_only=True, default=None)
     recipe_display_name = DisplayNameField(source="recipe.name", default=None)
 
     class Meta:
         model = DiaryEntry
         fields = [
-            "id", "date", "meal_slot", "food", "food_name", "recipe", "recipe_name",
+            "id", "date", "meal_slot", "food", "food_name", "food_display_name",
+            "recipe", "recipe_name",
             "recipe_display_name",
             "quantity", "notes", "user",
             "quick_name", "quick_calories", "quick_protein_grams",
@@ -1602,6 +1652,7 @@ class ShoppingDayAmountSerializer(serializers.Serializer):
 class ShoppingItemSerializer(serializers.Serializer):
     food = serializers.IntegerField(source="food.pk")
     food_name = serializers.CharField(source="food.name")
+    food_display_name = FoodDisplayNameField(source="food")
     unit = serializers.CharField(help_text="The food's serving unit: g, ml or piece.")
     total = serializers.DecimalField(max_digits=10, decimal_places=2)
     by_day = ShoppingDayAmountSerializer(many=True)

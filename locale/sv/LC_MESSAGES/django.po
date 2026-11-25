@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 13:43+0000\n"
+"POT-Creation-Date: 2026-11-25 19:07+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -44,81 +44,92 @@ msgstr ""
 "För många förfrågningar om lösenordsåterställning. Försök igen om några "
 "minuter."
 
-#: apps/accounts/forms.py:299 apps/accounts/forms.py:726
+#: apps/accounts/forms.py:299 apps/accounts/forms.py:738
 msgid "Timezone"
 msgstr "Tidszon"
 
-#: apps/accounts/forms.py:330 apps/accounts/forms.py:706
+#: apps/accounts/forms.py:331 apps/accounts/forms.py:718
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Enheter"
 
-#: apps/accounts/forms.py:331 apps/accounts/forms.py:756
+#: apps/accounts/forms.py:332 apps/accounts/forms.py:768
 msgid "Track nutrition"
 msgstr "Spåra kost"
 
-#: apps/accounts/forms.py:332 apps/accounts/forms.py:766
+#: apps/accounts/forms.py:333 apps/accounts/forms.py:778
 msgid "Track stretching"
 msgstr "Följ stretching"
 
-#: apps/accounts/forms.py:333
+#: apps/accounts/forms.py:334
 msgid "Remind me to log body measurements"
 msgstr "Påminn mig om att logga kroppsmått"
 
-#: apps/accounts/forms.py:336
+#: apps/accounts/forms.py:337
 msgid "Show"
 msgstr "Visa"
 
-#: apps/accounts/forms.py:337 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:338 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "BMI"
 
-#: apps/accounts/forms.py:338
+#: apps/accounts/forms.py:339
 msgid "on the body weight page"
 msgstr "på sidan för kroppsvikt"
 
-#: apps/accounts/forms.py:340
+#: apps/accounts/forms.py:341
 msgid "Share my activity"
 msgstr "Dela min aktivitet"
 
-#: apps/accounts/forms.py:341
+#: apps/accounts/forms.py:342
 msgid "Show my name to others"
 msgstr "Visa mitt namn för andra"
 
-#: apps/accounts/forms.py:342
+#: apps/accounts/forms.py:343
 msgid "Show my Gravatar picture"
 msgstr "Visa min Gravatar-bild"
 
-#: apps/accounts/forms.py:343 apps/accounts/forms.py:739
+#: apps/accounts/forms.py:344 apps/accounts/forms.py:751
 msgid "Allow friend requests"
 msgstr "Tillåt vänförfrågningar"
 
-#: apps/accounts/forms.py:344 apps/accounts/forms.py:747
+#: apps/accounts/forms.py:345 apps/accounts/forms.py:759
 msgid "Allow group invites"
 msgstr "Tillåt gruppinbjudningar"
 
-#: apps/accounts/forms.py:345
+#: apps/accounts/forms.py:346
 msgid "I'm a personal trainer / coach"
 msgstr "Jag är en personlig tränare / coach"
 
-#: apps/accounts/forms.py:346
+#: apps/accounts/forms.py:347
 msgid "Accepting new coaching requests"
 msgstr "Tar emot nya coachningsförfrågningar"
 
-#: apps/accounts/forms.py:347 apps/accounts/forms.py:629
+#: apps/accounts/forms.py:348 apps/accounts/forms.py:641
 msgid "Language"
 msgstr "Språk"
 
-#: apps/accounts/forms.py:348
+#: apps/accounts/forms.py:349
+msgid "Food language"
+msgstr "Livsmedelsspråk"
+
+#: apps/accounts/forms.py:350
 msgid "Theme"
 msgstr "Tema"
 
-#: apps/accounts/forms.py:349
+#: apps/accounts/forms.py:351
 msgid "Appearance"
 msgstr "Utseende"
 
-#: apps/accounts/forms.py:353
+#: apps/accounts/forms.py:355
+msgid ""
+"Which language food names and ingredient lists from Open Food Facts are "
+"shown in, when the product has one in that language. Foods you added "
+"yourself keep the name you gave them."
+msgstr "Vilket språk livsmedelsnamn och ingredienslistor från Open Food Facts visas på, när produkten har dem på det språket. Livsmedel du själv har lagt till behåller namnet du gav dem."
+
+#: apps/accounts/forms.py:360
 msgid ""
 "Which color palette the app uses. Each theme has its own dark and light look "
 "- pick which one below."
@@ -126,7 +137,7 @@ msgstr ""
 "Vilken färgpalett appen använder. Varje tema har sitt eget mörka och ljusa "
 "utseende - välj vilket nedan."
 
-#: apps/accounts/forms.py:357
+#: apps/accounts/forms.py:364
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Turn off to hide it if you don't want to track nutrition - "
@@ -138,7 +149,7 @@ msgstr ""
 "befintlig kostdata raderas aldrig, och dess sidor går fortfarande att nå "
 "direkt via en länk."
 
-#: apps/accounts/forms.py:364
+#: apps/accounts/forms.py:371
 msgid ""
 "Shows stretching (routines, guided sessions) in navigation and suggests a "
 "cool-down after a workout. Turn off to hide it - existing stretching data is "
@@ -148,7 +159,7 @@ msgstr ""
 "nedvarvning efter ett träningspass. Stäng av för att dölja det - befintliga "
 "stretchingdata raderas aldrig."
 
-#: apps/accounts/forms.py:369
+#: apps/accounts/forms.py:376
 msgid ""
 "\"Auto\" follows your device's own light/dark setting and switches "
 "automatically when it changes."
@@ -156,7 +167,7 @@ msgstr ""
 "\"Auto\" följer din enhets egen ljus-/mörkerinställning och byter "
 "automatiskt när den ändras."
 
-#: apps/accounts/forms.py:373
+#: apps/accounts/forms.py:380
 msgid ""
 "Shows a dashboard card nudging you to log a body measurement when you "
 "haven't logged one in a while. Turn off to never see that reminder - you can "
@@ -167,11 +178,11 @@ msgstr ""
 "den påminnelsen - du kan fortfarande logga en mätning när som helst från "
 "Kroppsspårning."
 
-#: apps/accounts/forms.py:378
+#: apps/accounts/forms.py:385
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Stänger av BMI-kortet och dess kategoriintervall helt."
 
-#: apps/accounts/forms.py:380
+#: apps/accounts/forms.py:387
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
@@ -183,7 +194,7 @@ msgstr ""
 "instrumentpanelens prestationskarusell och listan \"Senast aktiva\". Stäng "
 "av för att hålla din egen aktivitet privat - du ser fortfarande allas andras."
 
-#: apps/accounts/forms.py:387
+#: apps/accounts/forms.py:394
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -193,7 +204,7 @@ msgstr ""
 "(prestationskarusellen och listan \"Senast aktiva\"). Stäng av för att bara "
 "visa ditt användarnamn där, som innan den här inställningen fanns."
 
-#: apps/accounts/forms.py:393
+#: apps/accounts/forms.py:400
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -207,7 +218,7 @@ msgstr ""
 "pratar med en server utanför din egen instans - som då ser hashvärdet för "
 "din e-postadress och din IP-adress."
 
-#: apps/accounts/forms.py:401
+#: apps/accounts/forms.py:408
 msgid ""
 "Off stops other users on this instance from sending you a friend request at "
 "all. Doesn't affect friend requests you already have, or friendships you "
@@ -217,7 +228,7 @@ msgstr ""
 "vänförfrågan till dig alls. Påverkar inte vänförfrågningar eller vänskaper "
 "du redan har."
 
-#: apps/accounts/forms.py:406
+#: apps/accounts/forms.py:413
 msgid ""
 "Off stops a group member from inviting you to a group directly. You can "
 "still join any group yourself using its invite link, if you have one."
@@ -226,7 +237,7 @@ msgstr ""
 "fortfarande gå med i vilken grupp som helst själv via dess inbjudningslänk, "
 "om du har en."
 
-#: apps/accounts/forms.py:411
+#: apps/accounts/forms.py:418
 msgid ""
 "Lets you build gym programs and diet plans other users can request you coach "
 "them on. Turning this off doesn't end any coaching relationship you already "
@@ -236,7 +247,7 @@ msgstr ""
 "coacha dem i. Att stänga av det avslutar inte något coachningsförhållande du "
 "redan har."
 
-#: apps/accounts/forms.py:416
+#: apps/accounts/forms.py:423
 msgid ""
 "Off stops new coaching requests from reaching you. Existing coaching "
 "relationships, and any request you already received, are unaffected."
@@ -244,53 +255,57 @@ msgstr ""
 "Av stoppar nya coachningsförfrågningar från att nå dig. Befintliga "
 "coachningsförhållanden och förfrågningar du redan fått påverkas inte."
 
-#: apps/accounts/forms.py:441 apps/accounts/forms.py:792
+#: apps/accounts/forms.py:448
+msgid "Same as the app language"
+msgstr "Samma som appens språk"
+
+#: apps/accounts/forms.py:453 apps/accounts/forms.py:804
 #: apps/nutrition/forms.py:41 apps/nutrition/forms.py:541
 msgid "Height (cm)"
 msgstr "Längd (cm)"
 
-#: apps/accounts/forms.py:441 apps/accounts/forms.py:792
+#: apps/accounts/forms.py:453 apps/accounts/forms.py:804
 #: apps/nutrition/forms.py:41 apps/nutrition/forms.py:541
 msgid "Height (in)"
 msgstr "Längd (in)"
 
-#: apps/accounts/forms.py:497 apps/accounts/forms.py:533
+#: apps/accounts/forms.py:509 apps/accounts/forms.py:545
 msgid "Verification code"
 msgstr "Verifieringskod"
 
-#: apps/accounts/forms.py:511
+#: apps/accounts/forms.py:523
 msgid "Incorrect code - check your authenticator app and try again."
 msgstr "Fel kod - kontrollera din autentiseringsapp och försök igen."
 
-#: apps/accounts/forms.py:547
+#: apps/accounts/forms.py:559
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "För många felaktiga koder. Försök igen om några minuter."
 
-#: apps/accounts/forms.py:560
+#: apps/accounts/forms.py:572
 msgid "Incorrect code."
 msgstr "Fel kod."
 
-#: apps/accounts/forms.py:574 apps/accounts/forms.py:600
+#: apps/accounts/forms.py:586 apps/accounts/forms.py:612
 msgid "Password"
 msgstr "Lösenord"
 
-#: apps/accounts/forms.py:583 apps/accounts/forms.py:614
+#: apps/accounts/forms.py:595 apps/accounts/forms.py:626
 msgid "Incorrect password."
 msgstr "Fel lösenord."
 
-#: apps/accounts/forms.py:603
+#: apps/accounts/forms.py:615
 msgid "Type your username to confirm"
 msgstr "Skriv ditt användarnamn för att bekräfta"
 
-#: apps/accounts/forms.py:616
+#: apps/accounts/forms.py:628
 msgid "Doesn't match your username."
 msgstr "Matchar inte ditt användarnamn."
 
-#: apps/accounts/forms.py:663
+#: apps/accounts/forms.py:675
 msgid "First name"
 msgstr "Förnamn"
 
-#: apps/accounts/forms.py:665
+#: apps/accounts/forms.py:677
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -300,11 +315,11 @@ msgstr ""
 "användarnamn där din aktivitet visas för andra (om du tillåter det i din "
 "profil)."
 
-#: apps/accounts/forms.py:672
+#: apps/accounts/forms.py:684
 msgid "Email"
 msgstr "E-post"
 
-#: apps/accounts/forms.py:674
+#: apps/accounts/forms.py:686
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -312,7 +327,7 @@ msgstr ""
 "Används endast för lösenordsåterställningsmejl om du någonsin blir utelåst. "
 "Visas aldrig för andra användare."
 
-#: apps/accounts/forms.py:684
+#: apps/accounts/forms.py:696
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -322,7 +337,7 @@ msgstr ""
 "startpunkt. Lämna tomt och logga den istället när som helst från sidan "
 "Kroppsvikt."
 
-#: apps/accounts/forms.py:699
+#: apps/accounts/forms.py:711
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this - you can add it anytime from your profile."
@@ -331,7 +346,7 @@ msgstr ""
 "tomt för att hoppa över detta - du kan lägga till det när som helst från din "
 "profil."
 
-#: apps/accounts/forms.py:708
+#: apps/accounts/forms.py:720
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -339,7 +354,7 @@ msgstr ""
 "Anger om vikter och avstånd visas i kg/km eller lb/mi i hela appen. Ändra "
 "detta när som helst från din profil."
 
-#: apps/accounts/forms.py:728
+#: apps/accounts/forms.py:740
 msgid ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
@@ -348,7 +363,7 @@ msgstr ""
 "som helst från din profil.Anger om vikter och avstånd visas i kg/km eller lb/"
 "mi i hela appen. Ändra detta när som helst från din profil."
 
-#: apps/accounts/forms.py:741
+#: apps/accounts/forms.py:753
 msgid ""
 "Lets other users on this instance send you a friend request. Change this "
 "anytime from your profile."
@@ -356,7 +371,7 @@ msgstr ""
 "Låter andra användare på den här instansen skicka en vänförfrågan till dig. "
 "Du kan ändra detta när som helst från din profil."
 
-#: apps/accounts/forms.py:749
+#: apps/accounts/forms.py:761
 msgid ""
 "Lets a group member invite you to a group directly. You can always join a "
 "group yourself using its invite link either way. Change this anytime from "
@@ -366,7 +381,7 @@ msgstr ""
 "i en grupp själv via dess inbjudningslänk oavsett. Du kan ändra detta när "
 "som helst från din profil."
 
-#: apps/accounts/forms.py:758
+#: apps/accounts/forms.py:770
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Leave unchecked if you don't want to track nutrition - you can "
@@ -378,7 +393,7 @@ msgstr ""
 "på eller av det när som helst från din profil, och inget raderas någonsin i "
 "vilket fall som helst."
 
-#: apps/accounts/forms.py:768
+#: apps/accounts/forms.py:780
 msgid ""
 "Shows stretching routines and guided sessions in navigation, and suggests a "
 "cool-down after a workout. You can turn it on or off anytime from your "
@@ -388,13 +403,13 @@ msgstr ""
 "nedvarvning efter ett träningspass. Du kan slå på eller av det när som helst "
 "i din profil."
 
-#: apps/accounts/forms.py:787 apps/nutrition/forms.py:42
+#: apps/accounts/forms.py:799 apps/nutrition/forms.py:42
 #: apps/nutrition/forms.py:550 apps/nutrition/forms.py:754
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Nuvarande vikt (%(unit)s)"
 
-#: apps/accounts/forms.py:789
+#: apps/accounts/forms.py:801
 msgid "Current weight"
 msgstr "Nuvarande vikt"
 
@@ -438,7 +453,7 @@ msgstr "Earth"
 msgid "Zen"
 msgstr "Zen"
 
-#: apps/accounts/models.py:456
+#: apps/accounts/models.py:464
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -629,15 +644,15 @@ msgstr[1] "%(counter)s PR"
 msgid "Total weight lifted"
 msgstr "Total lyft vikt"
 
-#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1679
+#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1719
 msgid "7 days"
 msgstr "7 dagar"
 
-#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1681
+#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1721
 msgid "30 days"
 msgstr "30 dagar"
 
-#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1682
+#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1722
 msgid "3 months"
 msgstr "3 månader"
 
@@ -645,11 +660,11 @@ msgstr "3 månader"
 msgid "6 months"
 msgstr "6 månader"
 
-#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1684
+#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1724
 msgid "1 year"
 msgstr "1 år"
 
-#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1685
+#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1725
 #: templates/stretching/home.html:24
 msgid "All time"
 msgstr "All tid"
@@ -1090,11 +1105,11 @@ msgstr "AI-tjänsten har problem just nu. Försök igen senare."
 msgid "Couldn't reach the AI service."
 msgstr "Det gick inte att nå AI-tjänsten."
 
-#: apps/assistant/services.py:115
+#: apps/assistant/services.py:117
 msgid "The administrator has turned the AI assistant off."
 msgstr "Administratören har stängt av AI-assistenten."
 
-#: apps/assistant/services.py:136
+#: apps/assistant/services.py:138
 msgid ""
 "This instance doesn't provide an AI model for your account. You can use the "
 "assistant with your own Anthropic API key."
@@ -1102,19 +1117,19 @@ msgstr ""
 "Den här instansen tillhandahåller ingen AI-modell för ditt konto. Du kan "
 "använda assistenten med din egen Anthropic-API-nyckel."
 
-#: apps/assistant/services.py:250
+#: apps/assistant/services.py:252
 msgid "Turn the assistant on in its settings first."
 msgstr "Slå först på assistenten i dess inställningar."
 
-#: apps/assistant/services.py:258
+#: apps/assistant/services.py:260
 msgid "Wait for the assistant to finish its current reply."
 msgstr "Vänta tills assistenten har skrivit klart sitt svar."
 
-#: apps/assistant/services.py:261
+#: apps/assistant/services.py:263
 msgid "You've used today's assistant allowance. It resets tomorrow."
 msgstr "Du har använt dagens assistentkvot. Den återställs i morgon."
 
-#: apps/assistant/services.py:266
+#: apps/assistant/services.py:268
 msgid ""
 "This conversation used your own API key, which you've removed. Start a new "
 "conversation."
@@ -1122,133 +1137,133 @@ msgstr ""
 "Den här konversationen använde din egen API-nyckel, som du har tagit bort. "
 "Starta en ny konversation."
 
-#: apps/assistant/services.py:275
+#: apps/assistant/services.py:277
 msgid "This conversation can't be continued anymore. Start a new conversation."
 msgstr ""
 "Den här konversationen kan inte fortsättas längre. Starta en ny konversation."
 
-#: apps/assistant/services.py:280
+#: apps/assistant/services.py:282
 msgid ""
 "This conversation is getting long. Start a new one to keep replies quick."
 msgstr ""
 "Den här konversationen börjar bli lång. Starta en ny så att svaren går "
 "snabbt."
 
-#: apps/assistant/services.py:296
+#: apps/assistant/services.py:298
 msgid "No API key is available for this conversation."
 msgstr "Ingen API-nyckel finns tillgänglig för den här konversationen."
 
-#: apps/assistant/services.py:308 apps/assistant/views.py:77
+#: apps/assistant/services.py:310 apps/assistant/views.py:77
 #: apps/assistant/views.py:119
 msgid "Write a message first."
 msgstr "Skriv ett meddelande först."
 
-#: apps/assistant/services.py:310
+#: apps/assistant/services.py:312
 msgid "That message is too long."
 msgstr "Meddelandet är för långt."
 
-#: apps/assistant/services.py:441
+#: apps/assistant/services.py:447
 msgid "Thinking…"
 msgstr "Tänker…"
 
-#: apps/assistant/services.py:455
+#: apps/assistant/services.py:461
 msgid "The assistant can't help with that request."
 msgstr "Assistenten kan inte hjälpa till med den förfrågan."
 
-#: apps/assistant/services.py:461
+#: apps/assistant/services.py:467
 msgid "The reply was cut off. Try asking for something smaller."
 msgstr "Svaret klipptes av. Försök be om något mindre."
 
-#: apps/assistant/services.py:467
+#: apps/assistant/services.py:473
 msgid "The reply was cut off."
 msgstr "Svaret klipptes av."
 
-#: apps/assistant/services.py:476
+#: apps/assistant/services.py:482
 msgid "The assistant stopped after too many steps."
 msgstr "Assistenten stannade efter för många steg."
 
-#: apps/assistant/services.py:482
+#: apps/assistant/services.py:488
 msgid "Something went wrong while writing the reply."
 msgstr "Något gick fel när svaret skrevs."
 
-#: apps/assistant/services.py:518
+#: apps/assistant/services.py:524
 msgid "The reply was interrupted. Please try again."
 msgstr "Svaret avbröts. Försök igen."
 
-#: apps/assistant/tools.py:512 apps/nutrition/models.py:647
+#: apps/assistant/tools.py:512 apps/nutrition/models.py:668
 #: templates/nutrition/diary_day.html:64
 msgid "Quick entry"
 msgstr "Snabbregistrering"
 
-#: apps/assistant/tools.py:987
+#: apps/assistant/tools.py:988
 msgid "Looking at your profile…"
 msgstr "Tittar på din profil…"
 
-#: apps/assistant/tools.py:998
+#: apps/assistant/tools.py:999
 msgid "Looking at your workouts…"
 msgstr "Tittar på dina träningspass…"
 
-#: apps/assistant/tools.py:1014
+#: apps/assistant/tools.py:1015
 msgid "Looking at your records…"
 msgstr "Tittar på dina rekord…"
 
-#: apps/assistant/tools.py:1027
+#: apps/assistant/tools.py:1028
 msgid "Looking at your measurements…"
 msgstr "Tittar på dina mätningar…"
 
-#: apps/assistant/tools.py:1035
+#: apps/assistant/tools.py:1036
 msgid "Looking at your activities…"
 msgstr "Tittar på dina aktiviteter…"
 
-#: apps/assistant/tools.py:1045 apps/assistant/tools.py:1058
+#: apps/assistant/tools.py:1046 apps/assistant/tools.py:1059
 msgid "Looking at your food diary…"
 msgstr "Tittar på din matdagbok…"
 
-#: apps/assistant/tools.py:1071
+#: apps/assistant/tools.py:1072
 msgid "Looking at your weight trend…"
 msgstr "Tittar på din viktutveckling…"
 
-#: apps/assistant/tools.py:1079
+#: apps/assistant/tools.py:1080
 msgid "Looking at your stretching…"
 msgstr "Tittar på din stretching…"
 
-#: apps/assistant/tools.py:1086 apps/assistant/tools.py:1097
+#: apps/assistant/tools.py:1087 apps/assistant/tools.py:1098
 msgid "Looking at your programs…"
 msgstr "Tittar på dina program…"
 
-#: apps/assistant/tools.py:1112
+#: apps/assistant/tools.py:1113
 msgid "Looking at your progression…"
 msgstr "Tittar på din progression…"
 
-#: apps/assistant/tools.py:1119 apps/assistant/tools.py:1130
+#: apps/assistant/tools.py:1120 apps/assistant/tools.py:1131
 msgid "Looking at your diet plans…"
 msgstr "Tittar på dina kostplaner…"
 
-#: apps/assistant/tools.py:1144
+#: apps/assistant/tools.py:1145
 msgid "Searching exercises…"
 msgstr "Söker övningar…"
 
-#: apps/assistant/tools.py:1159
+#: apps/assistant/tools.py:1160
 msgid "Searching foods…"
 msgstr "Söker livsmedel…"
 
-#: apps/assistant/tools.py:1169
+#: apps/assistant/tools.py:1170
 msgid "Searching recipes…"
 msgstr "Söker recept…"
 
-#: apps/assistant/tools.py:1176
+#: apps/assistant/tools.py:1177
 msgid "Looking at your meals…"
 msgstr "Tittar på dina måltider…"
 
-#: apps/assistant/tools.py:1236
+#: apps/assistant/tools.py:1237
 msgid "Putting a diet plan together…"
 msgstr "Sätter ihop en kostplan…"
 
-#: apps/assistant/tools.py:1296
+#: apps/assistant/tools.py:1297
 msgid "Putting a program together…"
 msgstr "Sätter ihop ett program…"
 
-#: apps/assistant/tools.py:1339
+#: apps/assistant/tools.py:1340
 msgid "Putting a recipe together…"
 msgstr "Sätter ihop ett recept…"
 
@@ -1409,7 +1424,7 @@ msgid "You can't update this diet plan."
 msgstr "Du kan inte uppdatera den här kostplanen."
 
 #: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
-#: apps/nutrition/views.py:1127 apps/nutrition/views.py:1420
+#: apps/nutrition/views.py:1140 apps/nutrition/views.py:1433
 #: apps/programs/views.py:207
 #, python-format
 msgid "Imported “%(name)s”."
@@ -3397,144 +3412,144 @@ msgstr ""
 "Vissa dagar kan vara bara delvis loggade, vilket gör den här uppskattningen "
 "för låg."
 
-#: apps/nutrition/models.py:33
+#: apps/nutrition/models.py:35
 msgid "Male"
 msgstr "Man"
 
-#: apps/nutrition/models.py:34
+#: apps/nutrition/models.py:36
 msgid "Female"
 msgstr "Kvinna"
 
-#: apps/nutrition/models.py:38
+#: apps/nutrition/models.py:40
 msgid "Desk job, mostly sitting"
 msgstr "Skrivbordsjobb, mest stillasittande"
 
-#: apps/nutrition/models.py:39
+#: apps/nutrition/models.py:41
 msgid "On my feet some of the day"
 msgstr "På benen en del av dagen"
 
-#: apps/nutrition/models.py:40
+#: apps/nutrition/models.py:42
 msgid "On my feet most of the day"
 msgstr "På benen större delen av dagen"
 
-#: apps/nutrition/models.py:41
+#: apps/nutrition/models.py:43
 msgid "Physically demanding / manual labor"
 msgstr "Fysiskt krävande / kroppsarbete"
 
-#: apps/nutrition/models.py:51
+#: apps/nutrition/models.py:53
 msgid "Sedentary"
 msgstr "Stillasittande"
 
-#: apps/nutrition/models.py:52
+#: apps/nutrition/models.py:54
 msgid "Lightly active"
 msgstr "Lätt aktiv"
 
-#: apps/nutrition/models.py:53
+#: apps/nutrition/models.py:55
 msgid "Moderately active"
 msgstr "Måttligt aktiv"
 
-#: apps/nutrition/models.py:54 templates/nutrition/_diet_plan_card.html:5
+#: apps/nutrition/models.py:56 templates/nutrition/_diet_plan_card.html:5
 #: templates/nutrition/diet_plan_detail.html:15
 msgid "Active"
 msgstr "Aktiv"
 
-#: apps/nutrition/models.py:55
+#: apps/nutrition/models.py:57
 msgid "Very active"
 msgstr "Mycket aktiv"
 
-#: apps/nutrition/models.py:59
+#: apps/nutrition/models.py:61
 msgid "Fat loss - aggressive"
 msgstr "Fettförlust - aggressiv"
 
-#: apps/nutrition/models.py:60
+#: apps/nutrition/models.py:62
 msgid "Fat loss - moderate"
 msgstr "Fettförlust - måttlig"
 
-#: apps/nutrition/models.py:61
+#: apps/nutrition/models.py:63
 msgid "Fat loss - conservative"
 msgstr "Fettförlust - försiktig"
 
-#: apps/nutrition/models.py:62 apps/programs/models.py:147
+#: apps/nutrition/models.py:64 apps/programs/models.py:147
 msgid "Maintenance"
 msgstr "Underhåll"
 
-#: apps/nutrition/models.py:63
+#: apps/nutrition/models.py:65
 msgid "Muscle gain - lean bulk"
 msgstr "Muskeltillväxt - mager bulk"
 
-#: apps/nutrition/models.py:64
+#: apps/nutrition/models.py:66
 msgid "Muscle gain - moderate bulk"
 msgstr "Muskeltillväxt - måttlig bulk"
 
-#: apps/nutrition/models.py:65
+#: apps/nutrition/models.py:67
 msgid "Muscle gain - aggressive bulk"
 msgstr "Muskeltillväxt - aggressiv bulk"
 
-#: apps/nutrition/models.py:69
+#: apps/nutrition/models.py:71
 msgid "Calculated from goal"
 msgstr "Beräknat från mål"
 
-#: apps/nutrition/models.py:70
+#: apps/nutrition/models.py:72
 msgid "Set manually"
 msgstr "Inställt manuellt"
 
-#: apps/nutrition/models.py:71
+#: apps/nutrition/models.py:73
 msgid "Accepted a suggested adjustment"
 msgstr "Accepterade en föreslagen justering"
 
-#: apps/nutrition/models.py:75
+#: apps/nutrition/models.py:77
 msgid "g"
 msgstr "g"
 
-#: apps/nutrition/models.py:76
+#: apps/nutrition/models.py:78
 msgid "ml"
 msgstr "ml"
 
-#: apps/nutrition/models.py:77
+#: apps/nutrition/models.py:79
 msgid "piece"
 msgstr "st"
 
-#: apps/nutrition/models.py:92
+#: apps/nutrition/models.py:94
 msgid "A - best"
 msgstr "A - bäst"
 
-#: apps/nutrition/models.py:93
+#: apps/nutrition/models.py:95
 msgid "B"
 msgstr "B"
 
-#: apps/nutrition/models.py:94
+#: apps/nutrition/models.py:96
 msgid "C"
 msgstr "C"
 
-#: apps/nutrition/models.py:95
+#: apps/nutrition/models.py:97
 msgid "D"
 msgstr "D"
 
-#: apps/nutrition/models.py:96
+#: apps/nutrition/models.py:98
 msgid "E - worst"
 msgstr "E - sämst"
 
-#: apps/nutrition/models.py:106
+#: apps/nutrition/models.py:108
 msgid "1 - unprocessed or minimally processed"
 msgstr "1 - obearbetat eller minimalt bearbetat"
 
-#: apps/nutrition/models.py:107
+#: apps/nutrition/models.py:109
 msgid "2 - processed culinary ingredients"
 msgstr "2 - bearbetade kulinariska ingredienser"
 
-#: apps/nutrition/models.py:108
+#: apps/nutrition/models.py:110
 msgid "3 - processed food"
 msgstr "3 - bearbetad mat"
 
-#: apps/nutrition/models.py:109
+#: apps/nutrition/models.py:111
 msgid "4 - ultra-processed food"
 msgstr "4 - ultrabearbetad mat"
 
-#: apps/nutrition/models.py:124
+#: apps/nutrition/models.py:126
 msgid "Stored instead of a raw age, so it never goes stale."
 msgstr "Sparas istället för en rå ålder, så att den aldrig blir inaktuell."
 
-#: apps/nutrition/models.py:136
+#: apps/nutrition/models.py:138
 msgid ""
 "If you already track this, tell us - used only to compare against this app's "
 "own estimate, never as an input to it."
@@ -3542,17 +3557,17 @@ msgstr ""
 "Om du redan följer detta, berätta för oss - används endast för att jämföra "
 "med appens egen uppskattning, aldrig som indata till den."
 
-#: apps/nutrition/models.py:310
+#: apps/nutrition/models.py:312
 msgid "Null for the built-in default meal slots."
 msgstr "Null för de inbyggda standardmåltiderna."
 
-#: apps/nutrition/models.py:652
+#: apps/nutrition/models.py:673
 msgid "Log either a food, a recipe or quick macros - exactly one of them."
 msgstr ""
 "Registrera antingen ett livsmedel, ett recept eller snabba makron - exakt "
 "ett av dem."
 
-#: apps/nutrition/models.py:822
+#: apps/nutrition/models.py:843
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Använd antingen ett livsmedel eller ett recept, inte båda eller inget."
 
@@ -3764,83 +3779,83 @@ msgstr "Kolhydrater"
 msgid "Protein"
 msgstr "Protein"
 
-#: apps/nutrition/openfoodfacts.py:127
+#: apps/nutrition/openfoodfacts.py:138
 msgid "Breakfast cereals"
 msgstr "Frukostflingor"
 
-#: apps/nutrition/openfoodfacts.py:128
+#: apps/nutrition/openfoodfacts.py:139
 msgid "Breads"
 msgstr "Bröd"
 
-#: apps/nutrition/openfoodfacts.py:129
+#: apps/nutrition/openfoodfacts.py:140
 msgid "Dairy"
 msgstr "Mejeriprodukter"
 
-#: apps/nutrition/openfoodfacts.py:130
+#: apps/nutrition/openfoodfacts.py:141
 msgid "Cheeses"
 msgstr "Ostar"
 
-#: apps/nutrition/openfoodfacts.py:131
+#: apps/nutrition/openfoodfacts.py:142
 msgid "Yogurts"
 msgstr "Yoghurtar"
 
-#: apps/nutrition/openfoodfacts.py:132
+#: apps/nutrition/openfoodfacts.py:143
 msgid "Meats"
 msgstr "Kött"
 
-#: apps/nutrition/openfoodfacts.py:133
+#: apps/nutrition/openfoodfacts.py:144
 msgid "Fish"
 msgstr "Fisk"
 
-#: apps/nutrition/openfoodfacts.py:134
+#: apps/nutrition/openfoodfacts.py:145
 msgid "Eggs"
 msgstr "Ägg"
 
-#: apps/nutrition/openfoodfacts.py:135
+#: apps/nutrition/openfoodfacts.py:146
 msgid "Fruits"
 msgstr "Frukter"
 
-#: apps/nutrition/openfoodfacts.py:136
+#: apps/nutrition/openfoodfacts.py:147
 msgid "Vegetables"
 msgstr "Grönsaker"
 
-#: apps/nutrition/openfoodfacts.py:137
+#: apps/nutrition/openfoodfacts.py:148
 msgid "Legumes"
 msgstr "Baljväxter"
 
-#: apps/nutrition/openfoodfacts.py:138
+#: apps/nutrition/openfoodfacts.py:149
 msgid "Nuts"
 msgstr "Nötter"
 
-#: apps/nutrition/openfoodfacts.py:139
+#: apps/nutrition/openfoodfacts.py:150
 msgid "Pasta"
 msgstr "Pasta"
 
-#: apps/nutrition/openfoodfacts.py:140
+#: apps/nutrition/openfoodfacts.py:151
 msgid "Rice"
 msgstr "Ris"
 
-#: apps/nutrition/openfoodfacts.py:141
+#: apps/nutrition/openfoodfacts.py:152
 msgid "Snacks"
 msgstr "Snacks"
 
-#: apps/nutrition/openfoodfacts.py:142
+#: apps/nutrition/openfoodfacts.py:153
 msgid "Chocolate"
 msgstr "Choklad"
 
-#: apps/nutrition/openfoodfacts.py:143
+#: apps/nutrition/openfoodfacts.py:154
 msgid "Biscuits"
 msgstr "Kex"
 
-#: apps/nutrition/openfoodfacts.py:144
+#: apps/nutrition/openfoodfacts.py:155
 msgid "Plant-based milks"
 msgstr "Växtbaserad mjölk"
 
-#: apps/nutrition/openfoodfacts.py:145
+#: apps/nutrition/openfoodfacts.py:156
 msgid "Beverages"
 msgstr "Drycker"
 
-#: apps/nutrition/openfoodfacts.py:146
+#: apps/nutrition/openfoodfacts.py:157
 msgid "Protein bars"
 msgstr "Proteinbars"
 
@@ -3892,41 +3907,41 @@ msgstr "Receptets namn saknas."
 msgid "Ingredient “%(name)s” has an invalid quantity."
 msgstr "Ingrediensen ”%(name)s” har en ogiltig mängd."
 
-#: apps/nutrition/services.py:765
+#: apps/nutrition/services.py:766
 msgid "A diet plan item is missing its recipe name."
 msgstr "En post i kostplanen saknar receptnamn."
 
-#: apps/nutrition/services.py:785
+#: apps/nutrition/services.py:786
 msgid "A diet plan meal is missing its meal slot."
 msgstr "En måltid i kostplanen saknar måltidstyp."
 
-#: apps/nutrition/services.py:789
+#: apps/nutrition/services.py:790
 msgid "A diet plan meal is missing its target calories."
 msgstr "En måltid i kostplanen saknar kalorimål."
 
-#: apps/nutrition/services.py:804
+#: apps/nutrition/services.py:805
 msgid "A diet plan item must reference exactly one of a food or a recipe."
 msgstr ""
 "En post i kostplanen måste ange antingen ett livsmedel eller ett recept, "
 "inte båda."
 
-#: apps/nutrition/services.py:810
+#: apps/nutrition/services.py:811
 msgid "A diet plan item has an invalid quantity."
 msgstr "En post i kostplanen har en ogiltig mängd."
 
-#: apps/nutrition/services.py:839
+#: apps/nutrition/services.py:840
 msgid "Missing diet plan name."
 msgstr "Kostplanens namn saknas."
 
-#: apps/nutrition/services.py:850
+#: apps/nutrition/services.py:851
 msgid "Missing or invalid diet plan targets."
 msgstr "Kostplanens mål saknas eller är ogiltiga."
 
-#: apps/nutrition/services.py:1680
+#: apps/nutrition/services.py:1720
 msgid "14 days"
 msgstr "14 dagar"
 
-#: apps/nutrition/services.py:1683
+#: apps/nutrition/services.py:1723
 msgid "Year to date"
 msgstr "Hittills i år"
 
@@ -3960,54 +3975,54 @@ msgstr ""
 "Mål: %(target)s %(unit)s/vecka. Faktisk trend: %(actual)s %(unit)s/vecka "
 "under de senaste %(days)s dagarna. Föreslagen justering: %(delta)+d kcal/dag."
 
-#: apps/nutrition/views.py:440
+#: apps/nutrition/views.py:442
 #, python-format
 msgid "Goal updated - new target is %(calories)d kcal/day."
 msgstr "Mål uppdaterat - nytt mål är %(calories)d kcal/dag."
 
-#: apps/nutrition/views.py:748
+#: apps/nutrition/views.py:761
 msgid "Pick a date to copy this day to."
 msgstr "Välj ett datum att kopiera denna dag till."
 
-#: apps/nutrition/views.py:753
+#: apps/nutrition/views.py:766
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Kopierade %(count)d post till %(date)s."
 msgstr[1] "Kopierade %(count)d poster till %(date)s."
 
-#: apps/nutrition/views.py:759
+#: apps/nutrition/views.py:772
 msgid "Nothing to copy - that day has no entries."
 msgstr "Inget att kopiera - den dagen har inga poster."
 
-#: apps/nutrition/views.py:820 apps/nutrition/views.py:1190
-#: apps/nutrition/views.py:1724
+#: apps/nutrition/views.py:833 apps/nutrition/views.py:1203
+#: apps/nutrition/views.py:1737
 msgid "That food couldn't be imported - try again."
 msgstr "Det gick inte att importera detta livsmedel - försök igen."
 
-#: apps/nutrition/views.py:865
+#: apps/nutrition/views.py:878
 msgid "Pick a meal."
 msgstr "Välj en måltid."
 
-#: apps/nutrition/views.py:889
+#: apps/nutrition/views.py:902
 msgid "Added to your diary."
 msgstr "Tillagt i din dagbok."
 
-#: apps/nutrition/views.py:931
+#: apps/nutrition/views.py:944
 msgid "Nothing logged for this meal yet to save as a recipe."
 msgstr "Inget har loggats för den här måltiden än att spara som recept."
 
-#: apps/nutrition/views.py:933
+#: apps/nutrition/views.py:946
 #, python-format
 msgid "Saved “%(name)s” as a new recipe."
 msgstr "Sparade ”%(name)s” som ett nytt recept."
 
-#: apps/nutrition/views.py:1082
+#: apps/nutrition/views.py:1095
 #, python-format
 msgid "\"%(name)s\" created - now add its ingredients below."
 msgstr "\"%(name)s\" skapad - lägg till dess ingredienser nedan."
 
-#: apps/nutrition/views.py:1132 apps/nutrition/views.py:1425
+#: apps/nutrition/views.py:1145 apps/nutrition/views.py:1438
 #: apps/programs/views.py:212
 #, python-format
 msgid ""
@@ -4017,22 +4032,22 @@ msgstr ""
 "Den här filen exporterades från IronStack %(version)s - värt att dubbelkolla "
 "importen om något ser fel ut."
 
-#: apps/nutrition/views.py:1565
+#: apps/nutrition/views.py:1578
 msgid "Shopping days saved."
 msgstr "Inköpsdagarna sparades."
 
-#: apps/nutrition/views.py:1647
+#: apps/nutrition/views.py:1660
 msgid "Only a personal trainer can share a diet plan."
 msgstr "Endast en personlig tränare kan dela en kostplan."
 
-#: apps/nutrition/views.py:1763
+#: apps/nutrition/views.py:1776
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Loggade %(count)d post till %(date)s."
 msgstr[1] "Loggade %(count)d poster till %(date)s."
 
-#: apps/nutrition/views.py:1774
+#: apps/nutrition/views.py:1787
 msgid "Nothing to log - this plan has no items for that date."
 msgstr "Inget att logga - den här planen har inga poster för det datumet."
 

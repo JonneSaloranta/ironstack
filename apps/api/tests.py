@@ -4145,3 +4145,55 @@ class AssistantEndpointTests(APITestCase):
             reverse("api:assistant-proposal-dismiss", args=[broken.pk]), **self.auth
         )
         self.assertEqual(dismissed.data["status"], "dismissed")
+
+
+class FoodLanguageApiTests(APITestCase):
+    """User.food_language - food names in their own language, apart
+    from the UI language (apps.nutrition.food_language)."""
+
+    def setUp(self):
+        from apps.nutrition.models import Food
+
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", language="en"
+        )
+        _api_key, raw_secret = _create_key(self.alice)
+        self.auth = {"HTTP_AUTHORIZATION": f"Bearer {raw_secret}"}
+        self.food = Food.objects.create(
+            owner=None,
+            name="Grekisk Yoghurt 0% Fett",
+            name_translations={"fi": "Kreikkalainen Jugurtti", "sv": "Grekisk yoghurt"},
+            serving_size=Decimal("100"),
+            serving_unit="g",
+            calories=65,
+            protein_grams=Decimal("13"),
+            carbohydrate_grams=Decimal("2.8"),
+            fat_grams=Decimal("0"),
+        )
+
+    def _food(self, **extra):
+        return self.client.get(f"/api/v1/foods/{self.food.pk}/", **self.auth, **extra).data
+
+    def test_display_name_follows_the_users_food_language(self):
+        self.alice.food_language = "fi"
+        self.alice.save(update_fields=["food_language"])
+        data = self._food(HTTP_ACCEPT_LANGUAGE="sv")
+        self.assertEqual(data["name"], "Grekisk Yoghurt 0% Fett")
+        self.assertEqual(data["display_name"], "Kreikkalainen Jugurtti")
+        self.assertEqual(data["name_translations"]["sv"], "Grekisk yoghurt")
+
+    def test_without_a_food_language_the_display_language_is_used(self):
+        self.assertEqual(self._food(HTTP_ACCEPT_LANGUAGE="sv")["display_name"], "Grekisk yoghurt")
+        self.assertEqual(self._food()["display_name"], "Grekisk Yoghurt 0% Fett")
+
+    def test_search_matches_a_translated_name(self):
+        response = self.client.get("/api/v1/foods/", {"search": "jugurtti"}, **self.auth)
+        self.assertEqual([row["id"] for row in response.data["results"]], [self.food.pk])
+
+    def test_food_language_is_editable_on_the_profile(self):
+        response = self.client.patch(
+            "/api/v1/profile/", {"food_language": "fi"}, format="json", **self.auth
+        )
+        self.assertEqual(response.status_code, 200)
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.food_language, "fi")

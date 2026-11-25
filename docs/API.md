@@ -167,6 +167,15 @@ and in coaching (a client's `measurements` and `assigned_programs`, the
 exercises, stretches and recipes; and `display_description` on programs
 and stretch routines. An empty text stays empty.
 
+Foods are the exception: their names aren't translated by the server but
+come from Open Food Facts in several languages. A food's `display_name`
+(and `food_display_name` on diary entries and shopping-list items, and
+`display_name` on `foods/search-off/` results) is its name in the user's
+profile `food_language`, else in the language above, from the read-only
+`name_translations` (`{"fi": "...", "en": "..."}`) - falling back to the
+stored `name` when Open Food Facts has no name in that language.
+`?search=` on `foods/` matches the stored name and every translation.
+
 ## Managing keys
 
 Self-service, from the Profile page → "API keys" (`/api/keys/` -

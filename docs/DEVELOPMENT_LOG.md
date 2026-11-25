@@ -6234,3 +6234,28 @@ because a regex `url_path` on the router isn't resolvable by drf-spectacular
 under namespace versioning. Workout `estimate`s (#50) come from the cached
 instance timing statistics, so nesting them in every program is cheap.
 
+
+## Food names in several languages
+
+Product 7392672004459 was "not found" although Open Food Facts had it: its
+main language is French and its French name blank, the name only existing in
+`product_name_fi`/`_en`/`_sv`, so `parse_product` dropped it silently. Lookups
+now request `product_name_<lang>`, `generic_name_<lang>` and
+`ingredients_text_<lang>` for every app language in the same single request,
+and `Food` stores the non-blank ones (`name_translations`,
+`ingredients_translations`), so one shared row serves every language. `name`
+stays a language-independent fallback (main language, else English, else the
+first one OFF has) so a refresh by someone with another language can't rename
+a shared food.
+
+What's shown is `Food.display_name`: the user's new `food_language` (profile;
+blank follows the UI language), activated per request by
+`apps.nutrition.middleware.FoodLanguageMiddleware` the way Django activates
+the UI language, so templates and services need no request passed around. The
+assistant activates it alongside the user's language; the API resolves it per
+request (`api_food_language`), since token auth runs after middleware. Search
+matches every stored language and the food list sorts by the shown name.
+Migration 0029 clears `off_synced_at` on existing OFF foods so they pick up
+translations on their next scan or import. A barcode already in the library no
+longer spends an OFF request on a result that would be hidden; a stale row is
+refreshed instead.

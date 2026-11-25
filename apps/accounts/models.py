@@ -243,6 +243,14 @@ class User(AbstractUser):
     # (apps.accounts.signals.follow_browser_language), so a new account
     # starts in the browser's language; once chosen it stays put.
     language_chosen = models.BooleanField(default=False)
+    # Which language food names and ingredient lists are shown in
+    # (apps.nutrition.food_language) - blank follows `language` above.
+    # Open Food Facts products carry their names in many languages, and
+    # someone running the app in English may still want the Finnish
+    # names printed on the packages they actually buy.
+    food_language = models.CharField(
+        max_length=10, choices=settings.LANGUAGES, blank=True, default=""
+    )
     # apps.tutorials - whether a page's guided tour starts by itself the
     # first time the user opens that page. "Don't show tutorials" in a
     # tour, or the toggle on profile → Tutorials, switches it off; tours

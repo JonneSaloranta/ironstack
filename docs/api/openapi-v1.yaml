@@ -7777,6 +7777,9 @@ components:
         food_name:
           type: string
           readOnly: true
+        food_display_name:
+          type: string
+          readOnly: true
         recipe:
           type: integer
           nullable: true
@@ -7824,6 +7827,7 @@ components:
           readOnly: true
       required:
       - date
+      - food_display_name
       - food_name
       - id
       - meal_slot
@@ -8617,6 +8621,11 @@ components:
         name:
           type: string
           maxLength: 200
+        display_name:
+          type: string
+          readOnly: true
+        name_translations:
+          readOnly: true
         brand:
           type: string
           maxLength: 200
@@ -8711,9 +8720,11 @@ components:
       - active
       - calories
       - carbohydrate_grams
+      - display_name
       - fat_grams
       - id
       - name
+      - name_translations
       - nova_group
       - nutri_score
       - off_id
@@ -8732,6 +8743,22 @@ components:
           pattern: ^\d{8,14}$
       required:
       - barcode
+    FoodLanguageEnum:
+      enum:
+      - en
+      - fi
+      - sv
+      - ru
+      - it
+      - et
+      type: string
+      description: |-
+        * `en` - English
+        * `fi` - Suomi
+        * `sv` - Svenska
+        * `ru` - Русский
+        * `it` - Italiano
+        * `et` - Eesti
     FoodRequest:
       type: object
       properties:
@@ -9796,6 +9823,13 @@ components:
           type: string
         name:
           type: string
+        display_name:
+          type: string
+          readOnly: true
+        name_translations:
+          type: object
+          additionalProperties:
+            type: string
         brand:
           type: string
         serving_size:
@@ -9830,9 +9864,11 @@ components:
       - brand
       - calories
       - carbohydrate_grams
+      - display_name
       - fat_grams
       - image_thumb_url
       - name
+      - name_translations
       - nova_group
       - nutri_score
       - off_id
@@ -11012,6 +11048,10 @@ components:
             one.
         language:
           $ref: '#/components/schemas/LanguageEnum'
+        food_language:
+          oneOf:
+          - $ref: '#/components/schemas/FoodLanguageEnum'
+          - $ref: '#/components/schemas/BlankEnum'
         theme:
           $ref: '#/components/schemas/ThemeEnum'
         appearance:
@@ -11511,6 +11551,10 @@ components:
             one.
         language:
           $ref: '#/components/schemas/LanguageEnum'
+        food_language:
+          oneOf:
+          - $ref: '#/components/schemas/FoodLanguageEnum'
+          - $ref: '#/components/schemas/BlankEnum'
         theme:
           $ref: '#/components/schemas/ThemeEnum'
         appearance:
@@ -11579,6 +11623,10 @@ components:
             one.
         language:
           $ref: '#/components/schemas/LanguageEnum'
+        food_language:
+          oneOf:
+          - $ref: '#/components/schemas/FoodLanguageEnum'
+          - $ref: '#/components/schemas/BlankEnum'
         theme:
           $ref: '#/components/schemas/ThemeEnum'
         appearance:
@@ -12053,6 +12101,9 @@ components:
           type: integer
         food_name:
           type: string
+        food_display_name:
+          type: string
+          readOnly: true
         unit:
           type: string
           description: 'The food''s serving unit: g, ml or piece.'
@@ -12067,6 +12118,7 @@ components:
       required:
       - by_day
       - food
+      - food_display_name
       - food_name
       - total
       - unit

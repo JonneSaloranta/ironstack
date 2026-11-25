@@ -17,11 +17,11 @@ from decimal import Decimal, InvalidOperation
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
-from django.utils.translation import get_language, gettext
+from django.utils.translation import gettext
 
 from apps.core.data_exchange import ImportValidationError
 
-from . import energy, macros, open_prices, openfoodfacts
+from . import energy, food_language, macros, open_prices, openfoodfacts
 from .models import (
     DietPlan,
     Food,
@@ -670,7 +670,8 @@ def import_recipe(user, payload):
         quantity = _decimal_or_none(ingredient_data.get("quantity"))
         if quantity is None:
             raise ImportValidationError(
-                gettext("Ingredient “%(name)s” has an invalid quantity.") % {"name": food.name}
+                gettext("Ingredient “%(name)s” has an invalid quantity.")
+                % {"name": food.display_name}
             )
         ingredients.append(
             RecipeIngredient(
@@ -954,6 +955,24 @@ def merge_foods(keep, duplicates):
 _BARCODE_RE = re.compile(r"^\d{8,14}$")
 
 
+def food_name_filter(query):
+    """`Q` matching a food by its canonical name or any of its stored
+    per-language names (`Food.name_translations`)."""
+    condition = Q(name__icontains=query)
+    for code in food_language.LANGUAGE_CODES:
+        condition |= Q(**{f"name_translations__{code}__icontains": query})
+    return condition
+
+
+def _with_display_name(parsed):
+    """A not-yet-imported OFF result, plus the `display_name` a `Food`
+    would show for it in the active food language."""
+    parsed["display_name"] = food_language.localized(
+        parsed["name_translations"], parsed["name"]
+    )
+    return parsed
+
+
 def search_foods(user, query, *, online=False):
     """Local foods (the user's own + shared/imported) matching
     `query`, plus Open Food Facts results when they're warranted.
@@ -975,31 +994,52 @@ def search_foods(user, query, *, online=False):
     (our own rate budget is spent or OFF recently failed) or "error".
     OFF results aren't imported just for appearing in this list -
     only `import_or_refresh_food_from_off` (called once the caller
-    actually picks one) ever creates or updates a `Food` row."""
-    is_barcode = bool(_BARCODE_RE.match(query.strip()))
-    local_filter = Q(off_id=query.strip()) if is_barcode else Q(name__icontains=query)
-    local = list(
-        Food.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True)
-        .filter(local_filter)
-        .order_by("name")
-    )
+    actually picks one) ever creates or updates a `Food` row - except
+    that a barcode already in the library is refreshed when stale
+    (rather than spending the lookup on a result that would be hidden
+    anyway), which is also how a food imported before per-language
+    names existed picks them up.
+
+    Text queries match the canonical name and every stored translation
+    (`Food.name_translations`), so a food is found by any of its names.
+    """
+    query = query.strip()
+    is_barcode = bool(_BARCODE_RE.match(query))
+    if is_barcode:
+        local_filter = Q(off_id=query)
+    else:
+        local_filter = food_name_filter(query)
+
+    def _local():
+        return sorted(
+            Food.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True)
+            .filter(local_filter)
+            .distinct(),
+            key=lambda food: food.display_name.casefold(),
+        )
+
+    local = _local()
     if not OpenFoodFactsSettings.load().enabled:
         return local, [], "disabled"
     if not (online or is_barcode):
         return local, [], "available"
+    if is_barcode and any(food.off_id == query for food in local):
+        # A no-op unless stale; never raises (falls back to the row).
+        import_or_refresh_food_from_off(query)
+        return _local(), [], "ok"
     try:
         if is_barcode:
-            raw_products = [openfoodfacts.get_product(query.strip())]
+            raw_products = [openfoodfacts.get_product(query)]
         else:
             raw_products = openfoodfacts.search_products(
-                query, language=(get_language() or "en").split("-")[0]
+                query, language=food_language.get_food_language()
             )
     except openfoodfacts.OpenFoodFactsRateLimited:
         return local, [], "busy"
     except openfoodfacts.OpenFoodFactsError:
         return local, [], "error"
     off_results = [
-        parsed
+        _with_display_name(parsed)
         for raw in raw_products
         if raw is not None
         and (parsed := openfoodfacts.parse_product(raw)) is not None
@@ -1067,7 +1107,7 @@ def browse_category(category_id):
     except openfoodfacts.OpenFoodFactsError:
         return []
     return [
-        parsed
+        _with_display_name(parsed)
         for raw in raw_products
         if (parsed := openfoodfacts.parse_product(raw)) is not None
         and not Food.objects.filter(off_id=parsed["off_id"]).exists()

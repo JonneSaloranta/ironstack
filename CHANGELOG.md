@@ -18,6 +18,23 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- Nutrition: a "Food language" setting on the profile shows Open Food Facts
+  food names and ingredient lists in a chosen language, independent of the
+  app's language. Each imported food stores its names and ingredients in every
+  supported language Open Food Facts has, so users with different languages
+  share the same food; search finds a food by any of its names. The API adds
+  `display_name`/`name_translations` on foods, `food_display_name` on diary
+  entries and shopping-list items, and `food_language` on the profile.
+
+### Fixed
+- Nutrition: an Open Food Facts product whose main-language name is blank
+  (but which has a name in another language) is no longer silently missing
+  from barcode lookup, search and category browsing.
+- Nutrition: scanning a barcode already in the food library no longer spends
+  an Open Food Facts request on a result that was then hidden; a stale food is
+  refreshed instead.
+
 ## [1.32.0] - 2026-11-04
 
 ### Added

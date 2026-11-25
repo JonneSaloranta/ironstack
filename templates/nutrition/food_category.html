@@ -14,7 +14,7 @@
       <input type="hidden" name="off_barcode" value="{{ product.off_id }}">
       <input type="hidden" name="next" value="{{ request.path }}">
       <div>
-        <strong>{{ product.name }}</strong>{% if product.brand %} <span class="text-muted">({{ product.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" with food=product %}
+        <strong>{{ product.display_name }}</strong>{% if product.brand %} <span class="text-muted">({{ product.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" with food=product %}
         <p class="text-muted">{{ product.calories }} kcal / {{ product.serving_size }} {{ product.serving_unit }}</p>
       </div>
       <button type="submit" class="button-secondary">{% trans "Import" %}</button>

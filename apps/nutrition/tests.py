@@ -21,6 +21,7 @@ from apps.nutrition import (
     calculators,
     diet_builder,
     energy,
+    food_language,
     macros,
     maintenance,
     nutrition_label,
@@ -1290,6 +1291,213 @@ class ParseProductTests(TestCase):
         parsed = openfoodfacts.parse_product(raw)
         self.assertIsNone(parsed["fiber_grams"])
         self.assertIsNone(parsed["sodium_mg"])
+
+
+# A real OFF case (EAN 7392672004459): main language French, but only
+# the Finnish/English/Swedish names are filled in.
+NAMELESS_MAIN_LANGUAGE = {
+    **RAW_OFF_PRODUCT,
+    "product_name": "",
+    "generic_name": "",
+    "product_name_fr": "",
+    "product_name_fi": "Kreikkalainen Jugurtti",
+    "product_name_en": "Grekisk Yoghurt 0% Fett",
+    "product_name_sv": "Grekisk yoghurt, laktosfri",
+    "ingredients_text": "",
+    "ingredients_text_fi": "Pastöroitu maito",
+    "ingredients_text_en": "Pasteurised milk",
+}
+
+
+class ParseProductTranslationsTests(TestCase):
+    def test_requests_every_supported_languages_fields(self):
+        fields = openfoodfacts.PRODUCT_FIELDS.split(",")
+        for field in ("product_name_fi", "generic_name_sv", "ingredients_text_et"):
+            self.assertIn(field, fields)
+
+    def test_stores_every_supported_languages_name_and_ingredients(self):
+        parsed = openfoodfacts.parse_product(NAMELESS_MAIN_LANGUAGE)
+        self.assertEqual(
+            parsed["name_translations"],
+            {
+                "en": "Grekisk Yoghurt 0% Fett",
+                "fi": "Kreikkalainen Jugurtti",
+                "sv": "Grekisk yoghurt, laktosfri",
+            },
+        )
+        self.assertEqual(
+            parsed["ingredients_translations"],
+            {"en": "Pasteurised milk", "fi": "Pastöroitu maito"},
+        )
+
+    def test_blank_main_name_falls_back_to_english_whatever_the_viewers_language(self):
+        # A shared food's stored name must not depend on who imported or
+        # refreshed it.
+        for language in ("fi", "sv", "en"):
+            with translation_override(language), food_language.override(language):
+                parsed = openfoodfacts.parse_product(NAMELESS_MAIN_LANGUAGE)
+            self.assertEqual(parsed["name"], "Grekisk Yoghurt 0% Fett")
+            self.assertEqual(parsed["ingredients_text"], "Pasteurised milk")
+
+    def test_without_english_the_first_supported_language_is_used(self):
+        raw = {**NAMELESS_MAIN_LANGUAGE, "product_name_en": "  "}
+        self.assertEqual(openfoodfacts.parse_product(raw)["name"], "Kreikkalainen Jugurtti")
+
+    def test_main_language_name_wins(self):
+        raw = {**NAMELESS_MAIN_LANGUAGE, "product_name": "Main name"}
+        self.assertEqual(openfoodfacts.parse_product(raw)["name"], "Main name")
+
+    def test_generic_name_variant_counts_as_a_name(self):
+        raw = {
+            **RAW_OFF_PRODUCT,
+            "product_name": "",
+            "generic_name": "",
+            "generic_name_sv": "Yoghurt",
+        }
+        parsed = openfoodfacts.parse_product(raw)
+        self.assertEqual(parsed["name"], "Yoghurt")
+        self.assertEqual(parsed["name_translations"], {"sv": "Yoghurt"})
+
+    def test_no_name_in_any_language_returns_none(self):
+        raw = {**RAW_OFF_PRODUCT, "product_name": "", "generic_name": ""}
+        self.assertIsNone(openfoodfacts.parse_product(raw))
+
+
+class FoodDisplayNameTests(TestCase):
+    def setUp(self):
+        self.food = make_food(
+            None,
+            name="Grekisk Yoghurt 0% Fett",
+            name_translations={"fi": "Kreikkalainen Jugurtti", "en": "Grekisk Yoghurt 0% Fett"},
+            ingredients_text="Pasteurised milk",
+            ingredients_translations={"fi": "Pastöroitu maito"},
+            brand="Salakis",
+        )
+
+    def test_shows_the_food_languages_name(self):
+        with food_language.override("fi"):
+            self.assertEqual(self.food.display_name, "Kreikkalainen Jugurtti")
+            self.assertEqual(self.food.display_ingredients_text, "Pastöroitu maito")
+            self.assertEqual(str(self.food), "Kreikkalainen Jugurtti (Salakis)")
+
+    def test_falls_back_to_the_stored_name(self):
+        with food_language.override("ru"):
+            self.assertEqual(self.food.display_name, "Grekisk Yoghurt 0% Fett")
+            self.assertEqual(self.food.display_ingredients_text, "Pasteurised milk")
+
+    def test_unset_food_language_follows_the_ui_language(self):
+        with translation_override("fi"), food_language.override(""):
+            self.assertEqual(self.food.display_name, "Kreikkalainen Jugurtti")
+
+    def test_a_hand_entered_food_keeps_its_own_name(self):
+        food = make_food(None, name="Mummon puuro")
+        with food_language.override("en"):
+            self.assertEqual(food.display_name, "Mummon puuro")
+
+
+class FoodLanguageWebTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="eve", password="s3cret-pass", language="en", food_language="fi"
+        )
+        self.client.force_login(self.user)
+        self.food = make_food(
+            None,
+            name="Grekisk Yoghurt 0% Fett",
+            name_translations={"fi": "Kreikkalainen Jugurtti"},
+        )
+
+    def test_pages_show_the_food_language_even_with_another_ui_language(self):
+        response = self.client.get(reverse("nutrition:food-detail", args=[self.food.pk]))
+        self.assertContains(response, "Kreikkalainen Jugurtti")
+        self.assertEqual(response.wsgi_request.LANGUAGE_CODE, "en")
+
+    def test_blank_food_language_follows_the_ui_language(self):
+        self.user.food_language = ""
+        self.user.save(update_fields=["food_language"])
+        response = self.client.get(reverse("nutrition:food-detail", args=[self.food.pk]))
+        self.assertNotContains(response, "Kreikkalainen Jugurtti")
+        self.assertContains(response, "Grekisk Yoghurt 0% Fett")
+
+    def test_the_food_list_sorts_and_searches_by_the_shown_name(self):
+        Food.objects.filter(owner__isnull=True).exclude(pk=self.food.pk).delete()
+        # Stored names sort Grekisk < Hirssi; the shown ones Hirssi < Kreikkalainen.
+        millet = make_food(None, name="Hirssi")
+        response = self.client.get(
+            reverse("nutrition:food-list"), {"sort": "name", "dir": "asc"}
+        )
+        self.assertEqual(list(response.context["object_list"]), [millet, self.food])
+        response = self.client.get(reverse("nutrition:food-list"), {"q": "jugurtti"})
+        self.assertEqual(list(response.context["object_list"]), [self.food])
+
+    def test_the_profile_form_saves_the_food_language(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "Same as the app language")
+        form = response.context["form"]
+        data = {name: field.value() for name, field in ((n, form[n]) for n in form.fields)}
+        data = {key: value for key, value in data.items() if value not in (None, False)}
+        data["food_language"] = "sv"
+        self.client.post(reverse("profile"), data)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.food_language, "sv")
+
+
+class SearchFoodsTranslationTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        Food.objects.filter(owner__isnull=True).delete()
+
+    def test_local_search_matches_any_stored_language(self):
+        food = make_food(
+            None, name="Grekisk Yoghurt 0% Fett", name_translations={"fi": "Kreikkalainen Jugurtti"}
+        )
+        with food_language.override("en"):
+            local, _off, _status = services.search_foods(self.alice, "jugurtti")
+        self.assertEqual(local, [food])
+
+    def test_off_results_carry_the_food_languages_name(self):
+        with mock.patch.object(
+            openfoodfacts, "get_product", return_value=NAMELESS_MAIN_LANGUAGE
+        ), food_language.override("sv"):
+            _local, off_results, _status = services.search_foods(
+                self.alice, "1234567890123", online=True
+            )
+        self.assertEqual(off_results[0]["display_name"], "Grekisk yoghurt, laktosfri")
+
+    def test_text_search_asks_off_in_the_food_language(self):
+        with mock.patch.object(
+            openfoodfacts, "search_products", return_value=[]
+        ) as search_products, food_language.override("fi"):
+            services.search_foods(self.alice, "jugurtti", online=True)
+        search_products.assert_called_once_with("jugurtti", language="fi")
+
+    def test_a_barcode_already_in_the_library_is_refreshed_when_stale(self):
+        # A food imported before translations were stored (migration
+        # 0029 clears off_synced_at) picks them up from the next scan.
+        food = make_food(None, name="Grekisk Yoghurt 0% Fett", off_id="1234567890123")
+        with mock.patch.object(
+            openfoodfacts, "get_product", return_value=NAMELESS_MAIN_LANGUAGE
+        ), food_language.override("fi"):
+            local, off_results, status = services.search_foods(
+                self.alice, "1234567890123", online=True
+            )
+        self.assertEqual(status, "ok")
+        self.assertEqual(off_results, [])
+        food.refresh_from_db()
+        self.assertEqual(food.name_translations["fi"], "Kreikkalainen Jugurtti")
+        with food_language.override("fi"):
+            self.assertEqual(local[0].display_name, "Kreikkalainen Jugurtti")
+
+    def test_a_fresh_barcode_already_in_the_library_costs_no_off_request(self):
+        make_food(
+            None, name="Muesli", off_id="1234567890123", off_synced_at=timezone.now()
+        )
+        with mock.patch.object(openfoodfacts, "get_product") as get_product:
+            local, _off, _status = services.search_foods(
+                self.alice, "1234567890123", online=True
+            )
+        get_product.assert_not_called()
+        self.assertEqual([f.name for f in local], ["Muesli"])
 
 
 class ImportOrRefreshFoodFromOffTests(TestCase):

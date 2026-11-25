@@ -24,6 +24,8 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
 
+from . import food_language
+
 
 class BiologicalSex(models.TextChoices):
     """A physiological input to the Mifflin-St Jeor BMR formula
@@ -355,6 +357,13 @@ class Food(TimeStampedModel):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=200)
+    # Open Food Facts' per-language names (`{"fi": "...", "en": "..."}`,
+    # only the app's own languages, blanks left out) - every one OFF has
+    # is stored at import, so users with different food languages
+    # (apps.nutrition.food_language) share the same row. `name` stays the
+    # canonical fallback and what lists sort by; `display_name` is what
+    # gets shown. Always empty for a hand-entered food.
+    name_translations = models.JSONField(default=dict, blank=True)
     brand = models.CharField(max_length=200, blank=True)
     serving_size = models.DecimalField(max_digits=8, decimal_places=2)
     serving_unit = models.CharField(max_length=10, choices=ServingUnit.choices)
@@ -450,6 +459,8 @@ class Food(TimeStampedModel):
     # than a clean display name, shown as OFF provides it regardless.
     quantity = models.CharField(max_length=100, blank=True)
     ingredients_text = models.TextField(blank=True)
+    # Same as name_translations, for OFF's `ingredients_text_<lang>`.
+    ingredients_translations = models.JSONField(default=dict, blank=True)
     labels = models.TextField(blank=True)
     allergens = models.TextField(blank=True)
     # Sourced from Open Prices (prices.openfoodfacts.org), a distinct
@@ -476,7 +487,17 @@ class Food(TimeStampedModel):
         ordering = ["name"]
 
     def __str__(self):
-        return f"{self.name} ({self.brand})" if self.brand else self.name
+        return f"{self.display_name} ({self.brand})" if self.brand else self.display_name
+
+    @property
+    def display_name(self):
+        """The name in the active food language when OFF has one,
+        else the canonical `name`."""
+        return food_language.localized(self.name_translations, self.name)
+
+    @property
+    def display_ingredients_text(self):
+        return food_language.localized(self.ingredients_translations, self.ingredients_text)
 
 
 class Recipe(TimeStampedModel):
@@ -541,7 +562,7 @@ class RecipeIngredient(models.Model):
         ordering = ["order", "id"]
 
     def __str__(self):
-        return f"{self.quantity} {self.food.serving_unit} {self.food.name}"
+        return f"{self.quantity} {self.food.serving_unit} {self.food.display_name}"
 
 
 class DiaryEntry(TimeStampedModel):
@@ -641,7 +662,7 @@ class DiaryEntry(TimeStampedModel):
     @property
     def display_name(self):
         if self.food_id:
-            return self.food.name
+            return self.food.display_name
         if self.recipe_id:
             return self.recipe.name
         return self.quick_name or _("Quick entry")
@@ -822,7 +843,7 @@ class DietPlanItem(models.Model):
             raise ValidationError(_("Use either a food or a recipe, not both or neither."))
 
     def __str__(self):
-        item = self.food.name if self.food_id else self.recipe.name
+        item = self.food.display_name if self.food_id else self.recipe.name
         return f"{self.quantity} {item}"
 
 

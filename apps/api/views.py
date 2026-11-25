@@ -35,7 +35,7 @@ from apps.exercises.forms import ExerciseImageForm
 from apps.exercises.models import Equipment, ExerciseImage, MuscleGroup
 from apps.measurements import services as measurement_services
 from apps.measurements.models import BodyMeasurement
-from apps.nutrition import diet_builder
+from apps.nutrition import diet_builder, food_language
 from apps.nutrition import services as nutrition_services
 from apps.nutrition.models import (
     DiaryEntry,
@@ -122,6 +122,7 @@ from .serializers import (
     VolumeAnalyticsSerializer,
     WorkoutSerializer,
     WorkoutSessionSerializer,
+    api_food_language,
     duration_estimate_data,
 )
 from .viewsets import OwnedResourceViewSet
@@ -1044,7 +1045,9 @@ class FoodViewSet(OwnedResourceViewSet):
         query = (self.request.query_params.get("search") or "").strip()
         if query:
             queryset = queryset.filter(
-                Q(name__icontains=query) | Q(brand__icontains=query) | Q(off_id=query)
+                nutrition_services.food_name_filter(query)
+                | Q(brand__icontains=query)
+                | Q(off_id=query)
             )
         return queryset
 
@@ -1091,7 +1094,7 @@ class FoodViewSet(OwnedResourceViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
         return Response(
-            FoodSerializer(food).data,
+            FoodSerializer(food, context=self.get_serializer_context()).data,
             status=status.HTTP_200_OK if existed else status.HTTP_201_CREATED,
         )
 
@@ -1111,13 +1114,17 @@ class FoodViewSet(OwnedResourceViewSet):
         if not query:
             raise serializers.ValidationError({"q": "This field is required."})
         language = request.user.language
-        with translation.override(language) if language else nullcontext():
+        with (
+            translation.override(language) if language else nullcontext(),
+            food_language.override(api_food_language(request)),
+        ):
             local, results, off_status = nutrition_services.search_foods(
                 request.user, query, online=True
             )
         return Response(
             OffSearchSerializer(
-                {"status": off_status, "local": local, "results": results}
+                {"status": off_status, "local": local, "results": results},
+                context=self.get_serializer_context(),
             ).data
         )
 
