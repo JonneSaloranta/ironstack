@@ -14,6 +14,7 @@ from contextlib import nullcontext
 from datetime import datetime, time
 from decimal import Decimal
 
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone, translation
 from django.utils.dateparse import parse_date, parse_datetime
@@ -62,6 +63,7 @@ from . import idempotency
 from .idempotency import IdempotentCreateMixin
 from .models import ApiContext
 from .serializers import (
+    PERFORMED_EXERCISE_TARGET_FIELDS,
     AchievementSerializer,
     ActivitySerializer,
     ActivityTypeSerializer,
@@ -98,6 +100,7 @@ from .serializers import (
     NutritionStatsSerializer,
     NutritionTargetSerializer,
     OffSearchSerializer,
+    PerformedExerciseCreateSerializer,
     PerformedExerciseSerializer,
     PerformedStretchMarkSerializer,
     PerformedStretchSerializer,
@@ -121,7 +124,9 @@ from .serializers import (
     UpNextSerializer,
     VolumeAnalyticsSerializer,
     WorkoutSerializer,
+    WorkoutSessionCreateSerializer,
     WorkoutSessionSerializer,
+    WorkoutSessionUpdateSerializer,
     api_food_language,
     duration_estimate_data,
 )
@@ -443,8 +448,22 @@ def _date_range_parameters(after="date_after", before="date_before", *, what="da
     ]
 
 
+def _end_session(session, new_status, ended_at):
+    if new_status == WorkoutSessionStatus.COMPLETED:
+        workout_services.complete_session(session, ended_at=ended_at)
+    elif new_status == WorkoutSessionStatus.ABANDONED:
+        workout_services.abandon_session(session, ended_at=ended_at)
+
+
 @extend_schema_view(
-    create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]),
+    create=extend_schema(
+        parameters=[idempotency.SCHEMA_PARAMETER],
+        request=WorkoutSessionCreateSerializer,
+        responses={201: WorkoutSessionSerializer},
+    ),
+    partial_update=extend_schema(
+        request=WorkoutSessionUpdateSerializer, responses=WorkoutSessionSerializer
+    ),
     list=extend_schema(
         parameters=[
             OpenApiParameter("status", enum=WorkoutSessionStatus.values),
@@ -488,19 +507,31 @@ class WorkoutSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
             queryset = queryset.filter(started_at__lt=started_before)
         return queryset
 
+    def get_serializer_class(self):
+        if self.action == "create":
+            return WorkoutSessionCreateSerializer
+        if self.action == "partial_update":
+            return WorkoutSessionUpdateSerializer
+        return WorkoutSessionSerializer
+
+    @transaction.atomic
     def perform_create(self, serializer):
-        workout = serializer.validated_data.get("workout")
-        serializer.instance = workout_services.start_session(self.request.user, workout=workout)
+        data = serializer.validated_data
+        session = workout_services.start_session(
+            self.request.user,
+            workout=data.get("workout"),
+            started_at=data.get("started_at"),
+            snapshot=data["snapshot"],
+        )
+        _end_session(session, data.get("status"), data.get("ended_at"))
+        serializer.instance = session
 
     def perform_update(self, serializer):
         session = serializer.instance
-        new_status = serializer.validated_data.get("status")
         if not session.is_in_progress:
             return
-        if new_status == "completed":
-            workout_services.complete_session(session)
-        elif new_status == "abandoned":
-            workout_services.abandon_session(session)
+        data = serializer.validated_data
+        _end_session(session, data.get("status"), data.get("ended_at"))
 
     def perform_destroy(self, instance):
         exercise_ids = list(instance.performed_exercises.values_list("exercise_id", flat=True))
@@ -556,7 +587,13 @@ class WorkoutSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
         return Response(CooldownSuggestionSerializer(data, context={"request": request}).data)
 
 
-@extend_schema_view(create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]))
+@extend_schema_view(
+    create=extend_schema(
+        parameters=[idempotency.SCHEMA_PARAMETER],
+        request=PerformedExerciseCreateSerializer,
+        responses={201: PerformedExerciseSerializer},
+    )
+)
 class PerformedExerciseViewSet(
     IdempotentCreateMixin,
     mixins.CreateModelMixin,
@@ -574,10 +611,21 @@ class PerformedExerciseViewSet(
     def get_queryset(self):
         return PerformedExercise.objects.filter(session__user=self.request.user)
 
+    def get_serializer_class(self):
+        if self.action == "create":
+            return PerformedExerciseCreateSerializer
+        return PerformedExerciseSerializer
+
     def perform_create(self, serializer):
-        session = serializer.validated_data["session"]
-        exercise = serializer.validated_data["exercise"]
-        serializer.instance = workout_services.add_performed_exercise(session, exercise)
+        data = serializer.validated_data
+        extra = {
+            name: data[name]
+            for name in (*PERFORMED_EXERCISE_TARGET_FIELDS, "notes")
+            if name in data
+        }
+        serializer.instance = workout_services.add_performed_exercise(
+            data["session"], data["exercise"], **extra
+        )
 
     @extend_schema(responses=SuggestionSerializer)
     @action(detail=True, methods=["get"])
@@ -645,7 +693,9 @@ class ExerciseSetViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
         logged_set = workout_services.log_set(performed_exercise, **fields)
         # The response lists the records this set broke (issue #30) -
         # the web's PR toast - so a client needn't diff records/.
-        serializer.context["new_records"] = records_services.check_and_record_prs(logged_set)
+        serializer.context["new_records"] = records_services.record_prs_for_logged_set(
+            logged_set
+        )
         serializer.instance = logged_set
 
     def perform_update(self, serializer):
@@ -1261,6 +1311,7 @@ class NutritionGoalViewSet(
                     target_rate_kg_per_week=data["target_rate_kg_per_week"],
                     target_weight=data.get("target_weight"),
                     notes=data.get("notes", ""),
+                    started_at=data.get("started_at"),
                 )
             except nutrition_services.GoalChangeError as error:
                 return Response({"detail": str(error)}, status=status.HTTP_400_BAD_REQUEST)
@@ -1737,13 +1788,19 @@ class StretchSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         data = serializer.validated_data
+        started_at = data.get("started_at")
         serializer.instance = stretching_services.quick_log(
             self.request.user,
-            date=data.get("date") or timezone.localdate(),
+            date=data.get("date") or timezone.localdate(started_at),
             duration=data["duration"],
             routine=data.get("routine"),
+            name=data.get("name", ""),
             notes=data.get("notes", ""),
             after_workout=data.get("after_workout"),
+            started_at=started_at,
+            completed_at=data.get("completed_at"),
+            status=data["status"],
+            performed=data.get("performed_stretches", []),
         )
 
     def _in_progress_or_409(self):

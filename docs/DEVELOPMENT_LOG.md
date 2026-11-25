@@ -6259,3 +6259,31 @@ Migration 0029 clears `off_synced_at` on existing OFF foods so they pick up
 translations on their next scan or import. A barcode already in the library no
 longer spends an OFF request on a result that would be hidden; a stale row is
 refreshed instead.
+
+## History transfer from the offline client (#52)
+
+The Sailfish client's offline mode transfers its history once through the
+API, so past workouts must keep their real times. `start_session` takes
+`started_at` and `snapshot=False` (link the workout, don't copy today's
+prescriptions), `complete_session`/`abandon_session` take `ended_at`,
+`add_performed_exercise` takes the targets of the time (progression's
+`_summarize` reads min/max reps and RIR from history), the stretching quick
+log takes its times, status and steps, and `change_goal` takes `started_at`
+(auto_now_add ignores a value on create, so it's written with an update; the
+target uses the body weight logged by then). The API exposes them through
+separate input serializers (`WorkoutSessionCreateSerializer`,
+`WorkoutSessionUpdateSerializer`, `PerformedExerciseCreateSerializer`, the
+extended `StretchSessionQuickLogSerializer`) so responses keep their fields
+read-only and required - oasdiff sees only additions.
+
+Sets and performed exercises still need a session in progress (a finished
+session is history), so a transfer creates the session in progress, adds to
+it and ends it with its real `ended_at`. The issue asked to skip
+`start_session_once`'s 10-second merge; the API never used it.
+
+Records: `check_and_record_prs` compares a set with every other set,
+whenever done, which is right for a set logged now but wrong for one dated
+before existing sets - a later record would survive next to an older,
+heavier set. `record_prs_for_logged_set` takes the `rebuild_records` replay
+for such a set instead. `NotInFutureDateTimeField` allows a minute of phone
+clock drift and stores it as now.

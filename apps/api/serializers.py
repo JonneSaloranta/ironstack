@@ -10,6 +10,8 @@ as plain preferences (the UI reads them to decide *how* to render), just
 never applied to convert any other endpoint's numbers.
 """
 
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
@@ -36,13 +38,20 @@ from apps.programs.models import ExercisePrescription, Program, Workout
 from apps.records.models import PersonalRecord
 from apps.stretching.models import (
     PerformedStretch,
+    PerformedStretchStatus,
     RoutineItem,
     Stretch,
     StretchRoutine,
     StretchSession,
+    StretchSessionStatus,
 )
 from apps.workouts import services as workout_services
-from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSession
+from apps.workouts.models import (
+    ExerciseSet,
+    PerformedExercise,
+    WorkoutSession,
+    WorkoutSessionStatus,
+)
 
 User = get_user_model()
 
@@ -527,6 +536,48 @@ class PerformedExerciseSerializer(serializers.ModelSerializer):
         return value
 
 
+# What a plan asked for, snapshotted onto a performed exercise.
+PERFORMED_EXERCISE_TARGET_FIELDS = [
+    "set_count",
+    "min_reps",
+    "max_reps",
+    "target_weight",
+    "target_rpe",
+    "target_rir",
+    "progression_method",
+    "weight_increment",
+]
+
+
+class PerformedExerciseCreateSerializer(PerformedExerciseSerializer):
+    """`POST performed-exercises/` input. The targets (normally copied
+    from the plan when a session starts) are writable here for an
+    exercise of a workout done earlier, created with `snapshot: false`
+    (issue #52) - progression reads them from history. All optional;
+    leave them out for an ad-hoc exercise. A separate class so the
+    response keeps them read-only and required."""
+
+    class Meta(PerformedExerciseSerializer.Meta):
+        read_only_fields = []
+
+    def validate_target_rpe(self, value):
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        if value is None:
+            return value
+        try:
+            workout_services.validate_rpe(value)
+        except DjangoValidationError as error:
+            raise serializers.ValidationError(error.messages) from None
+        return value
+
+    def validate(self, attrs):
+        min_reps, max_reps = attrs.get("min_reps"), attrs.get("max_reps")
+        if min_reps is not None and max_reps is not None and min_reps > max_reps:
+            raise serializers.ValidationError({"max_reps": "Can't be below min_reps."})
+        return attrs
+
+
 class WorkoutSessionSerializer(serializers.ModelSerializer):
     performed_exercises = PerformedExerciseSerializer(many=True, read_only=True)
     is_in_progress = serializers.BooleanField(read_only=True)
@@ -582,6 +633,105 @@ class WorkoutSessionSerializer(serializers.ModelSerializer):
         if not self.instance.is_in_progress and value != self.instance.status:
             raise serializers.ValidationError("This session is no longer in progress.")
         return value
+
+
+# A phone's clock can run a little ahead of the server's; a time only
+# that much in the future is still "now".
+CLOCK_SKEW_ALLOWANCE = timedelta(minutes=1)
+
+
+class NotInFutureDateTimeField(serializers.DateTimeField):
+    """A past (or present) date/time - one at most CLOCK_SKEW_ALLOWANCE
+    ahead is taken as now, anything later is rejected."""
+
+    def to_internal_value(self, data):
+        from django.utils import timezone
+
+        value = super().to_internal_value(data)
+        now = timezone.now()
+        if value > now + CLOCK_SKEW_ALLOWANCE:
+            raise serializers.ValidationError("Can't be in the future.")
+        return min(value, now)
+
+
+class WorkoutSessionCreateSerializer(WorkoutSessionSerializer):
+    """`POST sessions/` input. Everything optional beyond the plain
+    "start now" of before: `started_at` records a workout done earlier
+    (history transferred from an offline client, issue #52), `status`
+    `completed`/`abandoned` with `ended_at` creates it already finished,
+    and `snapshot: false` links it to `workout` without copying the
+    plan's current prescriptions - add the exercises actually done
+    with `performed-exercises/`. To transfer one with its sets, create
+    it in progress, add exercises and sets, then `PATCH` it finished
+    with its real `ended_at`. A separate class so the response keeps
+    `started_at`/`ended_at` read-only and required."""
+
+    started_at = NotInFutureDateTimeField(
+        required=False,
+        help_text="When the workout started. Default: now.",
+    )
+    ended_at = NotInFutureDateTimeField(
+        required=False,
+        help_text="When it ended - only with `status` `completed` or `abandoned`.",
+    )
+    snapshot = serializers.BooleanField(
+        default=True, write_only=True,
+        help_text="False: don't copy the workout's prescriptions as performed exercises.",
+    )
+
+    class Meta(WorkoutSessionSerializer.Meta):
+        fields = [*WorkoutSessionSerializer.Meta.fields, "snapshot"]
+        read_only_fields = ["program"]
+
+    def validate_status(self, value):
+        # Default `in_progress`; `completed`/`abandoned` need `ended_at`.
+        if value == WorkoutSessionStatus.PLANNED:
+            raise serializers.ValidationError(
+                "A session starts in_progress, or is created completed or abandoned."
+            )
+        return value
+
+    def validate(self, attrs):
+        finished = attrs.get("status") in (
+            WorkoutSessionStatus.COMPLETED, WorkoutSessionStatus.ABANDONED
+        )
+        if finished and attrs.get("ended_at") is None:
+            raise serializers.ValidationError({"ended_at": "Required for a finished session."})
+        if not finished and attrs.get("ended_at") is not None:
+            raise serializers.ValidationError(
+                {"ended_at": "Only a completed or abandoned session has an end."}
+            )
+        _validate_end_after_start(attrs.get("ended_at"), attrs.get("started_at"))
+        return attrs
+
+
+class WorkoutSessionUpdateSerializer(WorkoutSessionSerializer):
+    """`PATCH sessions/<id>/` input: `status` `completed`/`abandoned`
+    ends a session in progress, at `ended_at` when given (a workout done
+    earlier, issue #52), else now."""
+
+    ended_at = NotInFutureDateTimeField(
+        required=False,
+        help_text="When it ended. Default: now. Only with `status`.",
+    )
+
+    class Meta(WorkoutSessionSerializer.Meta):
+        read_only_fields = ["program", "started_at"]
+
+    def validate(self, attrs):
+        if attrs.get("ended_at") is not None and "status" not in attrs:
+            raise serializers.ValidationError(
+                {"ended_at": "Send it with status completed or abandoned."}
+            )
+        _validate_end_after_start(attrs.get("ended_at"), self.instance.started_at)
+        return attrs
+
+
+def _validate_end_after_start(ended_at, started_at):
+    from django.utils import timezone
+
+    if ended_at is not None and ended_at < (started_at or timezone.now()):
+        raise serializers.ValidationError({"ended_at": "Can't be before the start."})
 
 
 # --------------------------------------------------------------------
@@ -1145,6 +1295,14 @@ class NutritionGoalCreateSerializer(serializers.Serializer):
         max_digits=8, decimal_places=2, min_value=20, required=False, allow_null=True
     )
     notes = serializers.CharField(required=False, allow_blank=True, default="")
+    started_at = NotInFutureDateTimeField(
+        required=False,
+        help_text=(
+            "When the goal started, for one set earlier (issue #52). Default: now. "
+            "Not before the current goal's start; the target uses the body weight "
+            "logged by then."
+        ),
+    )
 
     def validate(self, attrs):
         from apps.nutrition import services as nutrition_services
@@ -1516,16 +1674,83 @@ class StretchSessionSerializer(serializers.ModelSerializer):
         extra_kwargs = {"duration": {"required": True, "allow_null": False}}
 
 
+class PerformedStretchInputSerializer(serializers.Serializer):
+    """One stretch of a session logged after the fact (issue #52). Give
+    `stretch` (name, sides and hold default from it) or, for one that
+    isn't in the library, `stretch_name` and `target_hold_seconds`."""
+
+    stretch = serializers.PrimaryKeyRelatedField(
+        queryset=Stretch.objects.all(), required=False, allow_null=True
+    )
+    stretch_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    per_side = serializers.BooleanField(required=False)
+    target_hold_seconds = serializers.IntegerField(min_value=1, required=False)
+    sets = serializers.IntegerField(min_value=1, max_value=100, default=1)
+    rest_seconds = serializers.IntegerField(min_value=0, max_value=3600, default=0)
+    status = serializers.ChoiceField(
+        choices=PerformedStretchStatus.choices, default=PerformedStretchStatus.DONE
+    )
+    actual_seconds = serializers.IntegerField(min_value=0, required=False, allow_null=True)
+
+    def validate_stretch(self, value):
+        from apps.stretching import services as stretching_services
+
+        if value is None:
+            return value
+        if not stretching_services.visible_stretches(
+            self.context["request"].user, include_inactive=True
+        ).filter(pk=value.pk).exists():
+            raise serializers.ValidationError("Not a stretch you can use.")
+        return value
+
+    def validate(self, attrs):
+        if attrs.get("stretch") is None and not (
+            attrs.get("stretch_name") and attrs.get("target_hold_seconds")
+        ):
+            raise serializers.ValidationError(
+                "Give a stretch, or stretch_name and target_hold_seconds."
+            )
+        return attrs
+
+
 class StretchSessionQuickLogSerializer(StretchSessionSerializer):
     """The quick-log create's input: StretchSessionSerializer plus a
     writable `after_workout`. A separate class so `after_workout` stays a
     required, read-only property of every StretchSession response in the
     schema - making it writable there would make it optional, a breaking
-    change for v1 clients."""
+    change for v1 clients.
+
+    The rest records a session done earlier (history transferred from an
+    offline client, issue #52): its `name`, real `started_at` and/or
+    `completed_at` (the other follows from `duration`; `date` defaults
+    to the start's day), `status` `abandoned` for one stopped early, and
+    `performed_stretches` - what was done. All optional; leaving them
+    out is the plain quick log of before."""
 
     after_workout = serializers.PrimaryKeyRelatedField(
         queryset=WorkoutSession.objects.all(), required=False, allow_null=True
     )
+    name = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    status = serializers.ChoiceField(
+        choices=[
+            (StretchSessionStatus.COMPLETED, StretchSessionStatus.COMPLETED.label),
+            (StretchSessionStatus.ABANDONED, StretchSessionStatus.ABANDONED.label),
+        ],
+        default=StretchSessionStatus.COMPLETED,
+        help_text="A guided session in progress starts with `start/` instead.",
+    )
+    started_at = NotInFutureDateTimeField(required=False)
+    completed_at = NotInFutureDateTimeField(required=False)
+    performed_stretches = PerformedStretchInputSerializer(many=True, required=False)
+
+    def validate(self, attrs):
+        started_at, completed_at = attrs.get("started_at"), attrs.get("completed_at")
+        if started_at is not None and completed_at is not None and completed_at < started_at:
+            raise serializers.ValidationError({"completed_at": "Can't be before the start."})
+        return attrs
+
+    def to_representation(self, instance):
+        return StretchSessionSerializer(instance, context=self.context).data
 
     def validate_after_workout(self, value):
         return _validate_after_workout(self, value)

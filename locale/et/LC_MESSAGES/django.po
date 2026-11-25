@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 19:07+0000\n"
+"POT-Creation-Date: 2026-11-25 19:58+0000\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -128,7 +128,10 @@ msgid ""
 "Which language food names and ingredient lists from Open Food Facts are "
 "shown in, when the product has one in that language. Foods you added "
 "yourself keep the name you gave them."
-msgstr "Millises keeles kuvatakse Open Food Factsi toitude nimed ja koostisosade loendid, kui tootel on need selles keeles olemas. Ise lisatud toidud säilitavad sinu antud nime."
+msgstr ""
+"Millises keeles kuvatakse Open Food Factsi toitude nimed ja koostisosade "
+"loendid, kui tootel on need selles keeles olemas. Ise lisatud toidud "
+"säilitavad sinu antud nime."
 
 #: apps/accounts/forms.py:360
 msgid ""
@@ -641,15 +644,15 @@ msgstr[1] "%(counter)s rekordit"
 msgid "Total weight lifted"
 msgstr "Tõstetud kaal kokku"
 
-#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1719
+#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1765
 msgid "7 days"
 msgstr "7 päeva"
 
-#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1721
+#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1767
 msgid "30 days"
 msgstr "30 päeva"
 
-#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1722
+#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1768
 msgid "3 months"
 msgstr "3 kuud"
 
@@ -657,11 +660,11 @@ msgstr "3 kuud"
 msgid "6 months"
 msgstr "6 kuud"
 
-#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1724
+#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1770
 msgid "1 year"
 msgstr "1 aasta"
 
-#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1725
+#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1771
 #: templates/stretching/home.html:24
 msgid "All time"
 msgstr "Kogu aeg"
@@ -1417,7 +1420,7 @@ msgid "You can't update this diet plan."
 msgstr "Sa ei saa seda toitumiskava värskendada."
 
 #: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
-#: apps/nutrition/views.py:1140 apps/nutrition/views.py:1433
+#: apps/nutrition/views.py:1141 apps/nutrition/views.py:1434
 #: apps/programs/views.py:207
 #, python-format
 msgid "Imported “%(name)s”."
@@ -3851,32 +3854,40 @@ msgstr "Joogid"
 msgid "Protein bars"
 msgstr "Proteiinibatoonid"
 
-#: apps/nutrition/services.py:135
+#: apps/nutrition/services.py:157
 msgid "A fat-loss goal needs a negative rate - you're asking to lose weight."
 msgstr ""
 "Rasvapõletuse eesmärk vajab negatiivset tempot - sinu eesmärk on kaalu "
 "langetada."
 
-#: apps/nutrition/services.py:138
+#: apps/nutrition/services.py:160
 msgid ""
 "A muscle-gain goal needs a positive rate - you're asking to gain weight."
 msgstr ""
 "Lihasmassa kasvatamise eesmärk vajab positiivset tempot - sinu eesmärk on "
 "kaalus juurde võtta."
 
-#: apps/nutrition/services.py:141
+#: apps/nutrition/services.py:163
 msgid "A maintenance goal's rate should be 0 kg/week."
 msgstr "Säilitamise eesmärgi tempo peaks olema 0 kg/nädalas."
 
-#: apps/nutrition/services.py:166
+#: apps/nutrition/services.py:196
 msgid "Set up your nutrition profile first."
 msgstr "Seadista kõigepealt oma toitumisprofiil."
 
-#: apps/nutrition/services.py:168
+#: apps/nutrition/services.py:198
 msgid "Add your height to your profile first."
 msgstr "Lisa kõigepealt oma pikkus profiili."
 
-#: apps/nutrition/services.py:176
+#: apps/nutrition/services.py:201
+msgid "A goal can't start in the future."
+msgstr "Eesmärk ei saa alata tulevikus."
+
+#: apps/nutrition/services.py:206
+msgid "A goal can't start before the current goal started."
+msgstr "Eesmärk ei saa alata enne praeguse eesmärgi algust."
+
+#: apps/nutrition/services.py:220
 msgid ""
 "Log a body weight measurement before changing your goal - the calorie target "
 "needs your current weight."
@@ -3884,58 +3895,58 @@ msgstr ""
 "Enne eesmärgi muutmist logi kehakaalu mõõtmine - kalorieesmärk vajab sinu "
 "praegust kaalu."
 
-#: apps/nutrition/services.py:593
+#: apps/nutrition/services.py:639
 msgid "An ingredient is missing its food name."
 msgstr "Ühel koostisosal puudub toidu nimi."
 
-#: apps/nutrition/services.py:599
+#: apps/nutrition/services.py:645
 #, python-format
 msgid "Ingredient “%(name)s” is missing required nutrition data."
 msgstr "Koostisosal „%(name)s” puuduvad nõutud toitumisandmed."
 
-#: apps/nutrition/services.py:649
+#: apps/nutrition/services.py:695
 msgid "Missing recipe name."
 msgstr "Retsepti nimi puudub."
 
-#: apps/nutrition/services.py:673
+#: apps/nutrition/services.py:719
 #, python-format
 msgid "Ingredient “%(name)s” has an invalid quantity."
 msgstr "Koostisosa „%(name)s” kogus on vigane."
 
-#: apps/nutrition/services.py:766
+#: apps/nutrition/services.py:812
 msgid "A diet plan item is missing its recipe name."
 msgstr "Ühel toitumiskava kirjel puudub retsepti nimi."
 
-#: apps/nutrition/services.py:786
+#: apps/nutrition/services.py:832
 msgid "A diet plan meal is missing its meal slot."
 msgstr "Ühel toitumiskava toidukorral puudub toidukorra liik."
 
-#: apps/nutrition/services.py:790
+#: apps/nutrition/services.py:836
 msgid "A diet plan meal is missing its target calories."
 msgstr "Ühel toitumiskava toidukorral puudub kalorieesmärk."
 
-#: apps/nutrition/services.py:805
+#: apps/nutrition/services.py:851
 msgid "A diet plan item must reference exactly one of a food or a recipe."
 msgstr ""
 "Toitumiskava kirje peab viitama kas toidule või retseptile, mitte mõlemale."
 
-#: apps/nutrition/services.py:811
+#: apps/nutrition/services.py:857
 msgid "A diet plan item has an invalid quantity."
 msgstr "Toitumiskava kirje kogus on vigane."
 
-#: apps/nutrition/services.py:840
+#: apps/nutrition/services.py:886
 msgid "Missing diet plan name."
 msgstr "Toitumiskava nimi puudub."
 
-#: apps/nutrition/services.py:851
+#: apps/nutrition/services.py:897
 msgid "Missing or invalid diet plan targets."
 msgstr "Toitumiskava eesmärgid puuduvad või on vigased."
 
-#: apps/nutrition/services.py:1720
+#: apps/nutrition/services.py:1766
 msgid "14 days"
 msgstr "14 päeva"
 
-#: apps/nutrition/services.py:1723
+#: apps/nutrition/services.py:1769
 msgid "Year to date"
 msgstr "Aasta algusest"
 
@@ -3974,50 +3985,50 @@ msgstr ""
 msgid "Goal updated - new target is %(calories)d kcal/day."
 msgstr "Eesmärk uuendatud - uus eesmärk on %(calories)d kcal/päevas."
 
-#: apps/nutrition/views.py:761
+#: apps/nutrition/views.py:762
 msgid "Pick a date to copy this day to."
 msgstr "Vali kuupäev, kuhu see päev kopeerida."
 
-#: apps/nutrition/views.py:766
+#: apps/nutrition/views.py:767
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Kopeeriti %(count)d kirje kuupäevale %(date)s."
 msgstr[1] "Kopeeriti %(count)d kirjet kuupäevale %(date)s."
 
-#: apps/nutrition/views.py:772
+#: apps/nutrition/views.py:773
 msgid "Nothing to copy - that day has no entries."
 msgstr "Pole midagi kopeerida - sellel päeval pole kirjeid."
 
-#: apps/nutrition/views.py:833 apps/nutrition/views.py:1203
-#: apps/nutrition/views.py:1737
+#: apps/nutrition/views.py:834 apps/nutrition/views.py:1204
+#: apps/nutrition/views.py:1738
 msgid "That food couldn't be imported - try again."
 msgstr "Seda toitu ei õnnestunud importida - proovi uuesti."
 
-#: apps/nutrition/views.py:878
+#: apps/nutrition/views.py:879
 msgid "Pick a meal."
 msgstr "Vali söögikord."
 
-#: apps/nutrition/views.py:902
+#: apps/nutrition/views.py:903
 msgid "Added to your diary."
 msgstr "Lisatud päevikusse."
 
-#: apps/nutrition/views.py:944
+#: apps/nutrition/views.py:945
 msgid "Nothing logged for this meal yet to save as a recipe."
 msgstr ""
 "Sellele toidukorrale pole veel midagi märgitud retseptina salvestamiseks."
 
-#: apps/nutrition/views.py:946
+#: apps/nutrition/views.py:947
 #, python-format
 msgid "Saved “%(name)s” as a new recipe."
 msgstr "Salvestati „%(name)s” uue retseptina."
 
-#: apps/nutrition/views.py:1095
+#: apps/nutrition/views.py:1096
 #, python-format
 msgid "\"%(name)s\" created - now add its ingredients below."
 msgstr "\"%(name)s\" loodud - lisa selle koostisosad allpool."
 
-#: apps/nutrition/views.py:1145 apps/nutrition/views.py:1438
+#: apps/nutrition/views.py:1146 apps/nutrition/views.py:1439
 #: apps/programs/views.py:212
 #, python-format
 msgid ""
@@ -4027,22 +4038,22 @@ msgstr ""
 "See fail eksporditi IronStack %(version)s versioonist - tasub importi üle "
 "kontrollida, kui midagi tundub valesti."
 
-#: apps/nutrition/views.py:1578
+#: apps/nutrition/views.py:1579
 msgid "Shopping days saved."
 msgstr "Poepäevad salvestatud."
 
-#: apps/nutrition/views.py:1660
+#: apps/nutrition/views.py:1661
 msgid "Only a personal trainer can share a diet plan."
 msgstr "Toitumiskava saab jagada ainult personaaltreener."
 
-#: apps/nutrition/views.py:1776
+#: apps/nutrition/views.py:1777
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Logiti %(count)d kirje kuupäevale %(date)s."
 msgstr[1] "Logiti %(count)d kirjet kuupäevale %(date)s."
 
-#: apps/nutrition/views.py:1787
+#: apps/nutrition/views.py:1788
 msgid "Nothing to log - this plan has no items for that date."
 msgstr "Pole midagi logida - sellel plaanil pole selle kuupäeva jaoks kirjeid."
 

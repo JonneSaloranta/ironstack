@@ -46,23 +46,41 @@ logger = logging.getLogger(__name__)
 
 
 @transaction.atomic
-def set_goal(user, *, goal_type, target_rate_kg_per_week, target_weight=None, notes=""):
+def set_goal(
+    user, *, goal_type, target_rate_kg_per_week, target_weight=None, notes="", started_at=None
+):
     """Ends whichever goal is currently open (if any) and starts a new
     one - never mutates an existing row in place (docs/NUTRITION.md
-    "NutritionGoal")."""
-    now = timezone.now()
+    "NutritionGoal"). `started_at` (default now) is when a goal set
+    earlier really started - see `change_goal`."""
+    now = started_at or timezone.now()
     NutritionGoal.objects.filter(user=user, ended_at__isnull=True).update(ended_at=now)
-    return NutritionGoal.objects.create(
+    goal = NutritionGoal.objects.create(
         user=user,
         goal_type=goal_type,
         target_rate_kg_per_week=target_rate_kg_per_week,
         target_weight=target_weight,
         notes=notes,
     )
+    if started_at is not None:
+        # started_at is auto_now_add, which ignores a value given to create().
+        NutritionGoal.objects.filter(pk=goal.pk).update(started_at=started_at)
+        goal.started_at = started_at
+    return goal
 
 
 @transaction.atomic
-def set_target(user, *, goal, daily_calories, macro_breakdown, source, reason, reason_data=None):
+def set_target(
+    user,
+    *,
+    goal,
+    daily_calories,
+    macro_breakdown,
+    source,
+    reason,
+    reason_data=None,
+    started_at=None,
+):
     """Same append/supersede shape as `set_goal`. `macro_breakdown` is
     an `apps.nutrition.macros.MacroBreakdown` - this is the one place
     its grams get written into a persisted `NutritionTarget` row.
@@ -73,8 +91,8 @@ def set_target(user, *, goal, daily_calories, macro_breakdown, source, reason, r
     whichever language was active right now. Omitted by
     `apply_adjustment_suggestion` below, which has no such structured
     breakdown to snapshot; that path's `reason` stays frozen, same as
-    every target did before this existed."""
-    now = timezone.now()
+    every target did before this existed. `started_at` as in `set_goal`."""
+    now = started_at or timezone.now()
     NutritionTarget.objects.filter(user=user, ended_at__isnull=True).update(ended_at=now)
     reason_fields = {}
     if reason_data is not None:
@@ -87,7 +105,7 @@ def set_target(user, *, goal, daily_calories, macro_breakdown, source, reason, r
             calorie_floor=reason_data.floor,
             floor_was_applied=reason_data.floor_was_applied,
         )
-    return NutritionTarget.objects.create(
+    target = NutritionTarget.objects.create(
         user=user,
         goal=goal,
         daily_calories=daily_calories,
@@ -98,6 +116,10 @@ def set_target(user, *, goal, daily_calories, macro_breakdown, source, reason, r
         reason=reason,
         **reason_fields,
     )
+    if started_at is not None:
+        NutritionTarget.objects.filter(pk=target.pk).update(started_at=started_at)
+        target.started_at = started_at
+    return target
 
 
 def calculate_target_for_goal(profile, *, weight_kg, height_cm, goal_type, target_rate_kg_per_week):
@@ -148,16 +170,24 @@ class GoalChangeError(Exception):
 
 
 @transaction.atomic
-def change_goal(user, *, goal_type, target_rate_kg_per_week, target_weight=None, notes=""):
+def change_goal(
+    user, *, goal_type, target_rate_kg_per_week, target_weight=None, notes="", started_at=None
+):
     """A new goal after onboarding, with a freshly calculated target to
     match: the profile, the user's height and their latest body weight
     go through calculate_target_for_goal, then set_goal/set_target
     append both (the old goal and target stay in history). Used by the
     web's goal page and the API. Returns `(goal, target)`; raises
     GoalChangeError when the profile, height or a body weight is
-    missing."""
+    missing.
+
+    `started_at` records a goal set earlier (history transferred from an
+    offline client, issue #52): the goal and its target start then, the
+    one open before ends then, and the target uses the body weight
+    logged by then when there is one. It can't be in the future or
+    before the open goal's own start - history is only ever appended."""
     from apps.measurements.models import MeasurementType
-    from apps.measurements.services import latest_for
+    from apps.measurements.services import history_for, latest_for
 
     from .models import NutritionProfile
 
@@ -166,8 +196,22 @@ def change_goal(user, *, goal_type, target_rate_kg_per_week, target_weight=None,
         raise GoalChangeError(gettext("Set up your nutrition profile first."))
     if not user.height:
         raise GoalChangeError(gettext("Add your height to your profile first."))
+    if started_at is not None:
+        if started_at > timezone.now():
+            raise GoalChangeError(gettext("A goal can't start in the future."))
+        open_goal = NutritionGoal.objects.filter(user=user, ended_at__isnull=True).first()
+        open_target = NutritionTarget.objects.filter(user=user, ended_at__isnull=True).first()
+        if any(row is not None and started_at < row.started_at for row in (open_goal, open_target)):
+            raise GoalChangeError(
+                gettext("A goal can't start before the current goal started.")
+            )
     body_weight_type = MeasurementType.objects.filter(name="Body weight", owner=None).first()
     latest_weight = latest_for(user, body_weight_type) if body_weight_type else None
+    if started_at is not None and body_weight_type is not None:
+        latest_weight = (
+            history_for(user, body_weight_type).filter(recorded_at__lte=started_at).first()
+            or latest_weight
+        )
     if latest_weight is None:
         # The calorie engine needs a current weight (Mifflin-St Jeor),
         # so there's no reasonable number to fall back to.
@@ -190,6 +234,7 @@ def change_goal(user, *, goal_type, target_rate_kg_per_week, target_weight=None,
         target_rate_kg_per_week=target_rate_kg_per_week,
         target_weight=target_weight,
         notes=notes,
+        started_at=started_at,
     )
     target = set_target(
         user,
@@ -199,6 +244,7 @@ def change_goal(user, *, goal_type, target_rate_kg_per_week, target_weight=None,
         source=TargetSource.CALCULATED,
         reason=calorie_result.reason,
         reason_data=calorie_result.reason_data,
+        started_at=started_at,
     )
     return goal, target
 

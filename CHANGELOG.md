@@ -18,6 +18,15 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- API: history from an offline client keeps its real times (#52). Workout
+  sessions take `started_at`, `ended_at` (on create or when ending one) and
+  `snapshot: false` to skip copying the plan; performed exercises take the
+  plan's targets of the time; stretch sessions take their name, times, status
+  and the stretches done; nutrition goals take `started_at`. A set dated
+  before others of the same exercise rebuilds that exercise's records in time
+  order, so the record history is the one that happened.
+
 ## [1.33.0] - 2026-11-25
 
 ### Added

@@ -13,6 +13,7 @@ from apps.programs.models import ExercisePrescription, Program, Workout
 from apps.records import services as records_services
 from apps.records.models import PersonalRecord, PRType
 from apps.workouts import services as workout_services
+from apps.workouts.models import PerformedExercise, WorkoutSession
 
 from . import crypto, services
 from .models import ApiContext, ApiKey, ApiKeyPermission, ApiSettings, RateLimitTier
@@ -4197,3 +4198,346 @@ class FoodLanguageApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.food_language, "fi")
+
+
+class HistoryTransferTests(APITestCase):
+    """Issue #52 - history from an offline client keeps its real times:
+    sessions started and ended in the past, without the plan snapshot,
+    with their targets, stretch sessions with their steps, and goals
+    with their start."""
+
+    def setUp(self):
+        from apps.programs.models import ExercisePrescription
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, raw_secret = _create_key(self.alice)
+        self.auth = {"HTTP_AUTHORIZATION": f"Bearer {raw_secret}"}
+        self.exercise = Exercise.objects.create(name="Transfer Squat", owner=None)
+        self.program = Program.objects.create(owner=self.alice, name="Program")
+        self.workout = Workout.objects.create(program=self.program, name="Day 1")
+        ExercisePrescription.objects.create(
+            workout=self.workout, exercise=self.exercise, set_count=3, min_reps=5, max_reps=5
+        )
+        self.start = timezone.now() - timedelta(days=200)
+        self.end = self.start + timedelta(hours=1)
+
+    def _post(self, name, payload):
+        return self.client.post(reverse(name), payload, format="json", **self.auth)
+
+    def _patch_session(self, pk, payload):
+        return self.client.patch(
+            reverse("api:session-detail", args=[pk]), payload, format="json", **self.auth
+        )
+
+    # a) sessions with their real time
+
+    def test_a_session_keeps_its_real_start_and_end(self):
+        response = self._post(
+            "api:session-list",
+            {"workout": self.workout.pk, "started_at": self.start.isoformat()},
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["status"], "in_progress")
+        session_id = response.data["id"]
+        response = self._patch_session(
+            session_id, {"status": "completed", "ended_at": self.end.isoformat()}
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        session = WorkoutSession.objects.get(pk=session_id)
+        self.assertEqual((session.started_at, session.ended_at), (self.start, self.end))
+        self.assertEqual(session.status, "completed")
+
+    def test_a_session_can_be_created_already_finished(self):
+        response = self._post(
+            "api:session-list",
+            {
+                "workout": self.workout.pk,
+                "started_at": self.start.isoformat(),
+                "ended_at": self.end.isoformat(),
+                "status": "abandoned",
+            },
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["status"], "abandoned")
+        self.assertEqual(WorkoutSession.objects.get(pk=response.data["id"]).ended_at, self.end)
+
+    def test_two_past_sessions_of_the_same_workout_are_both_kept(self):
+        for days in (10, 9):
+            started = timezone.now() - timedelta(days=days)
+            response = self._post(
+                "api:session-list",
+                {"workout": self.workout.pk, "started_at": started.isoformat()},
+            )
+            self.assertEqual(response.status_code, 201)
+        self.assertEqual(WorkoutSession.objects.filter(user=self.alice).count(), 2)
+
+    def test_session_time_validation(self):
+        future = (timezone.now() + timedelta(hours=1)).isoformat()
+        cases = [
+            {"started_at": future},
+            {"started_at": self.start.isoformat(), "status": "completed"},
+            {"started_at": self.start.isoformat(), "ended_at": self.end.isoformat()},
+            {
+                "started_at": self.end.isoformat(),
+                "ended_at": self.start.isoformat(),
+                "status": "completed",
+            },
+        ]
+        for payload in cases:
+            with self.subTest(payload=payload):
+                response = self._post("api:session-list", {"workout": self.workout.pk, **payload})
+                self.assertEqual(response.status_code, 400, response.data)
+        self.assertFalse(WorkoutSession.objects.exists())
+
+    def test_patch_rejects_an_end_before_the_start(self):
+        session_id = self._post(
+            "api:session-list", {"started_at": self.start.isoformat()}
+        ).data["id"]
+        before = (self.start - timedelta(minutes=5)).isoformat()
+        response = self._patch_session(session_id, {"status": "completed", "ended_at": before})
+        self.assertEqual(response.status_code, 400)
+        response = self._patch_session(session_id, {"ended_at": self.end.isoformat()})
+        self.assertEqual(response.status_code, 400)
+
+    def test_a_slightly_fast_phone_clock_counts_as_now(self):
+        ahead = (timezone.now() + timedelta(seconds=20)).isoformat()
+        response = self._post("api:session-list", {"started_at": ahead})
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertLessEqual(
+            WorkoutSession.objects.get(pk=response.data["id"]).started_at, timezone.now()
+        )
+
+    def test_starting_now_works_as_before(self):
+        response = self._post("api:session-list", {"workout": self.workout.pk})
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data["performed_exercises"]), 1)
+        self.assertIsNone(response.data["ended_at"])
+        response = self._patch_session(response.data["id"], {"status": "completed"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNotNone(response.data["ended_at"])
+
+    # b) without the snapshot, with the targets given
+
+    def test_snapshot_false_links_the_workout_without_copying_it(self):
+        response = self._post(
+            "api:session-list",
+            {"workout": self.workout.pk, "started_at": self.start.isoformat(), "snapshot": False},
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["workout"], self.workout.pk)
+        self.assertEqual(response.data["program"], self.program.pk)
+        self.assertEqual(response.data["performed_exercises"], [])
+        self.assertNotIn("snapshot", response.data)
+
+    def test_a_performed_exercise_takes_the_targets_of_the_time(self):
+        session_id = self._post(
+            "api:session-list",
+            {"workout": self.workout.pk, "started_at": self.start.isoformat(), "snapshot": False},
+        ).data["id"]
+        response = self._post(
+            "api:performed-exercise-list",
+            {
+                "session": session_id,
+                "exercise": self.exercise.pk,
+                "set_count": 3,
+                "min_reps": 8,
+                "max_reps": 12,
+                "target_weight": "60.00",
+                "target_rpe": "8.0",
+                "progression_method": "double_progression",
+                "weight_increment": "2.50",
+                "notes": "felt good",
+            },
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        performed = PerformedExercise.objects.get(pk=response.data["id"])
+        self.assertEqual((performed.min_reps, performed.max_reps), (8, 12))
+        self.assertEqual(performed.target_weight, Decimal("60.00"))
+        self.assertEqual(performed.progression_method, "double_progression")
+        self.assertEqual(performed.notes, "felt good")
+        self.assertEqual(response.data["max_reps"], 12)
+
+    def test_performed_exercise_target_validation(self):
+        session_id = self._post("api:session-list", {}).data["id"]
+        for payload in ({"min_reps": 10, "max_reps": 5}, {"target_rpe": "11"}):
+            with self.subTest(payload=payload):
+                response = self._post(
+                    "api:performed-exercise-list",
+                    {"session": session_id, "exercise": self.exercise.pk, **payload},
+                )
+                self.assertEqual(response.status_code, 400, response.data)
+
+    def test_a_performed_exercise_without_targets_is_ad_hoc_as_before(self):
+        session_id = self._post("api:session-list", {}).data["id"]
+        response = self._post(
+            "api:performed-exercise-list", {"session": session_id, "exercise": self.exercise.pk}
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertIsNone(response.data["set_count"])
+
+    # Records: a set dated before later ones
+
+    def _log(self, weight, when):
+        session_id = self._post(
+            "api:session-list", {"started_at": when.isoformat(), "snapshot": False}
+        ).data["id"]
+        performed_id = self._post(
+            "api:performed-exercise-list", {"session": session_id, "exercise": self.exercise.pk}
+        ).data["id"]
+        response = self._post(
+            "api:set-list",
+            {
+                "performed_exercise": performed_id,
+                "weight": weight,
+                "reps": 5,
+                "performed_at": when.isoformat(),
+            },
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        self._patch_session(session_id, {"status": "completed", "ended_at": when.isoformat()})
+        return response
+
+    def test_an_older_set_logged_later_gives_the_record_history_that_happened(self):
+        recent = timezone.now() - timedelta(days=1)
+        self._log("100.00", recent)
+        response = self._log("110.00", self.start)  # transferred afterwards
+
+        max_weight = PersonalRecord.objects.filter(
+            user=self.alice, exercise=self.exercise, record_type=PRType.MAX_WEIGHT
+        )
+        # 110 back then was the first record; 100 yesterday no longer beats it.
+        self.assertEqual(
+            [(record.value, record.achieved_at) for record in max_weight],
+            [(Decimal("110.00"), self.start)],
+        )
+        self.assertIn(
+            PRType.MAX_WEIGHT, [record["record_type"] for record in response.data["new_records"]]
+        )
+
+    # c) stretch sessions with their real time and steps
+
+    def test_a_stretch_session_keeps_its_time_and_steps(self):
+        from apps.stretching.models import Stretch, StretchSession
+
+        stretch = Stretch.objects.filter(owner=None).first()
+        response = self._post(
+            "api:stretch-session-list",
+            {
+                "name": "Evening stretch",
+                "duration": "00:10:00",
+                "started_at": self.start.isoformat(),
+                "status": "abandoned",
+                "performed_stretches": [
+                    {"stretch": stretch.pk, "status": "done", "actual_seconds": 30},
+                    {
+                        "stretch_name": "Neck roll",
+                        "target_hold_seconds": 20,
+                        "per_side": True,
+                        "sets": 2,
+                        "status": "skipped",
+                    },
+                ],
+            },
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        session = StretchSession.objects.get(pk=response.data["id"])
+        self.assertEqual(session.started_at, self.start)
+        self.assertEqual(session.completed_at, self.start + timedelta(minutes=10))
+        self.assertEqual(session.date, timezone.localdate(self.start))
+        self.assertEqual((session.status, session.name), ("abandoned", "Evening stretch"))
+        steps = list(session.performed_stretches.order_by("order"))
+        self.assertEqual(steps[0].stretch_name, stretch.name)
+        self.assertEqual(steps[0].target_hold_seconds, stretch.default_hold_seconds)
+        self.assertEqual((steps[0].status, steps[0].actual_seconds), ("done", 30))
+        self.assertEqual((steps[1].stretch, steps[1].per_side, steps[1].sets), (None, True, 2))
+        # The response is the regular stretch session, steps included.
+        self.assertEqual(len(response.data["performed_stretches"]), 2)
+        self.assertEqual(response.data["performed_stretches"][1]["stretch_name"], "Neck roll")
+
+    def test_stretch_session_validation(self):
+        future = (timezone.now() + timedelta(hours=1)).isoformat()
+        cases = [
+            {"started_at": future},
+            {"started_at": self.end.isoformat(), "completed_at": self.start.isoformat()},
+            {"status": "in_progress"},
+            {"performed_stretches": [{"stretch_name": "No hold"}]},
+        ]
+        for payload in cases:
+            with self.subTest(payload=payload):
+                response = self._post(
+                    "api:stretch-session-list", {"duration": "00:10:00", **payload}
+                )
+                self.assertEqual(response.status_code, 400, response.data)
+
+    def test_a_plain_stretch_quick_log_works_as_before(self):
+        response = self._post("api:stretch-session-list", {"duration": "00:05:00"})
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["status"], "completed")
+        self.assertEqual(response.data["performed_stretches"], [])
+        self.assertEqual(response.data["date"], timezone.localdate().isoformat())
+
+    # d) a goal's start date
+
+    def _onboard(self):
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+        from apps.nutrition.models import NutritionProfile
+
+        NutritionProfile.objects.create(
+            user=self.alice,
+            biological_sex="male",
+            birth_date=date(1990, 1, 1),
+            activity_job="sedentary",
+            activity_level="moderate",
+        )
+        self.alice.height = Decimal("1.80")
+        self.alice.save(update_fields=["height"])
+        body_weight = MeasurementType.objects.get(name="Body weight", owner=None)
+        for days, kg in ((300, "100"), (1, "90")):
+            BodyMeasurement.objects.create(
+                user=self.alice,
+                measurement_type=body_weight,
+                value=Decimal(kg),
+                recorded_at=timezone.now() - timedelta(days=days),
+            )
+
+    def _post_goal(self, started_at=None):
+        payload = {"goal_type": "fat_loss_moderate", "target_rate_kg_per_week": "-0.5"}
+        if started_at is not None:
+            payload["started_at"] = started_at.isoformat()
+        return self._post("api:nutrition-goal-list", payload)
+
+    def test_goals_keep_their_start_dates(self):
+        from apps.nutrition.models import NutritionGoal, NutritionTarget
+
+        self._onboard()
+        first, second = timezone.now() - timedelta(days=200), timezone.now() - timedelta(days=100)
+        self.assertEqual(self._post_goal(first).status_code, 201)
+        response = self._post_goal(second)
+        self.assertEqual(response.status_code, 201, response.data)
+
+        goals = list(NutritionGoal.objects.filter(user=self.alice).order_by("started_at"))
+        self.assertEqual(
+            [(goal.started_at, goal.ended_at) for goal in goals],
+            [(first, second), (second, None)],
+        )
+        targets = list(NutritionTarget.objects.filter(user=self.alice).order_by("started_at"))
+        self.assertEqual([t.started_at for t in targets], [first, second])
+
+    def test_a_past_goals_target_uses_the_weight_logged_by_then(self):
+        from apps.nutrition.models import NutritionTarget
+
+        self._onboard()
+        self._post_goal(timezone.now() - timedelta(days=200))
+        past = NutritionTarget.objects.get(user=self.alice).daily_calories
+        self._post_goal()
+        current = NutritionTarget.objects.get(user=self.alice, ended_at__isnull=True)
+        # 100 kg then needs more energy than 90 kg now.
+        self.assertGreater(past, current.daily_calories)
+
+    def test_a_goal_cant_start_before_the_current_one(self):
+        self._onboard()
+        self.assertEqual(self._post_goal(timezone.now() - timedelta(days=10)).status_code, 201)
+        response = self._post_goal(timezone.now() - timedelta(days=20))
+        self.assertEqual(response.status_code, 400)
+        response = self._post_goal(timezone.now() + timedelta(days=1))
+        self.assertEqual(response.status_code, 400)

@@ -3692,13 +3692,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PerformedExerciseRequest'
+              $ref: '#/components/schemas/PerformedExerciseCreateRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PerformedExerciseRequest'
+              $ref: '#/components/schemas/PerformedExerciseCreateRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PerformedExerciseRequest'
+              $ref: '#/components/schemas/PerformedExerciseCreateRequest'
         required: true
       security:
       - ApiKeyAuth: []
@@ -4657,13 +4657,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WorkoutSessionRequest'
+              $ref: '#/components/schemas/WorkoutSessionCreateRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/WorkoutSessionRequest'
+              $ref: '#/components/schemas/WorkoutSessionCreateRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/WorkoutSessionRequest'
+              $ref: '#/components/schemas/WorkoutSessionCreateRequest'
       security:
       - ApiKeyAuth: []
       responses:
@@ -4717,13 +4717,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedWorkoutSessionRequest'
+              $ref: '#/components/schemas/PatchedWorkoutSessionUpdateRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedWorkoutSessionRequest'
+              $ref: '#/components/schemas/PatchedWorkoutSessionUpdateRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedWorkoutSessionRequest'
+              $ref: '#/components/schemas/PatchedWorkoutSessionUpdateRequest'
       security:
       - ApiKeyAuth: []
       responses:
@@ -9469,6 +9469,12 @@ components:
         notes:
           type: string
           default: ''
+        started_at:
+          type: string
+          format: date-time
+          description: 'When the goal started, for one set earlier (issue #52). Default:
+            now. Not before the current goal''s start; the target uses the body weight
+            logged by then.'
       required:
       - goal_type
       - target_rate_kg_per_week
@@ -11232,14 +11238,22 @@ components:
           - $ref: '#/components/schemas/NullEnum'
         notes:
           type: string
-    PatchedWorkoutSessionRequest:
+    PatchedWorkoutSessionUpdateRequest:
       type: object
+      description: |-
+        `PATCH sessions/<id>/` input: `status` `completed`/`abandoned`
+        ends a session in progress, at `ended_at` when given (a workout done
+        earlier, issue #52), else now.
       properties:
         workout:
           type: integer
           nullable: true
         status:
-          $ref: '#/components/schemas/WorkoutSessionStatusEnum'
+          $ref: '#/components/schemas/StatusBf3Enum'
+        ended_at:
+          type: string
+          format: date-time
+          description: 'When it ended. Default: now. Only with `status`.'
     PerformedExercise:
       type: object
       properties:
@@ -11320,6 +11334,68 @@ components:
       - target_rpe
       - target_weight
       - weight_increment
+    PerformedExerciseCreateRequest:
+      type: object
+      description: |-
+        `POST performed-exercises/` input. The targets (normally copied
+        from the plan when a session starts) are writable here for an
+        exercise of a workout done earlier, created with `snapshot: false`
+        (issue #52) - progression reads them from history. All optional;
+        leave them out for an ad-hoc exercise. A separate class so the
+        response keeps them read-only and required.
+      properties:
+        session:
+          type: integer
+        exercise:
+          type: integer
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        set_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        min_reps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        max_reps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        target_weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+          nullable: true
+        target_rpe:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,1})?$
+          nullable: true
+        target_rir:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        progression_method:
+          oneOf:
+          - $ref: '#/components/schemas/ProgressionMethodEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        weight_increment:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+          nullable: true
+        notes:
+          type: string
+      required:
+      - exercise
+      - session
     PerformedExerciseRequest:
       type: object
       properties:
@@ -11370,7 +11446,7 @@ components:
           maximum: 2147483647
           minimum: 0
         status:
-          $ref: '#/components/schemas/PerformedStretchStatusEnum'
+          $ref: '#/components/schemas/Status447Enum'
         actual_seconds:
           type: integer
           maximum: 2147483647
@@ -11381,6 +11457,42 @@ components:
       - stretch_display_name
       - stretch_name
       - target_hold_seconds
+    PerformedStretchInputRequest:
+      type: object
+      description: |-
+        One stretch of a session logged after the fact (issue #52). Give
+        `stretch` (name, sides and hold default from it) or, for one that
+        isn't in the library, `stretch_name` and `target_hold_seconds`.
+      properties:
+        stretch:
+          type: integer
+          nullable: true
+        stretch_name:
+          type: string
+          maxLength: 100
+        per_side:
+          type: boolean
+        target_hold_seconds:
+          type: integer
+          minimum: 1
+        sets:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 1
+        rest_seconds:
+          type: integer
+          maximum: 3600
+          minimum: 0
+          default: 0
+        status:
+          allOf:
+          - $ref: '#/components/schemas/Status447Enum'
+          default: done
+        actual_seconds:
+          type: integer
+          minimum: 0
+          nullable: true
     PerformedStretchMarkRequest:
       type: object
       description: |-
@@ -11427,7 +11539,7 @@ components:
           maximum: 2147483647
           minimum: 0
         status:
-          $ref: '#/components/schemas/PerformedStretchStatusEnum'
+          $ref: '#/components/schemas/Status447Enum'
         actual_seconds:
           type: integer
           maximum: 2147483647
@@ -11436,16 +11548,6 @@ components:
       required:
       - stretch_name
       - target_hold_seconds
-    PerformedStretchStatusEnum:
-      enum:
-      - pending
-      - done
-      - skipped
-      type: string
-      description: |-
-        * `pending` - Pending
-        * `done` - Done
-        * `skipped` - Skipped
     PersonalRecord:
       type: object
       properties:
@@ -12223,6 +12325,28 @@ components:
         * `calculated` - Calculated from goal
         * `manual` - Set manually
         * `adjusted` - Accepted a suggested adjustment
+    Status447Enum:
+      enum:
+      - pending
+      - done
+      - skipped
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `done` - Done
+        * `skipped` - Skipped
+    StatusBf3Enum:
+      enum:
+      - planned
+      - in_progress
+      - completed
+      - abandoned
+      type: string
+      description: |-
+        * `planned` - Planned
+        * `in_progress` - In progress
+        * `completed` - Completed
+        * `abandoned` - Abandoned
     Stretch:
       type: object
       properties:
@@ -12427,22 +12551,59 @@ components:
         required, read-only property of every StretchSession response in the
         schema - making it writable there would make it optional, a breaking
         change for v1 clients.
+
+        The rest records a session done earlier (history transferred from an
+        offline client, issue #52): its `name`, real `started_at` and/or
+        `completed_at` (the other follows from `duration`; `date` defaults
+        to the start's day), `status` `abandoned` for one stopped early, and
+        `performed_stretches` - what was done. All optional; leaving them
+        out is the plain quick log of before.
       properties:
+        name:
+          type: string
+          maxLength: 100
         routine:
           type: integer
           nullable: true
         after_workout:
           type: integer
           nullable: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StretchSessionQuickLogStatusEnum'
+          default: completed
+          description: |-
+            A guided session in progress starts with `start/` instead.
+
+            * `completed` - Completed
+            * `abandoned` - Abandoned
         date:
           type: string
           format: date
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
         duration:
           type: string
         notes:
           type: string
+        performed_stretches:
+          type: array
+          items:
+            $ref: '#/components/schemas/PerformedStretchInputRequest'
       required:
       - duration
+    StretchSessionQuickLogStatusEnum:
+      enum:
+      - completed
+      - abandoned
+      type: string
+      description: |-
+        * `completed` - Completed
+        * `abandoned` - Abandoned
     StretchSessionRequest:
       type: object
       description: |-
@@ -12817,7 +12978,7 @@ components:
           type: integer
           nullable: true
         status:
-          $ref: '#/components/schemas/WorkoutSessionStatusEnum'
+          $ref: '#/components/schemas/StatusBf3Enum'
         started_at:
           type: string
           format: date-time
@@ -12842,26 +13003,39 @@ components:
       - performed_exercises
       - program
       - started_at
-    WorkoutSessionRequest:
+    WorkoutSessionCreateRequest:
       type: object
+      description: |-
+        `POST sessions/` input. Everything optional beyond the plain
+        "start now" of before: `started_at` records a workout done earlier
+        (history transferred from an offline client, issue #52), `status`
+        `completed`/`abandoned` with `ended_at` creates it already finished,
+        and `snapshot: false` links it to `workout` without copying the
+        plan's current prescriptions - add the exercises actually done
+        with `performed-exercises/`. To transfer one with its sets, create
+        it in progress, add exercises and sets, then `PATCH` it finished
+        with its real `ended_at`. A separate class so the response keeps
+        `started_at`/`ended_at` read-only and required.
       properties:
         workout:
           type: integer
           nullable: true
         status:
-          $ref: '#/components/schemas/WorkoutSessionStatusEnum'
-    WorkoutSessionStatusEnum:
-      enum:
-      - planned
-      - in_progress
-      - completed
-      - abandoned
-      type: string
-      description: |-
-        * `planned` - Planned
-        * `in_progress` - In progress
-        * `completed` - Completed
-        * `abandoned` - Abandoned
+          $ref: '#/components/schemas/StatusBf3Enum'
+        started_at:
+          type: string
+          format: date-time
+          description: 'When the workout started. Default: now.'
+        ended_at:
+          type: string
+          format: date-time
+          description: When it ended - only with `status` `completed` or `abandoned`.
+        snapshot:
+          type: boolean
+          writeOnly: true
+          default: true
+          description: 'False: don''t copy the workout''s prescriptions as performed
+            exercises.'
   securitySchemes:
     ApiKeyAuth:
       type: http

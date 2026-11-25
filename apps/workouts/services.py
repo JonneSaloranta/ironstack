@@ -146,20 +146,27 @@ def start_session_once(user, workout=None):
 
 
 @transaction.atomic
-def start_session(user, workout=None):
+def start_session(user, workout=None, *, started_at=None, snapshot=True):
     """Start a session, snapshotting `workout`'s prescriptions if given.
 
     `workout=None` starts a freeform session with no planned exercises -
     the user adds exercises as they go via `add_performed_exercise`.
+
+    `started_at` (default now) and `snapshot=False` are for recording a
+    workout done earlier, e.g. history transferred from an offline
+    client (issue #52): the session keeps its real start time, and with
+    `snapshot=False` it links to `workout` without copying the plan's
+    *current* prescriptions, which may differ from what was done back
+    then - the caller adds the exercises it actually performed.
     """
     session = WorkoutSession.objects.create(
         user=user,
         workout=workout,
         program=workout.program if workout else None,
         status=WorkoutSessionStatus.IN_PROGRESS,
-        started_at=timezone.now(),
+        started_at=started_at or timezone.now(),
     )
-    if workout is not None:
+    if workout is not None and snapshot:
         performed_exercises = [
             PerformedExercise(
                 session=session,
@@ -183,34 +190,45 @@ def start_session(user, workout=None):
     return session
 
 
-def complete_session(session):
+def complete_session(session, *, ended_at=None):
+    """`ended_at` (default now) records when a workout done earlier
+    really ended - see `start_session`."""
+    return _end_session(session, WorkoutSessionStatus.COMPLETED, ended_at)
+
+
+def abandon_session(session, *, ended_at=None):
+    return _end_session(session, WorkoutSessionStatus.ABANDONED, ended_at)
+
+
+def _end_session(session, status, ended_at):
     if not session.is_in_progress:
         raise SessionNotInProgress
-    session.status = WorkoutSessionStatus.COMPLETED
-    session.ended_at = timezone.now()
+    session.status = status
+    session.ended_at = ended_at or timezone.now()
     session.save(update_fields=["status", "ended_at", "updated_at"])
     return session
 
 
-def abandon_session(session):
-    if not session.is_in_progress:
-        raise SessionNotInProgress
-    session.status = WorkoutSessionStatus.ABANDONED
-    session.ended_at = timezone.now()
-    session.save(update_fields=["status", "ended_at", "updated_at"])
-    return session
-
-
-def add_performed_exercise(session, exercise):
+def add_performed_exercise(session, exercise, **targets):
     """Add an exercise to an in-progress session with no prescription
     behind it - used for freeform sessions and for going off-plan mid
-    workout (the user always keeps the option to deviate)."""
+    workout (the user always keeps the option to deviate).
+
+    `targets` (set_count, min_reps, max_reps, target_weight, target_rpe,
+    target_rir, progression_method, weight_increment) are what the plan
+    asked for at the time, given when recording a workout done earlier
+    without a snapshot (`start_session(snapshot=False)`) - progression
+    reads them from history (apps.progression.engine._summarize)."""
     # Not `(highest or -1) + 1`: a highest order of 0 is falsy, which
     # used to give the second added exercise order 0 as well.
     highest = session.performed_exercises.aggregate(highest=Max("order"))["highest"]
     next_order = 0 if highest is None else highest + 1
     return PerformedExercise.objects.create(
-        session=session, exercise=exercise, exercise_name=exercise.name, order=next_order
+        session=session,
+        exercise=exercise,
+        exercise_name=exercise.name,
+        order=next_order,
+        **targets,
     )
 
 

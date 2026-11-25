@@ -240,22 +240,69 @@ def abandon_session(session):
     return session
 
 
-def quick_log(user, *, date, duration, routine=None, name="", notes="", after_workout=None):
-    """Log a session after the fact, with just a duration - no guided
-    timer, no per-stretch detail. `after_workout` marks it as that
-    workout's cool-down."""
-    now = timezone.now()
-    return StretchSession.objects.create(
+@transaction.atomic
+def quick_log(
+    user,
+    *,
+    date,
+    duration,
+    routine=None,
+    name="",
+    notes="",
+    after_workout=None,
+    started_at=None,
+    completed_at=None,
+    status=StretchSessionStatus.COMPLETED,
+    performed=(),
+):
+    """Log a finished session after the fact - no guided timer.
+    `after_workout` marks it as that workout's cool-down.
+
+    The rest is for a session done earlier, e.g. history transferred
+    from an offline client (issue #52): its real `started_at`/
+    `completed_at` (either one is enough - the other follows from
+    `duration`; neither means "just now"), `status` `abandoned` for one
+    stopped early, and `performed` - the stretches done, as dicts of
+    PerformedStretch fields (`stretch`, `stretch_name`, `per_side`,
+    `target_hold_seconds`, `sets`, `rest_seconds`, `status`,
+    `actual_seconds`); name, sides and hold default from `stretch`."""
+    if started_at is None and completed_at is None:
+        started_at = completed_at = timezone.now()
+    elif started_at is None:
+        started_at = completed_at - duration
+    elif completed_at is None:
+        completed_at = started_at + duration
+    session = StretchSession.objects.create(
         user=user,
         routine=routine,
         after_workout=after_workout,
         name=name or (routine.name if routine else ""),
-        status=StretchSessionStatus.COMPLETED,
+        status=status,
         date=date,
-        started_at=now,
-        completed_at=now,
+        started_at=started_at,
+        completed_at=completed_at,
         duration=duration,
         notes=notes,
+    )
+    PerformedStretch.objects.bulk_create(
+        _performed_stretch(session, order, item) for order, item in enumerate(performed)
+    )
+    return session
+
+
+def _performed_stretch(session, order, item):
+    stretch = item.get("stretch")
+    return PerformedStretch(
+        session=session,
+        stretch=stretch,
+        order=order,
+        stretch_name=item.get("stretch_name") or stretch.name,
+        per_side=item.get("per_side", stretch.per_side if stretch else False),
+        target_hold_seconds=item.get("target_hold_seconds") or stretch.default_hold_seconds,
+        sets=item.get("sets", 1),
+        rest_seconds=item.get("rest_seconds", 0),
+        status=item.get("status", PerformedStretchStatus.DONE),
+        actual_seconds=item.get("actual_seconds"),
     )
 
 
